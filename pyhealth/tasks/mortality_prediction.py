@@ -50,11 +50,15 @@ def mortality_prediction_mimic3_fn(patient: Patient):
         # TODO: should also exclude visit with age < 18
         samples.append(
             {
+                # To add other interesting features (if present in visit, otherwise continue with join afterwards)
                 "visit_id": visit.visit_id,
                 "patient_id": patient.patient_id,
                 "conditions": [conditions],
                 "procedures": [procedures],
                 "drugs": [drugs],
+                "age": age,
+                "gender": gender,
+                "ethnicity": ethnicity,
                 "label": mortality_label,
             }
         )
