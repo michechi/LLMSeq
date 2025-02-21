@@ -44,8 +44,8 @@ def mortality_prediction_mimic3_fn(patient: Patient):
         conditions = visit.get_code_list(table="DIAGNOSES_ICD")
         procedures = visit.get_code_list(table="PROCEDURES_ICD")
         drugs = visit.get_code_list(table="PRESCRIPTIONS")
-        # exclude: visits without condition, procedure, and drug code
-        if len(conditions) * len(procedures) * len(drugs) == 0:
+        # exclude: visits without both condition, procedure, and drug code
+        if len(conditions) + len(procedures) + len(drugs) == 0:
             continue
         # TODO: should also exclude visit with age < 18
         samples.append(
