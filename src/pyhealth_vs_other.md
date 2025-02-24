@@ -2,7 +2,7 @@
 
 With PyHealth we are making a subset of the whole patients (at least, it seems to be), here instead we prefer to focus more on the data, trying to understand all the info contained.
 
-### Description of data preprocessing in preprocessiong_no_pyhealth.ipynb
+## Description of text-summary data preprocessing in preprocessiong_no_pyhealth.ipynb
 
 This Python script processes clinical data from the MIMIC-IV database to generate structured clinical histories for patients. The data includes patient demographics, hospital admissions, ICU stays, diagnoses, prescriptions, and procedures. The script performs the following key steps:
 
@@ -62,3 +62,48 @@ This Python script processes clinical data from the MIMIC-IV database to generat
 - Compile summaries for a selection of patients (restrained to 100 for testing) TODO: FOR ALL.
 - Utilize a dictionary comprehension to generate and store histories in `summaries`.
 - Save all clinical histories to a text file (`clinical_histories.txt`) for external review and use.
+
+
+## Description of tabular-summary data preprocessing in preprocessiong_no_pyhealth.ipynb
+
+This Python script processes clinical data from the MIMIC-IV database to generate a tabular dataset from textual patient history. It compiles key clinical features like admissions, diagnoses, procedures, ICU stays, and prescriptions into a structured format suitable for machine learning and analysis.
+
+### Detailed Documentation
+
+#### Step 1: Load Data
+
+- Imports necessary libraries and loads datasets using `pandas.read_csv`.
+- Datasets include demographics (`patients`), admissions (`admissions`), ICU stays (`icustays`), medical records (`diagnoses`, `procedures`), and medication prescriptions (`prescriptions`).
+- Descriptions for ICD codes are loaded to provide context to diagnoses and procedures.
+
+#### Step 2: Map ICD Codes to Descriptions
+
+- Merges diagnosis and procedure data with descriptions using a left merge on `icd_code` and `icd_version`.
+- Ensures the inclusion of a human-readable description of diagnoses and procedures within patient records.
+
+#### Step 3: Compute Age at Events & Mortality
+
+- Filters patient data to retain core columns including `subject_id`, `gender`, `anchor_age`, etc.
+- Merges demographic data with main tables to incorporate patient age and mortality status.
+- Calculations:
+  - `age_at_event` for hospital admissions and prescriptions.
+  - Mortality indicators `death_flag` and `age_at_death`.
+
+#### Step 4: Build Tabular Dataset
+
+- Aggregates key features:
+  - **ICU Stays**: Counts ICU admissions and calculates total stay days per hospitalization.
+  - **Diagnoses**: Summarizes the number and descriptions of diagnoses per hospitalization.
+  - **Procedures**: Counts and lists unique procedures performed.
+  - **Medications**: Counts and lists prescribed drugs.
+- Merges aggregated summaries with core admission features for a comprehensive dataset.
+- Handles missing values by filling numerical with zeros and textual lists with "None".
+
+#### Step 5: Save & Display Dataset
+
+- Saves the compiled tabular dataset to a CSV file: `mimiciv_clinical_dataset_tabular.csv`.
+- Prepares the dataset for further exploration or machine learning analysis, offering a concise view of patient histories in a structured, numerical format.
+
+--- 
+
+This description focuses on the essential functionality and steps performed by your script. Let me know if you need anything else!
