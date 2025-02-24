@@ -1,5 +1,9 @@
 from pyhealth.data import Patient, Visit
-
+def calculate_age(birth_date, reference_date):
+    if birth_date is None or reference_date is None:
+        return None
+    age = relativedelta(reference_date, birth_date).years
+    return age
 
 def mortality_prediction_mimic3_fn(patient: Patient):
     """Processes a single patient for the mortality prediction task.
@@ -175,8 +179,12 @@ def mortality_prediction_eicu_fn(patient: Patient):
         conditions = visit.get_code_list(table="diagnosis")
         procedures = visit.get_code_list(table="physicalExam")
         drugs = visit.get_code_list(table="medication")
+        patient.birth_datetime = patient.birth_datetime.replace(month=9, day=4)
+        age = calculate_age(patient.birth_datetime, visit.encounter_time)
+        gender = patient.gender
+        ethnicity = patient.ethnicity
         # exclude: visits without condition, procedure, or drug code
-        if len(conditions) * len(procedures) * len(drugs) == 0:
+        if len(conditions) + len(procedures) + len(drugs) == 0:
             continue
         # TODO: should also exclude visit with age < 18
         samples.append(
@@ -186,6 +194,9 @@ def mortality_prediction_eicu_fn(patient: Patient):
                 "conditions": [conditions],
                 "procedures": [procedures],
                 "drugs": [drugs],
+                "age": age,
+                "gender": gender,
+                "ethnicity": ethnicity,
                 "label": mortality_label,
             }
         )
@@ -249,7 +260,7 @@ def mortality_prediction_eicu_fn2(patient: Patient):
         treatment = visit.get_code_list(table="treatment")
 
         # exclude: visits without treatment, admissionDx, diagnosisString
-        if len(admissionDx) + len(diagnosisString) * len(treatment) == 0:
+        if len(admissionDx) + len(diagnosisString) + len(treatment) == 0:
             continue
         # TODO: should also exclude visit with age < 18
         samples.append(
