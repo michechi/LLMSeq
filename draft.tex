@@ -1,0 +1,60 @@
+\section{Methodological Considerations and Model Comparisons}
+
+\subsection{Landmark Analysis and Longitudinal Data}
+Longitudinal data present unique challenges and opportunities for predictive modeling, particularly in clinical settings. 
+Landmark analysis has emerged as a robust methodology for managing time-dependent covariates and outcomes, facilitating dynamic 
+predictions at various clinically relevant points (landmarks). In our study, we employed landmark analysis explicitly, 
+defining each clinical visit as a landmark to predict mortality within 90 days following each landmark.
+
+\subsection{Rationale for Dynamic Predictions}
+Initially, we trained separate predictive models at each landmark using an XGBoost classifier, each time utilizing clinical 
+data available strictly up to that landmark. This explicit separation ensured methodological rigor, prevented data leakage, 
+and provided clear insights into how predictive performance evolved as additional patient history was accumulated.
+
+\subsection{Single vs. Multiple Models for Landmark Analysis}
+While initially training separate XGBoost models at each landmark, we considered whether a single, unified model trained once
+on the entire landmark dataset could yield better predictive performance. This approach aligns closely with real-world 
+clinical scenarios, where clinicians typically rely on a single continuously used predictive model rather than repeatedly trained separate models.
+
+To explore this hypothesis rigorously, we adapted our modeling strategy to train a single XGBoost model across all landmarks 
+and then dynamically applied this model at subsequent landmarks. Explicit precautions were taken to ensure that each landmark prediction 
+only included data available up to that point, thereby preventing data leakage.
+
+\subsection{Application and Adaptation of Large Language Models (LLMs)}
+Parallel to traditional machine learning methods, we investigated the applicability of transformer-based large language models (LLMs), 
+specifically MedBERT, to leverage narrative patient clinical histories. Initially, we fine-tuned separate MedBERT models at each landmark, 
+observing moderate performance (AUC $\sim$0.8). We hypothesized that the limited performance might result from repeatedly fine-tuning separate 
+models on smaller subsets of data, thus limiting the model's ability to leverage full patient trajectories.
+
+To address this, we thought and implemented a single-model fine-tuning strategy. We fine-tuned one MedBERT model on the combined landmark dataset, 
+which allowed the model to exploit richer and more comprehensive narrative clinical contexts. The subsequent dynamic evaluation at each landmark 
+provided improved consistency and potentially higher predictive accuracy due to increased training data and the continuity of clinical narrative context. 
+However this introduce data leakage, since in this way the model implicitly sees future information because:
+\begin{itemize}
+    \item When the model is learning from Landmark 1 data, it also sees Landmark 2 and Landmark 3 data for the same patient during training.
+    \item Landmark 2 and Landmark 3 narratives explicitly include future information (visits) relative to Landmark 1.
+\end{itemize}
+
+\subsection{Narrative Prompt Design for MedBERT}
+We recognized that the quality and clarity of the input provided to MedBERT significantly impact predictive performance. 
+Initially, our prompts consisted of simple concatenations of diagnoses, medications, and procedures. However, realizing that 
+transformer-based models excel at interpreting coherent narratives, we refined our prompts into structured, clinically realistic 
+narratives explicitly describing patient demographics, medical histories, medications, and procedural histories clearly and cohesively. 
+This change substantially aligns the input format more closely with MedBERT's pre-training corpus, thereby potentially enhancing predictive performance.
+
+\subsection{Scientific Rigor and Data Leakage}
+A critical methodological point addressed in our study was the explicit prevention of data leakage. We emphasized that each landmark's 
+predictive inputs must strictly contain information available at or before the landmark, never including future information. 
+By explicitly structuring our datasets to meet this criterion, we maintained high methodological rigor and ensured scientific validity.
+
+\subsection{Comparative Performance Insights}
+Interestingly, despite methodological improvements, our experiments demonstrated that the XGBoost model leveraging structured numeric features 
+(such as age, intervals between visits, and structured clinical variables) consistently outperformed MedBERT. The substantial improvement in 
+predictive performance observed at higher landmarks for XGBoost highlights the strength of structured, numeric features in longitudinal clinical predictions.
+
+\subsection{Conclusions and Recommendations}
+Our findings indicate that while LLMs such as MedBERT offer promising avenues for leveraging rich narrative clinical data, traditional 
+structured machine learning methods like XGBoost remain particularly effective for longitudinal predictive modeling tasks involving structured 
+numeric data. Future research should further explore hybrid approaches or enhance narrative input structures for LLMs to better exploit their 
+inherent strengths. Explicit comparisons and methodological transparency remain crucial to guide model selection in clinical predictive modeling tasks.
+
