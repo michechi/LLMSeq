@@ -184,7 +184,3 @@ dataset.fillna({'diagnosis_list': 'None', 'procedure_list': 'None', 'medication_
 
 # Save the dataset to a CSV file for ML usage
 dataset.to_csv("mimiciv_clinical_dataset_tabular_death_visit.csv", index=False)
-
-# Display the dataset
-# import ace_tools as tools
-# tools.display_dataframe_to_user(name="MIMIC-IV Clinical Dataset (Tabular)", dataframe=dataset)
