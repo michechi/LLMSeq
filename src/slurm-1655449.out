@@ -1,0 +1,109 @@
+Starting job 1655449 on gpu-9 on fox at Fri May 30 20:06:42 CEST 2025
+
+2025-05-30 20:07:37,421: Argument batch_size: 8
+2025-05-30 20:07:37,421: Argument cache_dir: '/cluster/work/projects/ec403/ec-michechi/Project_M'
+2025-05-30 20:07:37,421: Argument epochs: 20
+2025-05-30 20:07:37,422: Argument input_csv: '/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_df_evo.csv'
+2025-05-30 20:07:37,422: Argument lr: 2e-05
+2025-05-30 20:07:37,422: Argument max_length: 512
+2025-05-30 20:07:37,422: Argument max_visits: 3
+2025-05-30 20:07:37,422: Argument model_name: 'meta-llama/Llama-3.1-8B'
+2025-05-30 20:07:37,422: Argument model_type: 'llm'
+2025-05-30 20:07:37,422: Argument patience: 3
+2025-05-30 20:07:37,422: Argument peft: True
+2025-05-30 20:07:37,422: Argument seed: 9550
+Note: Environment variable`HF_TOKEN` is set and is the current active token independently from the token you've just configured.
+2025-05-30 20:07:37,625: Note: Environment variable`HF_TOKEN` is set and is the current active token independently from the token you've just configured.
+2025-05-30 20:07:40,576: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]
+Loading checkpoint shards:  25%|██▌       | 1/4 [00:09<00:29,  9.99s/it]
+Loading checkpoint shards:  50%|█████     | 2/4 [00:21<00:22, 11.16s/it]
+Loading checkpoint shards:  75%|███████▌  | 3/4 [00:33<00:11, 11.42s/it]
+Loading checkpoint shards: 100%|██████████| 4/4 [00:34<00:00,  7.16s/it]
+Loading checkpoint shards: 100%|██████████| 4/4 [00:34<00:00,  8.58s/it]
+Some weights of LlamaForSequenceClassification were not initialized from the model checkpoint at meta-llama/Llama-3.1-8B and are newly initialized: ['score.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-05-30 20:08:18,038: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-05-30 20:10:54,112: Preparing data for Landmark 1
+2025-05-30 20:10:56,988: Average train text length: 147.92 words
+2025-05-30 20:10:56,990: Average test text length: 148.18 words
+2025-05-30 20:10:56,990: Training on 16086 samples, testing on 4022 samples
+2025-05-30 20:11:07,505: Fine-tuning at Landmark 1
+/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/optimization.py:591: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
+  warnings.warn(
+2025-05-30 20:45:23,886: Landmark 1 | Epoch 1/20 | Train Loss: 0.4500 | Val Loss: 0.3787 | Validation AUC: 0.7731 | F1-Score: 0.3248
+2025-05-30 21:19:49,767: Landmark 1 | Epoch 2/20 | Train Loss: 0.3517 | Val Loss: 0.3468 | Validation AUC: 0.8069 | F1-Score: 0.2031
+2025-05-30 21:54:15,568: Landmark 1 | Epoch 3/20 | Train Loss: 0.3154 | Val Loss: 0.3410 | Validation AUC: 0.8163 | F1-Score: 0.3532
+2025-05-30 22:28:41,290: Landmark 1 | Epoch 4/20 | Train Loss: 0.2956 | Val Loss: 0.3393 | Validation AUC: 0.8181 | F1-Score: 0.3429
+2025-05-30 23:03:07,702: Landmark 1 | Epoch 5/20 | Train Loss: 0.2694 | Val Loss: 0.3474 | Validation AUC: 0.8020 | F1-Score: 0.3508
+2025-05-30 23:37:21,668: Landmark 1 | Epoch 6/20 | Train Loss: 0.2384 | Val Loss: 0.3746 | Validation AUC: 0.7995 | F1-Score: 0.3298
+2025-05-31 00:11:39,900: Landmark 1 | Epoch 7/20 | Train Loss: 0.2031 | Val Loss: 0.4116 | Validation AUC: 0.7919 | F1-Score: 0.4116
+2025-05-31 00:11:39,935: Early stopping triggered at epoch 7
+2025-05-31 00:11:56,320: Tempo impiegato per Landmark 1: 14448.8 secondi
+2025-05-31 00:11:56,321: Preparing data for Landmark 2
+2025-05-31 00:12:00,806: Average train text length: 159.94 words
+2025-05-31 00:12:00,806: Average test text length: 158.47 words
+2025-05-31 00:12:00,806: Training on 16086 samples, testing on 4022 samples
+2025-05-31 00:12:12,616: Fine-tuning at Landmark 2
+/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/optimization.py:591: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
+  warnings.warn(
+2025-05-31 00:46:32,652: Landmark 2 | Epoch 1/20 | Train Loss: 0.3033 | Val Loss: 0.3093 | Validation AUC: 0.8523 | F1-Score: 0.4339
+2025-05-31 01:21:05,236: Landmark 2 | Epoch 2/20 | Train Loss: 0.2847 | Val Loss: 0.3063 | Validation AUC: 0.8503 | F1-Score: 0.3867
+2025-05-31 01:55:25,622: Landmark 2 | Epoch 3/20 | Train Loss: 0.2640 | Val Loss: 0.3127 | Validation AUC: 0.8529 | F1-Score: 0.3588
+2025-05-31 02:29:57,822: Landmark 2 | Epoch 4/20 | Train Loss: 0.2359 | Val Loss: 0.3251 | Validation AUC: 0.8477 | F1-Score: 0.4711
+2025-05-31 03:04:17,159: Landmark 2 | Epoch 5/20 | Train Loss: 0.1984 | Val Loss: 0.3540 | Validation AUC: 0.8390 | F1-Score: 0.4313
+2025-05-31 03:38:36,790: Landmark 2 | Epoch 6/20 | Train Loss: 0.1541 | Val Loss: 0.4031 | Validation AUC: 0.8247 | F1-Score: 0.4070
+2025-05-31 03:38:36,790: Early stopping triggered at epoch 6
+2025-05-31 03:38:51,269: Tempo impiegato per Landmark 2: 12398.7 secondi
+2025-05-31 03:38:51,270: Preparing data for Landmark 3
+2025-05-31 03:38:57,150: Average train text length: 185.42 words
+2025-05-31 03:38:57,150: Average test text length: 186.19 words
+2025-05-31 03:38:57,150: Training on 16086 samples, testing on 4022 samples
+2025-05-31 03:39:10,111: Fine-tuning at Landmark 3
+/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/optimization.py:591: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
+  warnings.warn(
+2025-05-31 04:13:36,619: Landmark 3 | Epoch 1/20 | Train Loss: 0.2035 | Val Loss: 0.1917 | Validation AUC: 0.9472 | F1-Score: 0.6973
+2025-05-31 04:48:14,229: Landmark 3 | Epoch 2/20 | Train Loss: 0.1772 | Val Loss: 0.1878 | Validation AUC: 0.9485 | F1-Score: 0.9485
+2025-05-31 05:22:51,783: Landmark 3 | Epoch 3/20 | Train Loss: 0.1530 | Val Loss: 0.1921 | Validation AUC: 0.9477 | F1-Score: 0.7386
+2025-05-31 05:57:17,839: Landmark 3 | Epoch 4/20 | Train Loss: 0.1185 | Val Loss: 0.2314 | Validation AUC: 0.9434 | F1-Score: 0.7137
+2025-05-31 06:31:44,711: Landmark 3 | Epoch 5/20 | Train Loss: 0.0795 | Val Loss: 0.2543 | Validation AUC: 0.9364 | F1-Score: 0.7199
+2025-05-31 06:31:44,711: Early stopping triggered at epoch 5
+2025-05-31 06:31:58,417: Tempo impiegato per Landmark 3: 10368.3 secondi
+2025-05-31 06:31:58,723: 0    0.8181
+1    0.8529
+2    0.9485
+Name: AUC, dtype: object
+trainable params: 6,823,936 || all params: 7,511,756,800 || trainable%: 0.0908
+   Landmark     AUC  ...  Validation Loss Training Time (s)
+0         1  0.8181  ...           0.3393           14448.8
+1         2  0.8529  ...           0.3127           12398.7
+2         3  0.9485  ...           0.1878           10368.3
+
+[3 rows x 6 columns]
+
+Job 1655449 consumed 198.0 billing hours from project ec403.
+
+Submitted 2025-05-30T19:56:08; waited 10.6 minutes in the queue after becoming eligible to run.
+
+Requested wallclock time: 24.0 hours
+Elapsed wallclock time:   10.4 hours
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+1655449          16            0.0 %  2025-05-30T20:06:42   10.4 h  0
+1655449.batch    16      1     6.2 %  2025-05-30T20:06:42   10.4 h  0
+
+Used CPU time:   10.4 CPU hours
+Unused CPU time: 6.5 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1655449          32.0        
+1655449.batch    32.0    32.0
+
+GPU usage stats:
+Job 1655449 completed at Sat May 31 06:32:02 CEST 2025

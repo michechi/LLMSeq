@@ -11,7 +11,7 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset, DataLoader
 from transformers import (
-    AutoTokenizer, AutoModelForSequenceClassification, get_linear_schedule_with_warmup, AdamW
+    AutoTokenizer, AutoModelForSequenceClassification, get_linear_schedule_with_warmup, BitsAndBytesConfig
 )
 from peft import LoraConfig, get_peft_model
 from sklearn.model_selection import train_test_split
@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 def set_seed(seed_value=5550):
     # os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
-    os.environ["PYTHONHASHSEED"] = "9550"
+    os.environ["PYTHONHASHSEED"] = str(seed_value)
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
     os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":16:8"
     random.seed(seed_value)
@@ -41,38 +41,42 @@ def set_seed(seed_value=5550):
 def parse_args():
     parser = argparse.ArgumentParser(description="Universal finetuning script for LLMs or MedBERT-like models.")
     parser.add_argument("--model_type", type=str, choices=["llm", "medbert"], default="llm",
-                        help="Tipo di modello: llm o medbert")
+                        help="Model type: llm o medbert")
     parser.add_argument("--model_name", type=str, required=True,
-                        help="Nome del modello da Hugging Face")
+                        help="Name of the model from Hugging Face")
     parser.add_argument("--peft", action="store_true", help="Usa PEFT (solo per LLM)")
+    parser.add_argument("--use_quantization", action="store_true",
+                        help="Quantization 4 bit")
     parser.add_argument("--cache_dir", type=str, default="/cluster/work/projects/ec403/ec-michechi/Project_M",
-                        help="Directory per cache e salvataggio modelli")
+                        help="Directory for cache e saving models")
     parser.add_argument("--input_csv", type=str, default="/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_df_evo.csv",
-                        help="Path al file CSV di input")
+                        help="Path to file CSV di input")
     parser.add_argument("--train_csv", type=str, default="/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_train.csv",
-                        help="Path al file CSV di training")
+                        help="Path to file CSV di training")
     parser.add_argument("--val_csv", type=str, default="/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_vali.csv",
-                        help="Path al file CSV di validation")
+                        help="Path to file CSV di validation")
     parser.add_argument("--test_csv", type=str, default="/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_test.csv",
-                        help="Path al file CSV di test") # evo as well 
-    parser.add_argument("--prompt_type", type=str, choices=["naive", "compact"], default="compact",
-                        help="Tipo di prompt da usare: 'naive' o 'compact'")
+                        help="Path to file CSV di test") # evo as well 
+    parser.add_argument("--prompt_type", type=str, choices=["naive", "compact", "no"], default="compact",
+                        help="Prompting type to use: 'naive', 'compact'  o 'no' (nessuna narrativa)")
     parser.add_argument("--max_visits", type=int, default=3,
-                        help="Numero massimo di landmark da processare")
+                        help="number of visits to consider for each patient (max_visits)")
+    parser.add_argument("--all_landmarks", action="store_true",
+                        help="Process all landmark (from 1 to max_visits) or just the last one")
     parser.add_argument("--batch_size", type=int, default=8,
-                        help="Batch size per il DataLoader")
+                        help="Batch size for DataLoader")
     parser.add_argument("--epochs", type=int, default=20,
-                        help="Numero di epoche di training")
+                        help="Num epochs for training")
     parser.add_argument("--patience", type=int, default=3,
                         help="Early stopping patience")
     parser.add_argument("--max_length", type=int, default=512,
-                        help="Lunghezza massima dei token")
+                        help="Token Max lenght")
     parser.add_argument("--lr", type=float, default=2e-5,
                         help="Learning rate")
-    parser.add_argument("--early", type=str, choices=["auc", "loss"], default="auc",
-                        help="Criterio di early stopping: 'auc' o 'loss'")
+    parser.add_argument("--early", type=str, choices=["auc", "loss", "f1"], default="auc",
+                        help="Early stopping criterion: 'auc', 'loss' or 'f1")
     parser.add_argument("--seed", type=int, default=9550,
-                        help="Seed per riproducibilità")
+                        help="Seed for riproducibility")
     
     args = parser.parse_args()
 
@@ -90,15 +94,27 @@ def load_tokenizer(model_name, model_type, hf_token, cache_dir):
     )
     return tokenizer
 
-def load_model(model_name, model_type, tokenizer, cache_dir, hf_token, use_peft):
+def load_model(model_name, model_type, tokenizer, cache_dir, hf_token, use_peft, use_quantization):
     if model_type == "llm":
+
+        if use_quantization:
+            bnb_config = BitsAndBytesConfig(
+                load_in_4bit=True,
+                bnb_4bit_quant_type="nf4",
+                bnb_4bit_use_double_quant=True,
+                bnb_4bit_compute_dtype=torch.bfloat16
+            )
+        else:
+            bnb_config = None
+
         model = AutoModelForSequenceClassification.from_pretrained(
             model_name,
             num_labels=2,
             torch_dtype=torch.bfloat16,
             device_map='auto',
             token=hf_token,
-            cache_dir=cache_dir
+            cache_dir=cache_dir,
+            quantization_config=None if use_quantization else bnb_config  # Use bnb for quantization
         )
         model.config.pad_token_id = tokenizer.eos_token_id
         if use_peft:
@@ -114,6 +130,7 @@ def load_model(model_name, model_type, tokenizer, cache_dir, hf_token, use_peft)
             model = get_peft_model(model, lora_config)
             model.print_trainable_parameters()
     else:
+        # For clinical models like MedBERT or similar
         model = AutoModelForSequenceClassification.from_pretrained(
             model_name,
             num_labels=2,
@@ -135,6 +152,17 @@ class ClinicalDataset(Dataset):
 
     def __len__(self):
         return len(self.labels)
+
+def no_narrative_prompt(row):
+    narrative = "Variables: "
+    if pd.notna(row['diag_text']) and row['diag_text'].strip():
+        narrative += f" {row['diag_text']}"
+    if pd.notna(row['med_text']) and row['med_text'].strip():
+        narrative += f" {row['med_text']}"
+    if pd.notna(row['proc_text']) and row['proc_text'].strip():
+        narrative += f" {row['proc_text']}"
+
+    return narrative
 
 def naive_narrative_prompt(row):
     narrative = f"Patient is a {row['age_at_landmark']}-year-old {row['gender']}."
@@ -238,6 +266,7 @@ def train_and_evaluate(model, train_loader, val_loader, args, landmark_visit):
     )
     best_auc = 0.0
     best_val_loss = float("inf")
+    best_f1 = 0.0
     epochs_no_improve = 0
     best_model_path = get_best_model_path(args.model_name, landmark_visit, args.cache_dir)
     
@@ -285,7 +314,6 @@ def train_and_evaluate(model, train_loader, val_loader, args, landmark_visit):
             f"F1-Score: {val_f1:.4f}"
         )
         
-
         # Early stopping based on validation AUC
         if args.early == "auc":
             if val_auc > best_auc:
@@ -311,8 +339,20 @@ def train_and_evaluate(model, train_loader, val_loader, args, landmark_visit):
                 if epochs_no_improve >= args.patience:
                     logger.info(f"Early stopping triggered at epoch {epoch+1}")
                     break
+        elif args.early == "f1":
+            if val_f1 > best_f1:  
+                best_auc = val_auc
+                best_f1 = val_f1
+                best_val_loss = avg_val_loss
+                epochs_no_improve = 0
+                torch.save(model.state_dict(), best_model_path)
+            else:
+                epochs_no_improve += 1
+                if epochs_no_improve >= args.patience:
+                    logger.info(f"Early stopping triggered at epoch {epoch+1}")
+                    break
         else:
-            raise ValueError("Invalid early stopping criterion. Use 'auc' or 'loss'.")
+            raise ValueError("Invalid early stopping criterion. Use 'auc', 'loss' or 'f1'.")
 
     model.load_state_dict(torch.load(best_model_path))
     return best_auc, best_model_path, best_f1, best_val_loss, epoch + 1
@@ -353,9 +393,8 @@ def main():
         login(hf_token)
 
     tokenizer = load_tokenizer(args.model_name, args.model_type, hf_token, args.cache_dir)
-    model = load_model(args.model_name, args.model_type, tokenizer, args.cache_dir, hf_token, args.peft).to(device="cpu")
+    model = load_model(args.model_name, args.model_type, tokenizer, args.cache_dir, hf_token, args.peft, args.use_quantization).to(device="cpu")
     
-
     if tokenizer.pad_token is None:
         logger.warning("Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].")
         tokenizer.add_special_tokens({'pad_token': '[PAD]'})
@@ -374,6 +413,8 @@ def main():
         narrative_prompt = naive_narrative_prompt
     elif args.prompt_type == "compact":
         narrative_prompt = compact_narrative_prompt
+    elif args.prompt_type == "no":
+        narrative_prompt = no_narrative_prompt
     else:
         raise ValueError("Invalid prompt type. Use 'naive' or 'compact'.")
     logger.info(f"Using prompt type: {args.prompt_type}")
@@ -383,9 +424,9 @@ def main():
     # Reading data
     #landmark_df = pd.read_csv(args.input_csv, na_values=['', 'None', 'NaN', 'na', 'nan'])
     #landmark_df = landmark_df.fillna('')
-    full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan'])
-    full_val_df = pd.read_csv(args.val_csv, na_values=['', 'None', 'NaN', 'na', 'nan'])
-    full_test_df = pd.read_csv(args.test_csv, na_values=['', 'None', 'NaN', 'na', 'nan'])
+    full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+    full_val_df = pd.read_csv(args.val_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+    full_test_df = pd.read_csv(args.test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
 
     # Older version, now we are splitting the data in the splitting_data.py script
     filtered_datasets = []
@@ -400,11 +441,19 @@ def main():
     # df_selected = landmark_df[landmark_df['subject_id'].isin(selected_patients)].copy()
 
     train_df_selected, val_df_selected, test_df_selected = filtered_datasets
-    
 
     predictions_list, labels_list, results = [], [], []
 
-    for landmark_visit in range(1, args.max_visits + 1):
+    if args.all_landmarks:
+        logger.info(f"Processing all landmarks from 1 to {args.max_visits}")
+        start = 1
+        end = args.max_visits + 1
+    else:
+        logger.info(f"Processing only the last landmark visit: {args.max_visits}")
+        start = args.max_visits
+        end = args.max_visits + 1
+
+    for landmark_visit in range(start, end):
         logger.info(f"Preparing data for Landmark {landmark_visit}")
         
         # df_subset = df_selected[df_selected['landmark_visit'] == landmark_visit]
@@ -416,7 +465,6 @@ def main():
         train_df = train_df_selected[train_df_selected['landmark_visit'] == landmark_visit].copy()
         val_df = val_df_selected[val_df_selected['landmark_visit'] == landmark_visit].copy()
         test_df = test_df_selected[test_df_selected['landmark_visit'] == landmark_visit].copy()
-        
 
         train_texts = train_df.apply(narrative_prompt, axis=1).tolist()
         val_texts = val_df.apply(narrative_prompt, axis=1).tolist()
@@ -461,9 +509,9 @@ def main():
             for batch in test_loader:
                 inputs = {k: v.to(device) for k, v in batch.items()}
                 outputs = model(**inputs)
-                probs = torch.softmax(outputs.logits, dim=-1)[:, 1].cpu().numpy()
+                probs = torch.softmax(outputs.logits, dim=-1)[:, 1].cpu().float().numpy() # on cpu for sklearn metrics
                 test_preds.extend(probs)
-                test_labels.extend(batch['labels'].cpu().numpy())
+                test_labels.extend(batch['labels'].cpu().float().numpy()) # on cpu for sklearn metrics
 
         test_auc = roc_auc_score(test_labels, test_preds)
         test_f1 = f1_score(test_labels, np.array(test_preds) >= 0.5)
@@ -508,12 +556,12 @@ def main():
     model_tag = args.model_name.replace("/", "_")
     peft_tag = "_peft" if args.peft else ""
     output_filename = (
-        f"results_{args.model_type}_{model_tag}_visits{args.max_visits}{peft_tag}_{timestamp}.csv"
+        f"results_{args.model_type}_{model_tag}_visits{args.max_visits}{peft_tag}_{args.seed}_{args.prompt_type}_{timestamp}.csv"
     )
+    logger.info(f"Saving results to {output_filename}")
     results_df.to_csv(os.path.join(args.cache_dir, output_filename), index=False)
 
     print(results_df)
-    logger.info(results_df["AUC"])
 
 if __name__ == "__main__":
     main()

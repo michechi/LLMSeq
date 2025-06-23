@@ -1,0 +1,82 @@
+Starting job 1699046 on gpu-9 on fox at Wed Jun 18 20:41:23 CEST 2025
+
+2025-06-18 20:41:42,186: Argument all_landmarks: False
+2025-06-18 20:41:42,186: Argument batch_size: 4
+2025-06-18 20:41:42,186: Argument cache_dir: '/cluster/work/projects/ec403/ec-michechi/Project_M'
+2025-06-18 20:41:42,186: Argument early: 'f1'
+2025-06-18 20:41:42,186: Argument epochs: 20
+2025-06-18 20:41:42,186: Argument input_csv: '/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_df_evo.csv'
+2025-06-18 20:41:42,186: Argument lr: 2e-05
+2025-06-18 20:41:42,186: Argument max_length: 1024
+2025-06-18 20:41:42,186: Argument max_visits: 3
+2025-06-18 20:41:42,186: Argument model_name: 'meta-llama/Llama-3.1-8B'
+2025-06-18 20:41:42,186: Argument model_type: 'llm'
+2025-06-18 20:41:42,186: Argument patience: 3
+2025-06-18 20:41:42,186: Argument peft: True
+2025-06-18 20:41:42,186: Argument prompt_type: 'no'
+2025-06-18 20:41:42,186: Argument seed: 9550
+2025-06-18 20:41:42,186: Argument test_csv: '/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_test.csv'
+2025-06-18 20:41:42,187: Argument train_csv: '/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_train.csv'
+2025-06-18 20:41:42,187: Argument use_quantization: False
+2025-06-18 20:41:42,187: Argument val_csv: '/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_vali.csv'
+Note: Environment variable`HF_TOKEN` is set and is the current active token independently from the token you've just configured.
+2025-06-18 20:41:42,366: Note: Environment variable`HF_TOKEN` is set and is the current active token independently from the token you've just configured.
+2025-06-18 20:41:44,128: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:09<00:27,  9.08s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:18<00:18,  9.27s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:27<00:09,  9.20s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:27<00:00,  5.70s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:27<00:00,  6.99s/it]
+Some weights of LlamaForSequenceClassification were not initialized from the model checkpoint at meta-llama/Llama-3.1-8B and are newly initialized: ['score.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-06-18 20:42:15,526: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-06-18 20:42:54,146: Using prompt type: no
+2025-06-18 20:42:54,146: Model type: llm, Model name: meta-llama/Llama-3.1-8B
+/fp/homes01/u01/ec-michechi/Project_M/MIMICIV/src/Finetuning.py:427: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+2025-06-18 20:43:30,167: Processing only the last landmark visit: 3
+2025-06-18 20:43:30,168: Preparing data for Landmark 3
+2025-06-18 20:43:31,808: Average train text length: 1239.42 words
+2025-06-18 20:43:31,809: Average validation text length: 1230.17 words
+2025-06-18 20:43:31,809: Average test text length: 1236.08 words
+2025-06-18 20:43:31,809: Training on 14477 samples, validating on 1609, testing on 4022 samples
+2025-06-18 20:44:41,357: Fine-tuning at Landmark 3
+2025-06-18 20:44:41,733: Early stopping criterion: f1
+2025-06-18 21:46:14,573: Landmark 3 | Epoch 1/20 | Train Loss: 0.5138 | Val Loss: 0.2135 | Validation AUC: 0.9381 | F1-Score: 0.6304
+2025-06-18 22:47:56,683: Landmark 3 | Epoch 2/20 | Train Loss: 0.2149 | Val Loss: 0.1731 | Validation AUC: 0.9562 | F1-Score: 0.7586
+2025-06-18 23:49:39,099: Landmark 3 | Epoch 3/20 | Train Loss: 0.1852 | Val Loss: 0.1740 | Validation AUC: 0.9588 | F1-Score: 0.7592
+2025-06-19 00:51:31,953: Landmark 3 | Epoch 4/20 | Train Loss: 0.1609 | Val Loss: 0.1797 | Validation AUC: 0.9562 | F1-Score: 0.7505
+2025-06-19 01:53:04,654: Landmark 3 | Epoch 5/20 | Train Loss: 0.1309 | Val Loss: 0.1832 | Validation AUC: 0.9529 | F1-Score: 0.7285
+2025-06-19 02:54:37,056: Landmark 3 | Epoch 6/20 | Train Loss: 0.0895 | Val Loss: 0.2302 | Validation AUC: 0.9501 | F1-Score: 0.7556
+2025-06-19 02:54:37,056: Early stopping triggered at epoch 6
+2025-06-19 02:54:48,813: Tempo impiegato per Landmark 3: 22207.5 secondi
+2025-06-19 02:54:48,814: Tempo medio per epoca: 3701.2 secondi
+2025-06-19 03:01:45,535: Final Test AUC (Landmark 3): 0.9492 | Test F1-Score: 0.7257
+2025-06-19 03:01:45,536: Saving results to results_llm_meta-llama_Llama-3.1-8B_visits3_peft_20250619_030145.csv
+trainable params: 6,823,936 || all params: 7,511,756,800 || trainable%: 0.0908
+   Landmark Val AUC  ... Validation Loss Training Time (s)
+0         3  0.9588  ...          0.1740           22207.5
+
+[1 rows x 9 columns]
+
+Job 1699046 consumed 120.5 billing hours from project ec403.
+
+Submitted 2025-06-18T15:18:21; waited 5.4 hours in the queue after becoming eligible to run.
+
+Requested wallclock time: 10.0 hours
+Elapsed wallclock time:   6.3 hours
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+1699046          16            0.0 %  2025-06-18T20:41:23    6.3 h  0
+1699046.batch    16      1     6.3 %  2025-06-18T20:41:23    6.3 h  0
+
+Used CPU time:   6.4 CPU hours
+Unused CPU time: 4.0 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1699046          32.0        
+1699046.batch    32.0    29.5
+
+GPU usage stats:
+Job 1699046 completed at Thu Jun 19 03:01:51 CEST 2025

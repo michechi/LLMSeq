@@ -1,0 +1,129 @@
+Starting job 1672178 on gpu-12 on fox at Wed Jun 4 22:49:13 CEST 2025
+
+2025-06-04 22:50:07,521: Argument batch_size: 8
+2025-06-04 22:50:07,521: Argument cache_dir: '/cluster/work/projects/ec403/ec-michechi/Project_M'
+2025-06-04 22:50:07,521: Argument early: 'loss'
+2025-06-04 22:50:07,521: Argument epochs: 20
+2025-06-04 22:50:07,521: Argument input_csv: '/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_df_evo.csv'
+2025-06-04 22:50:07,521: Argument lr: 2e-05
+2025-06-04 22:50:07,521: Argument max_length: 512
+2025-06-04 22:50:07,521: Argument max_visits: 3
+2025-06-04 22:50:07,521: Argument model_name: 'emilyalsentzer/Bio_ClinicalBERT'
+2025-06-04 22:50:07,521: Argument model_type: 'medbert'
+2025-06-04 22:50:07,521: Argument patience: 3
+2025-06-04 22:50:07,521: Argument peft: False
+2025-06-04 22:50:07,521: Argument prompt_type: 'compact'
+2025-06-04 22:50:07,521: Argument seed: 9550
+2025-06-04 22:50:07,521: Argument test_csv: '/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_test.csv'
+2025-06-04 22:50:07,521: Argument train_csv: '/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_train.csv'
+2025-06-04 22:50:07,521: Argument val_csv: '/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_vali.csv'
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_utils.py:831: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  return self.fget.__get__(instance, owner)()
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at emilyalsentzer/Bio_ClinicalBERT and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-06-04 22:50:11,308: Using prompt type: compact
+2025-06-04 22:50:11,308: Model type: medbert, Model name: emilyalsentzer/Bio_ClinicalBERT
+/fp/homes01/u01/ec-michechi/Project_M/MIMICIV/src/Finetuning.py:386: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan'])
+2025-06-04 22:50:46,362: Preparing data for Landmark 1
+2025-06-04 22:50:49,159: Average train text length: 147.83 words
+2025-06-04 22:50:49,159: Average validation text length: 148.75 words
+2025-06-04 22:50:49,159: Average test text length: 148.18 words
+2025-06-04 22:50:49,159: Training on 14477 samples, validating on 1609, testing on 4022 samples
+2025-06-04 22:51:03,600: Fine-tuning at Landmark 1
+2025-06-04 22:51:05,265: Early stopping criterion: loss
+2025-06-04 22:57:10,711: Landmark 1 | Epoch 1/20 | Train Loss: 0.3794 | Val Loss: 0.3372 | Validation AUC: 0.8227 | F1-Score: 0.2765
+2025-06-04 23:03:17,021: Landmark 1 | Epoch 2/20 | Train Loss: 0.3310 | Val Loss: 0.3200 | Validation AUC: 0.8302 | F1-Score: 0.1859
+2025-06-04 23:09:22,702: Landmark 1 | Epoch 3/20 | Train Loss: 0.3169 | Val Loss: 0.3179 | Validation AUC: 0.8269 | F1-Score: 0.3072
+2025-06-04 23:15:28,390: Landmark 1 | Epoch 4/20 | Train Loss: 0.2980 | Val Loss: 0.3294 | Validation AUC: 0.8190 | F1-Score: 0.2143
+2025-06-04 23:21:33,757: Landmark 1 | Epoch 5/20 | Train Loss: 0.2678 | Val Loss: 0.3392 | Validation AUC: 0.8072 | F1-Score: 0.3277
+2025-06-04 23:27:39,160: Landmark 1 | Epoch 6/20 | Train Loss: 0.2236 | Val Loss: 0.3952 | Validation AUC: 0.8075 | F1-Score: 0.3613
+2025-06-04 23:27:39,160: Early stopping triggered at epoch 6
+2025-06-04 23:27:39,407: Tempo impiegato per Landmark 1: 2195.8 secondi
+2025-06-04 23:27:39,407: Tempo medio per epoca: 366.0 secondi
+2025-06-04 23:28:11,075: Final Test AUC (Landmark 1): 0.8227 | Test F1-Score: 0.2726
+2025-06-04 23:28:11,078: Preparing data for Landmark 2
+2025-06-04 23:28:15,424: Average train text length: 159.78 words
+2025-06-04 23:28:15,424: Average validation text length: 161.36 words
+2025-06-04 23:28:15,424: Average test text length: 158.47 words
+2025-06-04 23:28:15,424: Training on 14477 samples, validating on 1609, testing on 4022 samples
+2025-06-04 23:28:31,104: Fine-tuning at Landmark 2
+2025-06-04 23:28:31,111: Early stopping criterion: loss
+2025-06-04 23:34:37,078: Landmark 2 | Epoch 1/20 | Train Loss: 0.2967 | Val Loss: 0.2855 | Validation AUC: 0.8724 | F1-Score: 0.4046
+2025-06-04 23:40:43,458: Landmark 2 | Epoch 2/20 | Train Loss: 0.2952 | Val Loss: 0.2804 | Validation AUC: 0.8782 | F1-Score: 0.4781
+2025-06-04 23:46:49,796: Landmark 2 | Epoch 3/20 | Train Loss: 0.2767 | Val Loss: 0.2808 | Validation AUC: 0.8788 | F1-Score: 0.4831
+2025-06-04 23:52:55,867: Landmark 2 | Epoch 4/20 | Train Loss: 0.2552 | Val Loss: 0.2928 | Validation AUC: 0.8709 | F1-Score: 0.3877
+2025-06-04 23:59:01,903: Landmark 2 | Epoch 5/20 | Train Loss: 0.2341 | Val Loss: 0.2991 | Validation AUC: 0.8637 | F1-Score: 0.4267
+2025-06-04 23:59:01,903: Early stopping triggered at epoch 5
+2025-06-04 23:59:02,113: Tempo impiegato per Landmark 2: 1831.0 secondi
+2025-06-04 23:59:02,113: Tempo medio per epoca: 366.2 secondi
+2025-06-04 23:59:33,780: Final Test AUC (Landmark 2): 0.8543 | Test F1-Score: 0.4368
+2025-06-04 23:59:33,780: Preparing data for Landmark 3
+2025-06-04 23:59:39,569: Average train text length: 185.53 words
+2025-06-04 23:59:39,569: Average validation text length: 184.46 words
+2025-06-04 23:59:39,569: Average test text length: 186.19 words
+2025-06-04 23:59:39,569: Training on 14477 samples, validating on 1609, testing on 4022 samples
+2025-06-04 23:59:57,256: Fine-tuning at Landmark 3
+2025-06-04 23:59:57,261: Early stopping criterion: loss
+2025-06-05 00:06:09,561: Landmark 3 | Epoch 1/20 | Train Loss: 0.2115 | Val Loss: 0.1906 | Validation AUC: 0.9561 | F1-Score: 0.7409
+2025-06-05 00:12:19,443: Landmark 3 | Epoch 2/20 | Train Loss: 0.1937 | Val Loss: 0.1873 | Validation AUC: 0.9558 | F1-Score: 0.7362
+2025-06-05 00:18:26,599: Landmark 3 | Epoch 3/20 | Train Loss: 0.1803 | Val Loss: 0.1853 | Validation AUC: 0.9542 | F1-Score: 0.7364
+2025-06-05 00:24:33,756: Landmark 3 | Epoch 4/20 | Train Loss: 0.1684 | Val Loss: 0.1750 | Validation AUC: 0.9574 | F1-Score: 0.7338
+2025-06-05 00:30:40,960: Landmark 3 | Epoch 5/20 | Train Loss: 0.1516 | Val Loss: 0.1861 | Validation AUC: 0.9518 | F1-Score: 0.7430
+2025-06-05 00:36:47,829: Landmark 3 | Epoch 6/20 | Train Loss: 0.1305 | Val Loss: 0.2013 | Validation AUC: 0.9512 | F1-Score: 0.7355
+2025-06-05 00:42:54,745: Landmark 3 | Epoch 7/20 | Train Loss: 0.1090 | Val Loss: 0.2393 | Validation AUC: 0.9447 | F1-Score: 0.7253
+2025-06-05 00:42:54,745: Early stopping triggered at epoch 7
+2025-06-05 00:42:54,954: Tempo impiegato per Landmark 3: 2577.7 secondi
+2025-06-05 00:42:54,954: Tempo medio per epoca: 368.2 secondi
+2025-06-05 00:43:26,513: Final Test AUC (Landmark 3): 0.9442 | Test F1-Score: 0.7148
+   Landmark Val AUC  ... Validation Loss Training Time (s)
+0         1  0.8269  ...          0.3179            2195.8
+1         2  0.8782  ...          0.2804            1831.0
+2         3  0.9574  ...          0.1750            2577.7
+
+[3 rows x 9 columns]
+Traceback (most recent call last):
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-scipy-ecosystem/01-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/pandas/core/indexes/base.py", line 3802, in get_loc
+    return self._engine.get_loc(casted_key)
+  File "pandas/_libs/index.pyx", line 138, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/index.pyx", line 165, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/hashtable_class_helper.pxi", line 5745, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas/_libs/hashtable_class_helper.pxi", line 5753, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'AUC'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/fp/homes01/u01/ec-michechi/Project_M/MIMICIV/src/Finetuning.py", line 519, in <module>
+    main()
+  File "/fp/homes01/u01/ec-michechi/Project_M/MIMICIV/src/Finetuning.py", line 516, in main
+    logger.info(results_df["AUC"])
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-scipy-ecosystem/01-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/pandas/core/frame.py", line 3807, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-scipy-ecosystem/01-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/pandas/core/indexes/base.py", line 3804, in get_loc
+    raise KeyError(key) from err
+KeyError: 'AUC'
+
+Job 1672178 consumed 36.2 billing hours from project ec403.
+
+Submitted 2025-06-04T22:48:44; waited 29.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 18.0 hours
+Elapsed wallclock time:   1.9 hours
+
+Job failed.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+1672178          16            0.0 %  2025-06-04T22:49:13    1.9 h  1
+1672178.batch    16      1     6.2 %  2025-06-04T22:49:13    1.9 h  1
+
+Used CPU time:   1.9 CPU hours
+Unused CPU time: 1.2 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1672178          32.0        
+1672178.batch    32.0     9.6
+
+Job 1672178 completed at Thu Jun 5 00:43:30 CEST 2025

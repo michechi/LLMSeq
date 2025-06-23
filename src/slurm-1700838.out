@@ -1,0 +1,76 @@
+Starting job 1700838 on gpu-5 on fox at Fri Jun 20 11:08:58 CEST 2025
+
+2025-06-20 11:09:36,600: Argument all_landmarks: False
+2025-06-20 11:09:36,600: Argument batch_size: 8
+2025-06-20 11:09:36,600: Argument cache_dir: '/cluster/work/projects/ec403/ec-michechi/Project_M'
+2025-06-20 11:09:36,600: Argument early: 'loss'
+2025-06-20 11:09:36,600: Argument epochs: 20
+2025-06-20 11:09:36,600: Argument input_csv: '/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_df_evo.csv'
+2025-06-20 11:09:36,600: Argument lr: 2e-05
+2025-06-20 11:09:36,600: Argument max_length: 512
+2025-06-20 11:09:36,600: Argument max_visits: 3
+2025-06-20 11:09:36,600: Argument model_name: 'emilyalsentzer/Bio_ClinicalBERT'
+2025-06-20 11:09:36,600: Argument model_type: 'medbert'
+2025-06-20 11:09:36,600: Argument patience: 3
+2025-06-20 11:09:36,600: Argument peft: False
+2025-06-20 11:09:36,600: Argument prompt_type: 'naive'
+2025-06-20 11:09:36,600: Argument seed: 9550
+2025-06-20 11:09:36,600: Argument test_csv: '/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_test.csv'
+2025-06-20 11:09:36,601: Argument train_csv: '/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_train.csv'
+2025-06-20 11:09:36,601: Argument use_quantization: False
+2025-06-20 11:09:36,601: Argument val_csv: '/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_vali.csv'
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_utils.py:831: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  return self.fget.__get__(instance, owner)()
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at emilyalsentzer/Bio_ClinicalBERT and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-06-20 11:09:40,955: Using prompt type: naive
+2025-06-20 11:09:40,955: Model type: medbert, Model name: emilyalsentzer/Bio_ClinicalBERT
+/fp/homes01/u01/ec-michechi/Project_M/MIMICIV/src/Finetuning.py:427: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+2025-06-20 11:10:17,316: Processing only the last landmark visit: 3
+2025-06-20 11:10:17,316: Preparing data for Landmark 3
+2025-06-20 11:10:19,249: Average train text length: 1276.52 words
+2025-06-20 11:10:19,249: Average validation text length: 1267.29 words
+2025-06-20 11:10:19,249: Average test text length: 1273.20 words
+2025-06-20 11:10:19,249: Training on 14477 samples, validating on 1609, testing on 4022 samples
+2025-06-20 11:11:50,143: Fine-tuning at Landmark 3
+2025-06-20 11:11:51,418: Early stopping criterion: loss
+2025-06-20 11:17:13,060: Landmark 3 | Epoch 1/20 | Train Loss: 0.3029 | Val Loss: 0.2220 | Validation AUC: 0.9300 | F1-Score: 0.6466
+2025-06-20 11:22:35,094: Landmark 3 | Epoch 2/20 | Train Loss: 0.2382 | Val Loss: 0.2166 | Validation AUC: 0.9354 | F1-Score: 0.6247
+2025-06-20 11:27:56,961: Landmark 3 | Epoch 3/20 | Train Loss: 0.2131 | Val Loss: 0.2083 | Validation AUC: 0.9391 | F1-Score: 0.6715
+2025-06-20 11:33:18,792: Landmark 3 | Epoch 4/20 | Train Loss: 0.1880 | Val Loss: 0.2100 | Validation AUC: 0.9371 | F1-Score: 0.6588
+2025-06-20 11:38:40,445: Landmark 3 | Epoch 5/20 | Train Loss: 0.1505 | Val Loss: 0.2156 | Validation AUC: 0.9330 | F1-Score: 0.6651
+2025-06-20 11:44:02,009: Landmark 3 | Epoch 6/20 | Train Loss: 0.1082 | Val Loss: 0.2609 | Validation AUC: 0.9346 | F1-Score: 0.6994
+2025-06-20 11:44:02,010: Early stopping triggered at epoch 6
+2025-06-20 11:44:02,903: Tempo impiegato per Landmark 3: 1932.8 secondi
+2025-06-20 11:44:02,904: Tempo medio per epoca: 322.1 secondi
+2025-06-20 11:44:28,764: Final Test AUC (Landmark 3): 0.9253 | Test F1-Score: 0.6219
+2025-06-20 11:44:28,765: Saving results to results_medbert_emilyalsentzer_Bio_ClinicalBERT_visits3_20250620_114428.csv
+   Landmark Val AUC  ... Validation Loss Training Time (s)
+0         3  0.9391  ...          0.2083            1932.8
+
+[1 rows x 9 columns]
+
+Job 1700838 consumed 11.3 billing hours from project ec403.
+
+Submitted 2025-06-20T10:21:02; waited 47.9 minutes in the queue after becoming eligible to run.
+
+Requested wallclock time: 5.0 hours
+Elapsed wallclock time:   35.6 minutes
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start   Elapsed  Exit status
+1700838          16            0.0 %  2025-06-20T11:08:58  2136.0 s  0
+1700838.batch    16      1     6.1 %  2025-06-20T11:08:58  2136.0 s  0
+
+Used CPU time:   34.9 CPU minutes
+Unused CPU time: 8.9 CPU hours
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1700838          32.0        
+1700838.batch    32.0    14.1
+
+Job 1700838 completed at Fri Jun 20 11:44:34 CEST 2025

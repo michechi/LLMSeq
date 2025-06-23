@@ -1,0 +1,76 @@
+Starting job 1699984 on gpu-11 on fox at Thu Jun 19 11:55:12 CEST 2025
+
+2025-06-19 11:55:50,716: Argument all_landmarks: False
+2025-06-19 11:55:50,716: Argument batch_size: 8
+2025-06-19 11:55:50,716: Argument cache_dir: '/cluster/work/projects/ec403/ec-michechi/Project_M'
+2025-06-19 11:55:50,716: Argument early: 'loss'
+2025-06-19 11:55:50,716: Argument epochs: 20
+2025-06-19 11:55:50,716: Argument input_csv: '/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_df_evo.csv'
+2025-06-19 11:55:50,717: Argument lr: 2e-05
+2025-06-19 11:55:50,717: Argument max_length: 512
+2025-06-19 11:55:50,717: Argument max_visits: 3
+2025-06-19 11:55:50,717: Argument model_name: 'Charangan/MedBERT'
+2025-06-19 11:55:50,717: Argument model_type: 'medbert'
+2025-06-19 11:55:50,717: Argument patience: 3
+2025-06-19 11:55:50,717: Argument peft: False
+2025-06-19 11:55:50,717: Argument prompt_type: 'no'
+2025-06-19 11:55:50,717: Argument seed: 4550
+2025-06-19 11:55:50,717: Argument test_csv: '/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_test.csv'
+2025-06-19 11:55:50,717: Argument train_csv: '/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_train.csv'
+2025-06-19 11:55:50,717: Argument use_quantization: False
+2025-06-19 11:55:50,717: Argument val_csv: '/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_vali.csv'
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_utils.py:831: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  return self.fget.__get__(instance, owner)()
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at Charangan/MedBERT and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-06-19 11:55:54,258: Using prompt type: no
+2025-06-19 11:55:54,258: Model type: medbert, Model name: Charangan/MedBERT
+/fp/homes01/u01/ec-michechi/Project_M/MIMICIV/src/Finetuning.py:427: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+2025-06-19 11:56:29,952: Processing only the last landmark visit: 3
+2025-06-19 11:56:29,952: Preparing data for Landmark 3
+2025-06-19 11:56:31,599: Average train text length: 1239.42 words
+2025-06-19 11:56:31,599: Average validation text length: 1230.17 words
+2025-06-19 11:56:31,599: Average test text length: 1236.08 words
+2025-06-19 11:56:31,599: Training on 14477 samples, validating on 1609, testing on 4022 samples
+2025-06-19 11:57:51,149: Fine-tuning at Landmark 3
+2025-06-19 11:57:52,423: Early stopping criterion: loss
+2025-06-19 12:03:23,053: Landmark 3 | Epoch 1/20 | Train Loss: 0.3446 | Val Loss: 0.2394 | Validation AUC: 0.9270 | F1-Score: 0.6559
+2025-06-19 12:08:55,955: Landmark 3 | Epoch 2/20 | Train Loss: 0.2422 | Val Loss: 0.2196 | Validation AUC: 0.9361 | F1-Score: 0.5698
+2025-06-19 12:14:28,488: Landmark 3 | Epoch 3/20 | Train Loss: 0.2121 | Val Loss: 0.2072 | Validation AUC: 0.9397 | F1-Score: 0.6776
+2025-06-19 12:20:00,148: Landmark 3 | Epoch 4/20 | Train Loss: 0.1774 | Val Loss: 0.2274 | Validation AUC: 0.9291 | F1-Score: 0.6407
+2025-06-19 12:25:31,441: Landmark 3 | Epoch 5/20 | Train Loss: 0.1281 | Val Loss: 0.2827 | Validation AUC: 0.9237 | F1-Score: 0.6502
+2025-06-19 12:31:02,626: Landmark 3 | Epoch 6/20 | Train Loss: 0.0834 | Val Loss: 0.3745 | Validation AUC: 0.9155 | F1-Score: 0.6636
+2025-06-19 12:31:02,626: Early stopping triggered at epoch 6
+2025-06-19 12:31:03,592: Tempo impiegato per Landmark 3: 1992.4 secondi
+2025-06-19 12:31:03,595: Tempo medio per epoca: 332.1 secondi
+2025-06-19 12:31:30,226: Final Test AUC (Landmark 3): 0.9247 | Test F1-Score: 0.6417
+2025-06-19 12:31:30,227: Saving results to results_medbert_Charangan_MedBERT_visits3_20250619_123130.csv
+   Landmark Val AUC  ... Validation Loss Training Time (s)
+0         3  0.9397  ...          0.2072            1992.4
+
+[1 rows x 9 columns]
+
+Job 1699984 consumed 11.5 billing hours from project ec403.
+
+Submitted 2025-06-19T10:58:23; waited 56.8 minutes in the queue after becoming eligible to run.
+
+Requested wallclock time: 5.0 hours
+Elapsed wallclock time:   36.4 minutes
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start   Elapsed  Exit status
+1699984          16            0.0 %  2025-06-19T11:55:12  2183.0 s  0
+1699984.batch    16      1     6.1 %  2025-06-19T11:55:12  2183.0 s  0
+
+Used CPU time:   35.7 CPU minutes
+Unused CPU time: 9.1 CPU hours
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1699984          32.0        
+1699984.batch    32.0    15.0
+
+Job 1699984 completed at Thu Jun 19 12:31:36 CEST 2025

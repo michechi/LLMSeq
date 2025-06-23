@@ -1,0 +1,57 @@
+Starting job 1695342 on gpu-2 on fox at Mon Jun 16 18:02:10 CEST 2025
+
+2025-06-16 18:03:15,821: Argument input_csv: 'landmark_df.csv'
+2025-06-16 18:03:15,823: Argument max_features: 512
+2025-06-16 18:03:15,823: Argument max_visits: 3
+2025-06-16 18:03:15,823: Argument output_dir: '/cluster/work/projects/ec403/ec-michechi/Project_M'
+2025-06-16 18:03:15,823: Argument prompt_type: 'compact'
+2025-06-16 18:03:15,823: Argument random_state: 9550
+2025-06-16 18:03:15,823: Argument test_csv: '/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_test.csv'
+2025-06-16 18:03:15,823: Argument train_csv: '/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_train.csv'
+2025-06-16 18:03:15,823: Argument val_csv: '/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_vali.csv'
+2025-06-16 18:03:15,823: Argument vectorizer_type: 'medbert'
+/fp/homes01/u01/ec-michechi/Project_M/MIMICIV/src/Xgboost_no_tune_v2.py:177: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+2025-06-16 18:03:50,232: Processing Landmark Visit: 1
+2025-06-16 18:03:50,247: Using hyperparameters for Landmark 1: {'min_samples_leaf': 30, 'max_leaf_nodes': 15, 'max_iter': 300, 'max_depth': 5, 'learning_rate': 0.05, 'l2_regularization': 0}
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_utils.py:831: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  return self.fget.__get__(instance, owner)()
+2025-06-16 18:19:45,195: Landmark 1 started at 18:03:50 and ended at 18:19:45 — duration: 954.96 seconds
+2025-06-16 18:19:45,197: Processing Landmark Visit: 2
+2025-06-16 18:19:45,349: Using hyperparameters for Landmark 2: {'min_samples_leaf': 30, 'max_leaf_nodes': 15, 'max_iter': 300, 'max_depth': 5, 'learning_rate': 0.05, 'l2_regularization': 0}
+2025-06-16 18:39:35,803: Landmark 2 started at 18:19:45 and ended at 18:39:35 — duration: 1190.61 seconds
+2025-06-16 18:39:35,803: Processing Landmark Visit: 3
+2025-06-16 18:39:35,962: Using hyperparameters for Landmark 3: {'min_samples_leaf': 10, 'max_leaf_nodes': 31, 'max_iter': 500, 'max_depth': 7, 'learning_rate': 0.1, 'l2_regularization': 0.1}
+2025-06-16 19:01:00,251: Landmark 3 started at 18:39:35 and ended at 19:01:00 — duration: 1284.45 seconds
+2025-06-16 19:01:00,583: Results saved to CSV.
+   Landmark (Visit Number)  ...  Elapsed Time (seconds)
+0                        1  ...                  954.96
+1                        2  ...                 1190.61
+2                        3  ...                 1284.45
+
+[3 rows x 6 columns]
+
+Job 1695342 consumed 18.7 billing hours from project ec403.
+
+Submitted 2025-06-16T18:01:52; waited 17.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 6.0 hours
+Elapsed wallclock time:   59.0 minutes
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start   Elapsed  Exit status
+1695342          16            0.0 %  2025-06-16T18:02:09  3540.0 s  0
+1695342.batch    16      1     7.5 %  2025-06-16T18:02:09  3540.0 s  0
+
+Used CPU time:   1.2 CPU hours
+Unused CPU time: 14.6 CPU hours
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1695342         128.0        
+1695342.batch   128.0     8.8
+
+GPU usage stats:
+Job 1695342 completed at Mon Jun 16 19:01:09 CEST 2025

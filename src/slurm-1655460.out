@@ -1,0 +1,63 @@
+Starting job 1655460 on gpu-13 on fox at Fri May 30 21:53:08 CEST 2025
+
+2025-05-30 21:53:49,275: Argument batch_size: 8
+2025-05-30 21:53:49,275: Argument cache_dir: '/cluster/work/projects/ec403/ec-michechi/Project_M'
+2025-05-30 21:53:49,275: Argument epochs: 20
+2025-05-30 21:53:49,276: Argument input_csv: '/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_df_evo.csv'
+2025-05-30 21:53:49,276: Argument lr: 2e-05
+2025-05-30 21:53:49,276: Argument max_length: 512
+2025-05-30 21:53:49,276: Argument max_visits: 1
+2025-05-30 21:53:49,276: Argument model_name: 'emilyalsentzer/Bio_ClinicalBERT'
+2025-05-30 21:53:49,276: Argument model_type: 'medbert'
+2025-05-30 21:53:49,276: Argument patience: 3
+2025-05-30 21:53:49,276: Argument peft: False
+2025-05-30 21:53:49,276: Argument seed: 9550
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_utils.py:831: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  return self.fget.__get__(instance, owner)()
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at emilyalsentzer/Bio_ClinicalBERT and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-05-30 21:55:54,734: Preparing data for Landmark 1
+2025-05-30 21:56:11,958: Average train text length: 145.56 words
+2025-05-30 21:56:11,958: Average test text length: 145.83 words
+2025-05-30 21:56:11,958: Training on 98631 samples, testing on 24658 samples
+2025-05-30 21:57:38,410: Fine-tuning at Landmark 1
+/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/optimization.py:591: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
+  warnings.warn(
+2025-05-30 22:36:21,097: Landmark 1 | Epoch 1/20 | Train Loss: 0.1452 | Val Loss: 0.1072 | Validation AUC: 0.9669 | F1-Score: 0.7207
+2025-05-30 23:15:04,657: Landmark 1 | Epoch 2/20 | Train Loss: 0.1122 | Val Loss: 0.1056 | Validation AUC: 0.9680 | F1-Score: 0.7402
+2025-05-30 23:53:47,109: Landmark 1 | Epoch 3/20 | Train Loss: 0.1067 | Val Loss: 0.1137 | Validation AUC: 0.9598 | F1-Score: 0.7550
+2025-05-31 00:32:37,063: Landmark 1 | Epoch 4/20 | Train Loss: 0.0981 | Val Loss: 0.1066 | Validation AUC: 0.9668 | F1-Score: 0.7521
+2025-05-31 01:11:18,846: Landmark 1 | Epoch 5/20 | Train Loss: 0.0896 | Val Loss: 0.1118 | Validation AUC: 0.9675 | F1-Score: 0.7456
+2025-05-31 01:11:18,846: Early stopping triggered at epoch 5
+2025-05-31 01:11:20,088: Tempo impiegato per Landmark 1: 11621.7 secondi
+2025-05-31 01:11:20,111: 0    0.9680
+Name: AUC, dtype: object
+   Landmark     AUC  ...  Validation Loss Training Time (s)
+0         1  0.9680  ...           0.1056           11621.7
+
+[1 rows x 6 columns]
+
+Job 1655460 consumed 62.8 billing hours from project ec403.
+
+Submitted 2025-05-30T21:53:07; waited 1.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 24.0 hours
+Elapsed wallclock time:   3.3 hours
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+1655460          16            0.0 %  2025-05-30T21:53:08    3.3 h  0
+1655460.batch    16      1     6.2 %  2025-05-30T21:53:08    3.3 h  0
+
+Used CPU time:   3.3 CPU hours
+Unused CPU time: 2.1 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1655460          32.0        
+1655460.batch    32.0    28.6
+
+GPU usage stats:
+Job 1655460 completed at Sat May 31 01:11:28 CEST 2025

@@ -1,0 +1,79 @@
+Starting job 1655458 on gpu-13 on fox at Fri May 30 21:35:20 CEST 2025
+
+2025-05-30 21:36:11,906: Argument batch_size: 8
+2025-05-30 21:36:11,908: Argument cache_dir: '/cluster/work/projects/ec403/ec-michechi/Project_M'
+2025-05-30 21:36:11,908: Argument epochs: 20
+2025-05-30 21:36:11,908: Argument input_csv: '/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_df_evo.csv'
+2025-05-30 21:36:11,908: Argument lr: 2e-05
+2025-05-30 21:36:11,908: Argument max_length: 512
+2025-05-30 21:36:11,908: Argument max_visits: 2
+2025-05-30 21:36:11,908: Argument model_name: 'emilyalsentzer/Bio_ClinicalBERT'
+2025-05-30 21:36:11,908: Argument model_type: 'medbert'
+2025-05-30 21:36:11,908: Argument patience: 3
+2025-05-30 21:36:11,908: Argument peft: False
+2025-05-30 21:36:11,908: Argument seed: 9550
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_utils.py:831: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  return self.fget.__get__(instance, owner)()
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at emilyalsentzer/Bio_ClinicalBERT and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-05-30 21:38:18,313: Preparing data for Landmark 1
+2025-05-30 21:38:24,528: Average train text length: 145.11 words
+2025-05-30 21:38:24,528: Average test text length: 144.48 words
+2025-05-30 21:38:24,528: Training on 35298 samples, testing on 8825 samples
+2025-05-30 21:38:55,027: Fine-tuning at Landmark 1
+/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/optimization.py:591: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
+  warnings.warn(
+2025-05-30 21:52:49,379: Landmark 1 | Epoch 1/20 | Train Loss: 0.2808 | Val Loss: 0.2397 | Validation AUC: 0.8688 | F1-Score: 0.2252
+2025-05-30 22:06:43,305: Landmark 1 | Epoch 2/20 | Train Loss: 0.2420 | Val Loss: 0.2374 | Validation AUC: 0.8729 | F1-Score: 0.4323
+2025-05-30 22:20:37,237: Landmark 1 | Epoch 3/20 | Train Loss: 0.2298 | Val Loss: 0.2373 | Validation AUC: 0.8718 | F1-Score: 0.2392
+2025-05-30 22:34:30,889: Landmark 1 | Epoch 4/20 | Train Loss: 0.2167 | Val Loss: 0.2431 | Validation AUC: 0.8661 | F1-Score: 0.4000
+2025-05-30 22:48:24,474: Landmark 1 | Epoch 5/20 | Train Loss: 0.1954 | Val Loss: 0.2506 | Validation AUC: 0.8702 | F1-Score: 0.4241
+2025-05-30 22:48:24,476: Early stopping triggered at epoch 5
+2025-05-30 22:48:25,396: Tempo impiegato per Landmark 1: 4170.4 secondi
+2025-05-30 22:48:25,396: Preparing data for Landmark 2
+2025-05-30 22:48:34,950: Average train text length: 159.57 words
+2025-05-30 22:48:34,950: Average test text length: 158.78 words
+2025-05-30 22:48:34,950: Training on 35298 samples, testing on 8825 samples
+2025-05-30 22:49:09,882: Fine-tuning at Landmark 2
+/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/optimization.py:591: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
+  warnings.warn(
+2025-05-30 23:03:04,771: Landmark 2 | Epoch 1/20 | Train Loss: 0.1539 | Val Loss: 0.1550 | Validation AUC: 0.9532 | F1-Score: 0.7117
+2025-05-30 23:17:01,122: Landmark 2 | Epoch 2/20 | Train Loss: 0.1427 | Val Loss: 0.1483 | Validation AUC: 0.9541 | F1-Score: 0.6897
+2025-05-30 23:30:57,370: Landmark 2 | Epoch 3/20 | Train Loss: 0.1260 | Val Loss: 0.1504 | Validation AUC: 0.9522 | F1-Score: 0.7096
+2025-05-30 23:44:53,354: Landmark 2 | Epoch 4/20 | Train Loss: 0.1109 | Val Loss: 0.1450 | Validation AUC: 0.9531 | F1-Score: 0.7130
+2025-05-30 23:58:49,238: Landmark 2 | Epoch 5/20 | Train Loss: 0.0911 | Val Loss: 0.1567 | Validation AUC: 0.9486 | F1-Score: 0.7073
+2025-05-30 23:58:49,238: Early stopping triggered at epoch 5
+2025-05-30 23:58:50,556: Tempo impiegato per Landmark 2: 4180.7 secondi
+2025-05-30 23:58:50,586: 0    0.8729
+1    0.9541
+Name: AUC, dtype: object
+   Landmark     AUC  ...  Validation Loss Training Time (s)
+0         1  0.8729  ...           0.2374            4170.4
+1         2  0.9541  ...           0.1483            4180.7
+
+[2 rows x 6 columns]
+
+Job 1655458 consumed 45.5 billing hours from project ec403.
+
+Submitted 2025-05-30T21:35:19; waited 1.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 24.0 hours
+Elapsed wallclock time:   2.4 hours
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+1655458          16            0.0 %  2025-05-30T21:35:20    2.4 h  0
+1655458.batch    16      1     6.2 %  2025-05-30T21:35:20    2.4 h  0
+
+Used CPU time:   2.4 CPU hours
+Unused CPU time: 1.5 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1655458          32.0        
+1655458.batch    32.0    25.5
+
+GPU usage stats:
+Job 1655458 completed at Fri May 30 23:58:56 CEST 2025

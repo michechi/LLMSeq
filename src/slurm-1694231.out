@@ -1,0 +1,114 @@
+Starting job 1694231 on gpu-9 on fox at Sun Jun 15 20:37:50 CEST 2025
+
+2025-06-15 20:38:40,359: Argument batch_size: 4
+2025-06-15 20:38:40,359: Argument cache_dir: '/cluster/work/projects/ec403/ec-michechi/Project_M'
+2025-06-15 20:38:40,359: Argument early: 'loss'
+2025-06-15 20:38:40,359: Argument epochs: 20
+2025-06-15 20:38:40,359: Argument input_csv: '/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_df_evo.csv'
+2025-06-15 20:38:40,359: Argument lr: 2e-05
+2025-06-15 20:38:40,359: Argument max_length: 1024
+2025-06-15 20:38:40,359: Argument max_visits: 3
+2025-06-15 20:38:40,359: Argument model_name: 'meta-llama/Llama-3.1-8B'
+2025-06-15 20:38:40,359: Argument model_type: 'llm'
+2025-06-15 20:38:40,360: Argument patience: 3
+2025-06-15 20:38:40,360: Argument peft: True
+2025-06-15 20:38:40,360: Argument prompt_type: 'no'
+2025-06-15 20:38:40,360: Argument seed: 4550
+2025-06-15 20:38:40,360: Argument test_csv: '/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_test.csv'
+2025-06-15 20:38:40,360: Argument train_csv: '/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_train.csv'
+2025-06-15 20:38:40,360: Argument val_csv: '/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_vali.csv'
+Note: Environment variable`HF_TOKEN` is set and is the current active token independently from the token you've just configured.
+2025-06-15 20:38:41,073: Note: Environment variable`HF_TOKEN` is set and is the current active token independently from the token you've just configured.
+2025-06-15 20:38:43,186: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:19<00:57, 19.04s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:39<00:39, 19.65s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:58<00:19, 19.52s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:59<00:00, 12.06s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:59<00:00, 14.78s/it]
+Some weights of LlamaForSequenceClassification were not initialized from the model checkpoint at meta-llama/Llama-3.1-8B and are newly initialized: ['score.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-06-15 20:39:45,448: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-06-15 20:40:19,133: Using prompt type: no
+2025-06-15 20:40:19,133: Model type: llm, Model name: meta-llama/Llama-3.1-8B
+/fp/homes01/u01/ec-michechi/Project_M/MIMICIV/src/Finetuning.py:398: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+2025-06-15 20:40:55,224: Preparing data for Landmark 1
+2025-06-15 20:40:56,151: Average train text length: 409.93 words
+2025-06-15 20:40:56,151: Average validation text length: 411.55 words
+2025-06-15 20:40:56,151: Average test text length: 411.01 words
+2025-06-15 20:40:56,151: Training on 14477 samples, validating on 1609, testing on 4022 samples
+2025-06-15 20:41:20,207: Fine-tuning at Landmark 1
+2025-06-15 20:41:22,038: Early stopping criterion: loss
+2025-06-15 21:42:49,825: Landmark 1 | Epoch 1/20 | Train Loss: 0.5388 | Val Loss: 0.3788 | Validation AUC: 0.7405 | F1-Score: 0.1754
+2025-06-15 22:44:29,038: Landmark 1 | Epoch 2/20 | Train Loss: 0.3591 | Val Loss: 0.3564 | Validation AUC: 0.7918 | F1-Score: 0.3949
+2025-06-15 23:46:08,564: Landmark 1 | Epoch 3/20 | Train Loss: 0.3182 | Val Loss: 0.3353 | Validation AUC: 0.7969 | F1-Score: 0.2977
+2025-06-16 00:47:51,055: Landmark 1 | Epoch 4/20 | Train Loss: 0.2855 | Val Loss: 0.3552 | Validation AUC: 0.7735 | F1-Score: 0.3714
+2025-06-16 01:49:18,538: Landmark 1 | Epoch 5/20 | Train Loss: 0.2434 | Val Loss: 0.3819 | Validation AUC: 0.7695 | F1-Score: 0.3596
+2025-06-16 02:50:46,572: Landmark 1 | Epoch 6/20 | Train Loss: 0.1832 | Val Loss: 0.4379 | Validation AUC: 0.7623 | F1-Score: 0.3539
+2025-06-16 02:50:46,572: Early stopping triggered at epoch 6
+2025-06-16 02:50:59,727: Tempo impiegato per Landmark 1: 22179.5 secondi
+2025-06-16 02:50:59,728: Tempo medio per epoca: 3696.6 secondi
+2025-06-16 02:58:07,788: Final Test AUC (Landmark 1): 0.8067 | Test F1-Score: 0.2567
+2025-06-16 02:58:07,788: Preparing data for Landmark 2
+2025-06-16 02:58:09,134: Average train text length: 799.47 words
+2025-06-16 02:58:09,134: Average validation text length: 804.72 words
+2025-06-16 02:58:09,134: Average test text length: 792.73 words
+2025-06-16 02:58:09,134: Training on 14477 samples, validating on 1609, testing on 4022 samples
+2025-06-16 02:58:54,781: Fine-tuning at Landmark 2
+2025-06-16 02:58:54,808: Early stopping criterion: loss
+2025-06-16 04:01:05,729: Landmark 2 | Epoch 1/20 | Train Loss: 0.3108 | Val Loss: 0.2916 | Validation AUC: 0.8685 | F1-Score: 0.3631
+2025-06-16 05:03:25,485: Landmark 2 | Epoch 2/20 | Train Loss: 0.2896 | Val Loss: 0.2828 | Validation AUC: 0.8772 | F1-Score: 0.3671
+2025-06-16 06:05:45,460: Landmark 2 | Epoch 3/20 | Train Loss: 0.2635 | Val Loss: 0.2876 | Validation AUC: 0.8686 | F1-Score: 0.4734
+2025-06-16 07:07:56,310: Landmark 2 | Epoch 4/20 | Train Loss: 0.2200 | Val Loss: 0.3163 | Validation AUC: 0.8556 | F1-Score: 0.4444
+2025-06-16 08:10:07,272: Landmark 2 | Epoch 5/20 | Train Loss: 0.1577 | Val Loss: 0.3537 | Validation AUC: 0.8430 | F1-Score: 0.4851
+2025-06-16 08:10:07,272: Early stopping triggered at epoch 5
+2025-06-16 08:10:19,822: Tempo impiegato per Landmark 2: 18685.0 secondi
+2025-06-16 08:10:19,823: Tempo medio per epoca: 3737.0 secondi
+2025-06-16 08:17:26,610: Final Test AUC (Landmark 2): 0.8565 | Test F1-Score: 0.3175
+2025-06-16 08:17:26,610: Preparing data for Landmark 3
+2025-06-16 08:17:28,382: Average train text length: 1239.42 words
+2025-06-16 08:17:28,382: Average validation text length: 1230.17 words
+2025-06-16 08:17:28,382: Average test text length: 1236.08 words
+2025-06-16 08:17:28,382: Training on 14477 samples, validating on 1609, testing on 4022 samples
+2025-06-16 08:18:37,624: Fine-tuning at Landmark 3
+2025-06-16 08:18:37,658: Early stopping criterion: loss
+2025-06-16 09:20:10,240: Landmark 3 | Epoch 1/20 | Train Loss: 0.2012 | Val Loss: 0.1931 | Validation AUC: 0.9553 | F1-Score: 0.6811
+2025-06-16 10:21:55,010: Landmark 3 | Epoch 2/20 | Train Loss: 0.1815 | Val Loss: 0.2233 | Validation AUC: 0.9558 | F1-Score: 0.7052
+2025-06-16 11:23:29,291: Landmark 3 | Epoch 3/20 | Train Loss: 0.1488 | Val Loss: 0.1789 | Validation AUC: 0.9562 | F1-Score: 0.7330
+2025-06-16 12:25:14,156: Landmark 3 | Epoch 4/20 | Train Loss: 0.1108 | Val Loss: 0.2122 | Validation AUC: 0.9483 | F1-Score: 0.7221
+2025-06-16 13:26:44,510: Landmark 3 | Epoch 5/20 | Train Loss: 0.0631 | Val Loss: 0.2536 | Validation AUC: 0.9381 | F1-Score: 0.6849
+2025-06-16 14:28:15,827: Landmark 3 | Epoch 6/20 | Train Loss: 0.0282 | Val Loss: 0.3351 | Validation AUC: 0.9442 | F1-Score: 0.7156
+2025-06-16 14:28:15,828: Early stopping triggered at epoch 6
+2025-06-16 14:28:28,644: Tempo impiegato per Landmark 3: 22191.0 secondi
+2025-06-16 14:28:28,645: Tempo medio per epoca: 3698.5 secondi
+2025-06-16 14:35:25,490: Final Test AUC (Landmark 3): 0.9458 | Test F1-Score: 0.6991
+2025-06-16 14:35:25,492: Saving results to results_llm_meta-llama_Llama-3.1-8B_visits3_peft_20250616_143525.csv
+trainable params: 6,823,936 || all params: 7,511,756,800 || trainable%: 0.0908
+   Landmark Val AUC  ... Validation Loss Training Time (s)
+0         1  0.7969  ...          0.3353           22179.5
+1         2  0.8772  ...          0.2828           18685.0
+2         3  0.9562  ...          0.1789           22191.0
+
+[3 rows x 9 columns]
+
+Job 1694231 consumed 341.3 billing hours from project ec403.
+
+Submitted 2025-06-15T18:27:06; waited 2.2 hours in the queue after becoming eligible to run.
+
+Requested wallclock time: 24.0 hours
+Elapsed wallclock time:   18.0 hours
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+1694231          16            0.0 %  2025-06-15T20:37:49   18.0 h  0
+1694231.batch    16      1     6.2 %  2025-06-15T20:37:49   18.0 h  0
+
+Used CPU time:   17.9 CPU hours
+Unused CPU time: 11.2 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1694231          32.0        
+1694231.batch    32.0    24.6
+
+GPU usage stats:
+Job 1694231 completed at Mon Jun 16 14:35:30 CEST 2025

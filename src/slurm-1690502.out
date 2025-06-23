@@ -1,0 +1,89 @@
+Starting job 1690502 on gpu-9 on fox at Fri Jun 13 14:26:16 CEST 2025
+
+2025-06-13 14:27:36,921: Argument batch_size: 8
+2025-06-13 14:27:36,921: Argument cache_dir: '/cluster/work/projects/ec403/ec-michechi/Project_M'
+2025-06-13 14:27:36,921: Argument early: 'loss'
+2025-06-13 14:27:36,921: Argument epochs: 20
+2025-06-13 14:27:36,921: Argument input_csv: '/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_df_evo.csv'
+2025-06-13 14:27:36,921: Argument lr: 2e-05
+2025-06-13 14:27:36,921: Argument max_length: 512
+2025-06-13 14:27:36,921: Argument max_visits: 2
+2025-06-13 14:27:36,921: Argument model_name: 'Charangan/MedBERT'
+2025-06-13 14:27:36,921: Argument model_type: 'medbert'
+2025-06-13 14:27:36,921: Argument patience: 3
+2025-06-13 14:27:36,921: Argument peft: False
+2025-06-13 14:27:36,921: Argument prompt_type: 'naive'
+2025-06-13 14:27:36,921: Argument seed: 9550
+2025-06-13 14:27:36,921: Argument test_csv: '/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_test.csv'
+2025-06-13 14:27:36,921: Argument train_csv: '/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_train.csv'
+2025-06-13 14:27:36,921: Argument val_csv: '/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_vali.csv'
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_utils.py:831: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  return self.fget.__get__(instance, owner)()
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at Charangan/MedBERT and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-06-13 14:27:42,987: Using prompt type: naive
+2025-06-13 14:27:42,988: Model type: medbert, Model name: Charangan/MedBERT
+/fp/homes01/u01/ec-michechi/Project_M/MIMICIV/src/Finetuning.py:398: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+2025-06-13 14:28:20,146: Preparing data for Landmark 1
+2025-06-13 14:28:22,621: Average train text length: 419.42 words
+2025-06-13 14:28:22,621: Average validation text length: 415.52 words
+2025-06-13 14:28:22,621: Average test text length: 419.40 words
+2025-06-13 14:28:22,621: Training on 31768 samples, validating on 3530, testing on 8825 samples
+2025-06-13 14:29:22,061: Fine-tuning at Landmark 1
+2025-06-13 14:29:25,432: Early stopping criterion: loss
+2025-06-13 14:40:41,378: Landmark 1 | Epoch 1/20 | Train Loss: 0.2851 | Val Loss: 0.2368 | Validation AUC: 0.8731 | F1-Score: 0.3067
+2025-06-13 14:51:57,633: Landmark 1 | Epoch 2/20 | Train Loss: 0.2467 | Val Loss: 0.2498 | Validation AUC: 0.8788 | F1-Score: 0.1176
+2025-06-13 15:03:13,515: Landmark 1 | Epoch 3/20 | Train Loss: 0.2316 | Val Loss: 0.2395 | Validation AUC: 0.8777 | F1-Score: 0.3112
+2025-06-13 15:14:29,300: Landmark 1 | Epoch 4/20 | Train Loss: 0.2139 | Val Loss: 0.2422 | Validation AUC: 0.8726 | F1-Score: 0.4404
+2025-06-13 15:14:29,300: Early stopping triggered at epoch 4
+2025-06-13 15:14:29,545: Tempo impiegato per Landmark 1: 2707.5 secondi
+2025-06-13 15:14:29,546: Tempo medio per epoca: 676.9 secondi
+2025-06-13 15:15:30,056: Final Test AUC (Landmark 1): 0.8677 | Test F1-Score: 0.3418
+2025-06-13 15:15:30,056: Preparing data for Landmark 2
+2025-06-13 15:15:33,705: Average train text length: 826.12 words
+2025-06-13 15:15:33,705: Average validation text length: 823.33 words
+2025-06-13 15:15:33,705: Average test text length: 822.60 words
+2025-06-13 15:15:33,708: Training on 31768 samples, validating on 3530, testing on 8825 samples
+2025-06-13 15:17:32,117: Fine-tuning at Landmark 2
+2025-06-13 15:17:32,126: Early stopping criterion: loss
+2025-06-13 15:28:43,997: Landmark 2 | Epoch 1/20 | Train Loss: 0.1780 | Val Loss: 0.1626 | Validation AUC: 0.9509 | F1-Score: 0.6796
+2025-06-13 15:39:56,704: Landmark 2 | Epoch 2/20 | Train Loss: 0.1578 | Val Loss: 0.1617 | Validation AUC: 0.9537 | F1-Score: 0.6918
+2025-06-13 15:51:09,510: Landmark 2 | Epoch 3/20 | Train Loss: 0.1369 | Val Loss: 0.1648 | Validation AUC: 0.9502 | F1-Score: 0.6936
+2025-06-13 16:02:21,819: Landmark 2 | Epoch 4/20 | Train Loss: 0.1141 | Val Loss: 0.1786 | Validation AUC: 0.9491 | F1-Score: 0.6709
+2025-06-13 16:13:34,138: Landmark 2 | Epoch 5/20 | Train Loss: 0.0826 | Val Loss: 0.1863 | Validation AUC: 0.9478 | F1-Score: 0.6570
+2025-06-13 16:13:34,138: Early stopping triggered at epoch 5
+2025-06-13 16:13:35,463: Tempo impiegato per Landmark 2: 3363.3 secondi
+2025-06-13 16:13:35,463: Tempo medio per epoca: 672.7 secondi
+2025-06-13 16:14:35,003: Final Test AUC (Landmark 2): 0.9446 | Test F1-Score: 0.6643
+2025-06-13 16:14:35,004: Saving results to results_medbert_Charangan_MedBERT_visits2_20250613_161435.csv
+   Landmark Val AUC  ... Validation Loss Training Time (s)
+0         1  0.8731  ...          0.2368            2707.5
+1         2  0.9537  ...          0.1617            3363.3
+
+[2 rows x 9 columns]
+
+Job 1690502 consumed 34.3 billing hours from project ec403.
+
+Submitted 2025-06-13T09:26:43; waited 5.0 hours in the queue after becoming eligible to run.
+
+Requested wallclock time: 18.0 hours
+Elapsed wallclock time:   1.8 hours
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+1690502          16            0.0 %  2025-06-13T14:26:16    1.8 h  0
+1690502.batch    16      1     6.1 %  2025-06-13T14:26:16    1.8 h  0
+
+Used CPU time:   1.8 CPU hours
+Unused CPU time: 1.1 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1690502          32.0        
+1690502.batch    32.0    26.9
+
+GPU usage stats:
+Job 1690502 completed at Fri Jun 13 16:14:43 CEST 2025
