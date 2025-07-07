@@ -36,7 +36,7 @@ def set_seed(seed_value=5550):
     torch.cuda.manual_seed_all(seed_value)
     # torch.use_deterministic_algorithms(True)
     # torch.backends.cudnn.deterministic = True
-    # torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.benchmark = True
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Universal finetuning script for LLMs or MedBERT-like models.")
@@ -47,25 +47,26 @@ def parse_args():
                         help="Name of the model from Hugging Face")
     
     parser.add_argument("--peft", action="store_true", help="Usa PEFT (solo per LLM)")
+
     parser.add_argument("--use_quantization", action="store_true",
                         help="Quantization 4 bit")
     
-    parser.add_argument("--cache_dir", type=str, default="/mnt/vdb/cache",
+    parser.add_argument("--cache_dir", type=str, default="/root/MIMICIV/cache",
                         help="Directory for cache e saving models")
     
-    parser.add_argument("--input_csv", type=str, default="/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_df_evo.csv",
+    parser.add_argument("--input_csv", type=str, default="/mnt/vdb/data/landmark_df_evo.csv",
                         help="Path to file CSV di input")
     
-    parser.add_argument("--train_csv", type=str, default="/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_train.csv",
+    parser.add_argument("--train_csv", type=str, default="/mnt/vdb/data/landmark_evo_train.csv",
                         help="Path to file CSV di training")
     
-    parser.add_argument("--val_csv", type=str, default="/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_vali.csv",
+    parser.add_argument("--val_csv", type=str, default="/mnt/vdb/data/landmark_evo_vali.csv",
                         help="Path to file CSV di validation")
     
-    parser.add_argument("--test_csv", type=str, default="/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_test.csv",
+    parser.add_argument("--test_csv", type=str, default="/mnt/vdb/data/landmark_evo_test.csv",
                         help="Path to file CSV di test") # evo as well 
     
-    parser.add_argument("--prompt_type", type=str, choices=["naive", "compact", "no", "full_narrative", "full_rnd"], default="compact",
+    parser.add_argument("--prompt_type", type=str, choices=["naive", "compact", "no", "full", "full_no_time", "full_no_time_rnd"], default="compact",
                         help="Prompting type to use: 'naive', 'compact'  o 'no' (nessuna narrativa)")
     
     parser.add_argument("--max_visits", type=int, default=3,
@@ -518,6 +519,12 @@ def main():
         narrative_prompt = compact_narrative_prompt
     elif args.prompt_type == "no":
         narrative_prompt = no_narrative_prompt
+    elif args.prompt_type == "full":
+        narrative_prompt = full_narrative
+    elif args.prompt_type == "full_no_time":
+        narrative_prompt = full_narrative_no_time
+    elif args.prompt_type == "full_no_time_rnd":
+        narrative_prompt = full_narrative_no_time_rnd
     else:
         raise ValueError("Invalid prompt type. Use 'naive' or 'compact'.")
     logger.info(f"Using prompt type: {args.prompt_type}")
@@ -581,7 +588,7 @@ def main():
         avg_val_length = np.mean([len(text.split()) for text in val_texts])
         avg_test_length = np.mean([len(text.split()) for text in test_texts])
         logger.info(f"Average train text length: {avg_train_length:.2f} words")
-        logger.info(f"Average validation text length: {avg_val_length:.2f} words")
+        logger.info(f"Average validation text length: {avg_val_length:.2f} words")      
         logger.info(f"Average test text length: {avg_test_length:.2f} words")
         logger.info(f"Training on {len(train_texts)} samples, validating on {len(val_texts)}, testing on {len(test_texts)} samples")
 

@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-data = pd.read_csv("/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_df_evo.csv", na_values=['', 'None', 'NaN', 'na', 'nan'])
+data = pd.read_csv("/root/MIMICIV/src/landmark_df_evo_correct.csv", na_values=['', 'None', 'NaN', 'na', 'nan'])
 data.fillna('', inplace=True)
 
 # Fai una divisione separata per ciascuna sottopopolazione
@@ -43,6 +43,6 @@ val_final = pd.concat(val_list).reset_index(drop=True)
 test_final = pd.concat(test_list).reset_index(drop=True)
 
 # Salvo i set in file separati
-train_final.to_csv("/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_train.csv", index=False)
-val_final.to_csv("/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_vali.csv", index=False)
-test_final.to_csv("/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_test.csv", index=False)
+train_final.to_csv("/mnt/vdb/data/landmark_evo_train.csv", index=False)
+val_final.to_csv("/mnt/vdb/data/landmark_evo_vali.csv", index=False)
+test_final.to_csv("/mnt/vdb/data/landmark_evo_test.csv", index=False)
