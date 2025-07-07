@@ -313,15 +313,15 @@ def full_narrative_no_time(row):
     #     narrative += f"Last visit happened {row['days_since_previous_visit']} days ago."
 
     narrative += "\nDiagnosis history:"
-    for past_visit, diags in reversed(list(ast.literal_eval(row['diag_per_visit']).items())):
+    for _, diags in reversed(list(ast.literal_eval(row['diag_per_visit']).items())):
         narrative += f"\n{'; '.join(diags)}."
         
     narrative += "\nPrescriptions history:"
-    for past_visit, meds in reversed(ast.literal_eval(row['meds_per_visit']).items()):
+    for _, meds in reversed(ast.literal_eval(row['meds_per_visit']).items()):
         narrative += f"\n{'; '.join(meds)}."
     
     narrative += "\nProcedures history:"
-    for past_visit, proc in reversed(ast.literal_eval(row['proc_per_visit']).items()):
+    for _, proc in reversed(ast.literal_eval(row['proc_per_visit']).items()):
         narrative += f"\n{'; '.join(proc)}."
     
     return narrative
@@ -487,7 +487,9 @@ def main():
     # Set seed for reproducibility
     set_seed(args.seed)
 
-    hf_token = os.getenv("HF_TOKEN")
+    #hf_token = os.getenv("HF_TOKEN")
+    hf_token = "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"
+
     if args.model_type == "llm" and hf_token is None:
         raise ValueError("Set the HF_TOKEN environment variable for authentication.")
     if args.model_type == "llm":
