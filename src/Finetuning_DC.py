@@ -1,11 +1,8 @@
 import os
-import time
-import re
 import random
 import logging
 import datetime
 import argparse
-import ast
 import pandas as pd
 import numpy as np
 import torch
@@ -17,9 +14,11 @@ from peft import LoraConfig, get_peft_model
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import roc_auc_score, f1_score
 from huggingface_hub import login
-from collections import Counter
 
-import matplotlib.pyplot as plt
+from prompts import (
+    no_narrative_prompt, naive_narrative_prompt, compact_narrative_prompt,
+    full_narrative, full_narrative_no_time, full_narrative_no_time_rnd
+)
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s: %(message)s")
 logger = logging.getLogger(__name__)
@@ -39,9 +38,9 @@ def set_seed(seed_value=5550):
     torch.backends.cudnn.benchmark = True
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Universal finetuning script for LLMs or MedBERT-like models.")
-    parser.add_argument("--model_type", type=str, choices=["llm", "medbert"], default="llm",
-                        help="Model type: llm o medbert")
+    parser = argparse.ArgumentParser(description="Universal finetuning script for general-purpose LLMs or medical-purpose models.")
+    parser.add_argument("--model_type", type=str, choices=["general-purpose", "medical-purpose"], default="general-purpose",
+                        help="Model type: general-purpose o medical-purpose (e.g., MedBERT, etc.)")
     
     parser.add_argument("--model_name", type=str, required=True,
                         help="Name of the model from Hugging Face")
@@ -54,16 +53,13 @@ def parse_args():
     parser.add_argument("--cache_dir", type=str, default="/root/MIMICIV/cache",
                         help="Directory for cache e saving models")
     
-    parser.add_argument("--input_csv", type=str, default="/mnt/vdb/data/landmark_df_evo.csv",
-                        help="Path to file CSV di input")
-    
-    parser.add_argument("--train_csv", type=str, default="/mnt/vdb/data/landmark_evo_train.csv",
+    parser.add_argument("--train_csv", type=str, default="/root/MIMICIV/data/splitted/landmark_evo_train.csv",
                         help="Path to file CSV di training")
     
-    parser.add_argument("--val_csv", type=str, default="/mnt/vdb/data/landmark_evo_vali.csv",
+    parser.add_argument("--val_csv", type=str, default="/root/MIMICIV/data/splitted/landmark_evo_vali.csv",
                         help="Path to file CSV di validation")
     
-    parser.add_argument("--test_csv", type=str, default="/mnt/vdb/data/landmark_evo_test.csv",
+    parser.add_argument("--test_csv", type=str, default="/root/MIMICIV/data/splitted/landmark_evo_test.csv",
                         help="Path to file CSV di test") # evo as well 
     
     parser.add_argument("--prompt_type", type=str, choices=["naive", "compact", "no", "full", "full_no_time", "full_no_time_rnd"], default="compact",
@@ -113,7 +109,7 @@ def load_tokenizer(model_name, model_type, hf_token, cache_dir):
     return tokenizer
 
 def load_model(model_name, model_type, tokenizer, cache_dir, hf_token, use_peft, use_quantization):
-    if model_type == "llm":
+    if model_type == "general-purpose":
 
         if use_quantization:
             bnb_config = BitsAndBytesConfig(
@@ -147,13 +143,15 @@ def load_model(model_name, model_type, tokenizer, cache_dir, hf_token, use_peft,
             )
             model = get_peft_model(model, lora_config)
             model.print_trainable_parameters()
-    else:
+    elif model_type == "medical-purpose":
         # For clinical models like MedBERT or similar
         model = AutoModelForSequenceClassification.from_pretrained(
             model_name,
             num_labels=2,
             cache_dir=cache_dir
         )
+    else:
+        raise ValueError("Invalid model type. Use 'general-purpose' or 'medical-purpose'.")
     return model
 
 class ClinicalDataset(Dataset):
@@ -171,193 +169,9 @@ class ClinicalDataset(Dataset):
     def __len__(self):
         return len(self.labels)
 
-def no_narrative_prompt(row):
-    narrative = "Variables: "
-    if pd.notna(row['diag_text']) and row['diag_text'].strip():
-        narrative += f" {row['diag_text']}"
-    if pd.notna(row['med_text']) and row['med_text'].strip():
-        narrative += f" {row['med_text']}"
-    if pd.notna(row['proc_text']) and row['proc_text'].strip():
-        narrative += f" {row['proc_text']}"
-
-    return narrative
-
-def naive_narrative_prompt(row):
-    narrative = f"Patient is a {row['age_at_landmark']}-year-old {row['gender']}."
-    narrative += f" This is the {row['num_total_visits']} visit."
-    if row['days_since_previous_visit'] != -1:
-        narrative += f" The last visit happened {row['days_since_previous_visit']} days ago."
-    if pd.notna(row['diag_text']) and row['diag_text'].strip():
-        narrative += f" Medical history includes: {row['diag_text']}."
-    if pd.notna(row['med_text']) and row['med_text'].strip():
-        narrative += f" Current medications are: {row['med_text']}."
-    if pd.notna(row['proc_text']) and row['proc_text'].strip():
-        narrative += f" Procedures performed: {row['proc_text']}."
-    # Add explicit prediction question
-    narrative += " Based on this information, what is the probability of mortality within 90 days?"
-    return narrative
-
-def compact_narrative_prompt(row):
-    narrative = f"You are a Doctor.\nWhat is the probability of death in the next 90 days for {row['age_at_landmark']}-year-old {row['gender']} patient?\n"
-    current_visit = row['landmark_visit']
-    type = row['admission_category']
-    narrative += f"Visit number {current_visit} - {type} \n"
-
-    if row['days_since_previous_visit'] != -1:
-        narrative += f"Last visit happened {row['days_since_previous_visit']} days ago."
-
-    # --- Diagnosi ---
-    narrative += "\nDIAGNOSIS HISTORY:"
-    diag_per_visit = ast.literal_eval(row['diag_per_visit'])
-    
-    # Conta frequenze
-    all_diags = []
-    for diags in diag_per_visit.values():
-        all_diags.extend(diags)
-    diag_counts = Counter(all_diags)
-
-    # Diagnosi croniche (almeno 2 visite)
-    chronic_diags = [d for d, c in diag_counts.items() if c >= 2]
-
-    # Diagnosi nuove solo in questa visita
-    current_diags = diag_per_visit[int(current_visit)]
-    new_diags = [d for d in current_diags if diag_counts[d] == 1]
-
-    if chronic_diags:
-        narrative += f"\nChronic diagnoses: {'; '.join(chronic_diags)}."
-    if new_diags:
-        narrative += f"\nNew diagnoses in this visit: {'; '.join(new_diags)}."
-    if not chronic_diags and not new_diags:
-        narrative += "\nNo diagnoses recorded."
-
-    # --- Farmaci ---
-    narrative += "\nPRESCRIPTIONS HISTORY:"
-    meds_per_visit = ast.literal_eval(row['meds_per_visit'])
-    
-    all_meds = []
-    for meds in meds_per_visit.values():
-        all_meds.extend(meds)
-    med_counts = Counter(all_meds)
-
-    chronic_meds = [m for m, c in med_counts.items() if c >= 2]
-    current_meds = meds_per_visit[int(current_visit)]
-    new_meds = [m for m in current_meds if med_counts[m] == 1]
-
-    if chronic_meds:
-        narrative += f"\nChronic medications: {'; '.join(chronic_meds)}."
-    if new_meds:
-        narrative += f"\nNew medications in this visit: {'; '.join(new_meds)}."
-    if not chronic_meds and not new_meds:
-        narrative += "\nNo medications recorded."
-
-    # --- Procedure ---
-    narrative += "\nPROCEDURES HISTORY:"
-    proc_per_visit = ast.literal_eval(row['proc_per_visit'])
-
-    all_proc = []
-    for procs in proc_per_visit.values():
-        all_proc.extend(procs)
-    proc_counts = Counter(all_proc)
-
-    chronic_proc = [p for p, c in proc_counts.items() if c >= 2]
-    current_proc = proc_per_visit[int(current_visit)]
-    new_proc = [p for p in current_proc if proc_counts[p] == 1]
-
-    if chronic_proc:
-        narrative += f"\nChronic procedures: {'; '.join(chronic_proc)}."
-    if new_proc:
-        narrative += f"\nNew procedures in this visit: {'; '.join(new_proc)}."
-    if not chronic_proc and not new_proc:
-        narrative += "\nNo procedures recorded."
-
-    return narrative
-
-def full_narrative(row):
-    narrative = f"You are a Doctor.\nWhat is the probability of death in the next 90 days from today for this {row['age_at_landmark']}-year-old {row['gender']} patient\n"
-    current_visit = row['landmark_visit']
-    narrative += f"Today is the {current_visit} visit.\n"
-
-    max_visit = int(row['landmark_visit'])
-
-    # if row['days_since_previous_visit'] != -1:
-    #     narrative += f"Last visit happened {row['days_since_previous_visit']} days ago."
-
-    narrative += "\nDiagnosis history:"
-    for past_visit, diags in reversed(list(ast.literal_eval(row['diag_per_visit']).items())):
-        if past_visit == max_visit:
-            narrative += f"\nToday: {'; '.join(diags)}."
-        else:
-            narrative += f"\n{int(row['days_since_previous_visit_cumulate_sum'][int(past_visit) -1])} days ago: {'; '.join(diags)}."
-
-    narrative += "\nPrescriptions history:"
-    for past_visit, meds in reversed(ast.literal_eval(row['meds_per_visit']).items()):
-        if past_visit ==  max_visit:
-            narrative += f"\nToday: {'; '.join(meds)}."
-        else:
-            narrative += f"\n{int(row['days_since_previous_visit_cumulate_sum'][past_visit-1])} days ago: {'; '.join(meds)}."
-
-    narrative += "\nProcedures history:"
-    for past_visit, proc in reversed(ast.literal_eval(row['proc_per_visit']).items()):
-        if past_visit == max_visit:
-            narrative += f"\nToday: {'; '.join(proc)}."
-        else:
-            narrative += f"\n{int(row['days_since_previous_visit_cumulate_sum'][past_visit-1])} days ago: {'; '.join(proc)}."
-    
-    return narrative
-
-def full_narrative_no_time(row):
-    narrative = f"You are a Doctor.\nWhat is the probability of death in the next 90 days from today for this {row['age_at_landmark']}-year-old {row['gender']} patient?\n"
-
-    max_visit = int(row['landmark_visit'])
-
-    # if row['days_since_previous_visit'] != -1:
-    #     narrative += f"Last visit happened {row['days_since_previous_visit']} days ago."
-
-    narrative += "\nDiagnosis history:"
-    for _, diags in reversed(list(ast.literal_eval(row['diag_per_visit']).items())):
-        narrative += f"\n{'; '.join(diags)}."
-        
-    narrative += "\nPrescriptions history:"
-    for _, meds in reversed(ast.literal_eval(row['meds_per_visit']).items()):
-        narrative += f"\n{'; '.join(meds)}."
-    
-    narrative += "\nProcedures history:"
-    for _, proc in reversed(ast.literal_eval(row['proc_per_visit']).items()):
-        narrative += f"\n{'; '.join(proc)}."
-    
-    return narrative
-
-def full_narrative_no_time_rnd(row):
-    narrative = f"You are a Doctor.\nWhat is the probability of death in the next 90 days from today for this {row['age_at_landmark']}-year-old {row['gender']} patient?\n"
-
-    # Diagnosi
-    all_diags = []
-    diag_dict = ast.literal_eval(row['diag_per_visit'])
-    for diags in diag_dict.values():
-        all_diags.extend(diags)
-    random.shuffle(all_diags)
-    narrative += "\nDiagnosis history:\n" + '; '.join(all_diags) + "."
-
-    # Prescrizioni
-    all_meds = []
-    meds_dict = ast.literal_eval(row['meds_per_visit'])
-    for meds in meds_dict.values():
-        all_meds.extend(meds)
-    random.shuffle(all_meds)
-    narrative += "\nPrescriptions history:\n" + '; '.join(all_meds) + "."
-
-    # Procedure
-    all_procs = []
-    proc_dict = ast.literal_eval(row['proc_per_visit'])
-    for procs in proc_dict.values():
-        all_procs.extend(procs)
-    random.shuffle(all_procs)
-    narrative += "\nProcedures history:\n" + '; '.join(all_procs) + "."
-
-    return narrative
-
 def train_and_evaluate(model, train_loader, val_loader, args, landmark_visit):
     device = "cuda" if torch.cuda.is_available() else "cpu"
+    print(f"Using device: {device}")
     model = model.to(device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr)
     total_steps = args.epochs * len(train_loader)
@@ -370,7 +184,7 @@ def train_and_evaluate(model, train_loader, val_loader, args, landmark_visit):
     best_val_loss = float("inf")
     best_f1 = 0.0
     epochs_no_improve = 0
-    best_model_path = get_best_model_path(args.model_name, landmark_visit, args.cache_dir)
+    best_model_path = get_best_model_path(args, landmark_visit)
     
     logger.info(f"Early stopping criterion: {args.early}")
     
@@ -416,71 +230,40 @@ def train_and_evaluate(model, train_loader, val_loader, args, landmark_visit):
             f"F1-Score: {val_f1:.4f}"
         )
         
-        # Early stopping based on validation AUC
+        # Early stopping based on the specified criterion
+        condition = False
         if args.early == "auc":
-            if val_auc > best_auc:
-                best_auc = val_auc
-                best_f1 = val_f1
-                best_val_loss = avg_val_loss
-                epochs_no_improve = 0
-                torch.save(model.state_dict(), best_model_path)
-            else:
-                epochs_no_improve += 1
-                if epochs_no_improve >= args.patience:
-                    logger.info(f"Early stopping triggered at epoch {epoch+1}")
-                    break
+            condition = val_auc > best_auc
         elif args.early == "loss":
-            if avg_val_loss < best_val_loss:
-                best_auc = val_auc
-                best_f1 = val_f1
-                best_val_loss = avg_val_loss
-                epochs_no_improve = 0
-                torch.save(model.state_dict(), best_model_path)
-            else:
-                epochs_no_improve += 1
-                if epochs_no_improve >= args.patience:
-                    logger.info(f"Early stopping triggered at epoch {epoch+1}")
-                    break
+            condition = avg_val_loss < best_val_loss
         elif args.early == "f1":
-            if val_f1 > best_f1:  
-                best_auc = val_auc
-                best_f1 = val_f1
-                best_val_loss = avg_val_loss
-                epochs_no_improve = 0
-                torch.save(model.state_dict(), best_model_path)
-            else:
-                epochs_no_improve += 1
-                if epochs_no_improve >= args.patience:
-                    logger.info(f"Early stopping triggered at epoch {epoch+1}")
-                    break
+            condition = val_f1 > best_f1
         else:
             raise ValueError("Invalid early stopping criterion. Use 'auc', 'loss' or 'f1'.")
 
+        if condition == True:
+            logger.info(f"Improvement detected at epoch {epoch+1}. Saving model.")
+            best_auc = val_auc
+            best_f1 = val_f1
+            best_val_loss = avg_val_loss
+            epochs_no_improve = 0
+            torch.save(model.state_dict(), best_model_path)
+        else:
+            epochs_no_improve += 1
+            if epochs_no_improve >= args.patience:
+                    logger.info(f"Early stopping triggered at epoch {epoch+1}")
+                    break
+    
     model.load_state_dict(torch.load(best_model_path))
     return best_auc, best_model_path, best_f1, best_val_loss, epoch + 1
 
-def get_best_model_path(model_name, landmark_visit, cache_dir):
+def get_best_model_path(args, landmark_visit):
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    safe_model_name = model_name.replace("/", "_")
-    filename = f"best_model_{safe_model_name}_landmark{landmark_visit}_{timestamp}.pt"
-    best_model_dir = os.path.join(cache_dir, 'best')
+    safe_model_name = args.model_name.replace("/", "_")
+    filename = f"best_model_{safe_model_name}_landmark{landmark_visit}_{args.prompt_type}_{args.max_visits}_{args.max_length}_all_landmarks_{args.all_landmarks}_{timestamp}_.pt"
+    best_model_dir = os.path.join(args.cache_dir, 'best')
     os.makedirs(best_model_dir, exist_ok=True)
     return os.path.join(best_model_dir, filename)
-
-def bootstrap_auc_ci(y_true, y_pred, n_bootstraps=1000, alpha=0.95, seed=42):
-    bootstrapped_scores = []
-    rng = np.random.RandomState(seed)
-    for _ in range(n_bootstraps):
-        indices = rng.randint(0, len(y_pred), len(y_pred))
-        if len(np.unique(np.array(y_true)[indices])) < 2:
-            continue
-        score = roc_auc_score(np.array(y_true)[indices], np.array(y_pred)[indices])
-        bootstrapped_scores.append(score)
-    sorted_scores = np.array(bootstrapped_scores)
-    sorted_scores.sort()
-    lower = sorted_scores[int((1.0 - alpha) / 2 * len(sorted_scores))]
-    upper = sorted_scores[int((alpha + (1.0 - alpha) / 2) * len(sorted_scores))]
-    return lower, upper
 
 def main():
     args = parse_args()
@@ -491,9 +274,9 @@ def main():
     #hf_token = os.getenv("HF_TOKEN")
     hf_token = "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"
 
-    if args.model_type == "llm" and hf_token is None:
+    if args.model_type == "general-purpose" and hf_token is None:
         raise ValueError("Set the HF_TOKEN environment variable for authentication.")
-    if args.model_type == "llm":
+    if args.model_type == "general-purpose":
         login(hf_token)
 
     tokenizer = load_tokenizer(args.model_name, args.model_type, hf_token, args.cache_dir)
@@ -506,12 +289,6 @@ def main():
         
     # After having resized the model, move it to the appropriate device    
     model.to("cuda" if torch.cuda.is_available() else "cpu")
-    
-    # if re.search("evo.csv$", args.input_csv):
-    #     narrative_prompt = compact_narrative_prompt
-    # else:
-    #     narrative_prompt = naive_narrative_prompt
-    # logger.info(f"Using narrative prompt: {narrative_prompt.__name__}")
 
     if args.prompt_type == "naive":
         narrative_prompt = naive_narrative_prompt
@@ -532,8 +309,6 @@ def main():
     logger.info(f"Model type: {args.model_type}, Model name: {args.model_name}") 
 
     # Reading data
-    #landmark_df = pd.read_csv(args.input_csv, na_values=['', 'None', 'NaN', 'na', 'nan'])
-    #landmark_df = landmark_df.fillna('')
     full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
     full_val_df = pd.read_csv(args.val_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
     full_test_df = pd.read_csv(args.test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
@@ -542,7 +317,7 @@ def main():
     filtered_datasets = []
     for dataset in [full_train_df, full_val_df, full_test_df]:
         visit_counts = dataset['subject_id'].value_counts()
-        selected_patients = visit_counts[visit_counts == args.max_visits].index
+        selected_patients = visit_counts[visit_counts >= args.max_visits].index # >= instead of == to include patients with more than max_visits
         dataset_selected = dataset[dataset['subject_id'].isin(selected_patients)].copy()
         filtered_datasets.append(dataset_selected)
     
@@ -552,7 +327,7 @@ def main():
 
     train_df_selected, val_df_selected, test_df_selected = filtered_datasets
 
-    predictions_list, labels_list, results = [], [], []
+    results = [], [], []
 
     if args.all_landmarks:
         logger.info(f"Processing all landmarks from 1 to {args.max_visits}")
@@ -609,7 +384,7 @@ def main():
         logger.info(f"Tempo impiegato per Landmark {landmark_visit}: {elapsed_seconds:.1f} secondi")
         logger.info(f"Tempo medio per epoca: {elapsed_seconds / epochs_done:.1f} secondi") # This is the important one
 
-        # VALUTAZIONE FINALE SUL TEST SET
+        # Final evaluation on the test set
         model.eval()
         test_preds, test_labels = [], []
         device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -642,24 +417,6 @@ def main():
             'Validation Loss': f"{best_val_loss:.4f}",
             'Training Time (s)': f"{elapsed_seconds:.1f}"
         })
-    # auc_means, ci_lowers, ci_uppers = [], [], []
-    # for preds, labels in zip(predictions_list, labels_list):
-    #     auc = roc_auc_score(labels, preds)
-    #     ci_lower, ci_upper = bootstrap_auc_ci(labels, preds, seed=args.seed)
-    #     auc_means.append(auc)
-    #     ci_lowers.append(ci_lower)
-    #     ci_uppers.append(ci_upper)
-
-    # plt.figure(figsize=(10, 6))
-    # plt.plot(range(1, args.max_visits + 1), auc_means, marker='o', label='Mean AUC')
-    # plt.fill_between(range(1, args.max_visits + 1), ci_lowers, ci_uppers, alpha=0.2, label='95% CI')
-    # plt.xlabel('Landmark Visit')
-    # plt.ylabel('AUC')
-    # plt.title(f'{args.model_name} Predictive Performance')
-    # plt.legend()
-    # plt.grid(alpha=0.4)
-    # plt.ylim([0.5, 1.0])
-    # plt.show()
 
     results_df = pd.DataFrame(results)
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")

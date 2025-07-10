@@ -43,6 +43,6 @@ val_final = pd.concat(val_list).reset_index(drop=True)
 test_final = pd.concat(test_list).reset_index(drop=True)
 
 # Salvo i set in file separati
-train_final.to_csv("/mnt/vdb/data/landmark_evo_train.csv", index=False)
-val_final.to_csv("/mnt/vdb/data/landmark_evo_vali.csv", index=False)
-test_final.to_csv("/mnt/vdb/data/landmark_evo_test.csv", index=False)
+train_final.to_csv("/root/MIMICIV/data/splitted/landmark_evo_train.csv", index=False)
+val_final.to_csv("/root/MIMICIV/data/splitted/landmark_evo_vali.csv", index=False)
+test_final.to_csv("/root/MIMICIV/data/splitted/landmark_evo_test.csv", index=False)
