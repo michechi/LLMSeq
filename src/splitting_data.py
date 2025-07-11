@@ -1,17 +1,25 @@
 import pandas as pd
+import numpy as np
 from sklearn.model_selection import train_test_split
 
 data = pd.read_csv("/root/MIMICIV/src/landmark_df_evo_correct.csv", na_values=['', 'None', 'NaN', 'na', 'nan'])
 data.fillna('', inplace=True)
 
+dataframe_no_overlap_2_merge = pd.read_csv("/root/MIMICIV/src/dataframe_no_overlap_2_merge.csv")
+landmark_df_evo_correct_no_overlap = data.merge(dataframe_no_overlap_2_merge, on=['subject_id', 'hadm_id'], how='inner')
+landmark_df_evo_correct_no_overlap['days_since_last_visit'] = landmark_df_evo_correct_no_overlap['days_since_last_visit'].replace(0, 1)
+landmark_df_evo_correct_no_overlap['days_since_last_visit_cumulate'] = landmark_df_evo_correct_no_overlap.groupby('subject_id')['days_since_last_visit'].transform(lambda x: [list(x[:i+1]) for i in range(len(x))])
+landmark_df_evo_correct_no_overlap['days_since_last_visit_cumulate_sum'] = landmark_df_evo_correct_no_overlap['days_since_last_visit_cumulate'].apply(lambda x: list(np.cumsum([y for y in x if y > 0][::-1])[::-1]) if isinstance(x, list) else [-1])
+
+
 # Fai una divisione separata per ciascuna sottopopolazione
 train_list, val_list, test_list = [], [], []
-visit_counts = data['subject_id'].value_counts()
+visit_counts = landmark_df_evo_correct_no_overlap['subject_id'].value_counts()
 
 
 for visit_count in range(1, 6):  # Visite 1 a 5
     selected_patients = visit_counts[visit_counts == visit_count].index
-    subset = data[data['subject_id'].isin(selected_patients)].copy()
+    subset = landmark_df_evo_correct_no_overlap[landmark_df_evo_correct_no_overlap['subject_id'].isin(selected_patients)].copy()
 
     patients = subset['subject_id'].unique()
     train_val_patients, test_patients = train_test_split(
