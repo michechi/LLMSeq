@@ -17,9 +17,11 @@ from huggingface_hub import login
 
 from prompts import (
     no_narrative_prompt, naive_narrative_prompt, compact_narrative_prompt,
-    full_narrative, full_narrative_no_time, full_narrative_no_time_rnd
+    full_narrative, full_narrative_no_time, full_narrative_no_time_rnd,
+    compact_no_time_prompt, compact_no_time_prompt_rnd
 )
 
+torch.set_float32_matmul_precision('high') 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s: %(message)s")
 logger = logging.getLogger(__name__)
 
@@ -62,7 +64,8 @@ def parse_args():
     parser.add_argument("--test_csv", type=str, default="/root/MIMICIV/data/splitted/landmark_evo_test.csv",
                         help="Path to file CSV di test") # evo as well 
     
-    parser.add_argument("--prompt_type", type=str, choices=["naive", "compact", "no", "full", "full_no_time", "full_no_time_rnd"], default="compact",
+    parser.add_argument("--prompt_type", type=str, choices=["naive", "compact", "compact_no_time", "compact_no_time_rnd", 
+                                                            "no", "full", "full_no_time", "full_no_time_rnd"], default="compact",
                         help="Prompting type to use: 'naive', 'compact'  o 'no' (nessuna narrativa)")
     
     parser.add_argument("--max_visits", type=int, default=3,
@@ -73,6 +76,9 @@ def parse_args():
     
     parser.add_argument("--batch_size", type=int, default=8,
                         help="Batch size for DataLoader")
+    
+    parser.add_argument("--gradient_accumulation_steps", type=int, default=1,
+                        help="Number of steps for gradient accumulation (useful for large models)")
     
     parser.add_argument("--epochs", type=int, default=20,
                         help="Num epochs for training")
@@ -103,7 +109,7 @@ def parse_args():
 def load_tokenizer(model_name, model_type, hf_token, cache_dir):
     tokenizer = AutoTokenizer.from_pretrained(
         model_name,
-        token=hf_token if model_type == "llm" else None,
+        token=hf_token if model_type == "general-purpose" else None,
         cache_dir=cache_dir
     )
     return tokenizer
@@ -191,16 +197,32 @@ def train_and_evaluate(model, train_loader, val_loader, args, landmark_visit):
     for epoch in range(args.epochs):
         model.train()
         total_train_loss = 0
-        for batch in train_loader:
-            optimizer.zero_grad()
+        optimizer.zero_grad()
+        for step, batch in enumerate(train_loader):
             inputs = {k: v.to(device) for k, v in batch.items()}
             outputs = model(**inputs)
-            loss = outputs.loss
+            loss = outputs.loss / args.gradient_accumulation_steps
             loss.backward()
-            optimizer.step()
-            scheduler.step()
             total_train_loss += loss.item()
+
+            if (step + 1) % args.gradient_accumulation_steps == 0 or (step + 1) == len(train_loader):
+                optimizer.step()
+                scheduler.step()
+                optimizer.zero_grad()
+
         avg_train_loss = total_train_loss / len(train_loader)
+
+        # Old without gradient accumulation
+        # for batch in train_loader:
+        #     optimizer.zero_grad()
+        #     inputs = {k: v.to(device) for k, v in batch.items()}
+        #     outputs = model(**inputs)
+        #     loss = outputs.loss
+        #     loss.backward()
+        #     optimizer.step()
+        #     scheduler.step()
+        #     total_train_loss += loss.item()
+        # avg_train_loss = total_train_loss / len(train_loader)
 
         model.eval()
         total_val_loss = 0
@@ -294,6 +316,10 @@ def main():
         narrative_prompt = naive_narrative_prompt
     elif args.prompt_type == "compact":
         narrative_prompt = compact_narrative_prompt
+    elif args.prompt_type == "compact_no_time":
+        narrative_prompt = compact_no_time_prompt
+    elif args.prompt_type == "compact_no_time_rnd":
+        narrative_prompt = compact_no_time_prompt_rnd
     elif args.prompt_type == "no":
         narrative_prompt = no_narrative_prompt
     elif args.prompt_type == "full":
@@ -317,7 +343,7 @@ def main():
     filtered_datasets = []
     for dataset in [full_train_df, full_val_df, full_test_df]:
         visit_counts = dataset['subject_id'].value_counts()
-        selected_patients = visit_counts[visit_counts >= args.max_visits].index # >= instead of == to include patients with more than max_visits
+        selected_patients = visit_counts[visit_counts == args.max_visits].index # >= instead of == to include patients with more than max_visits
         dataset_selected = dataset[dataset['subject_id'].isin(selected_patients)].copy()
         filtered_datasets.append(dataset_selected)
     

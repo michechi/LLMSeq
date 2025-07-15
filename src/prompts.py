@@ -104,6 +104,131 @@ def compact_narrative_prompt(row):
 
     return narrative
 
+def compact_no_time_prompt(row):
+    narrative = f"You are a Doctor.\nWhat is the probability of death in the next 90 days for {row['age_at_landmark']}-year-old {row['gender']} patient?\n"
+    narrative += f"Visit type: {row['admission_category']}\n"
+
+    current_visit = int(row['landmark_visit'])
+
+    # --- Diagnosi ---
+    narrative += "\nDIAGNOSIS HISTORY:"
+    diag_per_visit = ast.literal_eval(row['diag_per_visit'])
+
+    # Eventi da visite precedenti
+    past_diags = [diag for key, values in diag_per_visit.items() if int(key) != current_visit for diag in values]
+    past_diag_counts = Counter(past_diags)
+    chronic_diags = [diag for diag, count in past_diag_counts.items() if count >= 2]
+
+    # Eventi dell'ultima visita
+    current_diags = diag_per_visit.get(current_visit, [])
+
+    # Unione e conteggio finale
+    final_diags = chronic_diags + current_diags
+    diag_summary = Counter(final_diags)
+    if diag_summary:
+        diag_str = '; '.join([f"{d}" for d, _ in diag_summary.items()])
+        narrative += f"\nDiagnoses: {diag_str}."
+    else:
+        narrative += "\nNo diagnoses recorded."
+
+    # --- Farmaci ---
+    narrative += "\nPRESCRIPTIONS HISTORY:"
+    meds_per_visit = ast.literal_eval(row['meds_per_visit'])
+
+    past_meds = [med for key, values in meds_per_visit.items() if int(key) != current_visit for med in values]
+    past_meds_counts = Counter(past_meds)
+    chronic_meds = [med for med, count in past_meds_counts.items() if count >= 2]
+
+    current_meds = meds_per_visit.get(current_visit, [])
+    final_meds = chronic_meds + current_meds
+    med_summary = Counter(final_meds)
+    if med_summary:
+        med_str = '; '.join([f"{m}" for m, _ in med_summary.items()])
+        narrative += f"\nMedications: {med_str}."
+    else:
+        narrative += "\nNo medications recorded."
+
+    # --- Procedure ---
+    narrative += "\nPROCEDURES HISTORY:"
+    proc_per_visit = ast.literal_eval(row['proc_per_visit'])
+
+    past_procs = [proc for key, values in proc_per_visit.items() if int(key) != current_visit for proc in values]
+    past_proc_counts = Counter(past_procs)
+    chronic_procs = [proc for proc, count in past_proc_counts.items() if count >= 2]
+
+    current_procs = proc_per_visit.get(current_visit, [])
+    final_procs = chronic_procs + current_procs
+    proc_summary = Counter(final_procs)
+    if proc_summary:
+        proc_str = '; '.join([f"{p}" for p, _ in proc_summary.items()])
+        narrative += f"\nProcedures: {proc_str}."
+    else:
+        narrative += "\nNo procedures recorded."
+
+    return narrative
+
+def compact_no_time_prompt_rnd(row):
+    narrative = f"You are a Doctor.\nWhat is the probability of death in the next 90 days for {row['age_at_landmark']}-year-old {row['gender']} patient?\n"
+    narrative += f"Visit type: {row['admission_category']}\n"
+
+    current_visit = int(row['landmark_visit'])
+
+    # --- Diagnosi ---
+    narrative += "\nDIAGNOSIS HISTORY:"
+    diag_per_visit = ast.literal_eval(row['diag_per_visit'])
+
+    past_diags = [diag for key, values in diag_per_visit.items() if int(key) != current_visit for diag in values]
+    past_diag_counts = Counter(past_diags)
+    chronic_diags = [diag for diag, count in past_diag_counts.items() if count >= 2]
+
+    current_diags = diag_per_visit.get(current_visit, [])
+    final_diags = chronic_diags + current_diags
+
+    if final_diags:
+        random.shuffle(final_diags)  # <-- MISCELAZIONE
+        diag_str = '; '.join(final_diags)
+        narrative += f"\nDiagnoses: {diag_str}."
+    else:
+        narrative += "\nNo diagnoses recorded."
+
+    # --- Farmaci ---
+    narrative += "\nPRESCRIPTIONS HISTORY:"
+    meds_per_visit = ast.literal_eval(row['meds_per_visit'])
+
+    past_meds = [med for key, values in meds_per_visit.items() if int(key) != current_visit for med in values]
+    past_meds_counts = Counter(past_meds)
+    chronic_meds = [med for med, count in past_meds_counts.items() if count >= 2]
+
+    current_meds = meds_per_visit.get(current_visit, [])
+    final_meds = chronic_meds + current_meds
+
+    if final_meds:
+        random.shuffle(final_meds)  # <-- MISCELAZIONE
+        med_str = '; '.join(final_meds)
+        narrative += f"\nMedications: {med_str}."
+    else:
+        narrative += "\nNo medications recorded."
+
+    # --- Procedure ---
+    narrative += "\nPROCEDURES HISTORY:"
+    proc_per_visit = ast.literal_eval(row['proc_per_visit'])
+
+    past_procs = [proc for key, values in proc_per_visit.items() if int(key) != current_visit for proc in values]
+    past_proc_counts = Counter(past_procs)
+    chronic_procs = [proc for proc, count in past_proc_counts.items() if count >= 2]
+
+    current_procs = proc_per_visit.get(current_visit, [])
+    final_procs = chronic_procs + current_procs
+
+    if final_procs:
+        random.shuffle(final_procs)  # <-- MISCELAZIONE
+        proc_str = '; '.join(final_procs)
+        narrative += f"\nProcedures: {proc_str}."
+    else:
+        narrative += "\nNo procedures recorded."
+
+    return narrative
+
 def full_narrative(row):
     narrative = f"You are a Doctor.\nWhat is the probability of death in the next 90 days from today for this {row['age_at_landmark']}-year-old {row['gender']} patient\n"
     current_visit = row['landmark_visit']
