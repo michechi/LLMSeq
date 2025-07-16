@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --job-name=project_m
-#SBATCH --account=ec403
+#SBATCH --account=ec12
 #SBATCH --time=05:00:00
 #SBATCH --nodes=1
 #SBATCH --mem-per-cpu=2G
@@ -11,7 +11,7 @@
 # Increase this number when you really need parallel computing
 #SBATCH --cpus-per-task=16
 
-source ${HOME}/.bashrc
+#source ${HOME}/.bashrc
 
 # sanity: exit on all errors and disallow unset environment variables
 set -o errexit

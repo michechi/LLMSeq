@@ -47,15 +47,15 @@ def parse_args():
     parser.add_argument("--peft", action="store_true", help="Usa PEFT (solo per LLM)")
     parser.add_argument("--use_quantization", action="store_true",
                         help="Quantization 4 bit")
-    parser.add_argument("--cache_dir", type=str, default="/cluster/work/projects/ec403/ec-michechi/Project_M",
+    parser.add_argument("--cache_dir", type=str, default="/cluster/work/projects/ec12/michechi/cache",
                         help="Directory for cache e saving models")
-    parser.add_argument("--input_csv", type=str, default="/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_df_evo.csv",
+    parser.add_argument("--input_csv", type=str, default="/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_df_evo.csv",
                         help="Path to file CSV di input")
-    parser.add_argument("--train_csv", type=str, default="/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_train.csv",
+    parser.add_argument("--train_csv", type=str, default="/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_train.csv",
                         help="Path to file CSV di training")
-    parser.add_argument("--val_csv", type=str, default="/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_vali.csv",
+    parser.add_argument("--val_csv", type=str, default="/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_vali.csv",
                         help="Path to file CSV di validation")
-    parser.add_argument("--test_csv", type=str, default="/cluster/work/projects/ec403/ec-michechi/Project_M/data/landmark_evo_test.csv",
+    parser.add_argument("--test_csv", type=str, default="/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_test.csv",
                         help="Path to file CSV di test") # evo as well 
     parser.add_argument("--prompt_type", type=str, choices=["naive", "compact", "no"], default="compact",
                         help="Prompting type to use: 'naive', 'compact'  o 'no' (nessuna narrativa)")
@@ -73,7 +73,7 @@ def parse_args():
                         help="Token Max lenght")
     parser.add_argument("--lr", type=float, default=2e-5,
                         help="Learning rate")
-    parser.add_argument("--early", type=str, choices=["auc", "loss", "f1"], default="auc",
+    parser.add_argument("--early", type=str, choices=["auc", "loss", "f1"], default="loss",
                         help="Early stopping criterion: 'auc', 'loss' or 'f1")
     parser.add_argument("--seed", type=int, default=9550,
                         help="Seed for riproducibility")
