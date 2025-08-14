@@ -44,13 +44,13 @@ def parse_args():
     parser.add_argument("--input_csv", type=str, default="/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_df_evo.csv",
                         help="Path to file CSV di input")
 
-    parser.add_argument("--train_csv", type=str, default="/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_train_dod.csv",
+    parser.add_argument("--train_csv", type=str, default="/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_train_dod_fxd.csv",
                         help="Path to file CSV di training")
 
-    parser.add_argument("--val_csv", type=str, default="/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_vali_dod.csv",
+    parser.add_argument("--val_csv", type=str, default="/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_vali_dod_fxd.csv",
                         help="Path to file CSV di validation")
 
-    parser.add_argument("--test_csv", type=str, default="/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_test_dod.csv",
+    parser.add_argument("--test_csv", type=str, default="/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_test_dod_fxd.csv",
                         help="Path to file CSV di test") # evo as well 
     
     parser.add_argument("--when_counting_death", type=str, choices=["last_visit", "landmark"], default="last_visit",
