@@ -313,7 +313,7 @@ sys.argv = [''] + [
     '--val_csv', '/root/MIMICIV/data/splitted/landmark_evo_vali_dod_fxd.csv',
     '--test_csv', '/root/MIMICIV/data/splitted/landmark_evo_test_dod_fxd.csv',
     '--prompt_type', 'compact_narrative',  # 'naive', 'compact', 'no', 'full', 'full_no_time', 'full_no_time_rnd'
-    '--max_visits', '4',
+    '--max_visits', '3',
     '--all_landmarks',
     '--batch_size', '8',
     '--epochs', '20',
@@ -329,99 +329,9 @@ sys.argv = [''] + [
 models = ["Charangan/MedBERT", "emilyalsentzer/Bio_ClinicalBERT","meta-llama/Llama-3.1-8B", "answerdotai/ModernBERT-large"] # "Charangan/MedBERT", "emilyalsentzer/Bio_ClinicalBERT",
 prompts = ["no", "naive", "full_no_time", "compact_no_time", "compact", "compact_narrative", "full", "full_no_time_rnd", "compact_no_time_rnd"] # "no", "naive", "full_no_time", "compact_no_time", "compact", "compact_narrative", "full"
 
-def compute_truncation_stats(texts, tokenizer, max_length=512, show_plots=True):
-    token_lengths = []
-    truncation_amounts = []   # O_i = overflow in token
-    word_truncation_amounts = []
-    loss_fractions = []       # r_i = O_i / L_i
-
-    for text in texts:
-        tokens_full = tokenizer.encode(text, truncation=False)
-        tokens_truncated = tokenizer.encode(text, truncation=True, max_length=max_length)
-
-        L_i = len(tokens_full)
-        token_lengths.append(L_i)
-
-        if L_i > 0:
-            O_i = max(0, L_i - max_length)
-            if O_i > 0:
-                truncation_amounts.append(O_i)
-
-                # frazione di contenuto perso (sempre in [0,1])
-                loss_fractions.append(O_i / L_i)
-
-                # Stima “a parole” (grezza)
-                original_word_count = len(text.split())
-                truncated_text = tokenizer.decode(tokens_truncated, skip_special_tokens=True)
-                truncated_word_count = len(truncated_text.split())
-                word_truncation_amounts.append(max(0, original_word_count - truncated_word_count))
-            else:
-                # nessuna truncation ⇒ frazione persa = 0
-                loss_fractions.append(0.0)
-
-    total = len(texts)
-    truncated = len(truncation_amounts)
-
-    p = (truncated / total) if total else 0.0
-    mu_tokens = (np.mean(truncation_amounts) if truncated else 0.0)
-    L_avg = (np.mean(token_lengths) if total else 0.0)
-    L_trunc_avg = (np.mean([L for L in token_lengths if L > max_length]) if truncated else 0.0)
-
-    # 1) Content-Loss Index (media di O_i / L_i) ∈ [0,1]
-    CLI = float(np.mean(loss_fractions)) if total else 0.0
-
-    # 2) Indice condizionato sicuro p * (mu / L_trunc_avg) ∈ [0,1]
-    CI_trunc = float(p * (mu_tokens / L_trunc_avg)) if L_trunc_avg > 0 else 0.0
-
-    # --- Stampe
-    print(f"Total samples: {total}")
-    print(f"Truncated samples: {truncated} ({p*100:.2f}%)")
-
-    if truncated:
-        print(f"\n--- Token Truncation ---")
-        print(f"Avg tokens truncated (μ): {mu_tokens:.2f}")
-        print(f"Max tokens truncated: {max(truncation_amounts)}")
-
-        print(f"\n--- Word Truncation Estimate ---")
-        print(f"Avg words truncated: {np.mean(word_truncation_amounts):.2f}")
-        print(f"Max words truncated: {max(word_truncation_amounts)}")
-
-    else:
-        print("No samples were truncated.")
-
-    print(f"\n--- Indici in [0,1] ---")
-    print(f"CLI (mean overflow/length): {CLI:.4f}")
-    print(f"CI_trunc = p * (μ / L_trunc_avg): {CI_trunc:.4f}")
-
-    if show_plots and truncated:
-        plt.hist(truncation_amounts, bins=30)
-        plt.title("Distribution of Truncated Tokens")
-        plt.xlabel("Tokens truncated")
-        plt.ylabel("Number of samples")
-        plt.show()
-
-        plt.hist(loss_fractions, bins=30)
-        plt.title("Distribution of Content Loss Fraction (O_i / L_i)")
-        plt.xlabel("Fraction lost per prompt")
-        plt.ylabel("Number of samples")
-        plt.show()
-
-    return {
-        "total": total,
-        "truncated": truncated,
-        "p": float(p),
-        "mu_tokens": float(mu_tokens),
-        "L_avg": float(L_avg),
-        "L_trunc_avg": float(L_trunc_avg),
-        "CLI": CLI,
-        "CI_trunc": CI_trunc,
-        "max_tokens_truncated": int(max(truncation_amounts)) if truncated else 0,
-        "avg_words_truncated": float(np.mean(word_truncation_amounts)) if truncated else 0.0,
-        "max_words_truncated": int(max(word_truncation_amounts)) if truncated else 0,
-    }
 
 
-def do_ICL_IC(model, prompt):
+def do_prompt_sample(prompt):
     
     torch.cuda.empty_cache()
     torch.cuda.is_available()
@@ -429,32 +339,6 @@ def do_ICL_IC(model, prompt):
     
     # Here we change depending on prompt and model
     args.prompt_type = prompt
-    args.model_name = model
-    args.model_type = "llm" if model == "meta-llama/Llama-3.1-8B" else "medbert"
-
-    # Set seed for reproducibility
-    set_seed(args.seed)
-
-    #hf_token = os.getenv("HF_TOKEN")
-    hf_token = "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"
-
-    if args.model_type == "llm" and hf_token is None:
-        raise ValueError("Set the HF_TOKEN environment variable for authentication.")
-    if args.model_type == "llm":
-        login(hf_token)
-
-    tokenizer = load_tokenizer(args.model_name, args.model_type, hf_token, args.cache_dir)
-    model = load_model(args.model_name, args.model_type, tokenizer, args.cache_dir, hf_token, args.peft, args.use_quantization).to(device="cpu")
-
-    if tokenizer.pad_token is None:
-        logger.warning("Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].")
-        tokenizer.add_special_tokens({'pad_token': '[PAD]'})
-        model.resize_token_embeddings(len(tokenizer))
-        
-    # After having resized the model, move it to the appropriate device    
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    logger.info(f"Using device: {device}")
-    model.to(device)
 
     if args.prompt_type == "naive":
         narrative_prompt = naive_narrative_prompt
@@ -479,24 +363,23 @@ def do_ICL_IC(model, prompt):
     logger.info(f"Using prompt type: {args.prompt_type}")
 
     # Reading data
-    full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
-    full_val_df = pd.read_csv(args.val_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+    #full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+    #full_val_df = pd.read_csv(args.val_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
     full_test_df = pd.read_csv(args.test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
 
     # For testing problems in landmark/last_visit scenarios
-    full_train_df["correspondence"] = (full_train_df["death_in_90days"] == full_train_df["death_90days_landmark"]).astype(int)
+    # full_train_df["correspondence"] = (full_train_df["death_in_90days"] == full_train_df["death_90days_landmark"]).astype(int)
+    # full_val_df["correspondence"] = (full_val_df["death_in_90days"] == full_val_df["death_90days_landmark"]).astype(int)
     full_test_df["correspondence"] = (full_test_df["death_in_90days"] == full_test_df["death_90days_landmark"]).astype(int)
-    full_val_df["correspondence"] = (full_val_df["death_in_90days"] == full_val_df["death_90days_landmark"]).astype(int)
+
 
     # Older version, now we are splitting the data in the splitting_data.py script
-    filtered_datasets = []
-    for dataset in [full_train_df, full_val_df, full_test_df]:
-        visit_counts = dataset['subject_id'].value_counts()
-        selected_patients = visit_counts[visit_counts == args.max_visits].index
-        dataset_selected = dataset[dataset['subject_id'].isin(selected_patients)].copy()
-        filtered_datasets.append(dataset_selected)
-
-    train_df_selected, val_df_selected, test_df_selected = filtered_datasets
+    
+    
+    visit_counts = full_test_df['subject_id'].value_counts()
+    selected_patients = visit_counts[visit_counts == args.max_visits].index
+    dataset_selected = full_test_df[full_test_df['subject_id'].isin(selected_patients)].copy()
+    test_df_selected = dataset_selected
 
     # predictions_list, labels_list, results = [], [], []
 
@@ -512,12 +395,12 @@ def do_ICL_IC(model, prompt):
     landmark_visit = args.max_visits # >>>>>>>>>>>>>>>>>>>>!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!>>>>>>>>>>>>>>>> Change this to the desired landmark visit <<<<<<<
     logger.info(f"Preparing data for Landmark {landmark_visit}")
 
-    train_df = train_df_selected[train_df_selected['landmark_visit'] == landmark_visit].copy()
-    val_df = val_df_selected[val_df_selected['landmark_visit'] == landmark_visit].copy()
+    # train_df = train_df_selected[train_df_selected['landmark_visit'] == landmark_visit].copy()
+    # val_df = val_df_selected[val_df_selected['landmark_visit'] == landmark_visit].copy()
     test_df = test_df_selected[test_df_selected['landmark_visit'] == landmark_visit].copy()
 
-    train_texts = train_df.apply(narrative_prompt, axis=1).tolist()
-    val_texts = val_df.apply(narrative_prompt, axis=1).tolist()
+    # train_texts = train_df.apply(narrative_prompt, axis=1).tolist()
+    # val_texts = val_df.apply(narrative_prompt, axis=1).tolist()
     test_texts = test_df.apply(narrative_prompt, axis=1).tolist()
 
     # if args.when_counting_death == "last_visit":
@@ -530,32 +413,28 @@ def do_ICL_IC(model, prompt):
     #     test_labels = test_df['death_90days_landmark'].tolist()
 
     # Media di lunghezza dei testi
-    avg_train_length = np.mean([len(text.split()) for text in train_texts])
-    avg_val_length = np.mean([len(text.split()) for text in val_texts])
+    # avg_train_length = np.mean([len(text.split()) for text in train_texts])
+    # avg_val_length = np.mean([len(text.split()) for text in val_texts])
     avg_test_length = np.mean([len(text.split()) for text in test_texts])
-    logger.info(f"Average train text length: {avg_train_length:.2f} words")
-    logger.info(f"Average validation text length: {avg_val_length:.2f} words")      
+    # logger.info(f"Average train text length: {avg_train_length:.2f} words")
+    # logger.info(f"Average validation text length: {avg_val_length:.2f} words")      
     logger.info(f"Average test text length: {avg_test_length:.2f} words")
-    logger.info(f"Training on {len(train_texts)} samples, validating on {len(val_texts)}, testing on {len(test_texts)} samples")
-
+    # logger.info(f"Training on {len(train_texts)} samples, validating on {len(val_texts)}, testing on {len(test_texts)} samples")
 
     # Esempio:
-    metrics = compute_truncation_stats(train_texts, tokenizer, max_length=args.max_length, show_plots=False)
-    return(metrics)
+    print(f"Prompt: {prompt}")
+    print(test_texts[45])
+    prompt = test_texts[45]
+    return prompt
     
 
 
 results = []
 
-for model, prompt in product(models, prompts):
-    logger.info(f"model: {model} - prompt: {prompt}")
-    metrics = do_ICL_IC(model, prompt)
-    metrics["model"] = model
-    metrics["prompt"] = prompt
-    results.append(metrics)
+for prompt in prompts:
+    logger.info(f"prompt: {prompt}")
+    prompt = do_prompt_sample(prompt)
+    results.append(prompt)
 
 
-# df_ICL_IC = pd.DataFrame(results)
-df_ICL_IC = pd.read_csv("/root/MIMICIV/src/df_ICL_IC_512_4.csv")
-df_ICL_IC = pd.concat([df_ICL_IC, pd.DataFrame(results)], ignore_index = True)
-df_ICL_IC.to_csv("/root/MIMICIV/src/df_ICL_IC_512_4.csv", index = False)
+
