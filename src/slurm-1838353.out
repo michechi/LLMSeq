@@ -1,0 +1,125 @@
+Starting job 1838353 on gpu-2 on fox at Fri Aug 1 15:59:31 CEST 2025
+
+2025-08-01 15:59:48,829: Argument CI: False
+2025-08-01 15:59:48,829: Argument all_landmarks: True
+2025-08-01 15:59:48,829: Argument batch_size: 8
+2025-08-01 15:59:48,829: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-08-01 15:59:48,829: Argument early: 'loss'
+2025-08-01 15:59:48,829: Argument epochs: 20
+2025-08-01 15:59:48,829: Argument gradient_accumulation_steps: 1
+2025-08-01 15:59:48,829: Argument input_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_df_evo.csv'
+2025-08-01 15:59:48,830: Argument lr: 2e-05
+2025-08-01 15:59:48,830: Argument max_length: 512
+2025-08-01 15:59:48,830: Argument max_visits: 3
+2025-08-01 15:59:48,830: Argument model_name: 'emilyalsentzer/Bio_ClinicalBERT'
+2025-08-01 15:59:48,830: Argument model_type: 'medical'
+2025-08-01 15:59:48,830: Argument patience: 1
+2025-08-01 15:59:48,830: Argument peft: False
+2025-08-01 15:59:48,830: Argument prompt_type: 'full'
+2025-08-01 15:59:48,830: Argument seed: 4550
+2025-08-01 15:59:48,830: Argument test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_test_dod.csv'
+2025-08-01 15:59:48,830: Argument train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_train_dod.csv'
+2025-08-01 15:59:48,830: Argument use_quantization: False
+2025-08-01 15:59:48,830: Argument val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_vali_dod.csv'
+2025-08-01 15:59:48,830: Argument when_counting_death: 'landmark'
+2025-08-01 15:59:48,834: Using prompt type: full
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:79: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:81: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_test_df = pd.read_csv(args.test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+2025-08-01 16:00:25,954: Processing all landmarks from 1 to 3
+2025-08-01 16:00:25,954: Preparing data for Landmark 1
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_utils.py:831: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  return self.fget.__get__(instance, owner)()
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at emilyalsentzer/Bio_ClinicalBERT and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-01 16:00:31,160: Average train text length: 138.90 words
+2025-08-01 16:00:31,160: Average validation text length: 138.07 words
+2025-08-01 16:00:31,160: Average test text length: 139.65 words
+2025-08-01 16:00:31,160: Training on 14472 samples, validating on 1608, testing on 4020 samples
+2025-08-01 16:00:44,773: Fine-tuning at Landmark 1
+2025-08-01 16:00:45,138: Early stopping criterion: loss
+2025-08-01 16:03:01,143: Landmark 1 | Epoch 1/20 | Train Loss: 0.1702 | Val Loss: 0.1296 | Validation AUC: 0.8558 | F1-Score: 0.0000
+2025-08-01 16:03:01,514: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_emilyalsentzer_Bio_ClinicalBERT_4550_landmark1_full_3_512_landmark_all_landmarks_True_20250801_160045_.pt with AUC: 0.8558, F1: 0.0000, Val Loss: 0.1296
+2025-08-01 16:05:17,664: Landmark 1 | Epoch 2/20 | Train Loss: 0.1168 | Val Loss: 0.1357 | Validation AUC: 0.8564 | F1-Score: 0.0000
+2025-08-01 16:05:17,666: No improvement in epoch 2. Current best AUC: 0.8558, F1: 0.0000, Val Loss: 0.1296. Epochs without improvement: 1/1
+2025-08-01 16:05:17,666: Early stopping triggered at epoch 2. Best AUC: 0.8558, F1: 0.0000, Val Loss: 0.1296
+2025-08-01 16:05:17,937: Tempo impiegato per Landmark 1: 273.2 secondi
+2025-08-01 16:05:17,937: Tempo medio per epoca: 136.6 secondi
+2025-08-01 16:05:17,939: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_emilyalsentzer_Bio_ClinicalBERT_4550_landmark1_full_3_512_landmark_all_landmarks_True_20250801_160045_.pt for final evaluation on test set
+2025-08-01 16:05:29,263: Final Test AUC (Landmark 1): 0.8286 | Test F1-Score: 0.0000
+2025-08-01 16:05:29,264: Preparing data for Landmark 2
+Using device: cuda
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at emilyalsentzer/Bio_ClinicalBERT and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-01 16:05:36,311: Average train text length: 254.75 words
+2025-08-01 16:05:36,311: Average validation text length: 253.84 words
+2025-08-01 16:05:36,311: Average test text length: 253.66 words
+2025-08-01 16:05:36,311: Training on 14472 samples, validating on 1608, testing on 4020 samples
+2025-08-01 16:06:01,655: Fine-tuning at Landmark 2
+2025-08-01 16:06:01,659: Early stopping criterion: loss
+2025-08-01 16:08:19,095: Landmark 2 | Epoch 1/20 | Train Loss: 0.2379 | Val Loss: 0.1897 | Validation AUC: 0.8894 | F1-Score: 0.0000
+2025-08-01 16:08:19,400: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_emilyalsentzer_Bio_ClinicalBERT_4550_landmark2_full_3_512_landmark_all_landmarks_True_20250801_160601_.pt with AUC: 0.8894, F1: 0.0000, Val Loss: 0.1897
+2025-08-01 16:10:36,798: Landmark 2 | Epoch 2/20 | Train Loss: 0.1956 | Val Loss: 0.1739 | Validation AUC: 0.9099 | F1-Score: 0.1008
+2025-08-01 16:10:37,100: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_emilyalsentzer_Bio_ClinicalBERT_4550_landmark2_full_3_512_landmark_all_landmarks_True_20250801_160601_.pt with AUC: 0.9099, F1: 0.1008, Val Loss: 0.1739
+2025-08-01 16:12:54,484: Landmark 2 | Epoch 3/20 | Train Loss: 0.1797 | Val Loss: 0.1690 | Validation AUC: 0.9108 | F1-Score: 0.1000
+2025-08-01 16:12:54,801: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_emilyalsentzer_Bio_ClinicalBERT_4550_landmark2_full_3_512_landmark_all_landmarks_True_20250801_160601_.pt with AUC: 0.9108, F1: 0.1000, Val Loss: 0.1690
+2025-08-01 16:15:12,188: Landmark 2 | Epoch 4/20 | Train Loss: 0.1639 | Val Loss: 0.1692 | Validation AUC: 0.8862 | F1-Score: 0.4631
+2025-08-01 16:15:12,189: No improvement in epoch 4. Current best AUC: 0.9108, F1: 0.1000, Val Loss: 0.1690. Epochs without improvement: 1/1
+2025-08-01 16:15:12,189: Early stopping triggered at epoch 4. Best AUC: 0.9108, F1: 0.1000, Val Loss: 0.1690
+2025-08-01 16:15:12,439: Tempo impiegato per Landmark 2: 550.8 secondi
+2025-08-01 16:15:12,440: Tempo medio per epoca: 137.7 secondi
+2025-08-01 16:15:12,441: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_emilyalsentzer_Bio_ClinicalBERT_4550_landmark2_full_3_512_landmark_all_landmarks_True_20250801_160601_.pt for final evaluation on test set
+2025-08-01 16:15:23,748: Final Test AUC (Landmark 2): 0.8950 | Test F1-Score: 0.0468
+2025-08-01 16:15:23,748: Preparing data for Landmark 3
+Using device: cuda
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at emilyalsentzer/Bio_ClinicalBERT and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-01 16:15:33,700: Average train text length: 382.21 words
+2025-08-01 16:15:33,700: Average validation text length: 377.55 words
+2025-08-01 16:15:33,700: Average test text length: 380.77 words
+2025-08-01 16:15:33,700: Training on 14472 samples, validating on 1608, testing on 4020 samples
+2025-08-01 16:16:11,438: Fine-tuning at Landmark 3
+2025-08-01 16:16:11,444: Early stopping criterion: loss
+2025-08-01 16:18:26,564: Landmark 3 | Epoch 1/20 | Train Loss: 0.2816 | Val Loss: 0.1996 | Validation AUC: 0.9438 | F1-Score: 0.6859
+2025-08-01 16:18:26,897: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_emilyalsentzer_Bio_ClinicalBERT_4550_landmark3_full_3_512_landmark_all_landmarks_True_20250801_161611_.pt with AUC: 0.9438, F1: 0.6859, Val Loss: 0.1996
+2025-08-01 16:20:42,360: Landmark 3 | Epoch 2/20 | Train Loss: 0.2102 | Val Loss: 0.2096 | Validation AUC: 0.9413 | F1-Score: 0.6541
+2025-08-01 16:20:42,360: No improvement in epoch 2. Current best AUC: 0.9438, F1: 0.6859, Val Loss: 0.1996. Epochs without improvement: 1/1
+2025-08-01 16:20:42,360: Early stopping triggered at epoch 2. Best AUC: 0.9438, F1: 0.6859, Val Loss: 0.1996
+2025-08-01 16:20:42,611: Tempo impiegato per Landmark 3: 271.2 secondi
+2025-08-01 16:20:42,612: Tempo medio per epoca: 135.6 secondi
+2025-08-01 16:20:42,613: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_emilyalsentzer_Bio_ClinicalBERT_4550_landmark3_full_3_512_landmark_all_landmarks_True_20250801_161611_.pt for final evaluation on test set
+2025-08-01 16:20:53,399: Final Test AUC (Landmark 3): 0.9408 | Test F1-Score: 0.6862
+2025-08-01 16:20:53,400: Saving results to results_medical_True_emilyalsentzer_Bio_ClinicalBERT_landmark_visits3_4550_512_full_20250801_162053.csv
+Using device: cuda
+   Landmark Val AUC  ... Validation Loss Training Time (s)
+0         1  0.8558  ...          0.1296             273.2
+1         2  0.9108  ...          0.1690             550.8
+2         3  0.9438  ...          0.1996             271.2
+
+[3 rows x 9 columns]
+
+Job 1838353 consumed 6.8 billing hours from project ec12.
+
+Submitted 2025-08-01T15:59:06; waited 25.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 6.0 hours
+Elapsed wallclock time:   21.4 minutes
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start   Elapsed  Exit status
+1838353          16            0.0 %  2025-08-01T15:59:31  1287.0 s  0
+1838353.batch    16      1     6.2 %  2025-08-01T15:59:31  1287.0 s  0
+
+Used CPU time:   21.3 CPU minutes
+Unused CPU time: 5.4 CPU hours
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1838353          32.0        
+1838353.batch    32.0    12.1
+
+GPU usage stats:
+Job 1838353 completed at Fri Aug 1 16:20:59 CEST 2025

@@ -1,0 +1,76 @@
+Starting job 1853814 on gpu-15 on fox at Wed Aug 13 14:49:54 CEST 2025
+
+2025-08-13 14:50:12,387: Argument CI: False
+2025-08-13 14:50:12,387: Argument all_landmarks: True
+2025-08-13 14:50:12,387: Argument batch_size: 8
+2025-08-13 14:50:12,387: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-08-13 14:50:12,387: Argument early: 'loss'
+2025-08-13 14:50:12,387: Argument epochs: 20
+2025-08-13 14:50:12,387: Argument gradient_accumulation_steps: 1
+2025-08-13 14:50:12,387: Argument input_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_df_evo.csv'
+2025-08-13 14:50:12,387: Argument lr: 2e-05
+2025-08-13 14:50:12,387: Argument max_length: 2048
+2025-08-13 14:50:12,387: Argument max_visits: 4
+2025-08-13 14:50:12,387: Argument model_name: 'answerdotai/ModernBERT-large'
+2025-08-13 14:50:12,387: Argument model_type: 'general'
+2025-08-13 14:50:12,387: Argument patience: 1
+2025-08-13 14:50:12,387: Argument peft: False
+2025-08-13 14:50:12,387: Argument prompt_type: 'full'
+2025-08-13 14:50:12,387: Argument seed: 4550
+2025-08-13 14:50:12,387: Argument test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_test_dod.csv'
+2025-08-13 14:50:12,387: Argument train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_train_dod.csv'
+2025-08-13 14:50:12,387: Argument use_quantization: False
+2025-08-13 14:50:12,387: Argument val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_vali_dod.csv'
+2025-08-13 14:50:12,388: Argument when_counting_death: 'last_visit'
+2025-08-13 14:50:12,392: Using prompt type: full
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:79: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:81: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_test_df = pd.read_csv(args.test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+2025-08-13 14:50:49,688: Processing all landmarks from 1 to 4
+2025-08-13 14:50:49,688: Preparing data for Landmark 1
+Traceback (most recent call last):
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/models/auto/configuration_auto.py", line 1038, in from_pretrained
+    config_class = CONFIG_MAPPING[config_dict["model_type"]]
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/models/auto/configuration_auto.py", line 740, in __getitem__
+    raise KeyError(key)
+KeyError: 'modernbert'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py", line 240, in <module>
+    main()
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py", line 130, in main
+    model = load_model(args.model_name, args.model_type, tokenizer, args.cache_dir, hf_token, args.peft, args.use_quantization).to(device="cpu")
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/models_training.py", line 41, in load_model
+    model = AutoModelForSequenceClassification.from_pretrained(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/models/auto/auto_factory.py", line 526, in from_pretrained
+    config, kwargs = AutoConfig.from_pretrained(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/models/auto/configuration_auto.py", line 1040, in from_pretrained
+    raise ValueError(
+ValueError: The checkpoint you are trying to load has model type `modernbert` but Transformers does not recognize this architecture. This could be because of an issue with the checkpoint, or because your version of Transformers is out of date.
+
+Job 1853814 consumed 0.3 billing hours from project ec12.
+
+Submitted 2025-08-13T14:49:29; waited 25.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 10.0 hours
+Elapsed wallclock time:   59.0 seconds
+
+Job failed.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+1853814          16            0.0 %  2025-08-13T14:49:54   59.0 s  1
+1853814.batch    16      1     5.5 %  2025-08-13T14:49:54   59.0 s  1
+
+Used CPU time:   51.5 CPU seconds
+Unused CPU time: 14.9 CPU minutes
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1853814          32.0        
+1853814.batch    32.0     2.3
+
+Job 1853814 completed at Wed Aug 13 14:50:54 CEST 2025

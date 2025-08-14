@@ -19,7 +19,15 @@ from sklearn.metrics import roc_auc_score, f1_score
 from huggingface_hub import login
 from collections import Counter
 
+from prompts import (
+    no_narrative_prompt, naive_narrative_prompt, compact_narrative_prompt,
+    full_narrative, full_narrative_no_time, full_narrative_no_time_rnd,
+    compact_no_time_prompt, compact_no_time_prompt_rnd
+)
+
 import matplotlib.pyplot as plt
+
+torch.set_float32_matmul_precision('high')
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s: %(message)s")
 logger = logging.getLogger(__name__)
@@ -34,9 +42,9 @@ def set_seed(seed_value=5550):
     torch.manual_seed(seed_value)
     torch.cuda.manual_seed(seed_value)
     torch.cuda.manual_seed_all(seed_value)
-    # torch.use_deterministic_algorithms(True)
-    # torch.backends.cudnn.deterministic = True
-    # torch.backends.cudnn.benchmark = False
+    torch.use_deterministic_algorithms(True)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Universal finetuning script for LLMs or MedBERT-like models.")
@@ -55,16 +63,26 @@ def parse_args():
                         help="Path to file CSV di training")
     parser.add_argument("--val_csv", type=str, default="/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_vali.csv",
                         help="Path to file CSV di validation")
+
     parser.add_argument("--test_csv", type=str, default="/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_test.csv",
                         help="Path to file CSV di test") # evo as well 
-    parser.add_argument("--prompt_type", type=str, choices=["naive", "compact", "no"], default="compact",
+
+    parser.add_argument("--prompt_type", type=str, choices=["naive", "compact", "compact_no_time", "compact_no_time_rnd", 
+                                                            "no", "full", "full_no_time", "full_no_time_rnd"], default="compact",
                         help="Prompting type to use: 'naive', 'compact'  o 'no' (nessuna narrativa)")
+
     parser.add_argument("--max_visits", type=int, default=3,
                         help="number of visits to consider for each patient (max_visits)")
+
     parser.add_argument("--all_landmarks", action="store_true",
                         help="Process all landmark (from 1 to max_visits) or just the last one")
+                        
     parser.add_argument("--batch_size", type=int, default=8,
                         help="Batch size for DataLoader")
+
+    parser.add_argument("--gradient_accumulation_steps", type=int, default=1,
+                        help="Number of steps for gradient accumulation (useful for large models)")
+
     parser.add_argument("--epochs", type=int, default=20,
                         help="Num epochs for training")
     parser.add_argument("--patience", type=int, default=3,
@@ -141,7 +159,7 @@ def load_model(model_name, model_type, tokenizer, cache_dir, hf_token, use_peft,
 class ClinicalDataset(Dataset):
     def __init__(self, texts, labels, tokenizer, max_length=512): # depending on the model!! 
         self.encodings = tokenizer(
-            texts, truncation=True, padding=True, max_length=max_length
+            texts, truncation=True, padding='max_length', max_length=max_length  # change padding to 'max_length' for consistency instead of True
         )
         self.labels = labels
 
@@ -153,109 +171,9 @@ class ClinicalDataset(Dataset):
     def __len__(self):
         return len(self.labels)
 
-def no_narrative_prompt(row):
-    narrative = "Variables: "
-    if pd.notna(row['diag_text']) and row['diag_text'].strip():
-        narrative += f" {row['diag_text']}"
-    if pd.notna(row['med_text']) and row['med_text'].strip():
-        narrative += f" {row['med_text']}"
-    if pd.notna(row['proc_text']) and row['proc_text'].strip():
-        narrative += f" {row['proc_text']}"
-
-    return narrative
-
-def naive_narrative_prompt(row):
-    narrative = f"Patient is a {row['age_at_landmark']}-year-old {row['gender']}."
-    narrative += f" This is the {row['num_total_visits']} visit."
-    if row['days_since_previous_visit'] != -1:
-        narrative += f" The last visit happened {row['days_since_previous_visit']} days ago."
-    if pd.notna(row['diag_text']) and row['diag_text'].strip():
-        narrative += f" Medical history includes: {row['diag_text']}."
-    if pd.notna(row['med_text']) and row['med_text'].strip():
-        narrative += f" Current medications are: {row['med_text']}."
-    if pd.notna(row['proc_text']) and row['proc_text'].strip():
-        narrative += f" Procedures performed: {row['proc_text']}."
-    # Add explicit prediction question
-    narrative += " Based on this information, what is the probability of mortality within 90 days?"
-    return narrative
-
-def compact_narrative_prompt(row):
-    narrative = f"You are a Doctor.\nWhat is the probability of death in the next 90 days for {row['age_at_landmark']}-year-old {row['gender']} patient?\n"
-    current_visit = row['landmark_visit']
-    type = row['admission_category']
-    narrative += f"Visit number {current_visit} - {type} \n"
-
-    if row['days_since_previous_visit'] != -1:
-        narrative += f"Last visit happened {row['days_since_previous_visit']} days ago."
-
-    # --- Diagnosi ---
-    narrative += "\nDIAGNOSIS HISTORY:"
-    diag_per_visit = ast.literal_eval(row['diag_per_visit'])
-    
-    # Conta frequenze
-    all_diags = []
-    for diags in diag_per_visit.values():
-        all_diags.extend(diags)
-    diag_counts = Counter(all_diags)
-
-    # Diagnosi croniche (almeno 2 visite)
-    chronic_diags = [d for d, c in diag_counts.items() if c >= 2]
-
-    # Diagnosi nuove solo in questa visita
-    current_diags = diag_per_visit[int(current_visit)]
-    new_diags = [d for d in current_diags if diag_counts[d] == 1]
-
-    if chronic_diags:
-        narrative += f"\nChronic diagnoses: {', '.join(chronic_diags)}."
-    if new_diags:
-        narrative += f"\nNew diagnoses in this visit: {', '.join(new_diags)}."
-    if not chronic_diags and not new_diags:
-        narrative += "\nNo diagnoses recorded."
-
-    # --- Farmaci ---
-    narrative += "\nPRESCRIPTIONS HISTORY:"
-    meds_per_visit = ast.literal_eval(row['meds_per_visit'])
-    
-    all_meds = []
-    for meds in meds_per_visit.values():
-        all_meds.extend(meds)
-    med_counts = Counter(all_meds)
-
-    chronic_meds = [m for m, c in med_counts.items() if c >= 2]
-    current_meds = meds_per_visit[int(current_visit)]
-    new_meds = [m for m in current_meds if med_counts[m] == 1]
-
-    if chronic_meds:
-        narrative += f"\nChronic medications: {', '.join(chronic_meds)}."
-    if new_meds:
-        narrative += f"\nNew medications in this visit: {', '.join(new_meds)}."
-    if not chronic_meds and not new_meds:
-        narrative += "\nNo medications recorded."
-
-    # --- Procedure ---
-    narrative += "\nPROCEDURES HISTORY:"
-    proc_per_visit = ast.literal_eval(row['proc_per_visit'])
-
-    all_proc = []
-    for procs in proc_per_visit.values():
-        all_proc.extend(procs)
-    proc_counts = Counter(all_proc)
-
-    chronic_proc = [p for p, c in proc_counts.items() if c >= 2]
-    current_proc = proc_per_visit[int(current_visit)]
-    new_proc = [p for p in current_proc if proc_counts[p] == 1]
-
-    if chronic_proc:
-        narrative += f"\nChronic procedures: {', '.join(chronic_proc)}."
-    if new_proc:
-        narrative += f"\nNew procedures in this visit: {', '.join(new_proc)}."
-    if not chronic_proc and not new_proc:
-        narrative += "\nNo procedures recorded."
-
-    return narrative
-
 def train_and_evaluate(model, train_loader, val_loader, args, landmark_visit):
     device = "cuda" if torch.cuda.is_available() else "cpu"
+    print(f"Using device: {device}")
     model = model.to(device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr)
     total_steps = args.epochs * len(train_loader)
@@ -268,22 +186,26 @@ def train_and_evaluate(model, train_loader, val_loader, args, landmark_visit):
     best_val_loss = float("inf")
     best_f1 = 0.0
     epochs_no_improve = 0
-    best_model_path = get_best_model_path(args.model_name, landmark_visit, args.cache_dir)
+    best_model_path = get_best_model_path(args, landmark_visit)
     
     logger.info(f"Early stopping criterion: {args.early}")
     
     for epoch in range(args.epochs):
         model.train()
         total_train_loss = 0
-        for batch in train_loader:
-            optimizer.zero_grad()
+        optimizer.zero_grad()
+        for step, batch in enumerate(train_loader):
             inputs = {k: v.to(device) for k, v in batch.items()}
             outputs = model(**inputs)
-            loss = outputs.loss
+            loss = outputs.loss / args.gradient_accumulation_steps
             loss.backward()
-            optimizer.step()
-            scheduler.step()
             total_train_loss += loss.item()
+
+            if (step + 1) % args.gradient_accumulation_steps == 0 or (step + 1) == len(train_loader):
+                optimizer.step()
+                scheduler.step()
+                optimizer.zero_grad()
+        
         avg_train_loss = total_train_loss / len(train_loader)
 
         model.eval()
@@ -314,54 +236,40 @@ def train_and_evaluate(model, train_loader, val_loader, args, landmark_visit):
             f"F1-Score: {val_f1:.4f}"
         )
         
-        # Early stopping based on validation AUC
+        # Early stopping logic
+        condition = False
         if args.early == "auc":
-            if val_auc > best_auc:
-                best_auc = val_auc
-                best_f1 = val_f1
-                best_val_loss = avg_val_loss
-                epochs_no_improve = 0
-                torch.save(model.state_dict(), best_model_path)
-            else:
-                epochs_no_improve += 1
-                if epochs_no_improve >= args.patience:
-                    logger.info(f"Early stopping triggered at epoch {epoch+1}")
-                    break
+            condition = val_auc > best_auc
         elif args.early == "loss":
-            if avg_val_loss < best_val_loss:
-                best_auc = val_auc
-                best_f1 = val_f1
-                best_val_loss = avg_val_loss
-                epochs_no_improve = 0
-                torch.save(model.state_dict(), best_model_path)
-            else:
-                epochs_no_improve += 1
-                if epochs_no_improve >= args.patience:
-                    logger.info(f"Early stopping triggered at epoch {epoch+1}")
-                    break
+            condition = avg_val_loss < best_val_loss
         elif args.early == "f1":
-            if val_f1 > best_f1:  
-                best_auc = val_auc
-                best_f1 = val_f1
-                best_val_loss = avg_val_loss
-                epochs_no_improve = 0
-                torch.save(model.state_dict(), best_model_path)
-            else:
-                epochs_no_improve += 1
-                if epochs_no_improve >= args.patience:
-                    logger.info(f"Early stopping triggered at epoch {epoch+1}")
-                    break
+            condition = val_f1 > best_f1
         else:
             raise ValueError("Invalid early stopping criterion. Use 'auc', 'loss' or 'f1'.")
+
+        if condition == True:
+            best_auc = val_auc
+            best_f1 = val_f1
+            best_val_loss = avg_val_loss
+            epochs_no_improve = 0
+            torch.save(model.state_dict(), best_model_path)
+            logger.info(f"New best model saved at {best_model_path} with AUC: {best_auc:.4f}, F1: {best_f1:.4f}, Val Loss: {best_val_loss:.4f}")
+        else:
+            epochs_no_improve += 1
+            logger.info(f"No improvement in epoch {epoch+1}. Current best AUC: {best_auc:.4f}, F1: {best_f1:.4f}, Val Loss: {best_val_loss:.4f}. "
+                        f"Epochs without improvement: {epochs_no_improve}/{args.patience}")
+            if epochs_no_improve >= args.patience:
+                logger.info(f"Early stopping triggered at epoch {epoch+1}. Best AUC: {best_auc:.4f}, F1: {best_f1:.4f}, Val Loss: {best_val_loss:.4f}")
+                break
 
     model.load_state_dict(torch.load(best_model_path))
     return best_auc, best_model_path, best_f1, best_val_loss, epoch + 1
 
-def get_best_model_path(model_name, landmark_visit, cache_dir):
+def get_best_model_path(args, landmark_visit):
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    safe_model_name = model_name.replace("/", "_")
-    filename = f"best_model_{safe_model_name}_landmark{landmark_visit}_{timestamp}.pt"
-    best_model_dir = os.path.join(cache_dir, 'best')
+    safe_model_name = args.model_name.replace("/", "_")
+    filename = f"best_model_{safe_model_name}_landmark{landmark_visit}_{args.prompt_type}_{args.max_visits}_{args.max_length}_all_landmarks_{args.all_landmarks}_{timestamp}_.pt"
+    best_model_dir = os.path.join(args.cache_dir, 'best')
     os.makedirs(best_model_dir, exist_ok=True)
     return os.path.join(best_model_dir, filename)
 
@@ -386,22 +294,14 @@ def main():
     # Set seed for reproducibility
     set_seed(args.seed)
 
-    hf_token = os.getenv("HF_TOKEN")
+    # hf_token = os.getenv("HF_TOKEN")
+    hf_token = "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"
     if args.model_type == "llm" and hf_token is None:
         raise ValueError("Set the HF_TOKEN environment variable for authentication.")
     if args.model_type == "llm":
         login(hf_token)
 
     tokenizer = load_tokenizer(args.model_name, args.model_type, hf_token, args.cache_dir)
-    model = load_model(args.model_name, args.model_type, tokenizer, args.cache_dir, hf_token, args.peft, args.use_quantization).to(device="cpu")
-    
-    if tokenizer.pad_token is None:
-        logger.warning("Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].")
-        tokenizer.add_special_tokens({'pad_token': '[PAD]'})
-        model.resize_token_embeddings(len(tokenizer))
-        
-    # After having resized the model, move it to the appropriate device    
-    model.to("cuda" if torch.cuda.is_available() else "cpu")
     
     # if re.search("evo.csv$", args.input_csv):
     #     narrative_prompt = compact_narrative_prompt
@@ -413,13 +313,21 @@ def main():
         narrative_prompt = naive_narrative_prompt
     elif args.prompt_type == "compact":
         narrative_prompt = compact_narrative_prompt
+    elif args.prompt_type == "compact_no_time":
+        narrative_prompt = compact_no_time_prompt
+    elif args.prompt_type == "compact_no_time_rnd":
+        narrative_prompt = compact_no_time_prompt_rnd
     elif args.prompt_type == "no":
         narrative_prompt = no_narrative_prompt
+    elif args.prompt_type == "full":
+        narrative_prompt = full_narrative
+    elif args.prompt_type == "full_no_time":
+        narrative_prompt = full_narrative_no_time
+    elif args.prompt_type == "full_no_time_rnd":
+        narrative_prompt = full_narrative_no_time_rnd
     else:
         raise ValueError("Invalid prompt type. Use 'naive' or 'compact'.")
     logger.info(f"Using prompt type: {args.prompt_type}")
-    
-    logger.info(f"Model type: {args.model_type}, Model name: {args.model_name}") 
 
     # Reading data
     #landmark_df = pd.read_csv(args.input_csv, na_values=['', 'None', 'NaN', 'na', 'nan'])
@@ -456,6 +364,17 @@ def main():
     for landmark_visit in range(start, end):
         logger.info(f"Preparing data for Landmark {landmark_visit}")
         
+        # Load model
+        model = load_model(args.model_name, args.model_type, tokenizer, args.cache_dir, hf_token, args.peft, args.use_quantization).to(device="cpu")
+    
+        if tokenizer.pad_token is None:
+            logger.warning("Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].")
+            tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+            model.resize_token_embeddings(len(tokenizer))
+            
+        # After having resized the model, move it to the appropriate device    
+        model.to("cuda" if torch.cuda.is_available() else "cpu")
+
         # df_subset = df_selected[df_selected['landmark_visit'] == landmark_visit]
         # patients = df_subset['subject_id'].unique()
         # train_patients, test_patients = train_test_split(
@@ -500,10 +419,12 @@ def main():
         logger.info(f"Tempo medio per epoca: {elapsed_seconds / epochs_done:.1f} secondi") # This is the important one
 
         # VALUTAZIONE FINALE SUL TEST SET
-        model.eval()
-        test_preds, test_labels = [], []
         device = "cuda" if torch.cuda.is_available() else "cpu"
         model = model.to(device)
+        logger.info(f"Loading best model from {best_model_path} for final evaluation on test set")
+        model.load_state_dict(torch.load(best_model_path, map_location=device))
+        model.eval()
+        test_preds, test_labels = [], []
 
         with torch.no_grad():
             for batch in test_loader:

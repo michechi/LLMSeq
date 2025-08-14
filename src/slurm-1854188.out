@@ -1,0 +1,133 @@
+Starting job 1854188 on gpu-12 on fox at Thu Aug 14 10:06:07 CEST 2025
+
+2025-08-14 10:06:22,146: Argument CI: False
+2025-08-14 10:06:22,147: Argument all_landmarks: True
+2025-08-14 10:06:22,147: Argument batch_size: 8
+2025-08-14 10:06:22,147: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-08-14 10:06:22,147: Argument early: 'loss'
+2025-08-14 10:06:22,147: Argument epochs: 20
+2025-08-14 10:06:22,147: Argument gradient_accumulation_steps: 1
+2025-08-14 10:06:22,147: Argument input_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_df_evo.csv'
+2025-08-14 10:06:22,147: Argument lr: 2e-05
+2025-08-14 10:06:22,147: Argument max_length: 2048
+2025-08-14 10:06:22,147: Argument max_visits: 4
+2025-08-14 10:06:22,147: Argument model_name: 'meta-llama/Llama-3.1-8B'
+2025-08-14 10:06:22,147: Argument model_type: 'general'
+2025-08-14 10:06:22,147: Argument patience: 1
+2025-08-14 10:06:22,147: Argument peft: True
+2025-08-14 10:06:22,147: Argument prompt_type: 'compact'
+2025-08-14 10:06:22,147: Argument seed: 4550
+2025-08-14 10:06:22,147: Argument test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_test_dod.csv'
+2025-08-14 10:06:22,147: Argument train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_train_dod.csv'
+2025-08-14 10:06:22,147: Argument use_quantization: False
+2025-08-14 10:06:22,147: Argument val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_vali_dod.csv'
+2025-08-14 10:06:22,147: Argument when_counting_death: 'last_visit'
+2025-08-14 10:06:22,171: Using prompt type: compact
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:79: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:81: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_test_df = pd.read_csv(args.test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+2025-08-14 10:06:57,836: Processing all landmarks from 1 to 4
+2025-08-14 10:06:57,836: Preparing data for Landmark 1
+2025-08-14 10:07:02,201: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:15<00:46, 15.51s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:33<00:34, 17.22s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:51<00:17, 17.20s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:51<00:00, 10.72s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:51<00:00, 12.98s/it]
+Some weights of LlamaForSequenceClassification were not initialized from the model checkpoint at meta-llama/Llama-3.1-8B and are newly initialized: ['score.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-14 10:07:56,158: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-08-14 10:08:34,771: Example train text: You are a Doctor.
+What is the probability of death in the next 90 days for 43-year-old F patient?
+Visit number 1 - EMERGENCY 
+
+DIAGNOSIS HISTORY:
+New diagnoses in this visit: Diverticulitis of colon (without mention of hemorrhage); Acute kidney failure, unspecified; Abscess of intestine; Other postoperative infection; Cellulitis and abscess of trunk; Methicillin susceptible Staphylococcus aureus in conditions classified elsewhere and of unspecified site; Removal of other organ (partial) (total) causing abnormal patient reaction, or later complication, without mention of misadventure at time of operation; Hypovolemia; Nausea with vomiting.
+PRESCRIPTIONS HISTORY:
+New medications in this visit: NS; Potassium Chloride; OxycoDONE (Immediate Release) ; Magnesium Citrate; SW; Magnesium Sulfate; Prochlorperazine; Lorazepam; HYDROmorphone (Dilaudid); Iso-Osmotic Dextrose; Piperacillin-Tazobactam Na; Potassium Chl 20 mEq / 1000 mL D5 1/2 NS; Insulin; LR; Acetaminophen; Ondansetron; Ketorolac; OxycoDONE-Acetaminophen Elixir; Sodium Chloride 0.9%  Flush; Docusate Sodium; Hydrocodone-Acetaminophen; D5W; Clindamycin; Fluticasone Propionate NASAL; Ciprofloxacin; Pantoprazole; Metoclopramide; Calcium Carbonate; Vancomycin; Cephalexin; Heparin; Bupivacaine 0.5%; Promethazine HCl; D5 1/2NS; Hydrocortisone (Rectal) 2.5% Cream; Morphine Sulfate; Escitalopram Oxalate; Maalox/Diphenhydramine/Lidocaine; Nafcillin; HydrOXYzine; MetRONIDAZOLE (FLagyl); Ibuprofen.
+PROCEDURES HISTORY:
+New procedures in this visit: Open and other sigmoidectomy.
+2025-08-14 10:08:34,837: Average train text length: 148.15 words
+2025-08-14 10:08:34,837: Average validation text length: 152.37 words
+2025-08-14 10:08:34,837: Average test text length: 149.44 words
+2025-08-14 10:08:34,837: Training on 8040 samples, validating on 894, testing on 2234 samples
+2025-08-14 10:08:41,799: Fine-tuning at Landmark 1
+2025-08-14 10:08:41,809: Early stopping criterion: loss
+trainable params: 6,823,936 || all params: 7,511,756,800 || trainable%: 0.0908
+Using device: cuda
+Traceback (most recent call last):
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py", line 240, in <module>
+    main()
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py", line 183, in main
+    best_auc, best_model_path, best_val_f1, best_val_loss, epochs_done = train_and_evaluate(
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/models_training.py", line 95, in train_and_evaluate
+    outputs = model(**inputs)
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/peft/peft_model.py", line 1647, in forward
+    return self.base_model(
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/peft/tuners/tuners_utils.py", line 216, in forward
+    return self.model.forward(*args, **kwargs)
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 919, in forward
+    transformer_outputs = self.model(
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 589, in forward
+    layer_outputs = decoder_layer(
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 332, in forward
+    hidden_states, self_attn_weights = self.self_attn(
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 266, in forward
+    query_states = self.q_proj(hidden_states).view(hidden_shape).transpose(1, 2)
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/peft/tuners/lora/layer.py", line 769, in forward
+    result = result + lora_B(lora_A(dropout(x))) * scaling
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/torch/nn/modules/dropout.py", line 70, in forward
+    return F.dropout(input, self.p, self.training, self.inplace)
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/torch/nn/functional.py", line 1425, in dropout
+    _VF.dropout_(input, p, training) if inplace else _VF.dropout(input, p, training)
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 256.00 MiB. GPU 0 has a total capacity of 44.43 GiB of which 54.62 MiB is free. Including non-PyTorch memory, this process has 44.37 GiB memory in use. Of the allocated memory 43.73 GiB is allocated by PyTorch, and 349.06 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+
+Job 1854188 consumed 0.8 billing hours from project ec12.
+
+Submitted 2025-08-14T10:05:40; waited 27.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 4.0 hours
+Elapsed wallclock time:   2.7 minutes
+
+Job failed.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+1854188          16            0.0 %  2025-08-14T10:06:07  160.0 s  1
+1854188.batch    16      1    15.6 %  2025-08-14T10:06:07  160.0 s  1
+
+Used CPU time:   6.6 CPU minutes
+Unused CPU time: 36.0 CPU minutes
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1854188          32.0        
+1854188.batch    32.0    27.8
+
+Job 1854188 completed at Thu Aug 14 10:08:47 CEST 2025

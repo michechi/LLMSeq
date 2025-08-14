@@ -1,0 +1,107 @@
+Starting job 1853820 on gpu-15 on fox at Wed Aug 13 14:54:25 CEST 2025
+
+2025-08-13 14:54:50,236: Argument CI: False
+2025-08-13 14:54:50,237: Argument all_landmarks: True
+2025-08-13 14:54:50,237: Argument batch_size: 8
+2025-08-13 14:54:50,237: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-08-13 14:54:50,237: Argument early: 'loss'
+2025-08-13 14:54:50,237: Argument epochs: 20
+2025-08-13 14:54:50,237: Argument gradient_accumulation_steps: 1
+2025-08-13 14:54:50,237: Argument input_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_df_evo.csv'
+2025-08-13 14:54:50,237: Argument lr: 2e-05
+2025-08-13 14:54:50,238: Argument max_length: 512
+2025-08-13 14:54:50,238: Argument max_visits: 4
+2025-08-13 14:54:50,238: Argument model_name: 'answerdotai/ModernBERT-large'
+2025-08-13 14:54:50,238: Argument model_type: 'general'
+2025-08-13 14:54:50,238: Argument patience: 1
+2025-08-13 14:54:50,238: Argument peft: False
+2025-08-13 14:54:50,238: Argument prompt_type: 'compact'
+2025-08-13 14:54:50,238: Argument seed: 4550
+2025-08-13 14:54:50,238: Argument test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_test_dod.csv'
+2025-08-13 14:54:50,238: Argument train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_train_dod.csv'
+2025-08-13 14:54:50,238: Argument use_quantization: False
+2025-08-13 14:54:50,238: Argument val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_vali_dod.csv'
+2025-08-13 14:54:50,238: Argument when_counting_death: 'landmark'
+2025-08-13 14:54:50,303: Using prompt type: compact
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:79: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:81: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_test_df = pd.read_csv(args.test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+2025-08-13 14:55:26,208: Processing all landmarks from 1 to 4
+2025-08-13 14:55:26,208: Preparing data for Landmark 1
+Could not set the permissions on the file '/cluster/work/projects/ec12/michechi/cache/models--answerdotai--ModernBERT-large/blobs/d78aa50c890c167d8700301e5580164466e51fa5.incomplete'. Error: [Errno 2] No such file or directory: '/cluster/work/projects/ec12/michechi/cache/models--answerdotai--ModernBERT-large/blobs/d78aa50c890c167d8700301e5580164466e51fa5.incomplete'.
+Continuing without setting permissions.
+2025-08-13 14:55:26,761: Could not set the permissions on the file '/cluster/work/projects/ec12/michechi/cache/models--answerdotai--ModernBERT-large/blobs/d78aa50c890c167d8700301e5580164466e51fa5.incomplete'. Error: [Errno 2] No such file or directory: '/cluster/work/projects/ec12/michechi/cache/models--answerdotai--ModernBERT-large/blobs/d78aa50c890c167d8700301e5580164466e51fa5.incomplete'.
+Continuing without setting permissions.
+Traceback (most recent call last):
+  File "/usr/lib64/python3.9/shutil.py", line 825, in move
+    os.rename(src, real_dst)
+FileNotFoundError: [Errno 2] No such file or directory: '/cluster/work/projects/ec12/michechi/cache/models--answerdotai--ModernBERT-large/blobs/d78aa50c890c167d8700301e5580164466e51fa5.incomplete' -> '/cluster/work/projects/ec12/michechi/cache/models--answerdotai--ModernBERT-large/blobs/d78aa50c890c167d8700301e5580164466e51fa5'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/huggingface_hub/file_download.py", line 1787, in _copy_no_matter_what
+    shutil.copy2(src, dst)
+  File "/usr/lib64/python3.9/shutil.py", line 444, in copy2
+    copyfile(src, dst, follow_symlinks=follow_symlinks)
+  File "/usr/lib64/python3.9/shutil.py", line 264, in copyfile
+    with open(src, 'rb') as fsrc:
+FileNotFoundError: [Errno 2] No such file or directory: '/cluster/work/projects/ec12/michechi/cache/models--answerdotai--ModernBERT-large/blobs/d78aa50c890c167d8700301e5580164466e51fa5.incomplete'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py", line 240, in <module>
+    main()
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py", line 129, in main
+    tokenizer = load_tokenizer(args.model_name, args.model_type, hf_token, args.cache_dir)    
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/models_training.py", line 19, in load_tokenizer
+    tokenizer = AutoTokenizer.from_pretrained(
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/transformers/models/auto/tokenization_auto.py", line 934, in from_pretrained
+    return tokenizer_class.from_pretrained(pretrained_model_name_or_path, *inputs, **kwargs)
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/transformers/tokenization_utils_base.py", line 1955, in from_pretrained
+    resolved_config_file = cached_file(
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/transformers/utils/hub.py", line 403, in cached_file
+    resolved_file = hf_hub_download(
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/huggingface_hub/file_download.py", line 1008, in hf_hub_download
+    return _hf_hub_download_to_cache_dir(
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/huggingface_hub/file_download.py", line 1161, in _hf_hub_download_to_cache_dir
+    _download_to_tmp_and_move(
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/huggingface_hub/file_download.py", line 1735, in _download_to_tmp_and_move
+    _chmod_and_move(incomplete_path, destination_path)
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/huggingface_hub/file_download.py", line 1776, in _chmod_and_move
+    shutil.move(str(src), str(dst), copy_function=_copy_no_matter_what)
+  File "/usr/lib64/python3.9/shutil.py", line 845, in move
+    copy_function(src, real_dst)
+  File "/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/huggingface_hub/file_download.py", line 1790, in _copy_no_matter_what
+    shutil.copyfile(src, dst)
+  File "/usr/lib64/python3.9/shutil.py", line 264, in copyfile
+    with open(src, 'rb') as fsrc:
+FileNotFoundError: [Errno 2] No such file or directory: '/cluster/work/projects/ec12/michechi/cache/models--answerdotai--ModernBERT-large/blobs/d78aa50c890c167d8700301e5580164466e51fa5.incomplete'
+
+Job 1853820 consumed 0.3 billing hours from project ec12.
+
+Submitted 2025-08-13T14:54:18; waited 7.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 10.0 hours
+Elapsed wallclock time:   1.1 minutes
+
+Job failed.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+1853820          16            0.0 %  2025-08-13T14:54:25   64.0 s  1
+1853820.batch    16      1     4.7 %  2025-08-13T14:54:25   64.0 s  1
+
+Used CPU time:   48.3 CPU seconds
+Unused CPU time: 16.3 CPU minutes
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1853820          32.0        
+1853820.batch    32.0     5.4
+
+Job 1853820 completed at Wed Aug 13 14:55:29 CEST 2025

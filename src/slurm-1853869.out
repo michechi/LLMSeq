@@ -1,0 +1,184 @@
+Starting job 1853869 on gpu-15 on fox at Wed Aug 13 16:54:09 CEST 2025
+
+2025-08-13 16:54:34,871: Argument CI: False
+2025-08-13 16:54:34,871: Argument all_landmarks: True
+2025-08-13 16:54:34,871: Argument batch_size: 8
+2025-08-13 16:54:34,871: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-08-13 16:54:34,871: Argument early: 'loss'
+2025-08-13 16:54:34,871: Argument epochs: 20
+2025-08-13 16:54:34,871: Argument gradient_accumulation_steps: 1
+2025-08-13 16:54:34,871: Argument input_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_df_evo.csv'
+2025-08-13 16:54:34,871: Argument lr: 2e-05
+2025-08-13 16:54:34,871: Argument max_length: 2048
+2025-08-13 16:54:34,871: Argument max_visits: 4
+2025-08-13 16:54:34,871: Argument model_name: 'answerdotai/ModernBERT-large'
+2025-08-13 16:54:34,871: Argument model_type: 'general'
+2025-08-13 16:54:34,871: Argument patience: 1
+2025-08-13 16:54:34,871: Argument peft: False
+2025-08-13 16:54:34,871: Argument prompt_type: 'no'
+2025-08-13 16:54:34,871: Argument seed: 4550
+2025-08-13 16:54:34,871: Argument test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_test_dod.csv'
+2025-08-13 16:54:34,871: Argument train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_train_dod.csv'
+2025-08-13 16:54:34,872: Argument use_quantization: False
+2025-08-13 16:54:34,872: Argument val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_vali_dod.csv'
+2025-08-13 16:54:34,872: Argument when_counting_death: 'last_visit'
+2025-08-13 16:54:34,929: Using prompt type: no
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:79: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:81: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_test_df = pd.read_csv(args.test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+2025-08-13 16:55:11,840: Processing all landmarks from 1 to 4
+2025-08-13 16:55:11,840: Preparing data for Landmark 1
+2025-08-13 16:55:17,326: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+Some weights of ModernBertForSequenceClassification were not initialized from the model checkpoint at answerdotai/ModernBERT-large and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-13 16:55:21,612: Example train text: Based on this information, what is the probability of mortality within 90 days?
+Cellulitis and abscess of trunk; Diverticulitis of colon (without mention of hemorrhage); Methicillin susceptible Staphylococcus aureus in conditions classified elsewhere and of unspecified site; Hypovolemia; Acute kidney failure, unspecified; Other postoperative infection; Nausea with vomiting; Abscess of intestine; Removal of other organ (partial) (total) causing abnormal patient reaction, or later complication, without mention of misadventure at time of operation
+Ondansetron; Fluticasone Propionate NASAL; OxycoDONE-Acetaminophen Elixir; Docusate Sodium; D5W; Ciprofloxacin; Piperacillin-Tazobactam Na; Potassium Chl 20 mEq / 1000 mL D5 1/2 NS; Calcium Carbonate; Escitalopram Oxalate; HYDROmorphone (Dilaudid); OxycoDONE (Immediate Release) ; Morphine Sulfate; Acetaminophen; Lorazepam; Hydrocodone-Acetaminophen; Bupivacaine 0.5%; SW; Potassium Chloride; Heparin; NS; Nafcillin; Clindamycin; Magnesium Citrate; Metoclopramide; Magnesium Sulfate; Vancomycin; Ibuprofen; D5 1/2NS; HydrOXYzine; Promethazine HCl; Hydrocortisone (Rectal) 2.5% Cream; Ketorolac; Cephalexin; Insulin; Sodium Chloride 0.9%  Flush; LR; Prochlorperazine; MetRONIDAZOLE (FLagyl); Maalox/Diphenhydramine/Lidocaine; Iso-Osmotic Dextrose; Pantoprazole
+0.25 mg of HYDROmorphone (Dilaudid) in SYR through IVPCA; 0.12 mg of HYDROmorphone (Dilaudid) in SYR through IVPCA; 4 mL/hr of Bupivacaine 0.5% in VIAL through SC; 50 mL of SW in BAG through IV; 40 mEq of Potassium Chloride in mL through IV; 10 mg of Metoclopramide in VIAL through IV; 1-2 TAB of Hydrocodone-Acetaminophen in TAB through PO; 10 mg of Escitalopram Oxalate in TAB through PO; 900 mg of Clindamycin in mL through IV; 0.125 mg of HYDROmorphone (Dilaudid) in SYR through IV; 5-10 mg of OxycoDONE (Immediate Release)  in TAB through PO; 200 mL of Iso-Osmotic Dextrose in mL through IV; 325-650 mg of Acetaminophen in TAB through PO; 300 mL of Magnesium Citrate in BTL through PO; 500 mL of NS in mL through IV; 40 mg of Pantoprazole in TAB through PO; 500 mg of Cephalexin in BTL through ORAL; 250 mL of NS in mL through IV; 400 mg of Ciprofloxacin in mL through IV; 650 mg of Acetaminophen in TAB through PO; 30 mg of Ketorolac in VIAL through IV; 0.5 mg of Lorazepam in TAB through PO; 4.5 g of Piperacillin-Tazobactam Na in BAG through IV; 6.25 mg of Promethazine HCl in AMP through IV; 1000 mg of Vancomycin in BAG through IV; 8 mg of Ondansetron in VIAL through IV; 5 mg of OxycoDONE (Immediate Release)  in TAB through PO; 1 mg of Lorazepam in TAB through PO; 50 mL of D5W in mL through IV; 4 mg of Ondansetron in VIAL through IV; 1 Appl of Hydrocortisone (Rectal) 2.5% Cream in TUBE through PR; 600 mg of Clindamycin in mL through IV; 0.5 mg of Lorazepam in mL through IV; 25 mg of Prochlorperazine in SUPP through PR; 10 mg of Prochlorperazine in VIAL through IV; 250 mL of D5W in mL through IV; 500-1000 mg of Acetaminophen in TAB through PO; 15 mg of Ketorolac in VIAL through IV; 600 mg of Ibuprofen in TAB through PO; 0.5 mg of HYDROmorphone (Dilaudid) in SYR through IV; 20 mEq of Potassium Chloride in mL through IV; 0.25 mg of HYDROmorphone (Dilaudid) in SYR through IV; 5-10 mL of OxycoDONE-Acetaminophen Elixir in UDCUP through PO; 1000 mL of D5 1/2NS in mL through IV; 15-30 mL of Maalox/Diphenhydramine/Lidocaine in BTL through PO; 0 UNIT of Insulin in VIAL through SC; 25 mg of HydrOXYzine in VIAL through IM; 10 mg of Metoclopramide in TAB through PO; 1000 mL of Potassium Chl 20 mEq / 1000 mL D5 1/2 NS in BAG through IV; 100 mL of NS in mL through IV; 650 mg of Acetaminophen in SUPP through PR; 325-650 mg of Acetaminophen in SUPP through PR; 1 mg of Morphine Sulfate in SYR through IVPCA; 2 gm of Magnesium Sulfate in BAG through IV; 100 mg of Docusate Sodium in CAP through PO; 500 mg of Calcium Carbonate in TAB through PO; 10 mg of Prochlorperazine in VIAL through IM; 2 gm of Nafcillin in BAG through IV; 500 mg of MetRONIDAZOLE (FLagyl) in BAG through IV; 100 mL of Iso-Osmotic Dextrose in mL through IV; 1 SPRY of Fluticasone Propionate NASAL in AERO through NU; 5000 UNIT of Heparin in mL through SC; 1000 mL of LR in BAG through IV; 3 mL of Sodium Chloride 0.9%  Flush in SYR through IV; 500 mg of Cephalexin in CAP through PO
+2025-08-13 16:55:21,747: Average train text length: 334.71 words
+2025-08-13 16:55:21,748: Average validation text length: 349.97 words
+2025-08-13 16:55:21,748: Average test text length: 338.09 words
+2025-08-13 16:55:21,748: Training on 8040 samples, validating on 894, testing on 2234 samples
+2025-08-13 16:55:34,076: Fine-tuning at Landmark 1
+2025-08-13 16:55:34,081: Early stopping criterion: loss
+/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/networkx/utils/backends.py:135: RuntimeWarning: networkx backend defined more than once: nx-loopback
+  backends.update(_get_backends("networkx.backends"))
+2025-08-13 17:06:36,751: Landmark 1 | Epoch 1/20 | Train Loss: 0.6786 | Val Loss: 0.4681 | Validation AUC: 0.6162 | F1-Score: 0.0000
+2025-08-13 17:06:37,316: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark1_no_4_2048_last_visit_all_landmarks_True_20250813_165534_.pt with AUC: 0.6162, F1: 0.0000, Val Loss: 0.4681
+2025-08-13 17:17:23,766: Landmark 1 | Epoch 2/20 | Train Loss: 0.4750 | Val Loss: 0.4611 | Validation AUC: 0.6477 | F1-Score: 0.0000
+2025-08-13 17:17:24,297: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark1_no_4_2048_last_visit_all_landmarks_True_20250813_165534_.pt with AUC: 0.6477, F1: 0.0000, Val Loss: 0.4611
+2025-08-13 17:28:10,879: Landmark 1 | Epoch 3/20 | Train Loss: 0.4631 | Val Loss: 0.4523 | Validation AUC: 0.6691 | F1-Score: 0.0000
+2025-08-13 17:28:11,425: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark1_no_4_2048_last_visit_all_landmarks_True_20250813_165534_.pt with AUC: 0.6691, F1: 0.0000, Val Loss: 0.4523
+2025-08-13 17:38:56,925: Landmark 1 | Epoch 4/20 | Train Loss: 0.4601 | Val Loss: 0.4476 | Validation AUC: 0.6915 | F1-Score: 0.0000
+2025-08-13 17:38:57,466: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark1_no_4_2048_last_visit_all_landmarks_True_20250813_165534_.pt with AUC: 0.6915, F1: 0.0000, Val Loss: 0.4476
+2025-08-13 17:49:42,701: Landmark 1 | Epoch 5/20 | Train Loss: 0.4532 | Val Loss: 0.4438 | Validation AUC: 0.7014 | F1-Score: 0.0000
+2025-08-13 17:49:43,245: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark1_no_4_2048_last_visit_all_landmarks_True_20250813_165534_.pt with AUC: 0.7014, F1: 0.0000, Val Loss: 0.4438
+2025-08-13 18:00:28,403: Landmark 1 | Epoch 6/20 | Train Loss: 0.4502 | Val Loss: 0.4567 | Validation AUC: 0.6975 | F1-Score: 0.0118
+2025-08-13 18:00:28,403: No improvement in epoch 6. Current best AUC: 0.7014, F1: 0.0000, Val Loss: 0.4438. Epochs without improvement: 1/1
+2025-08-13 18:00:28,403: Early stopping triggered at epoch 6. Best AUC: 0.7014, F1: 0.0000, Val Loss: 0.4438
+2025-08-13 18:00:28,979: Tempo impiegato per Landmark 1: 3894.9 secondi
+2025-08-13 18:00:28,980: Tempo medio per epoca: 649.2 secondi
+2025-08-13 18:00:28,982: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark1_no_4_2048_last_visit_all_landmarks_True_20250813_165534_.pt for final evaluation on test set
+2025-08-13 18:01:11,917: Final Test AUC (Landmark 1): 0.6918 | Test F1-Score: 0.0000
+2025-08-13 18:01:11,917: Preparing data for Landmark 2
+2025-08-13 18:01:14,680: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+Some weights of ModernBertForSequenceClassification were not initialized from the model checkpoint at answerdotai/ModernBERT-large and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-13 18:01:16,349: Example train text: Based on this information, what is the probability of mortality within 90 days?
+Cellulitis and abscess of trunk; Diverticulosis of colon (without mention of hemorrhage); Diverticulitis of colon (without mention of hemorrhage); Methicillin susceptible Staphylococcus aureus in conditions classified elsewhere and of unspecified site; Hypovolemia; Acute kidney failure, unspecified; Other postoperative infection; Nausea with vomiting; Abscess of intestine; Esophageal reflux; Other specified aftercare following surgery; Removal of other organ (partial) (total) causing abnormal patient reaction, or later complication, without mention of misadventure at time of operation
+Ondansetron; Fluticasone Propionate NASAL; Ondansetron ODT; OxycoDONE-Acetaminophen Elixir; Docusate Sodium; D5W; Ciprofloxacin; Piperacillin-Tazobactam Na; Potassium Chl 20 mEq / 1000 mL D5 1/2 NS; Calcium Carbonate; Escitalopram Oxalate; HYDROmorphone (Dilaudid); OxycoDONE (Immediate Release) ; Morphine Sulfate; Promethazine; Acetaminophen; Lorazepam; Hydrocodone-Acetaminophen; Bupivacaine 0.5%; SW; Potassium Chloride; Heparin; NS; Nafcillin; Clindamycin; Magnesium Citrate; Metoclopramide; Magnesium Sulfate; Vancomycin; Ibuprofen; Ranitidine; D5 1/2NS; HydrOXYzine; Promethazine HCl; Hydrocortisone (Rectal) 2.5% Cream; Ketorolac; Cephalexin; Insulin; Sodium Chloride 0.9%  Flush; LR; Prochlorperazine; MetRONIDAZOLE (FLagyl); Maalox/Diphenhydramine/Lidocaine; Iso-Osmotic Dextrose; Pantoprazole
+0.25 mg of HYDROmorphone (Dilaudid) in SYR through IVPCA; 0.12 mg of HYDROmorphone (Dilaudid) in SYR through IVPCA; 4 mL/hr of Bupivacaine 0.5% in VIAL through SC; 50 mL of SW in BAG through IV; 40 mEq of Potassium Chloride in mL through IV; 10 mg of Metoclopramide in VIAL through IV; 1-2 TAB of Hydrocodone-Acetaminophen in TAB through PO; 10 mg of Escitalopram Oxalate in TAB through PO; 900 mg of Clindamycin in mL through IV; 0.125 mg of HYDROmorphone (Dilaudid) in SYR through IV; 5-10 mg of OxycoDONE (Immediate Release)  in TAB through PO; 200 mL of Iso-Osmotic Dextrose in mL through IV; 325-650 mg of Acetaminophen in TAB through PO; 300 mL of Magnesium Citrate in BTL through PO; 500 mL of NS in mL through IV; 40 mg of Pantoprazole in TAB through PO; 500 mg of Cephalexin in BTL through ORAL; 250 mL of NS in mL through IV; 400 mg of Ciprofloxacin in mL through IV; 650 mg of Acetaminophen in TAB through PO; 30 mg of Ketorolac in VIAL through IV; 0.5 mg of Lorazepam in TAB through PO; 4.5 g of Piperacillin-Tazobactam Na in BAG through IV; 150 mg of Ranitidine in TAB through PO; 6.25 mg of Promethazine HCl in AMP through IV; 1000 mg of Vancomycin in BAG through IV; 4 mg of Ondansetron ODT in TAB through PO; 8 mg of Ondansetron in VIAL through IV; 5 mg of OxycoDONE (Immediate Release)  in TAB through PO; 1 mg of Lorazepam in TAB through PO; 50 mL of D5W in mL through IV; 4 mg of Ondansetron in VIAL through IV; 1 Appl of Hydrocortisone (Rectal) 2.5% Cream in TUBE through PR; 600 mg of Clindamycin in mL through IV; 0.5 mg of Lorazepam in mL through IV; 25 mg of Prochlorperazine in SUPP through PR; 10 mg of Prochlorperazine in VIAL through IV; 250 mL of D5W in mL through IV; 500-1000 mg of Acetaminophen in TAB through PO; 15 mg of Ketorolac in VIAL through IV; 600 mg of Ibuprofen in TAB through PO; 0.5 mg of HYDROmorphone (Dilaudid) in SYR through IV; 20 mEq of Potassium Chloride in mL through IV; 0.25 mg of HYDROmorphone (Dilaudid) in SYR through IV; 12.5 mg of Promethazine in AMP through IV; 5-10 mL of OxycoDONE-Acetaminophen Elixir in UDCUP through PO; 1000 mL of D5 1/2NS in mL through IV; 15-30 mL of Maalox/Diphenhydramine/Lidocaine in BTL through PO; 0 UNIT of Insulin in VIAL through SC; 25 mg of HydrOXYzine in VIAL through IM; 10 mg of Metoclopramide in TAB through PO; 1000 mL of Potassium Chl 20 mEq / 1000 mL D5 1/2 NS in BAG through IV; 100 mL of NS in mL through IV; 650 mg of Acetaminophen in SUPP through PR; 325-650 mg of Acetaminophen in SUPP through PR; 1 mg of Morphine Sulfate in SYR through IVPCA; 2 gm of Magnesium Sulfate in BAG through IV; 100 mg of Docusate Sodium in CAP through PO; 500 mg of Calcium Carbonate in TAB through PO; 10 mg of Prochlorperazine in VIAL through IM; 2 gm of Nafcillin in BAG through IV; 500 mg of MetRONIDAZOLE (FLagyl) in BAG through IV; 100 mL of Iso-Osmotic Dextrose in mL through IV; 1 SPRY of Fluticasone Propionate NASAL in AERO through NU; 5000 UNIT of Heparin in mL through SC; 1000 mL of LR in BAG through IV; 3 mL of Sodium Chloride 0.9%  Flush in SYR through IV; 500 mg of Cephalexin in CAP through PO
+2025-08-13 18:01:16,569: Average train text length: 564.42 words
+2025-08-13 18:01:16,569: Average validation text length: 578.59 words
+2025-08-13 18:01:16,569: Average test text length: 568.03 words
+2025-08-13 18:01:16,569: Training on 8040 samples, validating on 894, testing on 2234 samples
+2025-08-13 18:01:36,592: Fine-tuning at Landmark 2
+2025-08-13 18:01:36,616: Early stopping criterion: loss
+2025-08-13 18:12:18,469: Landmark 2 | Epoch 1/20 | Train Loss: 0.6907 | Val Loss: 0.4534 | Validation AUC: 0.6655 | F1-Score: 0.0000
+2025-08-13 18:12:19,053: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark2_no_4_2048_last_visit_all_landmarks_True_20250813_180136_.pt with AUC: 0.6655, F1: 0.0000, Val Loss: 0.4534
+2025-08-13 18:23:01,306: Landmark 2 | Epoch 2/20 | Train Loss: 0.4537 | Val Loss: 0.4307 | Validation AUC: 0.7269 | F1-Score: 0.0000
+2025-08-13 18:23:01,857: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark2_no_4_2048_last_visit_all_landmarks_True_20250813_180136_.pt with AUC: 0.7269, F1: 0.0000, Val Loss: 0.4307
+2025-08-13 18:33:44,219: Landmark 2 | Epoch 3/20 | Train Loss: 0.4361 | Val Loss: 0.4192 | Validation AUC: 0.7524 | F1-Score: 0.0000
+2025-08-13 18:33:44,764: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark2_no_4_2048_last_visit_all_landmarks_True_20250813_180136_.pt with AUC: 0.7524, F1: 0.0000, Val Loss: 0.4192
+2025-08-13 18:44:27,085: Landmark 2 | Epoch 4/20 | Train Loss: 0.4233 | Val Loss: 0.4094 | Validation AUC: 0.7683 | F1-Score: 0.0000
+2025-08-13 18:44:27,650: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark2_no_4_2048_last_visit_all_landmarks_True_20250813_180136_.pt with AUC: 0.7683, F1: 0.0000, Val Loss: 0.4094
+2025-08-13 18:55:09,959: Landmark 2 | Epoch 5/20 | Train Loss: 0.4154 | Val Loss: 0.4056 | Validation AUC: 0.7765 | F1-Score: 0.0117
+2025-08-13 18:55:10,499: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark2_no_4_2048_last_visit_all_landmarks_True_20250813_180136_.pt with AUC: 0.7765, F1: 0.0117, Val Loss: 0.4056
+2025-08-13 19:05:53,107: Landmark 2 | Epoch 6/20 | Train Loss: 0.4091 | Val Loss: 0.4700 | Validation AUC: 0.7868 | F1-Score: 0.4842
+2025-08-13 19:05:53,107: No improvement in epoch 6. Current best AUC: 0.7765, F1: 0.0117, Val Loss: 0.4056. Epochs without improvement: 1/1
+2025-08-13 19:05:53,107: Early stopping triggered at epoch 6. Best AUC: 0.7765, F1: 0.0117, Val Loss: 0.4056
+2025-08-13 19:05:53,550: Tempo impiegato per Landmark 2: 3857.0 secondi
+2025-08-13 19:05:53,550: Tempo medio per epoca: 642.8 secondi
+2025-08-13 19:05:53,552: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark2_no_4_2048_last_visit_all_landmarks_True_20250813_180136_.pt for final evaluation on test set
+2025-08-13 19:06:35,649: Final Test AUC (Landmark 2): 0.7612 | Test F1-Score: 0.0237
+2025-08-13 19:06:35,649: Preparing data for Landmark 3
+2025-08-13 19:06:37,617: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+Some weights of ModernBertForSequenceClassification were not initialized from the model checkpoint at answerdotai/ModernBERT-large and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-13 19:06:39,343: Example train text: Based on this information, what is the probability of mortality within 90 days?
+Cellulitis and abscess of trunk; Diverticulosis of colon (without mention of hemorrhage); Diverticulitis of colon (without mention of hemorrhage); Methicillin susceptible Staphylococcus aureus in conditions classified elsewhere and of unspecified site; Hypovolemia; Acute kidney failure, unspecified; Other postoperative infection; Orthostatic hypotension; Nausea with vomiting; Chest pain, unspecified; Abscess of intestine; Esophageal reflux; Other specified aftercare following surgery; Removal of other organ (partial) (total) causing abnormal patient reaction, or later complication, without mention of misadventure at time of operation
+Ondansetron; Fluticasone Propionate NASAL; Ondansetron ODT; OxycoDONE-Acetaminophen Elixir; Docusate Sodium; D5W; Ciprofloxacin; ; Piperacillin-Tazobactam Na; Potassium Chl 20 mEq / 1000 mL D5 1/2 NS; Calcium Carbonate; Escitalopram Oxalate; HYDROmorphone (Dilaudid); OxycoDONE (Immediate Release) ; Morphine Sulfate; Promethazine; Acetaminophen; Lorazepam; Hydrocodone-Acetaminophen; Bupivacaine 0.5%; SW; Potassium Chloride; Heparin; NS; Nafcillin; Clindamycin; Magnesium Citrate; Metoclopramide; Magnesium Sulfate; Vancomycin; Ibuprofen; Ranitidine; D5 1/2NS; HydrOXYzine; Promethazine HCl; Hydrocortisone (Rectal) 2.5% Cream; Ketorolac; Cephalexin; Insulin; Sodium Chloride 0.9%  Flush; LR; Prochlorperazine; MetRONIDAZOLE (FLagyl); Maalox/Diphenhydramine/Lidocaine; Iso-Osmotic Dextrose; Pantoprazole
+; 0.25 mg of HYDROmorphone (Dilaudid) in SYR through IVPCA; 0.12 mg of HYDROmorphone (Dilaudid) in SYR through IVPCA; 4 mL/hr of Bupivacaine 0.5% in VIAL through SC; 50 mL of SW in BAG through IV; 40 mEq of Potassium Chloride in mL through IV; 10 mg of Metoclopramide in VIAL through IV; 1-2 TAB of Hydrocodone-Acetaminophen in TAB through PO; 10 mg of Escitalopram Oxalate in TAB through PO; 900 mg of Clindamycin in mL through IV; 0.125 mg of HYDROmorphone (Dilaudid) in SYR through IV; 5-10 mg of OxycoDONE (Immediate Release)  in TAB through PO; 200 mL of Iso-Osmotic Dextrose in mL through IV; 325-650 mg of Acetaminophen in TAB through PO; 300 mL of Magnesium Citrate in BTL through PO; 500 mL of NS in mL through IV; 40 mg of Pantoprazole in TAB through PO; 500 mg of Cephalexin in BTL through ORAL; 250 mL of NS in mL through IV; 400 mg of Ciprofloxacin in mL through IV; 650 mg of Acetaminophen in TAB through PO; 30 mg of Ketorolac in VIAL through IV; 0.5 mg of Lorazepam in TAB through PO; 4.5 g of Piperacillin-Tazobactam Na in BAG through IV; 150 mg of Ranitidine in TAB through PO; 6.25 mg of Promethazine HCl in AMP through IV; 1000 mg of Vancomycin in BAG through IV; 4 mg of Ondansetron ODT in TAB through PO; 8 mg of Ondansetron in VIAL through IV; 5 mg of OxycoDONE (Immediate Release)  in TAB through PO; 1 mg of Lorazepam in TAB through PO; 50 mL of D5W in mL through IV; 4 mg of Ondansetron in VIAL through IV; 1 Appl of Hydrocortisone (Rectal) 2.5% Cream in TUBE through PR; 600 mg of Clindamycin in mL through IV; 0.5 mg of Lorazepam in mL through IV; 25 mg of Prochlorperazine in SUPP through PR; 10 mg of Prochlorperazine in VIAL through IV; 250 mL of D5W in mL through IV; 500-1000 mg of Acetaminophen in TAB through PO; 15 mg of Ketorolac in VIAL through IV; 600 mg of Ibuprofen in TAB through PO; 0.5 mg of HYDROmorphone (Dilaudid) in SYR through IV; 20 mEq of Potassium Chloride in mL through IV; 0.25 mg of HYDROmorphone (Dilaudid) in SYR through IV; 12.5 mg of Promethazine in AMP through IV; 5-10 mL of OxycoDONE-Acetaminophen Elixir in UDCUP through PO; 1000 mL of D5 1/2NS in mL through IV; 15-30 mL of Maalox/Diphenhydramine/Lidocaine in BTL through PO; 0 UNIT of Insulin in VIAL through SC; 25 mg of HydrOXYzine in VIAL through IM; 10 mg of Metoclopramide in TAB through PO; 1000 mL of Potassium Chl 20 mEq / 1000 mL D5 1/2 NS in BAG through IV; 100 mL of NS in mL through IV; 650 mg of Acetaminophen in SUPP through PR; 325-650 mg of Acetaminophen in SUPP through PR; 1 mg of Morphine Sulfate in SYR through IVPCA; 2 gm of Magnesium Sulfate in BAG through IV; 100 mg of Docusate Sodium in CAP through PO; 500 mg of Calcium Carbonate in TAB through PO; 10 mg of Prochlorperazine in VIAL through IM; 2 gm of Nafcillin in BAG through IV; 500 mg of MetRONIDAZOLE (FLagyl) in BAG through IV; 100 mL of Iso-Osmotic Dextrose in mL through IV; 1 SPRY of Fluticasone Propionate NASAL in AERO through NU; 5000 UNIT of Heparin in mL through SC; 1000 mL of LR in BAG through IV; 3 mL of Sodium Chloride 0.9%  Flush in SYR through IV; 500 mg of Cephalexin in CAP through PO
+2025-08-13 19:06:39,664: Average train text length: 767.47 words
+2025-08-13 19:06:39,665: Average validation text length: 781.78 words
+2025-08-13 19:06:39,665: Average test text length: 767.25 words
+2025-08-13 19:06:39,665: Training on 8040 samples, validating on 894, testing on 2234 samples
+2025-08-13 19:07:05,188: Fine-tuning at Landmark 3
+2025-08-13 19:07:05,220: Early stopping criterion: loss
+2025-08-13 19:17:50,076: Landmark 3 | Epoch 1/20 | Train Loss: 0.6883 | Val Loss: 0.4435 | Validation AUC: 0.6938 | F1-Score: 0.0000
+2025-08-13 19:17:50,613: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark3_no_4_2048_last_visit_all_landmarks_True_20250813_190705_.pt with AUC: 0.6938, F1: 0.0000, Val Loss: 0.4435
+2025-08-13 19:28:35,278: Landmark 3 | Epoch 2/20 | Train Loss: 0.4604 | Val Loss: 0.4700 | Validation AUC: 0.6768 | F1-Score: 0.0000
+2025-08-13 19:28:35,279: No improvement in epoch 2. Current best AUC: 0.6938, F1: 0.0000, Val Loss: 0.4435. Epochs without improvement: 1/1
+2025-08-13 19:28:35,279: Early stopping triggered at epoch 2. Best AUC: 0.6938, F1: 0.0000, Val Loss: 0.4435
+2025-08-13 19:28:35,929: Tempo impiegato per Landmark 3: 1290.7 secondi
+2025-08-13 19:28:35,929: Tempo medio per epoca: 645.4 secondi
+2025-08-13 19:28:35,932: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark3_no_4_2048_last_visit_all_landmarks_True_20250813_190705_.pt for final evaluation on test set
+2025-08-13 19:29:18,263: Final Test AUC (Landmark 3): 0.7152 | Test F1-Score: 0.0048
+2025-08-13 19:29:18,263: Preparing data for Landmark 4
+2025-08-13 19:29:20,768: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+Some weights of ModernBertForSequenceClassification were not initialized from the model checkpoint at answerdotai/ModernBERT-large and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-13 19:29:25,977: Example train text: Based on this information, what is the probability of mortality within 90 days?
+Methicillin susceptible Staphylococcus aureus in conditions classified elsewhere and of unspecified site; Acute kidney failure, unspecified; Orthostatic hypotension; Chest pain, unspecified; Other specified disorders of intestine; Diverticulosis of colon (without mention of hemorrhage); Other and unspecified ovarian cyst; Other postoperative infection; Abscess of intestine; Esophageal reflux; Other specified aftercare following surgery; Removal of other organ (partial) (total) causing abnormal patient reaction, or later complication, without mention of misadventure at time of operation; Hypovolemia; Nausea with vomiting; Intestinal bypass or anastomosis status; Anxiety state, unspecified; Ulceration of intestine; Cellulitis and abscess of trunk; Diverticulitis of colon (without mention of hemorrhage)
+Ondansetron; Fluticasone Propionate NASAL; Ondansetron ODT; OxycoDONE-Acetaminophen Elixir; Docusate Sodium; D5W; Ciprofloxacin; ; Omeprazole; Senna; Piperacillin-Tazobactam Na; Potassium Chl 20 mEq / 1000 mL D5 1/2 NS; Calcium Carbonate; Escitalopram Oxalate; HYDROmorphone (Dilaudid); OxycoDONE (Immediate Release) ; Morphine Sulfate; Promethazine; Acetaminophen; Lorazepam; Hydrocodone-Acetaminophen; Golytely; Bupivacaine 0.5%; Naproxen; SW; Fish Oil (Omega 3); Potassium Chloride; Heparin; NS; 0.9% Sodium Chloride; Nafcillin; Clindamycin; Magnesium Citrate; Metoclopramide; Neutra-Phos; Magnesium Sulfate; Desitin; Vancomycin; Ibuprofen; Ranitidine; D5 1/2NS; HydrOXYzine; Multivitamins; Promethazine HCl; Hydrocortisone (Rectal) 2.5% Cream; Ketorolac; 0.45% Sodium Chloride; Cephalexin; Insulin; Sodium Chloride 0.9%  Flush; LR; Vitamin D; Influenza Virus Vaccine; Prochlorperazine; MetRONIDAZOLE (FLagyl); Maalox/Diphenhydramine/Lidocaine; Iso-Osmotic Dextrose; Pantoprazole
+; 0.12 mg of HYDROmorphone (Dilaudid) in SYR through IVPCA; 4 mL/hr of Bupivacaine 0.5% in VIAL through SC; 40 mEq of Potassium Chloride in mL through IV; 20 mg of Omeprazole in CAP through PO; 10 mg of Escitalopram Oxalate in TAB through PO; 325-650 mg of Acetaminophen in TAB through PO/NG; 4 mg of Ondansetron ODT in TAB through PO; 8 mg of Ondansetron in VIAL through IV; 50 mL of D5W in mL through IV; 1000 mg of Fish Oil (Omega 3) in CAP through PO; 15 mg of Ketorolac in VIAL through IV; 0.5 mg of HYDROmorphone (Dilaudid) in SYR through IV; 800 UNIT of Vitamin D in TAB through PO/NG; 1000 mL of D5 1/2NS in mL through IV; 1000 mL of Potassium Chl 20 mEq / 1000 mL D5 1/2 NS in BAG through IV; 100 mL of NS in mL through IV; 1 TAB of Senna in TAB through PO/NG; 1 Appl of Desitin in TUBE through TP; 100 mg of Docusate Sodium in CAP through PO; 2 gm of Nafcillin in BAG through IV; 100 mL of Iso-Osmotic Dextrose in mL through IV; 0.25 mg of HYDROmorphone (Dilaudid) in SYR through IVPCA; 50 mL of SW in BAG through IV; 200 mL of Iso-Osmotic Dextrose in mL through IV; 2 mg of HYDROmorphone (Dilaudid) in TAB through PO/NG; 4.5 g of Piperacillin-Tazobactam Na in BAG through IV; 6.25 mg of Promethazine HCl in AMP through IV; 1000 mg of Vancomycin in BAG through IV; 600 mg of Clindamycin in mL through IV; 20 mEq of Potassium Chloride in mL through IV; 500 mg of Naproxen in TAB through PO; 15-30 mL of Maalox/Diphenhydramine/Lidocaine in BTL through PO; 2 PKT of Neutra-Phos in PKT through PO/NG; 325-650 mg of Acetaminophen in SUPP through PR; 500 mg of Calcium Carbonate in TAB through PO; 10 mg of Prochlorperazine in VIAL through IM; 1 SPRY of Fluticasone Propionate NASAL in AERO through NU; 500 mg of Cephalexin in CAP through PO; 1000 mL of 0.9% Sodium Chloride in mL through IV; 10 mg of Metoclopramide in VIAL through IV; 900 mg of Clindamycin in mL through IV; 0.125 mg of HYDROmorphone (Dilaudid) in SYR through IV; 300 mL of Magnesium Citrate in BTL through PO; 500 mL of NS in mL through IV; 500 mg of Cephalexin in BTL through ORAL; 40 mg of Pantoprazole in TAB through PO; 250 mL of NS in mL through IV; 30 mg of Ketorolac in VIAL through IV; 5 mg of OxycoDONE (Immediate Release)  in TAB through PO; 1 mg of Lorazepam in TAB through PO; 0.5 mg of Lorazepam in mL through IV; 25 mg of Prochlorperazine in SUPP through PR; 10 mg of Prochlorperazine in VIAL through IV; 250 mL of D5W in mL through IV; 600 mg of Ibuprofen in TAB through PO; 0.25 mg of HYDROmorphone (Dilaudid) in SYR through IV; 0.5 mg of Lorazepam in TAB through PO/NG; 0 UNIT of Insulin in VIAL through SC; 10 mg of Metoclopramide in TAB through PO; 2 gm of Magnesium Sulfate in BAG through IV; 500 mg of MetRONIDAZOLE (FLagyl) in BAG through IV; 1000 mg of Calcium Carbonate in TAB through PO/NG; 1000 mL of LR in BAG through IV; 1000 mL of 0.45% Sodium Chloride in mL through IV; 15-30 mg of Ketorolac in VIAL through IV; 1-2 TAB of Hydrocodone-Acetaminophen in TAB through PO; 5-10 mg of OxycoDONE (Immediate Release)  in TAB through PO; 0.5 mL of Influenza Virus Vaccine in SYR through IM; 4 L of Golytely in BTL through PO; 325-650 mg of Acetaminophen in TAB through PO; 0.5 mg of Lorazepam in TAB through PO; 400 mg of Ciprofloxacin in mL through IV; 650 mg of Acetaminophen in TAB through PO; 150 mg of Ranitidine in TAB through PO; 150 mg of Ranitidine in TAB through PO/NG; 4 mg of Ondansetron in VIAL through IV; 1 Appl of Hydrocortisone (Rectal) 2.5% Cream in TUBE through PR; 500-1000 mg of Acetaminophen in TAB through PO; 12.5 mg of Promethazine in AMP through IV; 5-10 mL of OxycoDONE-Acetaminophen Elixir in UDCUP through PO; 25 mg of HydrOXYzine in VIAL through IM; 650 mg of Acetaminophen in SUPP through PR; 1 mg of Morphine Sulfate in SYR through IVPCA; 4 mg of Ondansetron ODT in TAB through PO/NG; 1 TAB of Multivitamins in TAB through PO/NG; 5000 UNIT of Heparin in mL through SC; 3 mL of Sodium Chloride 0.9%  Flush in SYR through IV
+2025-08-13 19:29:26,412: Average train text length: 984.96 words
+2025-08-13 19:29:26,412: Average validation text length: 1002.68 words
+2025-08-13 19:29:26,413: Average test text length: 989.75 words
+2025-08-13 19:29:26,413: Training on 8040 samples, validating on 894, testing on 2234 samples
+2025-08-13 19:29:59,123: Fine-tuning at Landmark 4
+2025-08-13 19:29:59,183: Early stopping criterion: loss
+2025-08-13 19:40:46,697: Landmark 4 | Epoch 1/20 | Train Loss: 0.6761 | Val Loss: 0.4205 | Validation AUC: 0.7594 | F1-Score: 0.0773
+2025-08-13 19:40:47,271: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark4_no_4_2048_last_visit_all_landmarks_True_20250813_192959_.pt with AUC: 0.7594, F1: 0.0773, Val Loss: 0.4205
+2025-08-13 19:51:36,116: Landmark 4 | Epoch 2/20 | Train Loss: 0.4081 | Val Loss: 0.3792 | Validation AUC: 0.8204 | F1-Score: 0.2000
+2025-08-13 19:51:36,686: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark4_no_4_2048_last_visit_all_landmarks_True_20250813_192959_.pt with AUC: 0.8204, F1: 0.2000, Val Loss: 0.3792
+2025-08-13 20:02:25,566: Landmark 4 | Epoch 3/20 | Train Loss: 0.3835 | Val Loss: 0.3568 | Validation AUC: 0.8484 | F1-Score: 0.2020
+2025-08-13 20:02:26,122: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark4_no_4_2048_last_visit_all_landmarks_True_20250813_192959_.pt with AUC: 0.8484, F1: 0.2020, Val Loss: 0.3568
+2025-08-13 20:13:15,108: Landmark 4 | Epoch 4/20 | Train Loss: 0.3504 | Val Loss: 0.3335 | Validation AUC: 0.8798 | F1-Score: 0.5492
+2025-08-13 20:13:15,745: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark4_no_4_2048_last_visit_all_landmarks_True_20250813_192959_.pt with AUC: 0.8798, F1: 0.5492, Val Loss: 0.3335
+2025-08-13 20:24:04,301: Landmark 4 | Epoch 5/20 | Train Loss: 0.3295 | Val Loss: 0.3168 | Validation AUC: 0.8854 | F1-Score: 0.4781
+2025-08-13 20:24:04,854: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark4_no_4_2048_last_visit_all_landmarks_True_20250813_192959_.pt with AUC: 0.8854, F1: 0.4781, Val Loss: 0.3168
+2025-08-13 20:34:53,922: Landmark 4 | Epoch 6/20 | Train Loss: 0.3158 | Val Loss: 0.3541 | Validation AUC: 0.8949 | F1-Score: 0.6334
+2025-08-13 20:34:53,923: No improvement in epoch 6. Current best AUC: 0.8854, F1: 0.4781, Val Loss: 0.3168. Epochs without improvement: 1/1
+2025-08-13 20:34:53,923: Early stopping triggered at epoch 6. Best AUC: 0.8854, F1: 0.4781, Val Loss: 0.3168
+2025-08-13 20:34:54,521: Tempo impiegato per Landmark 4: 3895.4 secondi
+2025-08-13 20:34:54,521: Tempo medio per epoca: 649.2 secondi
+2025-08-13 20:34:54,524: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark4_no_4_2048_last_visit_all_landmarks_True_20250813_192959_.pt for final evaluation on test set
+2025-08-13 20:35:37,352: Final Test AUC (Landmark 4): 0.8703 | Test F1-Score: 0.4778
+2025-08-13 20:35:37,353: Saving results to results_general_True_answerdotai_ModernBERT-large_last_visit_visits4_4550_2048_no_20250813_203537.csv
+Using device: cuda
+Using device: cuda
+Using device: cuda
+Using device: cuda
+   Landmark Val AUC  ... Validation Loss Training Time (s)
+0         1  0.7014  ...          0.4438            3894.9
+1         2  0.7765  ...          0.4056            3857.0
+2         3  0.6938  ...          0.4435            1290.7
+3         4  0.8854  ...          0.3168            3895.4
+
+[4 rows x 9 columns]
+
+Job 1853869 consumed 70.2 billing hours from project ec12.
+
+Submitted 2025-08-13T16:36:10; waited 18.0 minutes in the queue after becoming eligible to run.
+
+Requested wallclock time: 10.0 hours
+Elapsed wallclock time:   3.7 hours
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+1853869          16            0.0 %  2025-08-13T16:54:08    3.7 h  0
+1853869.batch    16      1     7.9 %  2025-08-13T16:54:08    3.7 h  0
+
+Used CPU time:   4.7 CPU hours
+Unused CPU time: 2.3 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1853869          32.0        
+1853869.batch    32.0    17.4
+
+Job 1853869 completed at Wed Aug 13 20:35:43 CEST 2025

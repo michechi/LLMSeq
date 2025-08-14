@@ -1,0 +1,126 @@
+Starting job 1835978 on gpu-9 on fox at Tue Jul 29 14:00:25 CEST 2025
+
+2025-07-29 14:00:45,853: Argument CI: False
+2025-07-29 14:00:45,854: Argument all_landmarks: True
+2025-07-29 14:00:45,854: Argument batch_size: 8
+2025-07-29 14:00:45,854: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-07-29 14:00:45,854: Argument early: 'loss'
+2025-07-29 14:00:45,854: Argument epochs: 20
+2025-07-29 14:00:45,854: Argument gradient_accumulation_steps: 1
+2025-07-29 14:00:45,854: Argument input_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_df_evo.csv'
+2025-07-29 14:00:45,854: Argument lr: 2e-05
+2025-07-29 14:00:45,854: Argument max_length: 512
+2025-07-29 14:00:45,854: Argument max_visits: 3
+2025-07-29 14:00:45,854: Argument model_name: 'Charangan/MedBERT'
+2025-07-29 14:00:45,854: Argument model_type: 'medical'
+2025-07-29 14:00:45,855: Argument patience: 1
+2025-07-29 14:00:45,855: Argument peft: False
+2025-07-29 14:00:45,855: Argument prompt_type: 'no'
+2025-07-29 14:00:45,855: Argument seed: 9550
+2025-07-29 14:00:45,855: Argument test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_test.csv'
+2025-07-29 14:00:45,855: Argument train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_train.csv'
+2025-07-29 14:00:45,855: Argument use_quantization: False
+2025-07-29 14:00:45,855: Argument val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_vali.csv'
+2025-07-29 14:00:45,860: Using prompt type: no
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:77: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:79: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_test_df = pd.read_csv(args.test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+2025-07-29 14:01:22,744: Processing all landmarks from 1 to 3
+2025-07-29 14:01:22,744: Preparing data for Landmark 1
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_utils.py:831: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  return self.fget.__get__(instance, owner)()
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at Charangan/MedBERT and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-07-29 14:01:27,048: Average train text length: 142.08 words
+2025-07-29 14:01:27,048: Average validation text length: 141.17 words
+2025-07-29 14:01:27,048: Average test text length: 141.27 words
+2025-07-29 14:01:27,049: Training on 14472 samples, validating on 1608, testing on 4020 samples
+2025-07-29 14:01:39,194: Fine-tuning at Landmark 1
+2025-07-29 14:01:39,860: Early stopping criterion: loss
+2025-07-29 14:03:48,125: Landmark 1 | Epoch 1/20 | Train Loss: 0.4215 | Val Loss: 0.3988 | Validation AUC: 0.6524 | F1-Score: 0.0000
+2025-07-29 14:03:48,498: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_9550_landmark1_no_3_512_all_landmarks_True_20250729_140139_.pt with AUC: 0.6524, F1: 0.0000, Val Loss: 0.3988
+2025-07-29 14:05:56,958: Landmark 1 | Epoch 2/20 | Train Loss: 0.4175 | Val Loss: 0.4039 | Validation AUC: 0.6585 | F1-Score: 0.0000
+2025-07-29 14:05:56,961: No improvement in epoch 2. Current best AUC: 0.6524, F1: 0.0000, Val Loss: 0.3988. Epochs without improvement: 1/1
+2025-07-29 14:05:56,963: Early stopping triggered at epoch 2. Best AUC: 0.6524, F1: 0.0000, Val Loss: 0.3988
+2025-07-29 14:05:57,349: Tempo impiegato per Landmark 1: 258.2 secondi
+2025-07-29 14:05:57,350: Tempo medio per epoca: 129.1 secondi
+2025-07-29 14:05:57,351: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_9550_landmark1_no_3_512_all_landmarks_True_20250729_140139_.pt for final evaluation on test set
+2025-07-29 14:06:07,861: Final Test AUC (Landmark 1): 0.6433 | Test F1-Score: 0.0000
+2025-07-29 14:06:07,861: Preparing data for Landmark 2
+Using device: cuda
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at Charangan/MedBERT and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-07-29 14:06:13,492: Average train text length: 164.72 words
+2025-07-29 14:06:13,492: Average validation text length: 163.91 words
+2025-07-29 14:06:13,492: Average test text length: 163.85 words
+2025-07-29 14:06:13,492: Training on 14472 samples, validating on 1608, testing on 4020 samples
+2025-07-29 14:06:28,599: Fine-tuning at Landmark 2
+2025-07-29 14:06:28,604: Early stopping criterion: loss
+2025-07-29 14:08:33,375: Landmark 2 | Epoch 1/20 | Train Loss: 0.4346 | Val Loss: 0.3964 | Validation AUC: 0.7046 | F1-Score: 0.0000
+2025-07-29 14:08:33,700: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_9550_landmark2_no_3_512_all_landmarks_True_20250729_140628_.pt with AUC: 0.7046, F1: 0.0000, Val Loss: 0.3964
+2025-07-29 14:10:38,638: Landmark 2 | Epoch 2/20 | Train Loss: 0.4034 | Val Loss: 0.3881 | Validation AUC: 0.6898 | F1-Score: 0.0000
+2025-07-29 14:10:38,948: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_9550_landmark2_no_3_512_all_landmarks_True_20250729_140628_.pt with AUC: 0.6898, F1: 0.0000, Val Loss: 0.3881
+2025-07-29 14:12:43,935: Landmark 2 | Epoch 3/20 | Train Loss: 0.3979 | Val Loss: 0.3776 | Validation AUC: 0.7215 | F1-Score: 0.0000
+2025-07-29 14:12:44,230: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_9550_landmark2_no_3_512_all_landmarks_True_20250729_140628_.pt with AUC: 0.7215, F1: 0.0000, Val Loss: 0.3776
+2025-07-29 14:14:49,262: Landmark 2 | Epoch 4/20 | Train Loss: 0.3885 | Val Loss: 0.3766 | Validation AUC: 0.7320 | F1-Score: 0.0000
+2025-07-29 14:14:49,580: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_9550_landmark2_no_3_512_all_landmarks_True_20250729_140628_.pt with AUC: 0.7320, F1: 0.0000, Val Loss: 0.3766
+2025-07-29 14:16:54,591: Landmark 2 | Epoch 5/20 | Train Loss: 0.3904 | Val Loss: 0.3789 | Validation AUC: 0.7102 | F1-Score: 0.0000
+2025-07-29 14:16:54,591: No improvement in epoch 5. Current best AUC: 0.7320, F1: 0.0000, Val Loss: 0.3766. Epochs without improvement: 1/1
+2025-07-29 14:16:54,591: Early stopping triggered at epoch 5. Best AUC: 0.7320, F1: 0.0000, Val Loss: 0.3766
+2025-07-29 14:16:54,991: Tempo impiegato per Landmark 2: 626.4 secondi
+2025-07-29 14:16:54,991: Tempo medio per epoca: 125.3 secondi
+2025-07-29 14:16:54,993: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_9550_landmark2_no_3_512_all_landmarks_True_20250729_140628_.pt for final evaluation on test set
+2025-07-29 14:17:04,826: Final Test AUC (Landmark 2): 0.7177 | Test F1-Score: 0.0000
+2025-07-29 14:17:04,826: Preparing data for Landmark 3
+Using device: cuda
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at Charangan/MedBERT and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-07-29 14:17:11,333: Average train text length: 176.08 words
+2025-07-29 14:17:11,333: Average validation text length: 175.47 words
+2025-07-29 14:17:11,333: Average test text length: 175.65 words
+2025-07-29 14:17:11,333: Training on 14472 samples, validating on 1608, testing on 4020 samples
+2025-07-29 14:17:27,118: Fine-tuning at Landmark 3
+2025-07-29 14:17:27,125: Early stopping criterion: loss
+2025-07-29 14:19:30,410: Landmark 3 | Epoch 1/20 | Train Loss: 0.4155 | Val Loss: 0.3879 | Validation AUC: 0.7284 | F1-Score: 0.0000
+2025-07-29 14:19:30,737: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_9550_landmark3_no_3_512_all_landmarks_True_20250729_141727_.pt with AUC: 0.7284, F1: 0.0000, Val Loss: 0.3879
+2025-07-29 14:21:34,204: Landmark 3 | Epoch 2/20 | Train Loss: 0.4144 | Val Loss: 0.4272 | Validation AUC: 0.6323 | F1-Score: 0.0000
+2025-07-29 14:21:34,205: No improvement in epoch 2. Current best AUC: 0.7284, F1: 0.0000, Val Loss: 0.3879. Epochs without improvement: 1/1
+2025-07-29 14:21:34,205: Early stopping triggered at epoch 2. Best AUC: 0.7284, F1: 0.0000, Val Loss: 0.3879
+2025-07-29 14:21:34,674: Tempo impiegato per Landmark 3: 247.6 secondi
+2025-07-29 14:21:34,674: Tempo medio per epoca: 123.8 secondi
+2025-07-29 14:21:34,676: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_9550_landmark3_no_3_512_all_landmarks_True_20250729_141727_.pt for final evaluation on test set
+2025-07-29 14:21:44,084: Final Test AUC (Landmark 3): 0.7453 | Test F1-Score: 0.0000
+2025-07-29 14:21:44,105: Saving results to results_medical_True_Charangan_MedBERT_visits3_9550_no_20250729_142144.csv
+Using device: cuda
+   Landmark Val AUC  ... Validation Loss Training Time (s)
+0         1  0.6524  ...          0.3988             258.2
+1         2  0.7320  ...          0.3766             626.4
+2         3  0.7284  ...          0.3879             247.6
+
+[3 rows x 9 columns]
+
+Job 1835978 consumed 6.8 billing hours from project ec12.
+
+Submitted 2025-07-29T13:59:57; waited 28.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 24.0 hours
+Elapsed wallclock time:   21.4 minutes
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start   Elapsed  Exit status
+1835978          16            0.0 %  2025-07-29T14:00:25  1287.0 s  0
+1835978.batch    16      1     6.2 %  2025-07-29T14:00:25  1287.0 s  0
+
+Used CPU time:   21.1 CPU minutes
+Unused CPU time: 5.4 CPU hours
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1835978          32.0        
+1835978.batch    32.0    11.8
+
+GPU usage stats:
+Job 1835978 completed at Tue Jul 29 14:21:52 CEST 2025

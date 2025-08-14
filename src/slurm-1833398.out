@@ -1,0 +1,105 @@
+Starting job 1833398 on gpu-9 on fox at Mon Jul 28 03:41:54 CEST 2025
+
+2025-07-28 03:42:39,439: Argument all_landmarks: True
+2025-07-28 03:42:39,439: Argument batch_size: 2
+2025-07-28 03:42:39,439: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-07-28 03:42:39,439: Argument early: 'loss'
+2025-07-28 03:42:39,439: Argument epochs: 20
+2025-07-28 03:42:39,439: Argument gradient_accumulation_steps: 4
+2025-07-28 03:42:39,439: Argument input_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_df_evo.csv'
+2025-07-28 03:42:39,439: Argument lr: 2e-05
+2025-07-28 03:42:39,439: Argument max_length: 2048
+2025-07-28 03:42:39,439: Argument max_visits: 3
+2025-07-28 03:42:39,439: Argument model_name: 'meta-llama/Llama-3.1-8B'
+2025-07-28 03:42:39,439: Argument model_type: 'llm'
+2025-07-28 03:42:39,439: Argument patience: 3
+2025-07-28 03:42:39,439: Argument peft: True
+2025-07-28 03:42:39,439: Argument prompt_type: 'compact_no_time_rnd'
+2025-07-28 03:42:39,439: Argument seed: 9550
+2025-07-28 03:42:39,439: Argument test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_test.csv'
+2025-07-28 03:42:39,439: Argument train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_train.csv'
+2025-07-28 03:42:39,439: Argument use_quantization: False
+2025-07-28 03:42:39,439: Argument val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_vali.csv'
+2025-07-28 03:42:40,238: Using prompt type: compact_no_time_rnd
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning.py:450: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning.py:452: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_test_df = pd.read_csv(args.test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+2025-07-28 03:43:18,050: Processing all landmarks from 1 to 3
+2025-07-28 03:43:18,050: Preparing data for Landmark 1
+2025-07-28 03:43:20,840: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:10<00:30, 10.24s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:21<00:22, 11.02s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:33<00:11, 11.21s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:33<00:00,  6.99s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:33<00:00,  8.44s/it]
+Some weights of LlamaForSequenceClassification were not initialized from the model checkpoint at meta-llama/Llama-3.1-8B and are newly initialized: ['score.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-07-28 03:43:58,260: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-07-28 03:44:35,242: Average train text length: 133.90 words
+2025-07-28 03:44:35,242: Average validation text length: 133.07 words
+2025-07-28 03:44:35,242: Average test text length: 134.65 words
+2025-07-28 03:44:35,242: Training on 14472 samples, validating on 1608, testing on 4020 samples
+2025-07-28 03:44:48,593: Fine-tuning at Landmark 1
+2025-07-28 03:44:50,429: Early stopping criterion: loss
+2025-07-28 06:09:47,222: Landmark 1 | Epoch 1/20 | Train Loss: 0.1284 | Val Loss: 0.3713 | Validation AUC: 0.7404 | F1-Score: 0.0781
+2025-07-28 08:34:57,905: Landmark 1 | Epoch 2/20 | Train Loss: 0.0905 | Val Loss: 0.3273 | Validation AUC: 0.8220 | F1-Score: 0.1493
+2025-07-28 11:00:03,921: Landmark 1 | Epoch 3/20 | Train Loss: 0.0837 | Val Loss: 0.3298 | Validation AUC: 0.8349 | F1-Score: 0.1467
+2025-07-28 13:24:52,653: Landmark 1 | Epoch 4/20 | Train Loss: 0.0801 | Val Loss: 0.3178 | Validation AUC: 0.8291 | F1-Score: 0.3077
+2025-07-28 15:49:51,823: Landmark 1 | Epoch 5/20 | Train Loss: 0.0772 | Val Loss: 0.3274 | Validation AUC: 0.8342 | F1-Score: 0.4272
+2025-07-28 18:14:42,127: Landmark 1 | Epoch 6/20 | Train Loss: 0.0730 | Val Loss: 0.3314 | Validation AUC: 0.8368 | F1-Score: 0.4531
+2025-07-28 20:39:31,197: Landmark 1 | Epoch 7/20 | Train Loss: 0.0663 | Val Loss: 0.3619 | Validation AUC: 0.8091 | F1-Score: 0.2397
+2025-07-28 20:39:31,199: Early stopping triggered at epoch 7
+2025-07-28 20:39:41,732: Tempo impiegato per Landmark 1: 60893.1 secondi
+2025-07-28 20:39:41,733: Tempo medio per epoca: 8699.0 secondi
+2025-07-28 20:39:41,739: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_landmark1_compact_no_time_rnd_3_2048_all_landmarks_True_20250728_034450_.pt for final evaluation on test set
+2025-07-28 20:55:59,719: Final Test AUC (Landmark 1): 0.8220 | Test F1-Score: 0.2752
+2025-07-28 20:55:59,719: Preparing data for Landmark 2
+2025-07-28 20:56:00,483: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+trainable params: 6,823,936 || all params: 7,511,756,800 || trainable%: 0.0908
+Using device: cuda
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:09<00:29,  9.81s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:19<00:19,  9.80s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:23<00:06,  6.90s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:23<00:00,  4.39s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:23<00:00,  5.90s/it]
+Some weights of LlamaForSequenceClassification were not initialized from the model checkpoint at meta-llama/Llama-3.1-8B and are newly initialized: ['score.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-07-28 20:56:24,194: Some parameters are on the meta device because they were offloaded to the cpu.
+trainable params: 6,823,936 || all params: 7,511,756,800 || trainable%: 0.0908
+Traceback (most recent call last):
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning.py", line 603, in <module>
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning.py", line 483, in main
+    results_df.to_csv(os.path.join(args.cache_dir, output_filename), index=False)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1160, in to
+    return self._apply(convert)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 810, in _apply
+    module._apply(fn)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 810, in _apply
+    module._apply(fn)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 810, in _apply
+    module._apply(fn)
+  [Previous line repeated 5 more times]
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 833, in _apply
+    param_applied = fn(param)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1158, in convert
+    return t.to(device, dtype if t.is_floating_point() or t.is_complex() else None, non_blocking)
+NotImplementedError: Cannot copy out of meta tensor; no data!
+
+Job 1833398 consumed 327.7 billing hours from project ec12.
+
+Submitted 2025-07-27T22:15:03; waited 5.4 hours in the queue after becoming eligible to run.
+
+Requested wallclock time: 24.0 hours
+Elapsed wallclock time:   17.2 hours
+
+Job failed.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+1833398          16            0.0 %  2025-07-28T03:41:54   17.2 h  1
+1833398.batch    16      1     6.2 %  2025-07-28T03:41:54   17.2 h  1
+
+Used CPU time:   17.2 CPU hours
+Unused CPU time: 10.8 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1833398          32.0        
+1833398.batch    32.0    29.1
+
+GPU usage stats:
+Job 1833398 completed at Mon Jul 28 20:56:38 CEST 2025

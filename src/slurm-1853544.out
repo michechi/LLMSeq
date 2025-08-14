@@ -1,0 +1,142 @@
+Starting job 1853544 on gpu-12 on fox at Wed Aug 13 09:25:55 CEST 2025
+
+2025-08-13 09:26:15,226: Argument CI: False
+2025-08-13 09:26:15,226: Argument all_landmarks: True
+2025-08-13 09:26:15,226: Argument batch_size: 8
+2025-08-13 09:26:15,226: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-08-13 09:26:15,226: Argument early: 'loss'
+2025-08-13 09:26:15,226: Argument epochs: 20
+2025-08-13 09:26:15,226: Argument gradient_accumulation_steps: 1
+2025-08-13 09:26:15,226: Argument input_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_df_evo.csv'
+2025-08-13 09:26:15,226: Argument lr: 2e-05
+2025-08-13 09:26:15,226: Argument max_length: 512
+2025-08-13 09:26:15,226: Argument max_visits: 3
+2025-08-13 09:26:15,226: Argument model_name: 'Charangan/MedBERT'
+2025-08-13 09:26:15,226: Argument model_type: 'medical'
+2025-08-13 09:26:15,226: Argument patience: 1
+2025-08-13 09:26:15,226: Argument peft: False
+2025-08-13 09:26:15,226: Argument prompt_type: 'no'
+2025-08-13 09:26:15,226: Argument seed: 9550
+2025-08-13 09:26:15,226: Argument test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_test_dod.csv'
+2025-08-13 09:26:15,226: Argument train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_train_dod.csv'
+2025-08-13 09:26:15,226: Argument use_quantization: False
+2025-08-13 09:26:15,226: Argument val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_vali_dod.csv'
+2025-08-13 09:26:15,226: Argument when_counting_death: 'last_visit'
+2025-08-13 09:26:15,240: Using prompt type: no
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:79: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:81: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_test_df = pd.read_csv(args.test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+2025-08-13 09:26:52,555: Processing all landmarks from 1 to 3
+2025-08-13 09:26:52,556: Preparing data for Landmark 1
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_utils.py:831: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  return self.fget.__get__(instance, owner)()
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at Charangan/MedBERT and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-13 09:26:59,627: Example train text: Based on this information, what is the probability of mortality within 90 days?
+Anxiety state, unspecified; Portal hypertension; Unspecified protein-calorie malnutrition; Hypopotassemia; Other and unspecified alcohol dependence, continuous; Unspecified deficiency anemia; Urinary tract infection, site not specified; Acute alcoholic hepatitis; Other ascites; Other specified forms of effusion, except tuberculous; Other constipation; Pneumonia, organism unspecified; Alcoholic cirrhosis of liver; Hyposmolality and/or hyponatremia
+Ciprofloxacin HCl; Furosemide; FoLIC Acid; Morphine Sulfate; 0.9% Sodium Chloride; Lidocaine 5% Patch; Docusate Sodium; Nicotine Patch; SW; Acetaminophen; Multivitamin IV; Heparin; 1/2 NS; Neutra-Phos; Magnesium Sulfate; Potassium Chloride; Multivitamins; Ondansetron; Senna; Phytonadione; Thiamine; Albumin 25% (12.5g / 50mL); Lorazepam; OxycoDONE (Immediate Release) ; Sodium Chloride 0.9%  Flush
+1 mg of Lorazepam in mL through IV; 0.5-1 mg of Lorazepam in TAB through PO/NG; 1 mg of FoLIC Acid in mL through IV; 500 mL of 0.9% Sodium Chloride in mL through IV; 8 mg of Ondansetron in VIAL through IV; 1000 mL of 0.9% Sodium Chloride in BAG through IV; 1 mg of FoLIC Acid in TAB through PO/NG; 40 mEq of Potassium Chloride in TAB through PO; 250 mg of Ciprofloxacin HCl in TAB through PO/NG; 1 PKT of Neutra-Phos in PKT through PO/NG; 0.5 mg of Lorazepam in TAB through PO/NG; 1000 mL of 1/2 NS in mL through IV; 100 mg of Thiamine in mL through IV; 1 TAB of Multivitamins in TAB through PO/NG; 14 mg of Nicotine Patch in PTCH through TD; 20 mg of Furosemide in TAB through PO/NG; 5 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 0.5 mg of Lorazepam in mL through IV; 500 mg of Ciprofloxacin HCl in TAB through PO/NG; 4 gm of Magnesium Sulfate in BAG through IV; 3 mL of Sodium Chloride 0.9%  Flush in SYR through IV; 325-650 mg of Acetaminophen in TAB through PO/NG; 1 mg of Lorazepam in TAB through PO/NG; 2 gm of Magnesium Sulfate in BAG through IV; 100 mg of Thiamine in TAB through PO/NG; 100 mg of Docusate Sodium in CAP through PO; 2-4 mg of Morphine Sulfate in SYR through IV; 1 PTCH of Lidocaine 5% Patch in PTCH through TD; 10 mL of Multivitamin IV in VIAL through IV; 2 mg of Lorazepam in mL through IV; 2.5 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 50 mL of SW in BAG through IV; 5000 UNIT of Heparin in mL through SC; 2 TAB of Senna in TAB through PO/NG; 5 mg of Phytonadione in TAB through PO/NG; 100 mL of SW in BAG through IV; 60 mEq of Potassium Chloride in TAB through PO; 50 g of Albumin 25% (12.5g / 50mL) in BAG through IV
+2025-08-13 09:26:59,904: Average train text length: 330.04 words
+2025-08-13 09:26:59,904: Average validation text length: 331.97 words
+2025-08-13 09:26:59,904: Average test text length: 329.99 words
+2025-08-13 09:26:59,904: Training on 14472 samples, validating on 1608, testing on 4020 samples
+2025-08-13 09:27:22,860: Fine-tuning at Landmark 1
+2025-08-13 09:27:23,486: Early stopping criterion: loss
+2025-08-13 09:32:00,501: Landmark 1 | Epoch 1/20 | Train Loss: 0.3894 | Val Loss: 0.3740 | Validation AUC: 0.7969 | F1-Score: 0.0086
+2025-08-13 09:32:00,862: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_9550_landmark1_no_3_512_last_visit_all_landmarks_True_20250813_092723_.pt with AUC: 0.7969, F1: 0.0086, Val Loss: 0.3740
+2025-08-13 09:36:38,054: Landmark 1 | Epoch 2/20 | Train Loss: 0.3519 | Val Loss: 0.3436 | Validation AUC: 0.8026 | F1-Score: 0.3822
+2025-08-13 09:36:38,378: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_9550_landmark1_no_3_512_last_visit_all_landmarks_True_20250813_092723_.pt with AUC: 0.8026, F1: 0.3822, Val Loss: 0.3436
+2025-08-13 09:41:15,132: Landmark 1 | Epoch 3/20 | Train Loss: 0.3266 | Val Loss: 0.3371 | Validation AUC: 0.8008 | F1-Score: 0.3161
+2025-08-13 09:41:15,445: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_9550_landmark1_no_3_512_last_visit_all_landmarks_True_20250813_092723_.pt with AUC: 0.8008, F1: 0.3161, Val Loss: 0.3371
+2025-08-13 09:45:52,349: Landmark 1 | Epoch 4/20 | Train Loss: 0.2944 | Val Loss: 0.3766 | Validation AUC: 0.7901 | F1-Score: 0.3820
+2025-08-13 09:45:52,349: No improvement in epoch 4. Current best AUC: 0.8008, F1: 0.3161, Val Loss: 0.3371. Epochs without improvement: 1/1
+2025-08-13 09:45:52,349: Early stopping triggered at epoch 4. Best AUC: 0.8008, F1: 0.3161, Val Loss: 0.3371
+2025-08-13 09:45:52,602: Tempo impiegato per Landmark 1: 1109.7 secondi
+2025-08-13 09:45:52,602: Tempo medio per epoca: 277.4 secondi
+2025-08-13 09:45:52,603: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_9550_landmark1_no_3_512_last_visit_all_landmarks_True_20250813_092723_.pt for final evaluation on test set
+2025-08-13 09:46:15,371: Final Test AUC (Landmark 1): 0.8145 | Test F1-Score: 0.2959
+2025-08-13 09:46:15,371: Preparing data for Landmark 2
+Using device: cuda
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at Charangan/MedBERT and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-13 09:46:20,135: Example train text: Based on this information, what is the probability of mortality within 90 days?
+Anxiety state, unspecified; Portal hypertension; Unspecified protein-calorie malnutrition; Hypopotassemia; Other and unspecified alcohol dependence, continuous; Unspecified deficiency anemia; Unspecified pleural effusion; Tobacco use disorder; Urinary tract infection, site not specified; Acute alcoholic hepatitis; Other ascites; Other specified forms of effusion, except tuberculous; Alcoholic fatty liver; Other constipation; Pneumonia, organism unspecified; Alcoholic cirrhosis of liver; Sepsis; Hyposmolality and/or hyponatremia
+Ciprofloxacin HCl; Furosemide; FoLIC Acid; 5% Dextrose; Morphine Sulfate; 0.9% Sodium Chloride; Lidocaine 5% Patch; Docusate Sodium; Nicotine Patch; SW; D5 1/2NS; Acetaminophen; Multivitamin IV; Heparin; 1/2 NS; Spironolactone; Neutra-Phos; Magnesium Sulfate; Potassium Chloride; Multivitamins; Sarna Lotion; Lactulose; Ondansetron; Senna; CeftriaXONE; Acetylcysteine 20%; Heparin Sodium; Phytonadione; Thiamine; Albumin 25% (12.5g / 50mL); Lorazepam; Iso-Osmotic Dextrose; Sodium Polystyrene Sulfonate; OxycoDONE (Immediate Release) ; Sodium Chloride 0.9%  Flush
+1300-2500 UNIT of Heparin in mL through IV; 1 mg of Lorazepam in mL through IV; 0.5-1 mg of Lorazepam in TAB through PO/NG; 1 mg of FoLIC Acid in mL through IV; 500 mL of 0.9% Sodium Chloride in mL through IV; 1 Appl of Sarna Lotion in BTL through TP; 8 mg of Ondansetron in VIAL through IV; 1000 mL of 0.9% Sodium Chloride in BAG through IV; 1 mg of FoLIC Acid in TAB through PO/NG; 40 mEq of Potassium Chloride in TAB through PO; 250 mg of Ciprofloxacin HCl in TAB through PO/NG; 1 PKT of Neutra-Phos in PKT through PO/NG; 0.5 mg of Lorazepam in TAB through PO/NG; 1000 mL of 1/2 NS in mL through IV; 100 mg of Thiamine in mL through IV; 50 mL of Iso-Osmotic Dextrose in mL through IV; 1 TAB of Multivitamins in TAB through PO/NG; 5-10 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 250 mL of 5% Dextrose in mL through IV; 600 mg of Acetylcysteine 20% in VIAL through PO/NG; 2 gm of CeftriaXONE in BAG through IV; 10 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 7.5 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 14 mg of Nicotine Patch in PTCH through TD; 20 mg of Furosemide in TAB through PO/NG; 15 mL of Lactulose in UDCUP through PO/NG; 5 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 0.5 mg of Lorazepam in mL through IV; 500 mg of Ciprofloxacin HCl in TAB through PO/NG; 4 gm of Magnesium Sulfate in BAG through IV; 25,000 UNIT of Heparin Sodium in BAG through IV; 3 mL of Sodium Chloride 0.9%  Flush in SYR through IV; 4 mg of Ondansetron in VIAL through IV; 325-650 mg of Acetaminophen in TAB through PO/NG; 1 mg of Lorazepam in TAB through PO/NG; 1000 mL of D5 1/2NS in mL through IV; 2 gm of Magnesium Sulfate in BAG through IV; 100 mg of Thiamine in TAB through PO/NG; 100 mg of Docusate Sodium in CAP through PO; 2-4 mg of Morphine Sulfate in SYR through IV; 1 PTCH of Lidocaine 5% Patch in PTCH through TD; 10 mL of Multivitamin IV in VIAL through IV; 1 mg of Morphine Sulfate in SYR through IV; 2 mg of Lorazepam in mL through IV; 2.5 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 30 gm of Sodium Polystyrene Sulfonate in BTL through PO/NG; 50 mL of SW in BAG through IV; 10 mg of Phytonadione in AMP through SUBCUT; 5000 UNIT of Heparin in mL through SC; 25 mg of Spironolactone in TAB through PO/NG; 2 TAB of Senna in TAB through PO/NG; 5 mg of Phytonadione in TAB through PO/NG; 25 g of Albumin 25% (12.5g / 50mL) in BAG through IV; 100 mL of SW in BAG through IV; 60 mEq of Potassium Chloride in TAB through PO; 50 g of Albumin 25% (12.5g / 50mL) in BAG through IV; 10 mg of OxycoDONE (Immediate Release)  in TAB through PO
+2025-08-13 09:46:20,635: Average train text length: 554.04 words
+2025-08-13 09:46:20,636: Average validation text length: 557.60 words
+2025-08-13 09:46:20,636: Average test text length: 549.55 words
+2025-08-13 09:46:20,636: Training on 14472 samples, validating on 1608, testing on 4020 samples
+2025-08-13 09:46:59,966: Fine-tuning at Landmark 2
+2025-08-13 09:46:59,971: Early stopping criterion: loss
+2025-08-13 09:51:29,536: Landmark 2 | Epoch 1/20 | Train Loss: 0.3734 | Val Loss: 0.3240 | Validation AUC: 0.8521 | F1-Score: 0.4013
+2025-08-13 09:51:29,876: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_9550_landmark2_no_3_512_last_visit_all_landmarks_True_20250813_094659_.pt with AUC: 0.8521, F1: 0.4013, Val Loss: 0.3240
+2025-08-13 09:55:59,991: Landmark 2 | Epoch 2/20 | Train Loss: 0.3217 | Val Loss: 0.2987 | Validation AUC: 0.8714 | F1-Score: 0.5161
+2025-08-13 09:56:00,321: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_9550_landmark2_no_3_512_last_visit_all_landmarks_True_20250813_094659_.pt with AUC: 0.8714, F1: 0.5161, Val Loss: 0.2987
+2025-08-13 10:00:30,275: Landmark 2 | Epoch 3/20 | Train Loss: 0.2976 | Val Loss: 0.2927 | Validation AUC: 0.8692 | F1-Score: 0.5000
+2025-08-13 10:00:30,620: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_9550_landmark2_no_3_512_last_visit_all_landmarks_True_20250813_094659_.pt with AUC: 0.8692, F1: 0.5000, Val Loss: 0.2927
+2025-08-13 10:05:00,650: Landmark 2 | Epoch 4/20 | Train Loss: 0.2715 | Val Loss: 0.3278 | Validation AUC: 0.8700 | F1-Score: 0.5383
+2025-08-13 10:05:00,650: No improvement in epoch 4. Current best AUC: 0.8692, F1: 0.5000, Val Loss: 0.2927. Epochs without improvement: 1/1
+2025-08-13 10:05:00,650: Early stopping triggered at epoch 4. Best AUC: 0.8692, F1: 0.5000, Val Loss: 0.2927
+2025-08-13 10:05:00,907: Tempo impiegato per Landmark 2: 1080.9 secondi
+2025-08-13 10:05:00,907: Tempo medio per epoca: 270.2 secondi
+2025-08-13 10:05:00,909: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_9550_landmark2_no_3_512_last_visit_all_landmarks_True_20250813_094659_.pt for final evaluation on test set
+2025-08-13 10:05:22,272: Final Test AUC (Landmark 2): 0.8554 | Test F1-Score: 0.4550
+2025-08-13 10:05:22,272: Preparing data for Landmark 3
+Using device: cuda
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at Charangan/MedBERT and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-13 10:05:27,943: Example train text: Based on this information, what is the probability of mortality within 90 days?
+Unspecified protein-calorie malnutrition; Tobacco use disorder; Urinary tract infection, site not specified; Pneumonia, organism unspecified; Alcoholic cirrhosis of liver; Sepsis; Hyposmolality and/or hyponatremia; Thrombocytopenia, unspecified; Anxiety state, unspecified; Other chronic pain; Portal hypertension; Other specified forms of effusion, except tuberculous; Alcoholic fatty liver; Other constipation; Hypopotassemia; Other and unspecified alcohol dependence, continuous; Unspecified deficiency anemia; Unspecified pleural effusion; Acute alcoholic hepatitis; Other ascites; Lumbago
+Ciprofloxacin HCl; Furosemide; FoLIC Acid; 5% Dextrose; Morphine Sulfate; 0.9% Sodium Chloride; Lidocaine 5% Patch; Docusate Sodium; Nicotine Patch; SW; D5 1/2NS; Acetaminophen; Multivitamin IV; Heparin; 1/2 NS; Spironolactone; Neutra-Phos; Amitriptyline; Magnesium Sulfate; Potassium Chloride; Multivitamins; Sarna Lotion; Lactulose; Ondansetron; Senna; CeftriaXONE; Acetylcysteine 20%; Heparin Sodium; Phytonadione; Thiamine; Albumin 25% (12.5g / 50mL); Lorazepam; Iso-Osmotic Dextrose; Sodium Polystyrene Sulfonate; OxycoDONE (Immediate Release) ; Sodium Chloride 0.9%  Flush
+1300-2500 UNIT of Heparin in mL through IV; 1 mg of Lorazepam in mL through IV; 0.5-1 mg of Lorazepam in TAB through PO/NG; 30 mL of Lactulose in UDCUP through PO/NG; 1 mg of FoLIC Acid in mL through IV; 500 mL of 0.9% Sodium Chloride in mL through IV; 1 Appl of Sarna Lotion in BTL through TP; 8 mg of Ondansetron in VIAL through IV; 1000 mL of 0.9% Sodium Chloride in BAG through IV; 1 mg of FoLIC Acid in TAB through PO/NG; 40 mEq of Potassium Chloride in TAB through PO; 250 mg of Ciprofloxacin HCl in TAB through PO/NG; 1 PKT of Neutra-Phos in PKT through PO/NG; 0.5 mg of Lorazepam in TAB through PO/NG; 1000 mL of 1/2 NS in mL through IV; 100 mg of Thiamine in mL through IV; 50 mL of Iso-Osmotic Dextrose in mL through IV; 1 TAB of Multivitamins in TAB through PO/NG; 5-10 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 250 mL of 5% Dextrose in mL through IV; 600 mg of Acetylcysteine 20% in VIAL through PO/NG; 2 gm of CeftriaXONE in BAG through IV; 10 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 7.5 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 14 mg of Nicotine Patch in PTCH through TD; 20 mg of Furosemide in TAB through PO/NG; 15 mL of Lactulose in UDCUP through PO/NG; 5 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 0.5 mg of Lorazepam in mL through IV; 500 mg of Ciprofloxacin HCl in TAB through PO/NG; 4 gm of Magnesium Sulfate in BAG through IV; 25,000 UNIT of Heparin Sodium in BAG through IV; 3 mL of Sodium Chloride 0.9%  Flush in SYR through IV; 4 mg of Ondansetron in VIAL through IV; 325-650 mg of Acetaminophen in TAB through PO/NG; 1 mg of Lorazepam in TAB through PO/NG; 1000 mL of D5 1/2NS in mL through IV; 2 gm of Magnesium Sulfate in BAG through IV; 100 mg of Thiamine in TAB through PO/NG; 10 mg of Amitriptyline in TAB through PO/NG; 100 mg of Docusate Sodium in CAP through PO; 2-4 mg of Morphine Sulfate in SYR through IV; 1 PTCH of Lidocaine 5% Patch in PTCH through TD; 10 mL of Multivitamin IV in VIAL through IV; 1 mg of Morphine Sulfate in SYR through IV; 2 mg of Lorazepam in mL through IV; 2.5 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 30 gm of Sodium Polystyrene Sulfonate in BTL through PO/NG; 50 mL of SW in BAG through IV; 10 mg of Phytonadione in AMP through SUBCUT; 5000 UNIT of Heparin in mL through SC; 25 mg of Spironolactone in TAB through PO/NG; 2 TAB of Senna in TAB through PO/NG; 5 mg of Phytonadione in TAB through PO/NG; 25 g of Albumin 25% (12.5g / 50mL) in BAG through IV; 100 mL of SW in BAG through IV; 60 mEq of Potassium Chloride in TAB through PO; 50 g of Albumin 25% (12.5g / 50mL) in BAG through IV; 10 mg of OxycoDONE (Immediate Release)  in TAB through PO
+2025-08-13 10:05:28,632: Average train text length: 774.30 words
+2025-08-13 10:05:28,633: Average validation text length: 770.48 words
+2025-08-13 10:05:28,633: Average test text length: 771.71 words
+2025-08-13 10:05:28,633: Training on 14472 samples, validating on 1608, testing on 4020 samples
+2025-08-13 10:06:23,164: Fine-tuning at Landmark 3
+2025-08-13 10:06:23,172: Early stopping criterion: loss
+2025-08-13 10:10:44,891: Landmark 3 | Epoch 1/20 | Train Loss: 0.3081 | Val Loss: 0.2453 | Validation AUC: 0.9255 | F1-Score: 0.6345
+2025-08-13 10:10:45,252: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_9550_landmark3_no_3_512_last_visit_all_landmarks_True_20250813_100623_.pt with AUC: 0.9255, F1: 0.6345, Val Loss: 0.2453
+2025-08-13 10:15:07,662: Landmark 3 | Epoch 2/20 | Train Loss: 0.2263 | Val Loss: 0.2079 | Validation AUC: 0.9397 | F1-Score: 0.6698
+2025-08-13 10:15:08,002: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_9550_landmark3_no_3_512_last_visit_all_landmarks_True_20250813_100623_.pt with AUC: 0.9397, F1: 0.6698, Val Loss: 0.2079
+2025-08-13 10:19:30,588: Landmark 3 | Epoch 3/20 | Train Loss: 0.2052 | Val Loss: 0.2096 | Validation AUC: 0.9391 | F1-Score: 0.6548
+2025-08-13 10:19:30,588: No improvement in epoch 3. Current best AUC: 0.9397, F1: 0.6698, Val Loss: 0.2079. Epochs without improvement: 1/1
+2025-08-13 10:19:30,588: Early stopping triggered at epoch 3. Best AUC: 0.9397, F1: 0.6698, Val Loss: 0.2079
+2025-08-13 10:19:30,838: Tempo impiegato per Landmark 3: 787.7 secondi
+2025-08-13 10:19:30,838: Tempo medio per epoca: 262.6 secondi
+2025-08-13 10:19:30,840: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_9550_landmark3_no_3_512_last_visit_all_landmarks_True_20250813_100623_.pt for final evaluation on test set
+2025-08-13 10:19:50,681: Final Test AUC (Landmark 3): 0.9372 | Test F1-Score: 0.6707
+2025-08-13 10:19:50,682: Saving results to results_medical_True_Charangan_MedBERT_last_visit_visits3_9550_512_no_20250813_101950.csv
+Using device: cuda
+   Landmark Val AUC  ... Validation Loss Training Time (s)
+0         1  0.8008  ...          0.3371            1109.7
+1         2  0.8692  ...          0.2927            1080.9
+2         3  0.9397  ...          0.2079             787.7
+
+[3 rows x 9 columns]
+
+Job 1853544 consumed 17.1 billing hours from project ec12.
+
+Submitted 2025-08-13T09:25:48; waited 7.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 6.0 hours
+Elapsed wallclock time:   54.0 minutes
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start   Elapsed  Exit status
+1853544          16            0.0 %  2025-08-13T09:25:55  3241.0 s  0
+1853544.batch    16      1     6.2 %  2025-08-13T09:25:55  3241.0 s  0
+
+Used CPU time:   53.7 CPU minutes
+Unused CPU time: 13.5 CPU hours
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1853544          32.0        
+1853544.batch    32.0    16.9
+
+Job 1853544 completed at Wed Aug 13 10:19:57 CEST 2025

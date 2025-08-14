@@ -5,30 +5,40 @@ import pandas as pd
 from collections import Counter
 
 
-def no_narrative_prompt(row):
-    narrative = "Based on this information, what is the probability of mortality within 90 days?"
-    if pd.notna(row['diag_text']) and row['diag_text'].strip():
-        narrative += f"Diagnoses: {set(row['diag_text'])}"
-    if pd.notna(row['med_text']) and row['med_text'].strip():
-        narrative += f"Medications: {set(row['med_text'])}"
-    if pd.notna(row['proc_text']) and row['proc_text'].strip():
-        narrative += f"Procedures: {set(row['proc_text'])}"
+# def no_narrative_prompt(row):
+#     narrative = "Based on this information, what is the probability of mortality within 90 days?"
+#     if pd.notna(row['diag_text']) and row['diag_text'].strip():
+#         narrative += f"Diagnoses: {set(row['diag_text'])}"
+#     if pd.notna(row['med_text']) and row['med_text'].strip():
+#         narrative += f"Medications: {set(row['med_text'])}"
+#     if pd.notna(row['proc_text']) and row['proc_text'].strip():
+#         narrative += f"Procedures: {set(row['proc_text'])}"
 
+#     return narrative
+
+def no_narrative_prompt(row, to_split='\n'):
+    narrative = 'Based on this information, what is the probability of mortality within 90 days?'
+    if pd.notna(row['diag_text']) and row['diag_text'].strip():
+        narrative += f'\n{"; ".join(set(row["diag_text"].split(f"{to_split}")))}'
+    if pd.notna(row['med_text']) and row['med_text'].strip():
+        narrative += f'\n{"; ".join(set(row["med_text"].split(f"{to_split}")))}'
+    if pd.notna(row['proc_text']) and row['proc_text'].strip():
+        narrative += f'\n{"; ".join(set(row["proc_text"].split(f"{to_split}")))}'
     return narrative
 
 def naive_narrative_prompt(row):
-    narrative = f"Patient is a {row['age_at_landmark']}-year-old {row['gender']}."
-    narrative += f" This is the {row['landmark_visit']} visit."
-    if row['days_since_previous_visit'] != -1:
-        narrative += f" The last visit happened {row['days_since_previous_visit']} days ago."
-    if pd.notna(row['diag_text']) and row['diag_text'].strip():
-        narrative += f" Medical history includes: {set(row['diag_text'])}."
-    if pd.notna(row['med_text']) and row['med_text'].strip():
-        narrative += f" Current medications are: {set(row['med_text'])}."
-    if pd.notna(row['proc_text']) and row['proc_text'].strip():
-        narrative += f" Procedures performed: {set(row['proc_text'])}."
-    # Add explicit prediction question
-    narrative += " Based on this information, what is the probability of mortality within 90 days?"
+    narrative = 'Based on this information, what is the probability of mortality within 90 days?'
+    narrative += f"\nPatient is a {row['age_at_landmark']}-year-old {row['gender']}."
+    narrative += f" This is the patient history till visit {row['landmark_visit']}."
+
+    max_visit = int(row['landmark_visit'])
+
+    for visit in range(1, max_visit+1):
+        narrative += f"\nDuring visit {visit}:"
+        narrative += f"\n\tDiagnosis: {'; '.join(ast.literal_eval(row['diag_per_visit'])[visit])}"
+        narrative += f"\n\tMedications: {'; '.join(ast.literal_eval(row['meds_per_visit'])[visit])}"
+        narrative += f"\n\tProcedures: {'; '.join(ast.literal_eval(row['proc_per_visit'])[visit])}"
+    
     return narrative
 
 def compact_narrative_prompt(row):

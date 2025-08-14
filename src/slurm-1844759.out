@@ -1,0 +1,155 @@
+Starting job 1844759 on gpu-15 on fox at Sat Aug 9 14:40:02 CEST 2025
+
+2025-08-09 14:40:39,874: Argument CI: False
+2025-08-09 14:40:39,874: Argument all_landmarks: True
+2025-08-09 14:40:39,874: Argument batch_size: 2
+2025-08-09 14:40:39,874: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-08-09 14:40:39,874: Argument early: 'loss'
+2025-08-09 14:40:39,874: Argument epochs: 20
+2025-08-09 14:40:39,874: Argument gradient_accumulation_steps: 4
+2025-08-09 14:40:39,874: Argument input_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_df_evo.csv'
+2025-08-09 14:40:39,874: Argument lr: 2e-05
+2025-08-09 14:40:39,875: Argument max_length: 512
+2025-08-09 14:40:39,875: Argument max_visits: 3
+2025-08-09 14:40:39,875: Argument model_name: 'meta-llama/Llama-3.1-8B'
+2025-08-09 14:40:39,875: Argument model_type: 'general'
+2025-08-09 14:40:39,875: Argument patience: 1
+2025-08-09 14:40:39,875: Argument peft: True
+2025-08-09 14:40:39,875: Argument prompt_type: 'no'
+2025-08-09 14:40:39,875: Argument seed: 5550
+2025-08-09 14:40:39,875: Argument test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_test_dod.csv'
+2025-08-09 14:40:39,875: Argument train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_train_dod.csv'
+2025-08-09 14:40:39,875: Argument use_quantization: False
+2025-08-09 14:40:39,875: Argument val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_vali_dod.csv'
+2025-08-09 14:40:39,875: Argument when_counting_death: 'last_visit'
+2025-08-09 14:40:39,907: Using prompt type: no
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:79: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:81: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_test_df = pd.read_csv(args.test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+2025-08-09 14:41:17,043: Processing all landmarks from 1 to 3
+2025-08-09 14:41:17,043: Preparing data for Landmark 1
+2025-08-09 14:41:22,539: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:09<00:27,  9.13s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:18<00:18,  9.24s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:27<00:09,  9.20s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:27<00:00,  5.72s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:27<00:00,  7.00s/it]
+Some weights of LlamaForSequenceClassification were not initialized from the model checkpoint at meta-llama/Llama-3.1-8B and are newly initialized: ['score.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-09 14:41:54,150: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-08-09 14:42:35,062: Example train text: Based on this information, what is the probability of mortality within 90 days?
+Unspecified protein-calorie malnutrition; Acute alcoholic hepatitis; Urinary tract infection, site not specified; Pneumonia, organism unspecified; Unspecified deficiency anemia; Hypopotassemia; Alcoholic cirrhosis of liver; Other specified forms of effusion, except tuberculous; Hyposmolality and/or hyponatremia; Other and unspecified alcohol dependence, continuous; Other constipation; Other ascites; Anxiety state, unspecified; Portal hypertension
+Heparin; Nicotine Patch; Senna; SW; Acetaminophen; Lorazepam; 1/2 NS; FoLIC Acid; Ciprofloxacin HCl; Phytonadione; Sodium Chloride 0.9%  Flush; OxycoDONE (Immediate Release) ; Potassium Chloride; Albumin 25% (12.5g / 50mL); 0.9% Sodium Chloride; Multivitamins; Neutra-Phos; Docusate Sodium; Furosemide; Multivitamin IV; Morphine Sulfate; Thiamine; Lidocaine 5% Patch; Magnesium Sulfate; Ondansetron
+60 mEq of Potassium Chloride in TAB through PO; 40 mEq of Potassium Chloride in TAB through PO; 1000 mL of 0.9% Sodium Chloride in BAG through IV; 1000 mL of 1/2 NS in mL through IV; 10 mL of Multivitamin IV in VIAL through IV; 20 mg of Furosemide in TAB through PO/NG; 2 gm of Magnesium Sulfate in BAG through IV; 50 mL of SW in BAG through IV; 1 mg of Lorazepam in TAB through PO/NG; 14 mg of Nicotine Patch in PTCH through TD; 1 PTCH of Lidocaine 5% Patch in PTCH through TD; 5 mg of Phytonadione in TAB through PO/NG; 2-4 mg of Morphine Sulfate in SYR through IV; 8 mg of Ondansetron in VIAL through IV; 2 TAB of Senna in TAB through PO/NG; 325-650 mg of Acetaminophen in TAB through PO/NG; 1 PKT of Neutra-Phos in PKT through PO/NG; 1 mg of FoLIC Acid in TAB through PO/NG; 4 gm of Magnesium Sulfate in BAG through IV; 250 mg of Ciprofloxacin HCl in TAB through PO/NG; 5000 UNIT of Heparin in mL through SC; 2 mg of Lorazepam in mL through IV; 500 mg of Ciprofloxacin HCl in TAB through PO/NG; 100 mg of Docusate Sodium in CAP through PO; 5 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 0.5 mg of Lorazepam in mL through IV; 1 mg of FoLIC Acid in mL through IV; 0.5 mg of Lorazepam in TAB through PO/NG; 500 mL of 0.9% Sodium Chloride in mL through IV; 100 mg of Thiamine in TAB through PO/NG; 3 mL of Sodium Chloride 0.9%  Flush in SYR through IV; 2.5 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 50 g of Albumin 25% (12.5g / 50mL) in BAG through IV; 100 mL of SW in BAG through IV; 0.5-1 mg of Lorazepam in TAB through PO/NG; 1 mg of Lorazepam in mL through IV; 100 mg of Thiamine in mL through IV; 1 TAB of Multivitamins in TAB through PO/NG
+2025-08-09 14:42:35,341: Average train text length: 330.04 words
+2025-08-09 14:42:35,341: Average validation text length: 331.97 words
+2025-08-09 14:42:35,341: Average test text length: 329.99 words
+2025-08-09 14:42:35,341: Training on 14472 samples, validating on 1608, testing on 4020 samples
+2025-08-09 14:42:55,068: Fine-tuning at Landmark 1
+2025-08-09 14:42:56,282: Early stopping criterion: loss
+2025-08-09 15:16:43,512: Landmark 1 | Epoch 1/20 | Train Loss: 0.2376 | Val Loss: 0.5126 | Validation AUC: 0.5866 | F1-Score: 0.1362
+2025-08-09 15:16:56,093: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_5550_landmark1_no_3_512_last_visit_all_landmarks_True_20250809_144256_.pt with AUC: 0.5866, F1: 0.1362, Val Loss: 0.5126
+2025-08-09 15:50:43,916: Landmark 1 | Epoch 2/20 | Train Loss: 0.1174 | Val Loss: 0.4225 | Validation AUC: 0.6825 | F1-Score: 0.1119
+2025-08-09 15:50:56,190: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_5550_landmark1_no_3_512_last_visit_all_landmarks_True_20250809_144256_.pt with AUC: 0.6825, F1: 0.1119, Val Loss: 0.4225
+2025-08-09 16:24:43,598: Landmark 1 | Epoch 3/20 | Train Loss: 0.1007 | Val Loss: 0.3860 | Validation AUC: 0.7591 | F1-Score: 0.2047
+2025-08-09 16:25:10,946: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_5550_landmark1_no_3_512_last_visit_all_landmarks_True_20250809_144256_.pt with AUC: 0.7591, F1: 0.2047, Val Loss: 0.3860
+2025-08-09 16:58:53,308: Landmark 1 | Epoch 4/20 | Train Loss: 0.0882 | Val Loss: 0.3988 | Validation AUC: 0.7936 | F1-Score: 0.4367
+2025-08-09 16:58:53,308: No improvement in epoch 4. Current best AUC: 0.7591, F1: 0.2047, Val Loss: 0.3860. Epochs without improvement: 1/1
+2025-08-09 16:58:53,308: Early stopping triggered at epoch 4. Best AUC: 0.7591, F1: 0.2047, Val Loss: 0.3860
+2025-08-09 16:58:59,536: Tempo impiegato per Landmark 1: 8164.5 secondi
+2025-08-09 16:58:59,537: Tempo medio per epoca: 2041.1 secondi
+2025-08-09 16:58:59,544: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_5550_landmark1_no_3_512_last_visit_all_landmarks_True_20250809_144256_.pt for final evaluation on test set
+2025-08-09 17:02:35,245: Final Test AUC (Landmark 1): 0.7144 | Test F1-Score: 0.2352
+2025-08-09 17:02:35,245: Preparing data for Landmark 2
+2025-08-09 17:02:39,058: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+trainable params: 6,823,936 || all params: 7,511,756,800 || trainable%: 0.0908
+Using device: cuda
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:03<00:09,  3.08s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:08<00:08,  4.47s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:18<00:06,  6.85s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:18<00:00,  4.34s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:18<00:00,  4.68s/it]
+Some weights of LlamaForSequenceClassification were not initialized from the model checkpoint at meta-llama/Llama-3.1-8B and are newly initialized: ['score.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-09 17:02:59,811: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+2025-08-09 17:03:40,564: Example train text: Based on this information, what is the probability of mortality within 90 days?
+Alcoholic fatty liver; Unspecified protein-calorie malnutrition; Acute alcoholic hepatitis; Urinary tract infection, site not specified; Unspecified pleural effusion; Pneumonia, organism unspecified; Unspecified deficiency anemia; Sepsis; Hypopotassemia; Tobacco use disorder; Alcoholic cirrhosis of liver; Other specified forms of effusion, except tuberculous; Hyposmolality and/or hyponatremia; Other and unspecified alcohol dependence, continuous; Other constipation; Other ascites; Anxiety state, unspecified; Portal hypertension
+CeftriaXONE; Heparin; Iso-Osmotic Dextrose; Nicotine Patch; Senna; Acetylcysteine 20%; SW; Acetaminophen; Lorazepam; 1/2 NS; FoLIC Acid; Spironolactone; Ciprofloxacin HCl; Phytonadione; Heparin Sodium; Sodium Chloride 0.9%  Flush; OxycoDONE (Immediate Release) ; Potassium Chloride; Lactulose; Albumin 25% (12.5g / 50mL); 0.9% Sodium Chloride; Multivitamins; Neutra-Phos; D5 1/2NS; Docusate Sodium; Furosemide; Multivitamin IV; Sodium Polystyrene Sulfonate; Morphine Sulfate; Thiamine; Lidocaine 5% Patch; Magnesium Sulfate; Ondansetron; Sarna Lotion; 5% Dextrose
+60 mEq of Potassium Chloride in TAB through PO; 40 mEq of Potassium Chloride in TAB through PO; 1000 mL of 0.9% Sodium Chloride in BAG through IV; 1000 mL of 1/2 NS in mL through IV; 30 gm of Sodium Polystyrene Sulfonate in BTL through PO/NG; 4 mg of Ondansetron in VIAL through IV; 10 mL of Multivitamin IV in VIAL through IV; 20 mg of Furosemide in TAB through PO/NG; 25 mg of Spironolactone in TAB through PO/NG; 2 gm of Magnesium Sulfate in BAG through IV; 50 mL of SW in BAG through IV; 1 mg of Lorazepam in TAB through PO/NG; 14 mg of Nicotine Patch in PTCH through TD; 2 gm of CeftriaXONE in BAG through IV; 1 PTCH of Lidocaine 5% Patch in PTCH through TD; 600 mg of Acetylcysteine 20% in VIAL through PO/NG; 15 mL of Lactulose in UDCUP through PO/NG; 10 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 5 mg of Phytonadione in TAB through PO/NG; 2-4 mg of Morphine Sulfate in SYR through IV; 8 mg of Ondansetron in VIAL through IV; 10 mg of OxycoDONE (Immediate Release)  in TAB through PO; 2 TAB of Senna in TAB through PO/NG; 325-650 mg of Acetaminophen in TAB through PO/NG; 50 mL of Iso-Osmotic Dextrose in mL through IV; 1 PKT of Neutra-Phos in PKT through PO/NG; 1 mg of Morphine Sulfate in SYR through IV; 1 mg of FoLIC Acid in TAB through PO/NG; 4 gm of Magnesium Sulfate in BAG through IV; 7.5 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 250 mg of Ciprofloxacin HCl in TAB through PO/NG; 5000 UNIT of Heparin in mL through SC; 2 mg of Lorazepam in mL through IV; 500 mg of Ciprofloxacin HCl in TAB through PO/NG; 1 Appl of Sarna Lotion in BTL through TP; 100 mg of Docusate Sodium in CAP through PO; 5 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 0.5 mg of Lorazepam in mL through IV; 1000 mL of D5 1/2NS in mL through IV; 1 mg of FoLIC Acid in mL through IV; 0.5 mg of Lorazepam in TAB through PO/NG; 500 mL of 0.9% Sodium Chloride in mL through IV; 100 mg of Thiamine in TAB through PO/NG; 3 mL of Sodium Chloride 0.9%  Flush in SYR through IV; 2.5 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 50 g of Albumin 25% (12.5g / 50mL) in BAG through IV; 100 mL of SW in BAG through IV; 250 mL of 5% Dextrose in mL through IV; 5-10 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 1300-2500 UNIT of Heparin in mL through IV; 25 g of Albumin 25% (12.5g / 50mL) in BAG through IV; 0.5-1 mg of Lorazepam in TAB through PO/NG; 1 mg of Lorazepam in mL through IV; 10 mg of Phytonadione in AMP through SUBCUT; 25,000 UNIT of Heparin Sodium in BAG through IV; 100 mg of Thiamine in mL through IV; 1 TAB of Multivitamins in TAB through PO/NG
+2025-08-09 17:03:41,049: Average train text length: 554.04 words
+2025-08-09 17:03:41,049: Average validation text length: 557.60 words
+2025-08-09 17:03:41,050: Average test text length: 549.55 words
+2025-08-09 17:03:41,050: Training on 14472 samples, validating on 1608, testing on 4020 samples
+2025-08-09 17:04:14,426: Fine-tuning at Landmark 2
+2025-08-09 17:04:14,456: Early stopping criterion: loss
+2025-08-09 17:38:13,565: Landmark 2 | Epoch 1/20 | Train Loss: 0.2458 | Val Loss: 0.5327 | Validation AUC: 0.6041 | F1-Score: 0.1899
+2025-08-09 17:38:26,113: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_5550_landmark2_no_3_512_last_visit_all_landmarks_True_20250809_170414_.pt with AUC: 0.6041, F1: 0.1899, Val Loss: 0.5327
+2025-08-09 18:12:24,213: Landmark 2 | Epoch 2/20 | Train Loss: 0.1193 | Val Loss: 0.3948 | Validation AUC: 0.7142 | F1-Score: 0.1633
+2025-08-09 18:12:36,567: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_5550_landmark2_no_3_512_last_visit_all_landmarks_True_20250809_170414_.pt with AUC: 0.7142, F1: 0.1633, Val Loss: 0.3948
+2025-08-09 18:46:37,428: Landmark 2 | Epoch 3/20 | Train Loss: 0.0899 | Val Loss: 0.3149 | Validation AUC: 0.8576 | F1-Score: 0.4977
+2025-08-09 18:46:49,924: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_5550_landmark2_no_3_512_last_visit_all_landmarks_True_20250809_170414_.pt with AUC: 0.8576, F1: 0.4977, Val Loss: 0.3149
+2025-08-09 19:20:46,027: Landmark 2 | Epoch 4/20 | Train Loss: 0.0779 | Val Loss: 0.3376 | Validation AUC: 0.8621 | F1-Score: 0.5170
+2025-08-09 19:20:46,027: No improvement in epoch 4. Current best AUC: 0.8576, F1: 0.4977, Val Loss: 0.3149. Epochs without improvement: 1/1
+2025-08-09 19:20:46,027: Early stopping triggered at epoch 4. Best AUC: 0.8576, F1: 0.4977, Val Loss: 0.3149
+2025-08-09 19:20:52,445: Tempo impiegato per Landmark 2: 8198.0 secondi
+2025-08-09 19:20:52,446: Tempo medio per epoca: 2049.5 secondi
+2025-08-09 19:20:52,454: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_5550_landmark2_no_3_512_last_visit_all_landmarks_True_20250809_170414_.pt for final evaluation on test set
+2025-08-09 19:24:24,284: Final Test AUC (Landmark 2): 0.8473 | Test F1-Score: 0.4770
+2025-08-09 19:24:24,284: Preparing data for Landmark 3
+2025-08-09 19:24:30,630: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+trainable params: 6,823,936 || all params: 7,511,756,800 || trainable%: 0.0908
+Using device: cuda
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:10<00:30, 10.32s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:21<00:21, 10.81s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:32<00:10, 10.90s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:32<00:00,  6.79s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:32<00:00,  8.24s/it]
+Some weights of LlamaForSequenceClassification were not initialized from the model checkpoint at meta-llama/Llama-3.1-8B and are newly initialized: ['score.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-09 19:25:07,743: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+2025-08-09 19:25:49,257: Example train text: Based on this information, what is the probability of mortality within 90 days?
+Other chronic pain; Lumbago; Tobacco use disorder; Alcoholic cirrhosis of liver; Other ascites; Other specified forms of effusion, except tuberculous; Urinary tract infection, site not specified; Sepsis; Hypopotassemia; Hyposmolality and/or hyponatremia; Thrombocytopenia, unspecified; Unspecified protein-calorie malnutrition; Anxiety state, unspecified; Acute alcoholic hepatitis; Portal hypertension; Alcoholic fatty liver; Unspecified pleural effusion; Pneumonia, organism unspecified; Unspecified deficiency anemia; Other and unspecified alcohol dependence, continuous; Other constipation
+CeftriaXONE; Heparin; Iso-Osmotic Dextrose; Nicotine Patch; Senna; Acetylcysteine 20%; SW; Acetaminophen; Lorazepam; 1/2 NS; FoLIC Acid; Spironolactone; Amitriptyline; Ciprofloxacin HCl; Phytonadione; Heparin Sodium; Sodium Chloride 0.9%  Flush; OxycoDONE (Immediate Release) ; Potassium Chloride; Lactulose; Albumin 25% (12.5g / 50mL); 0.9% Sodium Chloride; Multivitamins; Neutra-Phos; D5 1/2NS; Docusate Sodium; Furosemide; Multivitamin IV; Sodium Polystyrene Sulfonate; Morphine Sulfate; Thiamine; Lidocaine 5% Patch; Magnesium Sulfate; Ondansetron; Sarna Lotion; 5% Dextrose
+60 mEq of Potassium Chloride in TAB through PO; 40 mEq of Potassium Chloride in TAB through PO; 1000 mL of 0.9% Sodium Chloride in BAG through IV; 1000 mL of 1/2 NS in mL through IV; 30 gm of Sodium Polystyrene Sulfonate in BTL through PO/NG; 4 mg of Ondansetron in VIAL through IV; 10 mL of Multivitamin IV in VIAL through IV; 20 mg of Furosemide in TAB through PO/NG; 25 mg of Spironolactone in TAB through PO/NG; 2 gm of Magnesium Sulfate in BAG through IV; 50 mL of SW in BAG through IV; 1 mg of Lorazepam in TAB through PO/NG; 14 mg of Nicotine Patch in PTCH through TD; 2 gm of CeftriaXONE in BAG through IV; 1 PTCH of Lidocaine 5% Patch in PTCH through TD; 600 mg of Acetylcysteine 20% in VIAL through PO/NG; 15 mL of Lactulose in UDCUP through PO/NG; 10 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 5 mg of Phytonadione in TAB through PO/NG; 2-4 mg of Morphine Sulfate in SYR through IV; 30 mL of Lactulose in UDCUP through PO/NG; 8 mg of Ondansetron in VIAL through IV; 10 mg of OxycoDONE (Immediate Release)  in TAB through PO; 2 TAB of Senna in TAB through PO/NG; 325-650 mg of Acetaminophen in TAB through PO/NG; 50 mL of Iso-Osmotic Dextrose in mL through IV; 1 PKT of Neutra-Phos in PKT through PO/NG; 1 mg of Morphine Sulfate in SYR through IV; 1 mg of FoLIC Acid in TAB through PO/NG; 4 gm of Magnesium Sulfate in BAG through IV; 7.5 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 250 mg of Ciprofloxacin HCl in TAB through PO/NG; 5000 UNIT of Heparin in mL through SC; 2 mg of Lorazepam in mL through IV; 500 mg of Ciprofloxacin HCl in TAB through PO/NG; 1 Appl of Sarna Lotion in BTL through TP; 100 mg of Docusate Sodium in CAP through PO; 5 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 0.5 mg of Lorazepam in mL through IV; 1000 mL of D5 1/2NS in mL through IV; 1 mg of FoLIC Acid in mL through IV; 0.5 mg of Lorazepam in TAB through PO/NG; 500 mL of 0.9% Sodium Chloride in mL through IV; 100 mg of Thiamine in TAB through PO/NG; 3 mL of Sodium Chloride 0.9%  Flush in SYR through IV; 2.5 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 50 g of Albumin 25% (12.5g / 50mL) in BAG through IV; 100 mL of SW in BAG through IV; 250 mL of 5% Dextrose in mL through IV; 5-10 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 1300-2500 UNIT of Heparin in mL through IV; 10 mg of Amitriptyline in TAB through PO/NG; 25 g of Albumin 25% (12.5g / 50mL) in BAG through IV; 0.5-1 mg of Lorazepam in TAB through PO/NG; 1 mg of Lorazepam in mL through IV; 10 mg of Phytonadione in AMP through SUBCUT; 25,000 UNIT of Heparin Sodium in BAG through IV; 100 mg of Thiamine in mL through IV; 1 TAB of Multivitamins in TAB through PO/NG
+2025-08-09 19:25:49,968: Average train text length: 774.30 words
+2025-08-09 19:25:49,968: Average validation text length: 770.48 words
+2025-08-09 19:25:49,968: Average test text length: 771.71 words
+2025-08-09 19:25:49,968: Training on 14472 samples, validating on 1608, testing on 4020 samples
+2025-08-09 19:26:35,886: Fine-tuning at Landmark 3
+2025-08-09 19:26:35,960: Early stopping criterion: loss
+2025-08-09 20:00:53,838: Landmark 3 | Epoch 1/20 | Train Loss: 0.2511 | Val Loss: 0.5398 | Validation AUC: 0.6604 | F1-Score: 0.2474
+2025-08-09 20:01:06,215: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_5550_landmark3_no_3_512_last_visit_all_landmarks_True_20250809_192635_.pt with AUC: 0.6604, F1: 0.2474, Val Loss: 0.5398
+2025-08-09 20:35:22,313: Landmark 3 | Epoch 2/20 | Train Loss: 0.1118 | Val Loss: 0.3182 | Validation AUC: 0.8445 | F1-Score: 0.4208
+2025-08-09 20:35:34,316: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_5550_landmark3_no_3_512_last_visit_all_landmarks_True_20250809_192635_.pt with AUC: 0.8445, F1: 0.4208, Val Loss: 0.3182
+2025-08-09 21:09:48,816: Landmark 3 | Epoch 3/20 | Train Loss: 0.0638 | Val Loss: 0.2097 | Validation AUC: 0.9382 | F1-Score: 0.7064
+2025-08-09 21:10:00,897: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_5550_landmark3_no_3_512_last_visit_all_landmarks_True_20250809_192635_.pt with AUC: 0.9382, F1: 0.7064, Val Loss: 0.2097
+2025-08-09 21:44:18,915: Landmark 3 | Epoch 4/20 | Train Loss: 0.0548 | Val Loss: 0.2256 | Validation AUC: 0.9455 | F1-Score: 0.7101
+2025-08-09 21:44:18,915: No improvement in epoch 4. Current best AUC: 0.9382, F1: 0.7064, Val Loss: 0.2097. Epochs without improvement: 1/1
+2025-08-09 21:44:18,915: Early stopping triggered at epoch 4. Best AUC: 0.9382, F1: 0.7064, Val Loss: 0.2097
+2025-08-09 21:44:28,819: Tempo impiegato per Landmark 3: 8272.9 secondi
+2025-08-09 21:44:28,821: Tempo medio per epoca: 2068.2 secondi
+2025-08-09 21:44:28,829: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_5550_landmark3_no_3_512_last_visit_all_landmarks_True_20250809_192635_.pt for final evaluation on test set
+2025-08-09 21:47:59,593: Final Test AUC (Landmark 3): 0.9374 | Test F1-Score: 0.6895
+2025-08-09 21:47:59,594: Saving results to results_general_True_meta-llama_Llama-3.1-8B_last_visit_visits3_peft_5550_512_no_20250809_214759.csv
+trainable params: 6,823,936 || all params: 7,511,756,800 || trainable%: 0.0908
+Using device: cuda
+   Landmark Val AUC  ... Validation Loss Training Time (s)
+0         1  0.7591  ...          0.3860            8164.5
+1         2  0.8576  ...          0.3149            8198.0
+2         3  0.9382  ...          0.2097            8272.9
+
+[3 rows x 9 columns]
+
+Job 1844759 consumed 135.5 billing hours from project ec12.
+
+Submitted 2025-08-08T08:51:27; waited 1.2 days in the queue after becoming eligible to run.
+
+Requested wallclock time: 14.0 hours
+Elapsed wallclock time:   7.1 hours
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+1844759          16            0.0 %  2025-08-09T14:40:02    7.1 h  0
+1844759.batch    16      1     6.4 %  2025-08-09T14:40:02    7.1 h  0
+
+Used CPU time:   7.3 CPU hours
+Unused CPU time: 4.5 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1844759          32.0        
+1844759.batch    32.0    32.0
+
+Job 1844759 completed at Sat Aug 9 21:48:04 CEST 2025

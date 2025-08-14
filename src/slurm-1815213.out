@@ -1,0 +1,82 @@
+Starting job 1815213 on gpu-9 on fox at Mon Jul 21 10:06:53 CEST 2025
+
+2025-07-21 10:07:03,099: Argument all_landmarks: False
+2025-07-21 10:07:03,100: Argument batch_size: 2
+2025-07-21 10:07:03,100: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-07-21 10:07:03,100: Argument early: 'loss'
+2025-07-21 10:07:03,100: Argument epochs: 20
+2025-07-21 10:07:03,100: Argument gradient_accumulation_steps: 4
+2025-07-21 10:07:03,100: Argument input_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_df_evo.csv'
+2025-07-21 10:07:03,100: Argument lr: 2e-05
+2025-07-21 10:07:03,100: Argument max_length: 2048
+2025-07-21 10:07:03,100: Argument max_visits: 3
+2025-07-21 10:07:03,100: Argument model_name: 'answerdotai/ModernBERT-large'
+2025-07-21 10:07:03,100: Argument model_type: 'medbert'
+2025-07-21 10:07:03,100: Argument patience: 3
+2025-07-21 10:07:03,100: Argument peft: True
+2025-07-21 10:07:03,100: Argument prompt_type: 'full_no_time_rnd'
+2025-07-21 10:07:03,100: Argument seed: 9550
+2025-07-21 10:07:03,100: Argument test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_test.csv'
+2025-07-21 10:07:03,100: Argument train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_train.csv'
+2025-07-21 10:07:03,100: Argument use_quantization: False
+2025-07-21 10:07:03,100: Argument val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_vali.csv'
+Some weights of ModernBertForSequenceClassification were not initialized from the model checkpoint at answerdotai/ModernBERT-large and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-07-21 10:07:06,352: Using prompt type: full_no_time_rnd
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning.py:459: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning.py:461: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_test_df = pd.read_csv(args.test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+2025-07-21 10:07:41,628: Processing only the last landmark visit: 3
+2025-07-21 10:07:41,628: Preparing data for Landmark 3
+2025-07-21 10:07:47,190: Average train text length: 356.21 words
+2025-07-21 10:07:47,190: Average validation text length: 351.55 words
+2025-07-21 10:07:47,190: Average test text length: 354.77 words
+2025-07-21 10:07:47,190: Training on 14472 samples, validating on 1608, testing on 4020 samples
+2025-07-21 10:08:15,398: Fine-tuning at Landmark 3
+2025-07-21 10:08:15,402: Early stopping criterion: loss
+/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/networkx/utils/backends.py:135: RuntimeWarning: networkx backend defined more than once: nx-loopback
+  backends.update(_get_backends("networkx.backends"))
+2025-07-21 10:49:18,555: Landmark 3 | Epoch 1/20 | Train Loss: 0.0820 | Val Loss: 0.2392 | Validation AUC: 0.9311 | F1-Score: 0.4713
+2025-07-21 11:29:57,731: Landmark 3 | Epoch 2/20 | Train Loss: 0.0590 | Val Loss: 0.1988 | Validation AUC: 0.9428 | F1-Score: 0.7062
+2025-07-21 12:10:41,384: Landmark 3 | Epoch 3/20 | Train Loss: 0.0539 | Val Loss: 0.2115 | Validation AUC: 0.9425 | F1-Score: 0.6411
+2025-07-21 12:51:22,009: Landmark 3 | Epoch 4/20 | Train Loss: 0.0507 | Val Loss: 0.2075 | Validation AUC: 0.9396 | F1-Score: 0.6732
+2025-07-21 13:32:00,781: Landmark 3 | Epoch 5/20 | Train Loss: 0.0481 | Val Loss: 0.1967 | Validation AUC: 0.9457 | F1-Score: 0.7051
+2025-07-21 14:12:29,457: Landmark 3 | Epoch 6/20 | Train Loss: 0.0451 | Val Loss: 0.2070 | Validation AUC: 0.9465 | F1-Score: 0.7237
+2025-07-21 14:53:03,783: Landmark 3 | Epoch 7/20 | Train Loss: 0.0391 | Val Loss: 0.2062 | Validation AUC: 0.9477 | F1-Score: 0.7042
+2025-07-21 15:33:33,328: Landmark 3 | Epoch 8/20 | Train Loss: 0.0299 | Val Loss: 0.2283 | Validation AUC: 0.9429 | F1-Score: 0.7212
+2025-07-21 15:33:33,330: Early stopping triggered at epoch 8
+2025-07-21 15:33:35,640: Tempo impiegato per Landmark 3: 19520.2 secondi
+2025-07-21 15:33:35,640: Tempo medio per epoca: 2440.0 secondi
+2025-07-21 15:37:13,843: Final Test AUC (Landmark 3): 0.9440 | Test F1-Score: 0.7127
+2025-07-21 15:37:13,846: Saving results to results_medbert_answerdotai_ModernBERT-large_visits3_peft_9550_full_no_time_rnd_20250721_153713.csv
+Using device: cuda
+   Landmark Val AUC  ... Validation Loss Training Time (s)
+0         3  0.9457  ...          0.1967           19520.2
+
+[1 rows x 9 columns]
+
+Job 1815213 consumed 104.6 billing hours from project ec12.
+
+Submitted 2025-07-21T10:06:46; waited 6.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 24.0 hours
+Elapsed wallclock time:   5.5 hours
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+1815213          16            0.0 %  2025-07-21T10:06:52    5.5 h  0
+1815213.batch    16      1     9.6 %  2025-07-21T10:06:52    5.5 h  0
+
+Used CPU time:   8.4 CPU hours
+Unused CPU time: 3.3 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1815213          32.0        
+1815213.batch    32.0    12.7
+
+GPU usage stats:
+Job 1815213 completed at Mon Jul 21 15:37:20 CEST 2025

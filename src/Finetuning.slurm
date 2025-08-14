@@ -2,12 +2,13 @@
 
 #SBATCH --job-name=project_m
 #SBATCH --account=ec12
-#SBATCH --time=05:00:00
+#SBATCH --time=10:00:00
 #SBATCH --nodes=1
 #SBATCH --mem-per-cpu=2G
 #SBATCH --partition=accel --gpus=1
 #SBATCH --exclude=gpu-14
 #SBATCH --exclude=gpu-4
+#SBATCH --nodelist=gpu-8,gpu-9
 # Increase this number when you really need parallel computing
 #SBATCH --cpus-per-task=16
 
@@ -34,7 +35,7 @@ nvidia-smi --query-gpu=timestamp,utilization.gpu,utilization.memory \
 NVIDIA_MONITOR_PID=$!  # Capture PID of monitoring process
 
 # We pass as arguments the path to the training corpus and (optionally) the number of CPU cores we want to use
-python3 Finetuning.py ${@}
+python3 Finetuning_rfct.py ${@}
 
 # After computation stop monitoring
 kill -SIGINT "$NVIDIA_MONITOR_PID"

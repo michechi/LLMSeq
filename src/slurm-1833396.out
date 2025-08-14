@@ -1,0 +1,193 @@
+Starting job 1833396 on gpu-9 on fox at Mon Jul 28 00:14:50 CEST 2025
+
+2025-07-28 00:15:42,683: Argument all_landmarks: True
+2025-07-28 00:15:42,683: Argument batch_size: 2
+2025-07-28 00:15:42,683: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-07-28 00:15:42,683: Argument early: 'loss'
+2025-07-28 00:15:42,683: Argument epochs: 20
+2025-07-28 00:15:42,683: Argument gradient_accumulation_steps: 4
+2025-07-28 00:15:42,683: Argument input_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_df_evo.csv'
+2025-07-28 00:15:42,683: Argument lr: 2e-05
+2025-07-28 00:15:42,683: Argument max_length: 512
+2025-07-28 00:15:42,683: Argument max_visits: 3
+2025-07-28 00:15:42,683: Argument model_name: 'meta-llama/Llama-3.1-8B'
+2025-07-28 00:15:42,683: Argument model_type: 'llm'
+2025-07-28 00:15:42,683: Argument patience: 3
+2025-07-28 00:15:42,683: Argument peft: True
+2025-07-28 00:15:42,683: Argument prompt_type: 'compact_no_time_rnd'
+2025-07-28 00:15:42,683: Argument seed: 9550
+2025-07-28 00:15:42,683: Argument test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_test.csv'
+2025-07-28 00:15:42,683: Argument train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_train.csv'
+2025-07-28 00:15:42,683: Argument use_quantization: False
+2025-07-28 00:15:42,683: Argument val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_vali.csv'
+2025-07-28 00:15:43,575: Using prompt type: compact_no_time_rnd
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning.py:450: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning.py:452: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_test_df = pd.read_csv(args.test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+2025-07-28 00:16:21,575: Processing all landmarks from 1 to 3
+2025-07-28 00:16:21,575: Preparing data for Landmark 1
+2025-07-28 00:16:24,163: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:10<00:31, 10.42s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:22<00:22, 11.18s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:33<00:11, 11.38s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:34<00:00,  7.12s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:34<00:00,  8.58s/it]
+Some weights of LlamaForSequenceClassification were not initialized from the model checkpoint at meta-llama/Llama-3.1-8B and are newly initialized: ['score.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-07-28 00:17:02,116: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-07-28 00:17:44,271: Average train text length: 133.90 words
+2025-07-28 00:17:44,272: Average validation text length: 133.07 words
+2025-07-28 00:17:44,272: Average test text length: 134.65 words
+2025-07-28 00:17:44,272: Training on 14472 samples, validating on 1608, testing on 4020 samples
+2025-07-28 00:17:53,876: Fine-tuning at Landmark 1
+2025-07-28 00:17:55,438: Early stopping criterion: loss
+2025-07-28 00:52:26,263: Landmark 1 | Epoch 1/20 | Train Loss: 0.1285 | Val Loss: 0.4107 | Validation AUC: 0.7305 | F1-Score: 0.1262
+2025-07-28 01:27:10,548: Landmark 1 | Epoch 2/20 | Train Loss: 0.0989 | Val Loss: 0.3601 | Validation AUC: 0.7913 | F1-Score: 0.2395
+2025-07-28 02:01:53,922: Landmark 1 | Epoch 3/20 | Train Loss: 0.0892 | Val Loss: 0.3648 | Validation AUC: 0.8096 | F1-Score: 0.1194
+2025-07-28 02:36:24,846: Landmark 1 | Epoch 4/20 | Train Loss: 0.0828 | Val Loss: 0.3392 | Validation AUC: 0.8093 | F1-Score: 0.3131
+2025-07-28 03:11:02,685: Landmark 1 | Epoch 5/20 | Train Loss: 0.0778 | Val Loss: 0.3403 | Validation AUC: 0.8240 | F1-Score: 0.3886
+2025-07-28 03:45:11,966: Landmark 1 | Epoch 6/20 | Train Loss: 0.0713 | Val Loss: 0.3479 | Validation AUC: 0.8241 | F1-Score: 0.4206
+2025-07-28 04:19:10,246: Landmark 1 | Epoch 7/20 | Train Loss: 0.0637 | Val Loss: 0.3814 | Validation AUC: 0.8147 | F1-Score: 0.2812
+2025-07-28 04:19:10,247: Early stopping triggered at epoch 7
+2025-07-28 04:19:22,468: Tempo impiegato per Landmark 1: 14488.6 secondi
+2025-07-28 04:19:22,469: Tempo medio per epoca: 2069.8 secondi
+2025-07-28 04:19:22,476: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_landmark1_compact_no_time_rnd_3_512_all_landmarks_True_20250728_001755_.pt for final evaluation on test set
+2025-07-28 04:23:25,457: Final Test AUC (Landmark 1): 0.7931 | Test F1-Score: 0.2704
+2025-07-28 04:23:25,457: Preparing data for Landmark 2
+2025-07-28 04:23:26,235: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+trainable params: 6,823,936 || all params: 7,511,756,800 || trainable%: 0.0908
+Using device: cuda
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:09<00:29,  9.90s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:20<00:20, 10.16s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:30<00:10, 10.30s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:31<00:00,  6.49s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:31<00:00,  7.84s/it]
+Some weights of LlamaForSequenceClassification were not initialized from the model checkpoint at meta-llama/Llama-3.1-8B and are newly initialized: ['score.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-07-28 04:24:06,684: Average train text length: 137.85 words
+2025-07-28 04:24:06,685: Average validation text length: 137.77 words
+2025-07-28 04:24:06,685: Average test text length: 136.01 words
+2025-07-28 04:24:06,685: Training on 14472 samples, validating on 1608, testing on 4020 samples
+2025-07-28 04:24:17,313: Fine-tuning at Landmark 2
+2025-07-28 04:24:17,334: Early stopping criterion: loss
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [0,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [1,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [2,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [3,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [4,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [5,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [6,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [7,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [8,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [9,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [10,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [11,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [12,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [13,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [14,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [15,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [16,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [17,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [18,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [19,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [20,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [21,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [22,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [23,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [24,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [25,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [26,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [27,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [28,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [29,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [30,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [226,0,0], thread: [31,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [64,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [65,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [66,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [67,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [68,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [69,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [70,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [71,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [72,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [73,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [74,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [75,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [76,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [77,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [78,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [79,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [80,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [81,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [82,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [83,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [84,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [85,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [86,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [87,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [88,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [89,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [90,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [91,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [92,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [93,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [94,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+/localscratch/409555/nlplpytorch/2.1.2/foss-2022b-cuda-12.0.0-Python-3.10.8/pytorch/aten/src/ATen/native/cuda/Indexing.cu:1292: indexSelectLargeIndex: block: [118,0,0], thread: [95,0,0] Assertion `srcIndex < srcSelectDimSize` failed.
+trainable params: 6,823,936 || all params: 7,511,756,800 || trainable%: 0.0908
+Using device: cuda
+Traceback (most recent call last):
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning.py", line 603, in <module>
+    main()
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning.py", line 528, in main
+    best_auc, best_model_path, best_val_f1, best_val_loss, epochs_done = train_and_evaluate(
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning.py", line 300, in train_and_evaluate
+    outputs = model(**inputs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-llmtools/06-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/peft/peft_model.py", line 1521, in forward
+    return self.base_model(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-llmtools/06-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/peft/tuners/tuners_utils.py", line 197, in forward
+    return self.model.forward(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 1251, in forward
+    transformer_outputs = self.model(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 883, in forward
+    causal_mask = self._update_causal_mask(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 973, in _update_causal_mask
+    if AttentionMaskConverter._ignore_causal_mask_sdpa(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/modeling_attn_mask_utils.py", line 284, in _ignore_causal_mask_sdpa
+    elif not is_tracing and torch.all(attention_mask == 1):
+RuntimeError: CUDA error: device-side assert triggered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1.
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+
+Job 1833396 consumed 79.1 billing hours from project ec12.
+
+Submitted 2025-07-27T22:14:55; waited 2.0 hours in the queue after becoming eligible to run.
+
+Requested wallclock time: 24.0 hours
+Elapsed wallclock time:   4.2 hours
+
+Job failed.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+1833396          16            0.0 %  2025-07-28T00:14:50    4.2 h  1
+1833396.batch    16      1     6.3 %  2025-07-28T00:14:50    4.2 h  1
+
+Used CPU time:   4.2 CPU hours
+Unused CPU time: 2.6 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1833396          32.0        
+1833396.batch    32.0    32.0
+
+GPU usage stats:
+Job 1833396 completed at Mon Jul 28 04:24:29 CEST 2025

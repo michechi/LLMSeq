@@ -1,0 +1,71 @@
+Starting job 1835706 on gpu-9 on fox at Mon Jul 28 21:28:42 CEST 2025
+
+2025-07-28 21:28:59,940: Argument CI: False
+2025-07-28 21:28:59,940: Argument all_landmarks: True
+2025-07-28 21:28:59,940: Argument batch_size: 8
+2025-07-28 21:28:59,941: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-07-28 21:28:59,941: Argument early: 'loss'
+2025-07-28 21:28:59,941: Argument epochs: 20
+2025-07-28 21:28:59,941: Argument gradient_accumulation_steps: 1
+2025-07-28 21:28:59,941: Argument input_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_df_evo.csv'
+2025-07-28 21:28:59,941: Argument lr: 2e-05
+2025-07-28 21:28:59,941: Argument max_length: 512
+2025-07-28 21:28:59,941: Argument max_visits: 3
+2025-07-28 21:28:59,941: Argument model_name: 'emilyalsentzer/Bio_ClinicalBERT'
+2025-07-28 21:28:59,941: Argument model_type: 'general'
+2025-07-28 21:28:59,941: Argument patience: 1
+2025-07-28 21:28:59,941: Argument peft: False
+2025-07-28 21:28:59,941: Argument prompt_type: 'no'
+2025-07-28 21:28:59,941: Argument seed: 9550
+2025-07-28 21:28:59,941: Argument test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_test.csv'
+2025-07-28 21:28:59,941: Argument train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_train.csv'
+2025-07-28 21:28:59,941: Argument use_quantization: False
+2025-07-28 21:28:59,941: Argument val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_vali.csv'
+2025-07-28 21:28:59,971: Using prompt type: no
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:77: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:79: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_test_df = pd.read_csv(args.test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+2025-07-28 21:29:37,089: Processing all landmarks from 1 to 3
+2025-07-28 21:29:37,089: Preparing data for Landmark 1
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_utils.py:831: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  return self.fget.__get__(instance, owner)()
+Traceback (most recent call last):
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py", line 221, in <module>
+    main()
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py", line 125, in main
+    model = load_model(args.model_name, args.model_type, tokenizer, args.cache_dir, hf_token, args.peft, args.use_quantization).to(device="cpu")
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/models_training.py", line 39, in load_model
+    model = AutoModelForSequenceClassification.from_pretrained(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/models/auto/auto_factory.py", line 564, in from_pretrained
+    return model_class.from_pretrained(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/modeling_utils.py", line 4173, in from_pretrained
+    no_split_modules = model._get_no_split_modules(device_map)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/modeling_utils.py", line 2072, in _get_no_split_modules
+    raise ValueError(
+ValueError: BertForSequenceClassification does not support `device_map='auto'`. To implement support, the model class needs to implement the `_no_split_modules` attribute.
+
+Job 1835706 consumed 0.3 billing hours from project ec12.
+
+Submitted 2025-07-28T21:28:41; waited 1.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 24.0 hours
+Elapsed wallclock time:   1.1 minutes
+
+Job failed.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+1835706          16            0.0 %  2025-07-28T21:28:42   63.0 s  1
+1835706.batch    16      1     6.2 %  2025-07-28T21:28:42   63.0 s  1
+
+Used CPU time:   1.0 CPU minutes
+Unused CPU time: 15.8 CPU minutes
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1835706          32.0        
+1835706.batch    32.0     5.3
+
+GPU usage stats:
+Job 1835706 completed at Mon Jul 28 21:29:45 CEST 2025

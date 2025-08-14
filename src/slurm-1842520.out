@@ -1,0 +1,184 @@
+Starting job 1842520 on gpu-9 on fox at Wed Aug 6 11:13:39 CEST 2025
+
+2025-08-06 11:14:29,892: Argument CI: False
+2025-08-06 11:14:29,895: Argument all_landmarks: True
+2025-08-06 11:14:29,895: Argument batch_size: 8
+2025-08-06 11:14:29,895: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-08-06 11:14:29,895: Argument early: 'loss'
+2025-08-06 11:14:29,895: Argument epochs: 20
+2025-08-06 11:14:29,895: Argument gradient_accumulation_steps: 1
+2025-08-06 11:14:29,895: Argument input_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_df_evo.csv'
+2025-08-06 11:14:29,895: Argument lr: 2e-05
+2025-08-06 11:14:29,895: Argument max_length: 512
+2025-08-06 11:14:29,895: Argument max_visits: 3
+2025-08-06 11:14:29,895: Argument model_name: 'answerdotai/ModernBERT-large'
+2025-08-06 11:14:29,895: Argument model_type: 'general'
+2025-08-06 11:14:29,895: Argument patience: 3
+2025-08-06 11:14:29,896: Argument peft: False
+2025-08-06 11:14:29,896: Argument prompt_type: 'no'
+2025-08-06 11:14:29,896: Argument seed: 9550
+2025-08-06 11:14:29,896: Argument test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_test_dod.csv'
+2025-08-06 11:14:29,896: Argument train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_train_dod.csv'
+2025-08-06 11:14:29,896: Argument use_quantization: False
+2025-08-06 11:14:29,896: Argument val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_vali_dod.csv'
+2025-08-06 11:14:29,896: Argument when_counting_death: 'last_visit'
+2025-08-06 11:14:29,959: Using prompt type: no
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:79: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:81: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_test_df = pd.read_csv(args.test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+2025-08-06 11:15:06,910: Processing all landmarks from 1 to 3
+2025-08-06 11:15:06,911: Preparing data for Landmark 1
+2025-08-06 11:15:14,120: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+Some weights of ModernBertForSequenceClassification were not initialized from the model checkpoint at answerdotai/ModernBERT-large and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-06 11:15:18,882: Example train text: Based on this information, what is the probability of mortality within 90 days?
+Portal hypertension; Unspecified deficiency anemia; Other ascites; Acute alcoholic hepatitis; Other constipation; Other specified forms of effusion, except tuberculous; Alcoholic cirrhosis of liver; Pneumonia, organism unspecified; Hyposmolality and/or hyponatremia; Hypopotassemia; Urinary tract infection, site not specified; Anxiety state, unspecified; Unspecified protein-calorie malnutrition; Other and unspecified alcohol dependence, continuous
+Heparin; Nicotine Patch; Lidocaine 5% Patch; Morphine Sulfate; Multivitamin IV; SW; Neutra-Phos; Acetaminophen; Multivitamins; Albumin 25% (12.5g / 50mL); Magnesium Sulfate; Lorazepam; Docusate Sodium; Potassium Chloride; Senna; 1/2 NS; Furosemide; Ondansetron; Sodium Chloride 0.9%  Flush; Phytonadione; FoLIC Acid; Thiamine; 0.9% Sodium Chloride; Ciprofloxacin HCl; OxycoDONE (Immediate Release) 
+100 mg of Thiamine in TAB through PO/NG; 0.5-1 mg of Lorazepam in TAB through PO/NG; 1 mg of Lorazepam in mL through IV; 2 mg of Lorazepam in mL through IV; 1 mg of FoLIC Acid in TAB through PO/NG; 1 mg of Lorazepam in TAB through PO/NG; 2-4 mg of Morphine Sulfate in SYR through IV; 1 PKT of Neutra-Phos in PKT through PO/NG; 5000 UNIT of Heparin in mL through SC; 10 mL of Multivitamin IV in VIAL through IV; 14 mg of Nicotine Patch in PTCH through TD; 1 PTCH of Lidocaine 5% Patch in PTCH through TD; 500 mg of Ciprofloxacin HCl in TAB through PO/NG; 1 mg of FoLIC Acid in mL through IV; 5 mg of Phytonadione in TAB through PO/NG; 100 mg of Thiamine in mL through IV; 500 mL of 0.9% Sodium Chloride in mL through IV; 2.5 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 325-650 mg of Acetaminophen in TAB through PO/NG; 4 gm of Magnesium Sulfate in BAG through IV; 8 mg of Ondansetron in VIAL through IV; 2 gm of Magnesium Sulfate in BAG through IV; 100 mg of Docusate Sodium in CAP through PO; 40 mEq of Potassium Chloride in TAB through PO; 5 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 250 mg of Ciprofloxacin HCl in TAB through PO/NG; 1000 mL of 0.9% Sodium Chloride in BAG through IV; 1000 mL of 1/2 NS in mL through IV; 20 mg of Furosemide in TAB through PO/NG; 50 g of Albumin 25% (12.5g / 50mL) in BAG through IV; 2 TAB of Senna in TAB through PO/NG; 3 mL of Sodium Chloride 0.9%  Flush in SYR through IV; 1 TAB of Multivitamins in TAB through PO/NG; 0.5 mg of Lorazepam in mL through IV; 60 mEq of Potassium Chloride in TAB through PO; 0.5 mg of Lorazepam in TAB through PO/NG; 100 mL of SW in BAG through IV; 50 mL of SW in BAG through IV
+2025-08-06 11:15:19,125: Average train text length: 329.93 words
+2025-08-06 11:15:19,125: Average validation text length: 331.88 words
+2025-08-06 11:15:19,125: Average test text length: 329.88 words
+2025-08-06 11:15:19,125: Training on 14472 samples, validating on 1608, testing on 4020 samples
+2025-08-06 11:15:39,298: Fine-tuning at Landmark 1
+2025-08-06 11:15:39,309: Early stopping criterion: loss
+/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/networkx/utils/backends.py:135: RuntimeWarning: networkx backend defined more than once: nx-loopback
+  backends.update(_get_backends("networkx.backends"))
+2025-08-06 11:20:22,197: Landmark 1 | Epoch 1/20 | Train Loss: 0.4084 | Val Loss: 0.3830 | Validation AUC: 0.7107 | F1-Score: 0.0000
+2025-08-06 11:20:22,840: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_9550_landmark1_no_3_512_last_visit_all_landmarks_True_20250806_111539_.pt with AUC: 0.7107, F1: 0.0000, Val Loss: 0.3830
+2025-08-06 11:24:36,168: Landmark 1 | Epoch 2/20 | Train Loss: 0.3784 | Val Loss: 0.3672 | Validation AUC: 0.7520 | F1-Score: 0.0000
+2025-08-06 11:24:36,719: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_9550_landmark1_no_3_512_last_visit_all_landmarks_True_20250806_111539_.pt with AUC: 0.7520, F1: 0.0000, Val Loss: 0.3672
+2025-08-06 11:28:49,917: Landmark 1 | Epoch 3/20 | Train Loss: 0.3664 | Val Loss: 0.3563 | Validation AUC: 0.7694 | F1-Score: 0.0085
+2025-08-06 11:28:50,501: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_9550_landmark1_no_3_512_last_visit_all_landmarks_True_20250806_111539_.pt with AUC: 0.7694, F1: 0.0085, Val Loss: 0.3563
+2025-08-06 11:33:05,298: Landmark 1 | Epoch 4/20 | Train Loss: 0.3606 | Val Loss: 0.3683 | Validation AUC: 0.7730 | F1-Score: 0.0086
+2025-08-06 11:33:05,311: No improvement in epoch 4. Current best AUC: 0.7694, F1: 0.0085, Val Loss: 0.3563. Epochs without improvement: 1/3
+2025-08-06 11:37:20,033: Landmark 1 | Epoch 5/20 | Train Loss: 0.3520 | Val Loss: 0.3477 | Validation AUC: 0.7904 | F1-Score: 0.1073
+2025-08-06 11:37:20,632: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_9550_landmark1_no_3_512_last_visit_all_landmarks_True_20250806_111539_.pt with AUC: 0.7904, F1: 0.1073, Val Loss: 0.3477
+2025-08-06 11:41:34,040: Landmark 1 | Epoch 6/20 | Train Loss: 0.3476 | Val Loss: 0.3427 | Validation AUC: 0.7932 | F1-Score: 0.0709
+2025-08-06 11:41:34,616: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_9550_landmark1_no_3_512_last_visit_all_landmarks_True_20250806_111539_.pt with AUC: 0.7932, F1: 0.0709, Val Loss: 0.3427
+2025-08-06 11:45:48,080: Landmark 1 | Epoch 7/20 | Train Loss: 0.3442 | Val Loss: 0.3427 | Validation AUC: 0.7988 | F1-Score: 0.1269
+2025-08-06 11:45:48,655: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_9550_landmark1_no_3_512_last_visit_all_landmarks_True_20250806_111539_.pt with AUC: 0.7988, F1: 0.1269, Val Loss: 0.3427
+2025-08-06 11:50:01,478: Landmark 1 | Epoch 8/20 | Train Loss: 0.3425 | Val Loss: 0.3419 | Validation AUC: 0.7967 | F1-Score: 0.0923
+2025-08-06 11:50:02,053: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_9550_landmark1_no_3_512_last_visit_all_landmarks_True_20250806_111539_.pt with AUC: 0.7967, F1: 0.0923, Val Loss: 0.3419
+2025-08-06 11:54:14,386: Landmark 1 | Epoch 9/20 | Train Loss: 0.3410 | Val Loss: 0.3394 | Validation AUC: 0.7995 | F1-Score: 0.1077
+2025-08-06 11:54:14,943: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_9550_landmark1_no_3_512_last_visit_all_landmarks_True_20250806_111539_.pt with AUC: 0.7995, F1: 0.1077, Val Loss: 0.3394
+2025-08-06 11:58:28,496: Landmark 1 | Epoch 10/20 | Train Loss: 0.3398 | Val Loss: 0.3423 | Validation AUC: 0.7961 | F1-Score: 0.0720
+2025-08-06 11:58:28,497: No improvement in epoch 10. Current best AUC: 0.7995, F1: 0.1077, Val Loss: 0.3394. Epochs without improvement: 1/3
+2025-08-06 12:02:40,239: Landmark 1 | Epoch 11/20 | Train Loss: 0.3387 | Val Loss: 0.3408 | Validation AUC: 0.7963 | F1-Score: 0.1008
+2025-08-06 12:02:40,239: No improvement in epoch 11. Current best AUC: 0.7995, F1: 0.1077, Val Loss: 0.3394. Epochs without improvement: 2/3
+2025-08-06 12:06:52,357: Landmark 1 | Epoch 12/20 | Train Loss: 0.3387 | Val Loss: 0.3430 | Validation AUC: 0.7953 | F1-Score: 0.1476
+2025-08-06 12:06:52,357: No improvement in epoch 12. Current best AUC: 0.7995, F1: 0.1077, Val Loss: 0.3394. Epochs without improvement: 3/3
+2025-08-06 12:06:52,357: Early stopping triggered at epoch 12. Best AUC: 0.7995, F1: 0.1077, Val Loss: 0.3394
+2025-08-06 12:06:53,719: Tempo impiegato per Landmark 1: 3074.4 secondi
+2025-08-06 12:06:53,719: Tempo medio per epoca: 256.2 secondi
+2025-08-06 12:06:53,721: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_9550_landmark1_no_3_512_last_visit_all_landmarks_True_20250806_111539_.pt for final evaluation on test set
+2025-08-06 12:07:18,449: Final Test AUC (Landmark 1): 0.7827 | Test F1-Score: 0.1146
+2025-08-06 12:07:18,449: Preparing data for Landmark 2
+2025-08-06 12:07:21,981: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+Some weights of ModernBertForSequenceClassification were not initialized from the model checkpoint at answerdotai/ModernBERT-large and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-06 12:07:27,132: Example train text: Based on this information, what is the probability of mortality within 90 days?
+Sepsis; Portal hypertension; Unspecified deficiency anemia; Other ascites; Acute alcoholic hepatitis; Alcoholic fatty liver; Other constipation; Tobacco use disorder; Other specified forms of effusion, except tuberculous; Alcoholic cirrhosis of liver; Pneumonia, organism unspecified; Unspecified pleural effusion; Hyposmolality and/or hyponatremia; Hypopotassemia; Urinary tract infection, site not specified; Anxiety state, unspecified; Unspecified protein-calorie malnutrition; Other and unspecified alcohol dependence, continuous
+Acetylcysteine 20%; Heparin Sodium; Sodium Polystyrene Sulfonate; Iso-Osmotic Dextrose; 5% Dextrose; Heparin; Nicotine Patch; Lidocaine 5% Patch; Morphine Sulfate; Multivitamin IV; SW; Neutra-Phos; Acetaminophen; Multivitamins; Lactulose; Albumin 25% (12.5g / 50mL); Magnesium Sulfate; Sarna Lotion; D5 1/2NS; Lorazepam; Docusate Sodium; Potassium Chloride; Senna; 1/2 NS; Furosemide; CeftriaXONE; Ondansetron; Sodium Chloride 0.9%  Flush; Phytonadione; FoLIC Acid; Spironolactone; Thiamine; 0.9% Sodium Chloride; Ciprofloxacin HCl; OxycoDONE (Immediate Release) 
+100 mg of Thiamine in TAB through PO/NG; 600 mg of Acetylcysteine 20% in VIAL through PO/NG; 0.5-1 mg of Lorazepam in TAB through PO/NG; 10 mg of Phytonadione in AMP through SUBCUT; 1 mg of Lorazepam in mL through IV; 2 mg of Lorazepam in mL through IV; 1 mg of FoLIC Acid in TAB through PO/NG; 10 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 1 mg of Lorazepam in TAB through PO/NG; 2-4 mg of Morphine Sulfate in SYR through IV; 1 PKT of Neutra-Phos in PKT through PO/NG; 1 Appl of Sarna Lotion in BTL through TP; 5000 UNIT of Heparin in mL through SC; 10 mL of Multivitamin IV in VIAL through IV; 14 mg of Nicotine Patch in PTCH through TD; 4 mg of Ondansetron in VIAL through IV; 1 PTCH of Lidocaine 5% Patch in PTCH through TD; 7.5 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 500 mg of Ciprofloxacin HCl in TAB through PO/NG; 50 mL of Iso-Osmotic Dextrose in mL through IV; 1 mg of Morphine Sulfate in SYR through IV; 1 mg of FoLIC Acid in mL through IV; 5 mg of Phytonadione in TAB through PO/NG; 100 mg of Thiamine in mL through IV; 500 mL of 0.9% Sodium Chloride in mL through IV; 10 mg of OxycoDONE (Immediate Release)  in TAB through PO; 2.5 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 325-650 mg of Acetaminophen in TAB through PO/NG; 4 gm of Magnesium Sulfate in BAG through IV; 8 mg of Ondansetron in VIAL through IV; 25,000 UNIT of Heparin Sodium in BAG through IV; 1300-2500 UNIT of Heparin in mL through IV; 2 gm of Magnesium Sulfate in BAG through IV; 100 mg of Docusate Sodium in CAP through PO; 250 mL of 5% Dextrose in mL through IV; 40 mEq of Potassium Chloride in TAB through PO; 5 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 250 mg of Ciprofloxacin HCl in TAB through PO/NG; 1000 mL of 0.9% Sodium Chloride in BAG through IV; 1000 mL of 1/2 NS in mL through IV; 25 g of Albumin 25% (12.5g / 50mL) in BAG through IV; 20 mg of Furosemide in TAB through PO/NG; 15 mL of Lactulose in UDCUP through PO/NG; 30 gm of Sodium Polystyrene Sulfonate in BTL through PO/NG; 5-10 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 50 g of Albumin 25% (12.5g / 50mL) in BAG through IV; 25 mg of Spironolactone in TAB through PO/NG; 2 TAB of Senna in TAB through PO/NG; 3 mL of Sodium Chloride 0.9%  Flush in SYR through IV; 1 TAB of Multivitamins in TAB through PO/NG; 0.5 mg of Lorazepam in mL through IV; 60 mEq of Potassium Chloride in TAB through PO; 2 gm of CeftriaXONE in BAG through IV; 0.5 mg of Lorazepam in TAB through PO/NG; 1000 mL of D5 1/2NS in mL through IV; 100 mL of SW in BAG through IV; 50 mL of SW in BAG through IV
+2025-08-06 12:07:27,530: Average train text length: 553.85 words
+2025-08-06 12:07:27,531: Average validation text length: 557.42 words
+2025-08-06 12:07:27,531: Average test text length: 549.36 words
+2025-08-06 12:07:27,531: Training on 14472 samples, validating on 1608, testing on 4020 samples
+2025-08-06 12:08:02,298: Fine-tuning at Landmark 2
+2025-08-06 12:08:02,329: Early stopping criterion: loss
+2025-08-06 12:12:16,425: Landmark 2 | Epoch 1/20 | Train Loss: 0.3969 | Val Loss: 0.3640 | Validation AUC: 0.7576 | F1-Score: 0.0000
+2025-08-06 12:12:17,071: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_9550_landmark2_no_3_512_last_visit_all_landmarks_True_20250806_120802_.pt with AUC: 0.7576, F1: 0.0000, Val Loss: 0.3640
+2025-08-06 12:16:31,086: Landmark 2 | Epoch 2/20 | Train Loss: 0.3578 | Val Loss: 0.4225 | Validation AUC: 0.3930 | F1-Score: 0.0000
+2025-08-06 12:16:31,087: No improvement in epoch 2. Current best AUC: 0.7576, F1: 0.0000, Val Loss: 0.3640. Epochs without improvement: 1/3
+2025-08-06 12:20:44,723: Landmark 2 | Epoch 3/20 | Train Loss: 0.4135 | Val Loss: 0.4054 | Validation AUC: 0.6655 | F1-Score: 0.0000
+2025-08-06 12:20:44,724: No improvement in epoch 3. Current best AUC: 0.7576, F1: 0.0000, Val Loss: 0.3640. Epochs without improvement: 2/3
+2025-08-06 12:24:58,171: Landmark 2 | Epoch 4/20 | Train Loss: 0.4073 | Val Loss: 0.4080 | Validation AUC: 0.6169 | F1-Score: 0.0000
+2025-08-06 12:24:58,171: No improvement in epoch 4. Current best AUC: 0.7576, F1: 0.0000, Val Loss: 0.3640. Epochs without improvement: 3/3
+2025-08-06 12:24:58,171: Early stopping triggered at epoch 4. Best AUC: 0.7576, F1: 0.0000, Val Loss: 0.3640
+2025-08-06 12:24:58,727: Tempo impiegato per Landmark 2: 1016.4 secondi
+2025-08-06 12:24:58,728: Tempo medio per epoca: 254.1 secondi
+2025-08-06 12:24:58,730: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_9550_landmark2_no_3_512_last_visit_all_landmarks_True_20250806_120802_.pt for final evaluation on test set
+2025-08-06 12:25:22,921: Final Test AUC (Landmark 2): 0.7480 | Test F1-Score: 0.0000
+2025-08-06 12:25:22,921: Preparing data for Landmark 3
+2025-08-06 12:25:24,702: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+Some weights of ModernBertForSequenceClassification were not initialized from the model checkpoint at answerdotai/ModernBERT-large and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-06 12:25:26,918: Example train text: Based on this information, what is the probability of mortality within 90 days?
+Sepsis; Unspecified deficiency anemia; Other specified forms of effusion, except tuberculous; Unspecified pleural effusion; Hyposmolality and/or hyponatremia; Other constipation; Portal hypertension; Tobacco use disorder; Lumbago; Urinary tract infection, site not specified; Other chronic pain; Acute alcoholic hepatitis; Alcoholic fatty liver; Alcoholic cirrhosis of liver; Pneumonia, organism unspecified; Hypopotassemia; Anxiety state, unspecified; Unspecified protein-calorie malnutrition; Other ascites; Thrombocytopenia, unspecified; Other and unspecified alcohol dependence, continuous
+Acetylcysteine 20%; Heparin Sodium; Sodium Polystyrene Sulfonate; Iso-Osmotic Dextrose; 5% Dextrose; Heparin; Nicotine Patch; Lidocaine 5% Patch; Amitriptyline; Morphine Sulfate; Multivitamin IV; SW; Neutra-Phos; Acetaminophen; Multivitamins; Lactulose; Albumin 25% (12.5g / 50mL); Magnesium Sulfate; Sarna Lotion; D5 1/2NS; Lorazepam; Docusate Sodium; Potassium Chloride; Senna; 1/2 NS; Furosemide; CeftriaXONE; Ondansetron; Sodium Chloride 0.9%  Flush; Phytonadione; FoLIC Acid; Spironolactone; Thiamine; 0.9% Sodium Chloride; Ciprofloxacin HCl; OxycoDONE (Immediate Release) 
+100 mg of Thiamine in TAB through PO/NG; 600 mg of Acetylcysteine 20% in VIAL through PO/NG; 0.5-1 mg of Lorazepam in TAB through PO/NG; 10 mg of Phytonadione in AMP through SUBCUT; 1 mg of Lorazepam in mL through IV; 30 mL of Lactulose in UDCUP through PO/NG; 2 mg of Lorazepam in mL through IV; 1 mg of FoLIC Acid in TAB through PO/NG; 10 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 1 mg of Lorazepam in TAB through PO/NG; 2-4 mg of Morphine Sulfate in SYR through IV; 1 PKT of Neutra-Phos in PKT through PO/NG; 1 Appl of Sarna Lotion in BTL through TP; 5000 UNIT of Heparin in mL through SC; 10 mL of Multivitamin IV in VIAL through IV; 14 mg of Nicotine Patch in PTCH through TD; 4 mg of Ondansetron in VIAL through IV; 1 PTCH of Lidocaine 5% Patch in PTCH through TD; 7.5 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 500 mg of Ciprofloxacin HCl in TAB through PO/NG; 50 mL of Iso-Osmotic Dextrose in mL through IV; 1 mg of Morphine Sulfate in SYR through IV; 1 mg of FoLIC Acid in mL through IV; 5 mg of Phytonadione in TAB through PO/NG; 100 mg of Thiamine in mL through IV; 500 mL of 0.9% Sodium Chloride in mL through IV; 10 mg of OxycoDONE (Immediate Release)  in TAB through PO; 2.5 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 325-650 mg of Acetaminophen in TAB through PO/NG; 4 gm of Magnesium Sulfate in BAG through IV; 8 mg of Ondansetron in VIAL through IV; 25,000 UNIT of Heparin Sodium in BAG through IV; 1300-2500 UNIT of Heparin in mL through IV; 2 gm of Magnesium Sulfate in BAG through IV; 100 mg of Docusate Sodium in CAP through PO; 10 mg of Amitriptyline in TAB through PO/NG; 250 mL of 5% Dextrose in mL through IV; 40 mEq of Potassium Chloride in TAB through PO; 5 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 250 mg of Ciprofloxacin HCl in TAB through PO/NG; 1000 mL of 0.9% Sodium Chloride in BAG through IV; 1000 mL of 1/2 NS in mL through IV; 25 g of Albumin 25% (12.5g / 50mL) in BAG through IV; 20 mg of Furosemide in TAB through PO/NG; 15 mL of Lactulose in UDCUP through PO/NG; 30 gm of Sodium Polystyrene Sulfonate in BTL through PO/NG; 5-10 mg of OxycoDONE (Immediate Release)  in TAB through PO/NG; 50 g of Albumin 25% (12.5g / 50mL) in BAG through IV; 25 mg of Spironolactone in TAB through PO/NG; 2 TAB of Senna in TAB through PO/NG; 3 mL of Sodium Chloride 0.9%  Flush in SYR through IV; 1 TAB of Multivitamins in TAB through PO/NG; 0.5 mg of Lorazepam in mL through IV; 60 mEq of Potassium Chloride in TAB through PO; 2 gm of CeftriaXONE in BAG through IV; 0.5 mg of Lorazepam in TAB through PO/NG; 1000 mL of D5 1/2NS in mL through IV; 100 mL of SW in BAG through IV; 50 mL of SW in BAG through IV
+2025-08-06 12:25:27,553: Average train text length: 774.11 words
+2025-08-06 12:25:27,554: Average validation text length: 770.31 words
+2025-08-06 12:25:27,554: Average test text length: 771.52 words
+2025-08-06 12:25:27,554: Training on 14472 samples, validating on 1608, testing on 4020 samples
+2025-08-06 12:26:15,152: Fine-tuning at Landmark 3
+2025-08-06 12:26:15,193: Early stopping criterion: loss
+2025-08-06 12:30:31,616: Landmark 3 | Epoch 1/20 | Train Loss: 0.3763 | Val Loss: 0.3204 | Validation AUC: 0.8352 | F1-Score: 0.0500
+2025-08-06 12:30:32,179: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_9550_landmark3_no_3_512_last_visit_all_landmarks_True_20250806_122615_.pt with AUC: 0.8352, F1: 0.0500, Val Loss: 0.3204
+2025-08-06 12:34:49,050: Landmark 3 | Epoch 2/20 | Train Loss: 0.2770 | Val Loss: 0.2407 | Validation AUC: 0.9216 | F1-Score: 0.6531
+2025-08-06 12:34:49,589: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_9550_landmark3_no_3_512_last_visit_all_landmarks_True_20250806_122615_.pt with AUC: 0.9216, F1: 0.6531, Val Loss: 0.2407
+2025-08-06 12:39:07,304: Landmark 3 | Epoch 3/20 | Train Loss: 0.2342 | Val Loss: 0.2243 | Validation AUC: 0.9261 | F1-Score: 0.6352
+2025-08-06 12:39:07,880: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_9550_landmark3_no_3_512_last_visit_all_landmarks_True_20250806_122615_.pt with AUC: 0.9261, F1: 0.6352, Val Loss: 0.2243
+2025-08-06 12:43:25,588: Landmark 3 | Epoch 4/20 | Train Loss: 0.2239 | Val Loss: 0.2379 | Validation AUC: 0.9270 | F1-Score: 0.5575
+2025-08-06 12:43:25,588: No improvement in epoch 4. Current best AUC: 0.9261, F1: 0.6352, Val Loss: 0.2243. Epochs without improvement: 1/3
+2025-08-06 12:47:43,756: Landmark 3 | Epoch 5/20 | Train Loss: 0.2197 | Val Loss: 0.2185 | Validation AUC: 0.9303 | F1-Score: 0.6420
+2025-08-06 12:47:44,299: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_9550_landmark3_no_3_512_last_visit_all_landmarks_True_20250806_122615_.pt with AUC: 0.9303, F1: 0.6420, Val Loss: 0.2185
+2025-08-06 12:52:02,190: Landmark 3 | Epoch 6/20 | Train Loss: 0.2116 | Val Loss: 0.2190 | Validation AUC: 0.9304 | F1-Score: 0.6361
+2025-08-06 12:52:02,190: No improvement in epoch 6. Current best AUC: 0.9303, F1: 0.6420, Val Loss: 0.2185. Epochs without improvement: 1/3
+2025-08-06 12:56:19,851: Landmark 3 | Epoch 7/20 | Train Loss: 0.2078 | Val Loss: 0.2215 | Validation AUC: 0.9317 | F1-Score: 0.6561
+2025-08-06 12:56:19,851: No improvement in epoch 7. Current best AUC: 0.9303, F1: 0.6420, Val Loss: 0.2185. Epochs without improvement: 2/3
+2025-08-06 13:00:37,477: Landmark 3 | Epoch 8/20 | Train Loss: 0.2055 | Val Loss: 0.2164 | Validation AUC: 0.9314 | F1-Score: 0.6651
+2025-08-06 13:00:38,019: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_9550_landmark3_no_3_512_last_visit_all_landmarks_True_20250806_122615_.pt with AUC: 0.9314, F1: 0.6651, Val Loss: 0.2164
+2025-08-06 13:04:55,711: Landmark 3 | Epoch 9/20 | Train Loss: 0.2034 | Val Loss: 0.2166 | Validation AUC: 0.9318 | F1-Score: 0.6667
+2025-08-06 13:04:55,711: No improvement in epoch 9. Current best AUC: 0.9314, F1: 0.6651, Val Loss: 0.2164. Epochs without improvement: 1/3
+2025-08-06 13:09:14,012: Landmark 3 | Epoch 10/20 | Train Loss: 0.2021 | Val Loss: 0.2172 | Validation AUC: 0.9316 | F1-Score: 0.6250
+2025-08-06 13:09:14,012: No improvement in epoch 10. Current best AUC: 0.9314, F1: 0.6651, Val Loss: 0.2164. Epochs without improvement: 2/3
+2025-08-06 13:13:32,292: Landmark 3 | Epoch 11/20 | Train Loss: 0.2009 | Val Loss: 0.2152 | Validation AUC: 0.9319 | F1-Score: 0.6532
+2025-08-06 13:13:32,860: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_9550_landmark3_no_3_512_last_visit_all_landmarks_True_20250806_122615_.pt with AUC: 0.9319, F1: 0.6532, Val Loss: 0.2152
+2025-08-06 13:17:51,269: Landmark 3 | Epoch 12/20 | Train Loss: 0.2019 | Val Loss: 0.2190 | Validation AUC: 0.9312 | F1-Score: 0.6574
+2025-08-06 13:17:51,269: No improvement in epoch 12. Current best AUC: 0.9319, F1: 0.6532, Val Loss: 0.2152. Epochs without improvement: 1/3
+2025-08-06 13:22:09,878: Landmark 3 | Epoch 13/20 | Train Loss: 0.2027 | Val Loss: 0.2172 | Validation AUC: 0.9313 | F1-Score: 0.6683
+2025-08-06 13:22:09,878: No improvement in epoch 13. Current best AUC: 0.9319, F1: 0.6532, Val Loss: 0.2152. Epochs without improvement: 2/3
+2025-08-06 13:26:28,559: Landmark 3 | Epoch 14/20 | Train Loss: 0.2027 | Val Loss: 0.2165 | Validation AUC: 0.9314 | F1-Score: 0.6715
+2025-08-06 13:26:28,560: No improvement in epoch 14. Current best AUC: 0.9319, F1: 0.6532, Val Loss: 0.2152. Epochs without improvement: 3/3
+2025-08-06 13:26:28,560: Early stopping triggered at epoch 14. Best AUC: 0.9319, F1: 0.6532, Val Loss: 0.2152
+2025-08-06 13:26:29,005: Tempo impiegato per Landmark 3: 3613.9 secondi
+2025-08-06 13:26:29,005: Tempo medio per epoca: 258.1 secondi
+2025-08-06 13:26:29,007: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_9550_landmark3_no_3_512_last_visit_all_landmarks_True_20250806_122615_.pt for final evaluation on test set
+2025-08-06 13:26:53,783: Final Test AUC (Landmark 3): 0.9329 | Test F1-Score: 0.6452
+2025-08-06 13:26:53,813: Saving results to results_general_True_answerdotai_ModernBERT-large_last_visit_visits3_9550_512_no_20250806_132653.csv
+Using device: cuda
+Using device: cuda
+Using device: cuda
+   Landmark Val AUC  ... Validation Loss Training Time (s)
+0         1  0.7995  ...          0.3394            3074.4
+1         2  0.7576  ...          0.3640            1016.4
+2         3  0.9319  ...          0.2152            3613.9
+
+[3 rows x 9 columns]
+
+Job 1842520 consumed 42.2 billing hours from project ec12.
+
+Submitted 2025-08-06T11:13:34; waited 5.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 10.0 hours
+Elapsed wallclock time:   2.2 hours
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+1842520          16            0.0 %  2025-08-06T11:13:39    2.2 h  0
+1842520.batch    16      1    10.8 %  2025-08-06T11:13:39    2.2 h  0
+
+Used CPU time:   3.8 CPU hours
+Unused CPU time: 1.3 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1842520          32.0        
+1842520.batch    32.0    17.9
+
+GPU usage stats:
+Job 1842520 completed at Wed Aug 6 13:27:05 CEST 2025

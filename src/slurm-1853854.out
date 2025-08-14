@@ -1,0 +1,219 @@
+Starting job 1853854 on gpu-9 on fox at Wed Aug 13 16:17:34 CEST 2025
+
+2025-08-13 16:17:59,464: Argument CI: False
+2025-08-13 16:17:59,465: Argument all_landmarks: True
+2025-08-13 16:17:59,465: Argument batch_size: 8
+2025-08-13 16:17:59,465: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-08-13 16:17:59,465: Argument early: 'loss'
+2025-08-13 16:17:59,465: Argument epochs: 20
+2025-08-13 16:17:59,465: Argument gradient_accumulation_steps: 1
+2025-08-13 16:17:59,465: Argument input_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_df_evo.csv'
+2025-08-13 16:17:59,465: Argument lr: 2e-05
+2025-08-13 16:17:59,465: Argument max_length: 2048
+2025-08-13 16:17:59,465: Argument max_visits: 4
+2025-08-13 16:17:59,465: Argument model_name: 'answerdotai/ModernBERT-large'
+2025-08-13 16:17:59,465: Argument model_type: 'general'
+2025-08-13 16:17:59,465: Argument patience: 1
+2025-08-13 16:17:59,465: Argument peft: False
+2025-08-13 16:17:59,465: Argument prompt_type: 'full_no_time'
+2025-08-13 16:17:59,465: Argument seed: 4550
+2025-08-13 16:17:59,465: Argument test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_test_dod.csv'
+2025-08-13 16:17:59,466: Argument train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_train_dod.csv'
+2025-08-13 16:17:59,466: Argument use_quantization: False
+2025-08-13 16:17:59,466: Argument val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_vali_dod.csv'
+2025-08-13 16:17:59,466: Argument when_counting_death: 'landmark'
+2025-08-13 16:17:59,544: Using prompt type: full_no_time
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:79: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:81: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_test_df = pd.read_csv(args.test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+2025-08-13 16:18:36,439: Processing all landmarks from 1 to 4
+2025-08-13 16:18:36,439: Preparing data for Landmark 1
+2025-08-13 16:18:42,425: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+Some weights of ModernBertForSequenceClassification were not initialized from the model checkpoint at answerdotai/ModernBERT-large and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-13 16:18:47,462: Example train text: You are a Doctor.
+What is the probability of death in the next 90 days from today for this 43-year-old F patient?
+
+Diagnosis history:
+Diverticulitis of colon (without mention of hemorrhage); Acute kidney failure, unspecified; Abscess of intestine; Other postoperative infection; Cellulitis and abscess of trunk; Methicillin susceptible Staphylococcus aureus in conditions classified elsewhere and of unspecified site; Removal of other organ (partial) (total) causing abnormal patient reaction, or later complication, without mention of misadventure at time of operation; Hypovolemia; Nausea with vomiting.
+Prescriptions history:
+NS; Potassium Chloride; OxycoDONE (Immediate Release) ; Magnesium Citrate; SW; Magnesium Sulfate; Prochlorperazine; Lorazepam; HYDROmorphone (Dilaudid); Iso-Osmotic Dextrose; Piperacillin-Tazobactam Na; Potassium Chl 20 mEq / 1000 mL D5 1/2 NS; Insulin; LR; Acetaminophen; Ondansetron; Ketorolac; OxycoDONE-Acetaminophen Elixir; Sodium Chloride 0.9%  Flush; Docusate Sodium; Hydrocodone-Acetaminophen; D5W; Clindamycin; Fluticasone Propionate NASAL; Ciprofloxacin; Pantoprazole; Metoclopramide; Calcium Carbonate; Vancomycin; Cephalexin; Heparin; Bupivacaine 0.5%; Promethazine HCl; D5 1/2NS; Hydrocortisone (Rectal) 2.5% Cream; Morphine Sulfate; Escitalopram Oxalate; Maalox/Diphenhydramine/Lidocaine; Nafcillin; HydrOXYzine; MetRONIDAZOLE (FLagyl); Ibuprofen.
+Procedures history:
+Open and other sigmoidectomy.
+2025-08-13 16:18:47,519: Average train text length: 131.15 words
+2025-08-13 16:18:47,519: Average validation text length: 135.37 words
+2025-08-13 16:18:47,519: Average test text length: 132.44 words
+2025-08-13 16:18:47,519: Training on 8040 samples, validating on 894, testing on 2234 samples
+2025-08-13 16:18:54,830: Fine-tuning at Landmark 1
+2025-08-13 16:18:54,837: Early stopping criterion: loss
+/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/networkx/utils/backends.py:135: RuntimeWarning: networkx backend defined more than once: nx-loopback
+  backends.update(_get_backends("networkx.backends"))
+2025-08-13 16:30:10,222: Landmark 1 | Epoch 1/20 | Train Loss: 0.4528 | Val Loss: 0.0751 | Validation AUC: 0.5358 | F1-Score: 0.0000
+2025-08-13 16:30:10,825: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark1_full_no_time_4_2048_landmark_all_landmarks_True_20250813_161854_.pt with AUC: 0.5358, F1: 0.0000, Val Loss: 0.0751
+2025-08-13 16:41:05,033: Landmark 1 | Epoch 2/20 | Train Loss: 0.0730 | Val Loss: 0.0651 | Validation AUC: 0.6646 | F1-Score: 0.0000
+2025-08-13 16:41:05,620: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark1_full_no_time_4_2048_landmark_all_landmarks_True_20250813_161854_.pt with AUC: 0.6646, F1: 0.0000, Val Loss: 0.0651
+2025-08-13 16:51:59,276: Landmark 1 | Epoch 3/20 | Train Loss: 0.0706 | Val Loss: 0.0654 | Validation AUC: 0.6792 | F1-Score: 0.0000
+2025-08-13 16:51:59,276: No improvement in epoch 3. Current best AUC: 0.6646, F1: 0.0000, Val Loss: 0.0651. Epochs without improvement: 1/1
+2025-08-13 16:51:59,276: Early stopping triggered at epoch 3. Best AUC: 0.6646, F1: 0.0000, Val Loss: 0.0651
+2025-08-13 16:52:00,072: Tempo impiegato per Landmark 1: 1985.2 secondi
+2025-08-13 16:52:00,072: Tempo medio per epoca: 661.7 secondi
+2025-08-13 16:52:00,074: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark1_full_no_time_4_2048_landmark_all_landmarks_True_20250813_161854_.pt for final evaluation on test set
+2025-08-13 16:52:47,996: Final Test AUC (Landmark 1): 0.7158 | Test F1-Score: 0.0000
+2025-08-13 16:52:47,996: Preparing data for Landmark 2
+2025-08-13 16:52:50,480: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+Some weights of ModernBertForSequenceClassification were not initialized from the model checkpoint at answerdotai/ModernBERT-large and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-13 16:52:56,299: Example train text: You are a Doctor.
+What is the probability of death in the next 90 days from today for this 43-year-old F patient?
+
+Diagnosis history:
+Esophageal reflux; Diverticulosis of colon (without mention of hemorrhage); Other specified aftercare following surgery.
+Diverticulitis of colon (without mention of hemorrhage); Acute kidney failure, unspecified; Abscess of intestine; Other postoperative infection; Cellulitis and abscess of trunk; Methicillin susceptible Staphylococcus aureus in conditions classified elsewhere and of unspecified site; Removal of other organ (partial) (total) causing abnormal patient reaction, or later complication, without mention of misadventure at time of operation; Hypovolemia; Nausea with vomiting.
+Prescriptions history:
+LR; Ranitidine; Acetaminophen; Escitalopram Oxalate; Promethazine; Heparin; Ondansetron ODT; Potassium Chl 20 mEq / 1000 mL D5 1/2 NS; Pantoprazole; Sodium Chloride 0.9%  Flush; Fluticasone Propionate NASAL; Ondansetron.
+NS; Potassium Chloride; OxycoDONE (Immediate Release) ; Magnesium Citrate; SW; Magnesium Sulfate; Prochlorperazine; Lorazepam; HYDROmorphone (Dilaudid); Iso-Osmotic Dextrose; Piperacillin-Tazobactam Na; Potassium Chl 20 mEq / 1000 mL D5 1/2 NS; Insulin; LR; Acetaminophen; Ondansetron; Ketorolac; OxycoDONE-Acetaminophen Elixir; Sodium Chloride 0.9%  Flush; Docusate Sodium; Hydrocodone-Acetaminophen; D5W; Clindamycin; Fluticasone Propionate NASAL; Ciprofloxacin; Pantoprazole; Metoclopramide; Calcium Carbonate; Vancomycin; Cephalexin; Heparin; Bupivacaine 0.5%; Promethazine HCl; D5 1/2NS; Hydrocortisone (Rectal) 2.5% Cream; Morphine Sulfate; Escitalopram Oxalate; Maalox/Diphenhydramine/Lidocaine; Nafcillin; HydrOXYzine; MetRONIDAZOLE (FLagyl); Ibuprofen.
+Procedures history:
+.
+Open and other sigmoidectomy.
+2025-08-13 16:52:56,401: Average train text length: 239.57 words
+2025-08-13 16:52:56,401: Average validation text length: 244.40 words
+2025-08-13 16:52:56,401: Average test text length: 240.79 words
+2025-08-13 16:52:56,401: Training on 8040 samples, validating on 894, testing on 2234 samples
+2025-08-13 16:53:08,474: Fine-tuning at Landmark 2
+2025-08-13 16:53:08,492: Early stopping criterion: loss
+2025-08-13 17:03:57,341: Landmark 2 | Epoch 1/20 | Train Loss: 0.5742 | Val Loss: 0.1528 | Validation AUC: 0.6681 | F1-Score: 0.0000
+2025-08-13 17:03:57,915: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark2_full_no_time_4_2048_landmark_all_landmarks_True_20250813_165308_.pt with AUC: 0.6681, F1: 0.0000, Val Loss: 0.1528
+2025-08-13 17:14:47,261: Landmark 2 | Epoch 2/20 | Train Loss: 0.1700 | Val Loss: 0.1399 | Validation AUC: 0.7257 | F1-Score: 0.0000
+2025-08-13 17:14:47,812: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark2_full_no_time_4_2048_landmark_all_landmarks_True_20250813_165308_.pt with AUC: 0.7257, F1: 0.0000, Val Loss: 0.1399
+2025-08-13 17:25:37,752: Landmark 2 | Epoch 3/20 | Train Loss: 0.1640 | Val Loss: 0.1423 | Validation AUC: 0.7311 | F1-Score: 0.0000
+2025-08-13 17:25:37,752: No improvement in epoch 3. Current best AUC: 0.7257, F1: 0.0000, Val Loss: 0.1399. Epochs without improvement: 1/1
+2025-08-13 17:25:37,752: Early stopping triggered at epoch 3. Best AUC: 0.7257, F1: 0.0000, Val Loss: 0.1399
+2025-08-13 17:25:38,369: Tempo impiegato per Landmark 2: 1949.9 secondi
+2025-08-13 17:25:38,369: Tempo medio per epoca: 650.0 secondi
+2025-08-13 17:25:38,372: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark2_full_no_time_4_2048_landmark_all_landmarks_True_20250813_165308_.pt for final evaluation on test set
+2025-08-13 17:26:25,657: Final Test AUC (Landmark 2): 0.7422 | Test F1-Score: 0.0000
+2025-08-13 17:26:25,657: Preparing data for Landmark 3
+2025-08-13 17:26:27,643: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+Some weights of ModernBertForSequenceClassification were not initialized from the model checkpoint at answerdotai/ModernBERT-large and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-13 17:26:34,108: Example train text: You are a Doctor.
+What is the probability of death in the next 90 days from today for this 46-year-old F patient?
+
+Diagnosis history:
+Chest pain, unspecified; Orthostatic hypotension.
+Esophageal reflux; Diverticulosis of colon (without mention of hemorrhage); Other specified aftercare following surgery.
+Diverticulitis of colon (without mention of hemorrhage); Acute kidney failure, unspecified; Abscess of intestine; Other postoperative infection; Cellulitis and abscess of trunk; Methicillin susceptible Staphylococcus aureus in conditions classified elsewhere and of unspecified site; Removal of other organ (partial) (total) causing abnormal patient reaction, or later complication, without mention of misadventure at time of operation; Hypovolemia; Nausea with vomiting.
+Prescriptions history:
+.
+LR; Ranitidine; Acetaminophen; Escitalopram Oxalate; Promethazine; Heparin; Ondansetron ODT; Potassium Chl 20 mEq / 1000 mL D5 1/2 NS; Pantoprazole; Sodium Chloride 0.9%  Flush; Fluticasone Propionate NASAL; Ondansetron.
+NS; Potassium Chloride; OxycoDONE (Immediate Release) ; Magnesium Citrate; SW; Magnesium Sulfate; Prochlorperazine; Lorazepam; HYDROmorphone (Dilaudid); Iso-Osmotic Dextrose; Piperacillin-Tazobactam Na; Potassium Chl 20 mEq / 1000 mL D5 1/2 NS; Insulin; LR; Acetaminophen; Ondansetron; Ketorolac; OxycoDONE-Acetaminophen Elixir; Sodium Chloride 0.9%  Flush; Docusate Sodium; Hydrocodone-Acetaminophen; D5W; Clindamycin; Fluticasone Propionate NASAL; Ciprofloxacin; Pantoprazole; Metoclopramide; Calcium Carbonate; Vancomycin; Cephalexin; Heparin; Bupivacaine 0.5%; Promethazine HCl; D5 1/2NS; Hydrocortisone (Rectal) 2.5% Cream; Morphine Sulfate; Escitalopram Oxalate; Maalox/Diphenhydramine/Lidocaine; Nafcillin; HydrOXYzine; MetRONIDAZOLE (FLagyl); Ibuprofen.
+Procedures history:
+.
+.
+Open and other sigmoidectomy.
+2025-08-13 17:26:34,276: Average train text length: 354.70 words
+2025-08-13 17:26:34,276: Average validation text length: 359.73 words
+2025-08-13 17:26:34,276: Average test text length: 354.60 words
+2025-08-13 17:26:34,276: Training on 8040 samples, validating on 894, testing on 2234 samples
+2025-08-13 17:26:49,709: Fine-tuning at Landmark 3
+2025-08-13 17:26:49,728: Early stopping criterion: loss
+2025-08-13 17:37:39,794: Landmark 3 | Epoch 1/20 | Train Loss: 0.6800 | Val Loss: 0.3265 | Validation AUC: 0.7068 | F1-Score: 0.0225
+2025-08-13 17:37:40,409: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark3_full_no_time_4_2048_landmark_all_landmarks_True_20250813_172649_.pt with AUC: 0.7068, F1: 0.0225, Val Loss: 0.3265
+2025-08-13 17:48:30,209: Landmark 3 | Epoch 2/20 | Train Loss: 0.3030 | Val Loss: 0.3011 | Validation AUC: 0.7313 | F1-Score: 0.0000
+2025-08-13 17:48:30,765: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark3_full_no_time_4_2048_landmark_all_landmarks_True_20250813_172649_.pt with AUC: 0.7313, F1: 0.0000, Val Loss: 0.3011
+2025-08-13 17:59:20,412: Landmark 3 | Epoch 3/20 | Train Loss: 0.2885 | Val Loss: 0.2755 | Validation AUC: 0.7701 | F1-Score: 0.0000
+2025-08-13 17:59:20,959: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark3_full_no_time_4_2048_landmark_all_landmarks_True_20250813_172649_.pt with AUC: 0.7701, F1: 0.0000, Val Loss: 0.2755
+2025-08-13 18:10:10,553: Landmark 3 | Epoch 4/20 | Train Loss: 0.2751 | Val Loss: 0.2650 | Validation AUC: 0.7981 | F1-Score: 0.0000
+2025-08-13 18:10:11,105: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark3_full_no_time_4_2048_landmark_all_landmarks_True_20250813_172649_.pt with AUC: 0.7981, F1: 0.0000, Val Loss: 0.2650
+2025-08-13 18:21:00,648: Landmark 3 | Epoch 5/20 | Train Loss: 0.2633 | Val Loss: 0.2557 | Validation AUC: 0.8141 | F1-Score: 0.0659
+2025-08-13 18:21:01,203: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark3_full_no_time_4_2048_landmark_all_landmarks_True_20250813_172649_.pt with AUC: 0.8141, F1: 0.0659, Val Loss: 0.2557
+2025-08-13 18:31:50,795: Landmark 3 | Epoch 6/20 | Train Loss: 0.2533 | Val Loss: 0.2587 | Validation AUC: 0.8191 | F1-Score: 0.1553
+2025-08-13 18:31:50,795: No improvement in epoch 6. Current best AUC: 0.8141, F1: 0.0659, Val Loss: 0.2557. Epochs without improvement: 1/1
+2025-08-13 18:31:50,795: Early stopping triggered at epoch 6. Best AUC: 0.8141, F1: 0.0659, Val Loss: 0.2557
+2025-08-13 18:31:51,365: Tempo impiegato per Landmark 3: 3901.7 secondi
+2025-08-13 18:31:51,366: Tempo medio per epoca: 650.3 secondi
+2025-08-13 18:31:51,368: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark3_full_no_time_4_2048_landmark_all_landmarks_True_20250813_172649_.pt for final evaluation on test set
+2025-08-13 18:32:38,610: Final Test AUC (Landmark 3): 0.8228 | Test F1-Score: 0.0184
+2025-08-13 18:32:38,610: Preparing data for Landmark 4
+2025-08-13 18:32:40,479: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+Some weights of ModernBertForSequenceClassification were not initialized from the model checkpoint at answerdotai/ModernBERT-large and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-13 18:32:44,997: Example train text: You are a Doctor.
+What is the probability of death in the next 90 days from today for this 47-year-old F patient?
+
+Diagnosis history:
+Other specified disorders of intestine; Ulceration of intestine; Other and unspecified ovarian cyst; Diverticulosis of colon (without mention of hemorrhage); Intestinal bypass or anastomosis status; Anxiety state, unspecified; Esophageal reflux.
+Chest pain, unspecified; Orthostatic hypotension.
+Esophageal reflux; Diverticulosis of colon (without mention of hemorrhage); Other specified aftercare following surgery.
+Diverticulitis of colon (without mention of hemorrhage); Acute kidney failure, unspecified; Abscess of intestine; Other postoperative infection; Cellulitis and abscess of trunk; Methicillin susceptible Staphylococcus aureus in conditions classified elsewhere and of unspecified site; Removal of other organ (partial) (total) causing abnormal patient reaction, or later complication, without mention of misadventure at time of operation; Hypovolemia; Nausea with vomiting.
+Prescriptions history:
+Ondansetron ODT; Calcium Carbonate; Senna; Vitamin D; Omeprazole; HYDROmorphone (Dilaudid); Desitin; 0.45% Sodium Chloride; Acetaminophen; 0.9% Sodium Chloride; Docusate Sodium; Lorazepam; Multivitamins; Influenza Virus Vaccine; Golytely; Neutra-Phos; Escitalopram Oxalate; Sodium Chloride 0.9%  Flush; Fish Oil (Omega 3); Fluticasone Propionate NASAL; Heparin; Ondansetron; Naproxen; Ranitidine; Ketorolac.
+.
+LR; Ranitidine; Acetaminophen; Escitalopram Oxalate; Promethazine; Heparin; Ondansetron ODT; Potassium Chl 20 mEq / 1000 mL D5 1/2 NS; Pantoprazole; Sodium Chloride 0.9%  Flush; Fluticasone Propionate NASAL; Ondansetron.
+NS; Potassium Chloride; OxycoDONE (Immediate Release) ; Magnesium Citrate; SW; Magnesium Sulfate; Prochlorperazine; Lorazepam; HYDROmorphone (Dilaudid); Iso-Osmotic Dextrose; Piperacillin-Tazobactam Na; Potassium Chl 20 mEq / 1000 mL D5 1/2 NS; Insulin; LR; Acetaminophen; Ondansetron; Ketorolac; OxycoDONE-Acetaminophen Elixir; Sodium Chloride 0.9%  Flush; Docusate Sodium; Hydrocodone-Acetaminophen; D5W; Clindamycin; Fluticasone Propionate NASAL; Ciprofloxacin; Pantoprazole; Metoclopramide; Calcium Carbonate; Vancomycin; Cephalexin; Heparin; Bupivacaine 0.5%; Promethazine HCl; D5 1/2NS; Hydrocortisone (Rectal) 2.5% Cream; Morphine Sulfate; Escitalopram Oxalate; Maalox/Diphenhydramine/Lidocaine; Nafcillin; HydrOXYzine; MetRONIDAZOLE (FLagyl); Ibuprofen.
+Procedures history:
+Closed [endoscopic] biopsy of large intestine.
+.
+.
+Open and other sigmoidectomy.
+2025-08-13 18:32:45,213: Average train text length: 482.72 words
+2025-08-13 18:32:45,213: Average validation text length: 487.47 words
+2025-08-13 18:32:45,213: Average test text length: 483.07 words
+2025-08-13 18:32:45,213: Training on 8040 samples, validating on 894, testing on 2234 samples
+2025-08-13 18:33:05,436: Fine-tuning at Landmark 4
+2025-08-13 18:33:05,466: Early stopping criterion: loss
+2025-08-13 18:43:59,866: Landmark 4 | Epoch 1/20 | Train Loss: 0.7596 | Val Loss: 0.4174 | Validation AUC: 0.7553 | F1-Score: 0.0000
+2025-08-13 18:44:00,447: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark4_full_no_time_4_2048_landmark_all_landmarks_True_20250813_183305_.pt with AUC: 0.7553, F1: 0.0000, Val Loss: 0.4174
+2025-08-13 18:54:55,191: Landmark 4 | Epoch 2/20 | Train Loss: 0.3968 | Val Loss: 0.3453 | Validation AUC: 0.8621 | F1-Score: 0.3660
+2025-08-13 18:54:55,780: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark4_full_no_time_4_2048_landmark_all_landmarks_True_20250813_183305_.pt with AUC: 0.8621, F1: 0.3660, Val Loss: 0.3453
+2025-08-13 19:05:50,482: Landmark 4 | Epoch 3/20 | Train Loss: 0.3519 | Val Loss: 0.3237 | Validation AUC: 0.8780 | F1-Score: 0.4211
+2025-08-13 19:05:51,050: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark4_full_no_time_4_2048_landmark_all_landmarks_True_20250813_183305_.pt with AUC: 0.8780, F1: 0.4211, Val Loss: 0.3237
+2025-08-13 19:16:45,678: Landmark 4 | Epoch 4/20 | Train Loss: 0.3219 | Val Loss: 0.3148 | Validation AUC: 0.8886 | F1-Score: 0.5833
+2025-08-13 19:16:46,332: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark4_full_no_time_4_2048_landmark_all_landmarks_True_20250813_183305_.pt with AUC: 0.8886, F1: 0.5833, Val Loss: 0.3148
+2025-08-13 19:27:41,064: Landmark 4 | Epoch 5/20 | Train Loss: 0.3071 | Val Loss: 0.3021 | Validation AUC: 0.8939 | F1-Score: 0.5552
+2025-08-13 19:27:41,682: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark4_full_no_time_4_2048_landmark_all_landmarks_True_20250813_183305_.pt with AUC: 0.8939, F1: 0.5552, Val Loss: 0.3021
+2025-08-13 19:38:36,550: Landmark 4 | Epoch 6/20 | Train Loss: 0.2946 | Val Loss: 0.3547 | Validation AUC: 0.8991 | F1-Score: 0.6301
+2025-08-13 19:38:36,550: No improvement in epoch 6. Current best AUC: 0.8939, F1: 0.5552, Val Loss: 0.3021. Epochs without improvement: 1/1
+2025-08-13 19:38:36,550: Early stopping triggered at epoch 6. Best AUC: 0.8939, F1: 0.5552, Val Loss: 0.3021
+2025-08-13 19:38:37,011: Tempo impiegato per Landmark 4: 3931.6 secondi
+2025-08-13 19:38:37,012: Tempo medio per epoca: 655.3 secondi
+2025-08-13 19:38:37,014: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_4550_landmark4_full_no_time_4_2048_landmark_all_landmarks_True_20250813_183305_.pt for final evaluation on test set
+2025-08-13 19:39:25,364: Final Test AUC (Landmark 4): 0.8821 | Test F1-Score: 0.5398
+2025-08-13 19:39:25,365: Saving results to results_general_True_answerdotai_ModernBERT-large_landmark_visits4_4550_2048_full_no_time_20250813_193925.csv
+Using device: cuda
+Using device: cuda
+Using device: cuda
+Using device: cuda
+   Landmark Val AUC  ... Validation Loss Training Time (s)
+0         1  0.6646  ...          0.0651            1985.2
+1         2  0.7257  ...          0.1399            1949.9
+2         3  0.8141  ...          0.2557            3901.7
+3         4  0.8939  ...          0.3021            3931.6
+
+[4 rows x 9 columns]
+
+Job 1853854 consumed 64.0 billing hours from project ec12.
+
+Submitted 2025-08-13T16:17:33; waited 1.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 10.0 hours
+Elapsed wallclock time:   3.4 hours
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+1853854          16            0.0 %  2025-08-13T16:17:34    3.4 h  0
+1853854.batch    16      1     7.7 %  2025-08-13T16:17:34    3.4 h  0
+
+Used CPU time:   4.2 CPU hours
+Unused CPU time: 2.1 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1853854          32.0        
+1853854.batch    32.0    14.6
+
+GPU usage stats:
+Job 1853854 completed at Wed Aug 13 19:39:31 CEST 2025

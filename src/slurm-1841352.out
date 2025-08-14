@@ -1,0 +1,140 @@
+Starting job 1841352 on gpu-1 on fox at Tue Aug 5 19:56:12 CEST 2025
+
+=== VERIFICA AMBIENTE ===
+/fp/homes01/u01/ec-michelec/ModernBERT/bin/python3
+Python 3.9.21
+pip 25.2 from /fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/pip (python 3.9)
+2025-08-05 19:56:27,252: Argument CI: False
+2025-08-05 19:56:27,254: Argument all_landmarks: True
+2025-08-05 19:56:27,254: Argument batch_size: 8
+2025-08-05 19:56:27,254: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-08-05 19:56:27,254: Argument early: 'loss'
+2025-08-05 19:56:27,254: Argument epochs: 20
+2025-08-05 19:56:27,254: Argument gradient_accumulation_steps: 1
+2025-08-05 19:56:27,254: Argument input_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_df_evo.csv'
+2025-08-05 19:56:27,254: Argument lr: 2e-05
+2025-08-05 19:56:27,254: Argument max_length: 512
+2025-08-05 19:56:27,254: Argument max_visits: 3
+2025-08-05 19:56:27,254: Argument model_name: 'answerdotai/ModernBERT-large'
+2025-08-05 19:56:27,254: Argument model_type: 'general'
+2025-08-05 19:56:27,254: Argument patience: 1
+2025-08-05 19:56:27,254: Argument peft: False
+2025-08-05 19:56:27,254: Argument prompt_type: 'no'
+2025-08-05 19:56:27,254: Argument seed: 5550
+2025-08-05 19:56:27,254: Argument test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_test_dod.csv'
+2025-08-05 19:56:27,254: Argument train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_train_dod.csv'
+2025-08-05 19:56:27,254: Argument use_quantization: False
+2025-08-05 19:56:27,254: Argument val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_vali_dod.csv'
+2025-08-05 19:56:27,254: Argument when_counting_death: 'last_visit'
+2025-08-05 19:56:27,263: Using prompt type: no
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:79: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:81: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_test_df = pd.read_csv(args.test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+2025-08-05 19:57:06,579: Processing all landmarks from 1 to 3
+2025-08-05 19:57:06,579: Preparing data for Landmark 1
+2025-08-05 19:57:11,193: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+Some weights of ModernBertForSequenceClassification were not initialized from the model checkpoint at answerdotai/ModernBERT-large and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-05 19:57:15,602: Average train text length: 330.04 words
+2025-08-05 19:57:15,602: Average validation text length: 331.97 words
+2025-08-05 19:57:15,602: Average test text length: 329.99 words
+2025-08-05 19:57:15,602: Training on 14472 samples, validating on 1608, testing on 4020 samples
+2025-08-05 19:57:35,790: Fine-tuning at Landmark 1
+2025-08-05 19:57:35,798: Early stopping criterion: loss
+/fp/homes01/u01/ec-michelec/ModernBERT/lib64/python3.9/site-packages/networkx/utils/backends.py:135: RuntimeWarning: networkx backend defined more than once: nx-loopback
+  backends.update(_get_backends("networkx.backends"))
+2025-08-05 20:02:13,988: Landmark 1 | Epoch 1/20 | Train Loss: 0.4413 | Val Loss: 0.3811 | Validation AUC: 0.7109 | F1-Score: 0.0000
+2025-08-05 20:02:14,541: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_5550_landmark1_no_3_512_last_visit_all_landmarks_True_20250805_195735_.pt with AUC: 0.7109, F1: 0.0000, Val Loss: 0.3811
+2025-08-05 20:06:36,184: Landmark 1 | Epoch 2/20 | Train Loss: 0.3852 | Val Loss: 0.3827 | Validation AUC: 0.7110 | F1-Score: 0.0000
+2025-08-05 20:06:36,185: No improvement in epoch 2. Current best AUC: 0.7109, F1: 0.0000, Val Loss: 0.3811. Epochs without improvement: 1/1
+2025-08-05 20:06:36,185: Early stopping triggered at epoch 2. Best AUC: 0.7109, F1: 0.0000, Val Loss: 0.3811
+2025-08-05 20:06:36,639: Tempo impiegato per Landmark 1: 540.8 secondi
+2025-08-05 20:06:36,639: Tempo medio per epoca: 270.4 secondi
+2025-08-05 20:06:36,641: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_5550_landmark1_no_3_512_last_visit_all_landmarks_True_20250805_195735_.pt for final evaluation on test set
+2025-08-05 20:07:01,298: Final Test AUC (Landmark 1): 0.6805 | Test F1-Score: 0.0000
+2025-08-05 20:07:01,298: Preparing data for Landmark 2
+2025-08-05 20:07:03,538: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+Some weights of ModernBertForSequenceClassification were not initialized from the model checkpoint at answerdotai/ModernBERT-large and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-05 20:07:08,995: Average train text length: 554.03 words
+2025-08-05 20:07:08,995: Average validation text length: 557.59 words
+2025-08-05 20:07:08,995: Average test text length: 549.54 words
+2025-08-05 20:07:08,995: Training on 14472 samples, validating on 1608, testing on 4020 samples
+2025-08-05 20:07:43,794: Fine-tuning at Landmark 2
+2025-08-05 20:07:43,827: Early stopping criterion: loss
+2025-08-05 20:12:09,450: Landmark 2 | Epoch 1/20 | Train Loss: 0.4185 | Val Loss: 0.3771 | Validation AUC: 0.7284 | F1-Score: 0.0000
+2025-08-05 20:12:10,031: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_5550_landmark2_no_3_512_last_visit_all_landmarks_True_20250805_200743_.pt with AUC: 0.7284, F1: 0.0000, Val Loss: 0.3771
+2025-08-05 20:16:35,604: Landmark 2 | Epoch 2/20 | Train Loss: 0.3806 | Val Loss: 0.3596 | Validation AUC: 0.7589 | F1-Score: 0.0000
+2025-08-05 20:16:36,177: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_5550_landmark2_no_3_512_last_visit_all_landmarks_True_20250805_200743_.pt with AUC: 0.7589, F1: 0.0000, Val Loss: 0.3596
+2025-08-05 20:21:01,237: Landmark 2 | Epoch 3/20 | Train Loss: 0.3663 | Val Loss: 0.3526 | Validation AUC: 0.7774 | F1-Score: 0.0000
+2025-08-05 20:21:01,802: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_5550_landmark2_no_3_512_last_visit_all_landmarks_True_20250805_200743_.pt with AUC: 0.7774, F1: 0.0000, Val Loss: 0.3526
+2025-08-05 20:25:26,605: Landmark 2 | Epoch 4/20 | Train Loss: 0.3605 | Val Loss: 0.3496 | Validation AUC: 0.7849 | F1-Score: 0.0170
+2025-08-05 20:25:27,174: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_5550_landmark2_no_3_512_last_visit_all_landmarks_True_20250805_200743_.pt with AUC: 0.7849, F1: 0.0170, Val Loss: 0.3496
+2025-08-05 20:29:51,104: Landmark 2 | Epoch 5/20 | Train Loss: 0.3600 | Val Loss: 0.3529 | Validation AUC: 0.7755 | F1-Score: 0.0170
+2025-08-05 20:29:51,104: No improvement in epoch 5. Current best AUC: 0.7849, F1: 0.0170, Val Loss: 0.3496. Epochs without improvement: 1/1
+2025-08-05 20:29:51,104: Early stopping triggered at epoch 5. Best AUC: 0.7849, F1: 0.0170, Val Loss: 0.3496
+2025-08-05 20:29:51,539: Tempo impiegato per Landmark 2: 1327.7 secondi
+2025-08-05 20:29:51,540: Tempo medio per epoca: 265.5 secondi
+2025-08-05 20:29:51,542: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_5550_landmark2_no_3_512_last_visit_all_landmarks_True_20250805_200743_.pt for final evaluation on test set
+2025-08-05 20:30:16,152: Final Test AUC (Landmark 2): 0.7603 | Test F1-Score: 0.0102
+2025-08-05 20:30:16,152: Preparing data for Landmark 3
+2025-08-05 20:30:18,299: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+Some weights of ModernBertForSequenceClassification were not initialized from the model checkpoint at answerdotai/ModernBERT-large and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-05 20:30:23,794: Average train text length: 774.29 words
+2025-08-05 20:30:23,794: Average validation text length: 770.47 words
+2025-08-05 20:30:23,794: Average test text length: 771.70 words
+2025-08-05 20:30:23,794: Training on 14472 samples, validating on 1608, testing on 4020 samples
+2025-08-05 20:31:11,439: Fine-tuning at Landmark 3
+2025-08-05 20:31:11,476: Early stopping criterion: loss
+2025-08-05 20:35:39,917: Landmark 3 | Epoch 1/20 | Train Loss: 0.3860 | Val Loss: 0.3074 | Validation AUC: 0.8525 | F1-Score: 0.1333
+2025-08-05 20:35:40,482: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_5550_landmark3_no_3_512_last_visit_all_landmarks_True_20250805_203111_.pt with AUC: 0.8525, F1: 0.1333, Val Loss: 0.3074
+2025-08-05 20:40:08,728: Landmark 3 | Epoch 2/20 | Train Loss: 0.3110 | Val Loss: 0.2730 | Validation AUC: 0.8871 | F1-Score: 0.4556
+2025-08-05 20:40:09,283: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_5550_landmark3_no_3_512_last_visit_all_landmarks_True_20250805_203111_.pt with AUC: 0.8871, F1: 0.4556, Val Loss: 0.2730
+2025-08-05 20:44:37,332: Landmark 3 | Epoch 3/20 | Train Loss: 0.2647 | Val Loss: 0.2355 | Validation AUC: 0.9240 | F1-Score: 0.5668
+2025-08-05 20:44:37,918: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_5550_landmark3_no_3_512_last_visit_all_landmarks_True_20250805_203111_.pt with AUC: 0.9240, F1: 0.5668, Val Loss: 0.2355
+2025-08-05 20:49:05,586: Landmark 3 | Epoch 4/20 | Train Loss: 0.2384 | Val Loss: 0.2275 | Validation AUC: 0.9293 | F1-Score: 0.6209
+2025-08-05 20:49:06,141: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_5550_landmark3_no_3_512_last_visit_all_landmarks_True_20250805_203111_.pt with AUC: 0.9293, F1: 0.6209, Val Loss: 0.2275
+2025-08-05 20:53:33,868: Landmark 3 | Epoch 5/20 | Train Loss: 0.2301 | Val Loss: 0.2298 | Validation AUC: 0.9320 | F1-Score: 0.5667
+2025-08-05 20:53:33,869: No improvement in epoch 5. Current best AUC: 0.9293, F1: 0.6209, Val Loss: 0.2275. Epochs without improvement: 1/1
+2025-08-05 20:53:33,869: Early stopping triggered at epoch 5. Best AUC: 0.9293, F1: 0.6209, Val Loss: 0.2275
+2025-08-05 20:53:34,442: Tempo impiegato per Landmark 3: 1343.0 secondi
+2025-08-05 20:53:34,442: Tempo medio per epoca: 268.6 secondi
+2025-08-05 20:53:34,445: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_answerdotai_ModernBERT-large_5550_landmark3_no_3_512_last_visit_all_landmarks_True_20250805_203111_.pt for final evaluation on test set
+2025-08-05 20:53:59,164: Final Test AUC (Landmark 3): 0.9260 | Test F1-Score: 0.6064
+2025-08-05 20:53:59,165: Saving results to results_general_True_answerdotai_ModernBERT-large_last_visit_visits3_5550_512_no_20250805_205359.csv
+Using device: cuda
+Using device: cuda
+Using device: cuda
+   Landmark Val AUC  ... Validation Loss Training Time (s)
+0         1  0.7109  ...          0.3811             540.8
+1         2  0.7849  ...          0.3496            1327.7
+2         3  0.9293  ...          0.2275            1343.0
+
+[3 rows x 9 columns]
+
+Job 1841352 consumed 18.3 billing hours from project ec12.
+
+Submitted 2025-08-05T19:55:56; waited 16.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 10.0 hours
+Elapsed wallclock time:   57.9 minutes
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start   Elapsed  Exit status
+1841352          16            0.0 %  2025-08-05T19:56:12  3473.0 s  0
+1841352.batch    16      1    10.7 %  2025-08-05T19:56:12  3473.0 s  0
+
+Used CPU time:   1.6 CPU hours
+Unused CPU time: 13.8 CPU hours
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1841352          32.0        
+1841352.batch    32.0    17.7
+
+GPU usage stats:
+Job 1841352 completed at Tue Aug 5 20:54:05 CEST 2025

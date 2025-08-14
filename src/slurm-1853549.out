@@ -1,0 +1,156 @@
+Starting job 1853549 on gpu-15 on fox at Wed Aug 13 09:26:56 CEST 2025
+
+2025-08-13 09:27:16,059: Argument CI: False
+2025-08-13 09:27:16,060: Argument all_landmarks: True
+2025-08-13 09:27:16,060: Argument batch_size: 8
+2025-08-13 09:27:16,060: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-08-13 09:27:16,060: Argument early: 'loss'
+2025-08-13 09:27:16,060: Argument epochs: 20
+2025-08-13 09:27:16,060: Argument gradient_accumulation_steps: 1
+2025-08-13 09:27:16,061: Argument input_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_df_evo.csv'
+2025-08-13 09:27:16,061: Argument lr: 2e-05
+2025-08-13 09:27:16,061: Argument max_length: 512
+2025-08-13 09:27:16,061: Argument max_visits: 3
+2025-08-13 09:27:16,061: Argument model_name: 'Charangan/MedBERT'
+2025-08-13 09:27:16,061: Argument model_type: 'medical'
+2025-08-13 09:27:16,061: Argument patience: 1
+2025-08-13 09:27:16,061: Argument peft: False
+2025-08-13 09:27:16,061: Argument prompt_type: 'naive'
+2025-08-13 09:27:16,061: Argument seed: 4550
+2025-08-13 09:27:16,061: Argument test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_test_dod.csv'
+2025-08-13 09:27:16,061: Argument train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_train_dod.csv'
+2025-08-13 09:27:16,061: Argument use_quantization: False
+2025-08-13 09:27:16,061: Argument val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_vali_dod.csv'
+2025-08-13 09:27:16,061: Argument when_counting_death: 'last_visit'
+2025-08-13 09:27:16,079: Using prompt type: naive
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:79: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:81: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_test_df = pd.read_csv(args.test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+2025-08-13 09:27:53,145: Processing all landmarks from 1 to 3
+2025-08-13 09:27:53,146: Preparing data for Landmark 1
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_utils.py:831: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  return self.fget.__get__(instance, owner)()
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at Charangan/MedBERT and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-13 09:27:58,646: Example train text: Based on this information, what is the probability of mortality within 90 days?
+Patient is a 32-year-old F. This is the patient history till visit 1.
+During visit 1:
+	Diagnosis: Alcoholic cirrhosis of liver; Pneumonia, organism unspecified; Other ascites; Portal hypertension; Urinary tract infection, site not specified; Unspecified protein-calorie malnutrition; Hyposmolality and/or hyponatremia; Other specified forms of effusion, except tuberculous; Acute alcoholic hepatitis; Hypopotassemia; Other and unspecified alcohol dependence, continuous; Other constipation; Unspecified deficiency anemia; Anxiety state, unspecified
+	Medications: Morphine Sulfate; Lorazepam; Heparin; Docusate Sodium; OxycoDONE (Immediate Release) ; Thiamine; Multivitamins; Ciprofloxacin HCl; Neutra-Phos; Albumin 25% (12.5g / 50mL); Phytonadione; 0.9% Sodium Chloride; Potassium Chloride; Sodium Chloride 0.9%  Flush; Magnesium Sulfate; SW; Ondansetron; Lidocaine 5% Patch; Senna; Multivitamin IV; FoLIC Acid; 1/2 NS; Nicotine Patch; Furosemide; Acetaminophen
+	Procedures: Percutaneous abdominal drainage
+2025-08-13 09:27:58,773: Average train text length: 134.39 words
+2025-08-13 09:27:58,774: Average validation text length: 133.56 words
+2025-08-13 09:27:58,774: Average test text length: 135.14 words
+2025-08-13 09:27:58,774: Training on 14472 samples, validating on 1608, testing on 4020 samples
+2025-08-13 09:28:10,979: Fine-tuning at Landmark 1
+2025-08-13 09:28:11,368: Early stopping criterion: loss
+2025-08-13 09:30:25,741: Landmark 1 | Epoch 1/20 | Train Loss: 0.4073 | Val Loss: 0.3243 | Validation AUC: 0.8282 | F1-Score: 0.2963
+2025-08-13 09:30:26,103: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_4550_landmark1_naive_3_512_last_visit_all_landmarks_True_20250813_092811_.pt with AUC: 0.8282, F1: 0.2963, Val Loss: 0.3243
+2025-08-13 09:32:40,770: Landmark 1 | Epoch 2/20 | Train Loss: 0.3424 | Val Loss: 0.3115 | Validation AUC: 0.8388 | F1-Score: 0.3354
+2025-08-13 09:32:41,143: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_4550_landmark1_naive_3_512_last_visit_all_landmarks_True_20250813_092811_.pt with AUC: 0.8388, F1: 0.3354, Val Loss: 0.3115
+2025-08-13 09:34:55,649: Landmark 1 | Epoch 3/20 | Train Loss: 0.3219 | Val Loss: 0.3217 | Validation AUC: 0.8308 | F1-Score: 0.2517
+2025-08-13 09:34:55,649: No improvement in epoch 3. Current best AUC: 0.8388, F1: 0.3354, Val Loss: 0.3115. Epochs without improvement: 1/1
+2025-08-13 09:34:55,649: Early stopping triggered at epoch 3. Best AUC: 0.8388, F1: 0.3354, Val Loss: 0.3115
+2025-08-13 09:34:55,930: Tempo impiegato per Landmark 1: 404.9 secondi
+2025-08-13 09:34:55,930: Tempo medio per epoca: 135.0 secondi
+2025-08-13 09:34:55,932: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_4550_landmark1_naive_3_512_last_visit_all_landmarks_True_20250813_092811_.pt for final evaluation on test set
+2025-08-13 09:35:07,193: Final Test AUC (Landmark 1): 0.8273 | Test F1-Score: 0.3043
+2025-08-13 09:35:07,193: Preparing data for Landmark 2
+Using device: cuda
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at Charangan/MedBERT and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-13 09:35:17,123: Example train text: Based on this information, what is the probability of mortality within 90 days?
+Patient is a 32-year-old F. This is the patient history till visit 2.
+During visit 1:
+	Diagnosis: Alcoholic cirrhosis of liver; Pneumonia, organism unspecified; Other ascites; Portal hypertension; Urinary tract infection, site not specified; Unspecified protein-calorie malnutrition; Hyposmolality and/or hyponatremia; Other specified forms of effusion, except tuberculous; Acute alcoholic hepatitis; Hypopotassemia; Other and unspecified alcohol dependence, continuous; Other constipation; Unspecified deficiency anemia; Anxiety state, unspecified
+	Medications: Morphine Sulfate; Lorazepam; Heparin; Docusate Sodium; OxycoDONE (Immediate Release) ; Thiamine; Multivitamins; Ciprofloxacin HCl; Neutra-Phos; Albumin 25% (12.5g / 50mL); Phytonadione; 0.9% Sodium Chloride; Potassium Chloride; Sodium Chloride 0.9%  Flush; Magnesium Sulfate; SW; Ondansetron; Lidocaine 5% Patch; Senna; Multivitamin IV; FoLIC Acid; 1/2 NS; Nicotine Patch; Furosemide; Acetaminophen
+	Procedures: Percutaneous abdominal drainage
+During visit 2:
+	Diagnosis: Acute alcoholic hepatitis; Sepsis; Other ascites; Hyposmolality and/or hyponatremia; Urinary tract infection, site not specified; Unspecified pleural effusion; Alcoholic fatty liver; Other and unspecified alcohol dependence, continuous; Tobacco use disorder
+	Medications: FoLIC Acid; OxycoDONE (Immediate Release) ; Magnesium Sulfate; Sarna Lotion; Sodium Polystyrene Sulfonate; Sodium Chloride 0.9%  Flush; Lidocaine 5% Patch; Lactulose; Albumin 25% (12.5g / 50mL); Phytonadione; Thiamine; 0.9% Sodium Chloride; Iso-Osmotic Dextrose; CeftriaXONE; Acetylcysteine 20%; 5% Dextrose; Heparin Sodium; Heparin; Ondansetron; Morphine Sulfate; D5 1/2NS; Spironolactone; Nicotine Patch; Multivitamins
+	Procedures: Percutaneous abdominal drainage
+2025-08-13 09:35:17,367: Average train text length: 246.67 words
+2025-08-13 09:35:17,367: Average validation text length: 245.73 words
+2025-08-13 09:35:17,367: Average test text length: 245.56 words
+2025-08-13 09:35:17,367: Training on 14472 samples, validating on 1608, testing on 4020 samples
+2025-08-13 09:35:40,219: Fine-tuning at Landmark 2
+2025-08-13 09:35:40,222: Early stopping criterion: loss
+2025-08-13 09:37:57,048: Landmark 2 | Epoch 1/20 | Train Loss: 0.3937 | Val Loss: 0.3078 | Validation AUC: 0.8525 | F1-Score: 0.4267
+2025-08-13 09:37:57,383: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_4550_landmark2_naive_3_512_last_visit_all_landmarks_True_20250813_093540_.pt with AUC: 0.8525, F1: 0.4267, Val Loss: 0.3078
+2025-08-13 09:40:14,058: Landmark 2 | Epoch 2/20 | Train Loss: 0.3193 | Val Loss: 0.2928 | Validation AUC: 0.8682 | F1-Score: 0.4557
+2025-08-13 09:40:14,377: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_4550_landmark2_naive_3_512_last_visit_all_landmarks_True_20250813_093540_.pt with AUC: 0.8682, F1: 0.4557, Val Loss: 0.2928
+2025-08-13 09:42:31,122: Landmark 2 | Epoch 3/20 | Train Loss: 0.2902 | Val Loss: 0.3321 | Validation AUC: 0.8529 | F1-Score: 0.3097
+2025-08-13 09:42:31,122: No improvement in epoch 3. Current best AUC: 0.8682, F1: 0.4557, Val Loss: 0.2928. Epochs without improvement: 1/1
+2025-08-13 09:42:31,122: Early stopping triggered at epoch 3. Best AUC: 0.8682, F1: 0.4557, Val Loss: 0.2928
+2025-08-13 09:42:31,378: Tempo impiegato per Landmark 2: 411.2 secondi
+2025-08-13 09:42:31,379: Tempo medio per epoca: 137.1 secondi
+2025-08-13 09:42:31,380: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_4550_landmark2_naive_3_512_last_visit_all_landmarks_True_20250813_093540_.pt for final evaluation on test set
+2025-08-13 09:42:42,601: Final Test AUC (Landmark 2): 0.8504 | Test F1-Score: 0.4522
+2025-08-13 09:42:42,601: Preparing data for Landmark 3
+Using device: cuda
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at Charangan/MedBERT and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-13 09:42:59,490: Example train text: Based on this information, what is the probability of mortality within 90 days?
+Patient is a 32-year-old F. This is the patient history till visit 3.
+During visit 1:
+	Diagnosis: Alcoholic cirrhosis of liver; Pneumonia, organism unspecified; Other ascites; Portal hypertension; Urinary tract infection, site not specified; Unspecified protein-calorie malnutrition; Hyposmolality and/or hyponatremia; Other specified forms of effusion, except tuberculous; Acute alcoholic hepatitis; Hypopotassemia; Other and unspecified alcohol dependence, continuous; Other constipation; Unspecified deficiency anemia; Anxiety state, unspecified
+	Medications: Morphine Sulfate; Lorazepam; Heparin; Docusate Sodium; OxycoDONE (Immediate Release) ; Thiamine; Multivitamins; Ciprofloxacin HCl; Neutra-Phos; Albumin 25% (12.5g / 50mL); Phytonadione; 0.9% Sodium Chloride; Potassium Chloride; Sodium Chloride 0.9%  Flush; Magnesium Sulfate; SW; Ondansetron; Lidocaine 5% Patch; Senna; Multivitamin IV; FoLIC Acid; 1/2 NS; Nicotine Patch; Furosemide; Acetaminophen
+	Procedures: Percutaneous abdominal drainage
+During visit 2:
+	Diagnosis: Acute alcoholic hepatitis; Sepsis; Other ascites; Hyposmolality and/or hyponatremia; Urinary tract infection, site not specified; Unspecified pleural effusion; Alcoholic fatty liver; Other and unspecified alcohol dependence, continuous; Tobacco use disorder
+	Medications: FoLIC Acid; OxycoDONE (Immediate Release) ; Magnesium Sulfate; Sarna Lotion; Sodium Polystyrene Sulfonate; Sodium Chloride 0.9%  Flush; Lidocaine 5% Patch; Lactulose; Albumin 25% (12.5g / 50mL); Phytonadione; Thiamine; 0.9% Sodium Chloride; Iso-Osmotic Dextrose; CeftriaXONE; Acetylcysteine 20%; 5% Dextrose; Heparin Sodium; Heparin; Ondansetron; Morphine Sulfate; D5 1/2NS; Spironolactone; Nicotine Patch; Multivitamins
+	Procedures: Percutaneous abdominal drainage
+During visit 3:
+	Diagnosis: Portal hypertension; Other ascites; Hyposmolality and/or hyponatremia; Alcoholic cirrhosis of liver; Thrombocytopenia, unspecified; Acute alcoholic hepatitis; Lumbago; Other chronic pain
+	Medications: Sodium Chloride 0.9%  Flush; Albumin 25% (12.5g / 50mL); FoLIC Acid; Lorazepam; Thiamine; Nicotine Patch; Multivitamins; Amitriptyline; OxycoDONE (Immediate Release) ; Lactulose
+	Procedures: Percutaneous abdominal drainage
+2025-08-13 09:42:59,854: Average train text length: 370.54 words
+2025-08-13 09:42:59,855: Average validation text length: 365.82 words
+2025-08-13 09:42:59,855: Average test text length: 369.07 words
+2025-08-13 09:42:59,855: Training on 14472 samples, validating on 1608, testing on 4020 samples
+2025-08-13 09:43:34,017: Fine-tuning at Landmark 3
+2025-08-13 09:43:34,023: Early stopping criterion: loss
+2025-08-13 09:45:47,443: Landmark 3 | Epoch 1/20 | Train Loss: 0.3890 | Val Loss: 0.2986 | Validation AUC: 0.8598 | F1-Score: 0.4119
+2025-08-13 09:45:47,788: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_4550_landmark3_naive_3_512_last_visit_all_landmarks_True_20250813_094334_.pt with AUC: 0.8598, F1: 0.4119, Val Loss: 0.2986
+2025-08-13 09:48:02,043: Landmark 3 | Epoch 2/20 | Train Loss: 0.3171 | Val Loss: 0.2884 | Validation AUC: 0.8701 | F1-Score: 0.4353
+2025-08-13 09:48:02,370: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_4550_landmark3_naive_3_512_last_visit_all_landmarks_True_20250813_094334_.pt with AUC: 0.8701, F1: 0.4353, Val Loss: 0.2884
+2025-08-13 09:50:16,160: Landmark 3 | Epoch 3/20 | Train Loss: 0.2867 | Val Loss: 0.2934 | Validation AUC: 0.8728 | F1-Score: 0.4035
+2025-08-13 09:50:16,160: No improvement in epoch 3. Current best AUC: 0.8701, F1: 0.4353, Val Loss: 0.2884. Epochs without improvement: 1/1
+2025-08-13 09:50:16,160: Early stopping triggered at epoch 3. Best AUC: 0.8701, F1: 0.4353, Val Loss: 0.2884
+2025-08-13 09:50:16,412: Tempo impiegato per Landmark 3: 402.4 secondi
+2025-08-13 09:50:16,412: Tempo medio per epoca: 134.1 secondi
+2025-08-13 09:50:16,414: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_4550_landmark3_naive_3_512_last_visit_all_landmarks_True_20250813_094334_.pt for final evaluation on test set
+2025-08-13 09:50:26,914: Final Test AUC (Landmark 3): 0.8651 | Test F1-Score: 0.4373
+2025-08-13 09:50:26,915: Saving results to results_medical_True_Charangan_MedBERT_last_visit_visits3_4550_512_naive_20250813_095026.csv
+Using device: cuda
+   Landmark Val AUC  ... Validation Loss Training Time (s)
+0         1  0.8388  ...          0.3115             404.9
+1         2  0.8682  ...          0.2928             411.2
+2         3  0.8701  ...          0.2884             402.4
+
+[3 rows x 9 columns]
+
+Job 1853549 consumed 7.5 billing hours from project ec12.
+
+Submitted 2025-08-13T09:26:50; waited 5.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 6.0 hours
+Elapsed wallclock time:   23.6 minutes
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start   Elapsed  Exit status
+1853549          16            0.0 %  2025-08-13T09:26:55  1417.0 s  0
+1853549.batch    16      1     6.2 %  2025-08-13T09:26:55  1417.0 s  0
+
+Used CPU time:   23.4 CPU minutes
+Unused CPU time: 5.9 CPU hours
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1853549          32.0        
+1853549.batch    32.0    12.5
+
+Job 1853549 completed at Wed Aug 13 09:50:32 CEST 2025
