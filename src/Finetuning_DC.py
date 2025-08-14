@@ -92,7 +92,7 @@ def parse_args():
     parser.add_argument("--lr", type=float, default=2e-5,
                         help="Learning rate")
     
-    parser.add_argument("--early", type=str, choices=["auc", "loss", "f1"], default="auc",
+    parser.add_argument("--early", type=str, choices=["auc", "loss", "f1"], default="loss",
                         help="Early stopping criterion: 'auc', 'loss' or 'f1")
     
     parser.add_argument("--seed", type=int, default=9550,
