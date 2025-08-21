@@ -18,7 +18,8 @@ from huggingface_hub import login
 from prompts import (
     no_narrative_prompt, naive_narrative_prompt, compact_narrative_prompt,
     full_narrative, full_narrative_no_time, full_narrative_no_time_rnd,
-    compact_no_time_prompt, compact_no_time_prompt_rnd
+    compact_no_time_prompt, compact_no_time_prompt_rnd, compact_narrative_humanstyle_prompt, 
+    semi_full_narrative, reversed_naive_narrative_prompt
 )
 
 torch.set_float32_matmul_precision('high') 
@@ -40,61 +41,72 @@ def set_seed(seed_value=5550):
     torch.backends.cudnn.benchmark = True
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Universal finetuning script for general-purpose LLMs or medical-purpose models.")
-    parser.add_argument("--model_type", type=str, choices=["general-purpose", "medical-purpose"], default="general-purpose",
-                        help="Model type: general-purpose o medical-purpose (e.g., MedBERT, etc.)")
-    
+
+    parser = argparse.ArgumentParser(description="Universal finetuning script for LLMs or MedBERT-like models.")
+
+    parser.add_argument("--CI", action="store_true", help="if true, runs for three different seeds for then compute the average results")
+
+    parser.add_argument("--model_type", type=str, choices=["general", "medical"], default="general",
+                        help="Model type: general-purpose o medical-purpose (MedBERT-like)")
+
     parser.add_argument("--model_name", type=str, required=True,
                         help="Name of the model from Hugging Face")
-    
+
     parser.add_argument("--peft", action="store_true", help="Usa PEFT (solo per LLM)")
 
     parser.add_argument("--use_quantization", action="store_true",
                         help="Quantization 4 bit")
-    
+
     parser.add_argument("--cache_dir", type=str, default="/root/MIMICIV/cache",
                         help="Directory for cache e saving models")
-    
-    parser.add_argument("--train_csv", type=str, default="/root/MIMICIV/data/splitted/landmark_evo_train.csv",
+
+    parser.add_argument("--input_csv", type=str, default="/root/MIMICIV/src/landmark_df_evo_correct.csv",
+                        help="Path to file CSV di input")
+
+    parser.add_argument("--train_csv", type=str, default="/root/MIMICIV/data/splitted/landmark_evo_train_dod_fxd.csv",
                         help="Path to file CSV di training")
-    
-    parser.add_argument("--val_csv", type=str, default="/root/MIMICIV/data/splitted/landmark_evo_vali.csv",
+
+    parser.add_argument("--val_csv", type=str, default="/root/MIMICIV/data/splitted/landmark_evo_vali_dod_fxd.csv",
                         help="Path to file CSV di validation")
-    
-    parser.add_argument("--test_csv", type=str, default="/root/MIMICIV/data/splitted/landmark_evo_test.csv",
+
+    parser.add_argument("--test_csv", type=str, default="/root/MIMICIV/data/splitted/landmark_evo_test_dod_fxd.csv",
                         help="Path to file CSV di test") # evo as well 
     
+    parser.add_argument("--when_counting_death", type=str, choices=["last_visit", "landmark"], default="last_visit",
+                        help="When counting death: 'last_visit' (considering the last visit) or 'landmark' (considering the current landmark visit)")
+
     parser.add_argument("--prompt_type", type=str, choices=["naive", "compact", "compact_no_time", "compact_no_time_rnd", 
-                                                            "no", "full", "full_no_time", "full_no_time_rnd"], default="compact",
+                                                            "no", "full", "full_no_time", "full_no_time_rnd", "compact_narrative",
+                                                            "semi_full_narrative", "reversed_naive_narrative_prompt"], default="compact",
                         help="Prompting type to use: 'naive', 'compact'  o 'no' (nessuna narrativa)")
-    
+
     parser.add_argument("--max_visits", type=int, default=3,
                         help="number of visits to consider for each patient (max_visits)")
-    
+
     parser.add_argument("--all_landmarks", action="store_true",
                         help="Process all landmark (from 1 to max_visits) or just the last one")
-    
+                        
     parser.add_argument("--batch_size", type=int, default=8,
                         help="Batch size for DataLoader")
-    
+
     parser.add_argument("--gradient_accumulation_steps", type=int, default=1,
                         help="Number of steps for gradient accumulation (useful for large models)")
-    
+
     parser.add_argument("--epochs", type=int, default=20,
                         help="Num epochs for training")
-    
+
     parser.add_argument("--patience", type=int, default=3,
                         help="Early stopping patience")
-    
+
     parser.add_argument("--max_length", type=int, default=512,
                         help="Token Max lenght")
-    
+
     parser.add_argument("--lr", type=float, default=2e-5,
                         help="Learning rate")
-    
+
     parser.add_argument("--early", type=str, choices=["auc", "loss", "f1"], default="loss",
                         help="Early stopping criterion: 'auc', 'loss' or 'f1")
-    
+
     parser.add_argument("--seed", type=int, default=9550,
                         help="Seed for riproducibility")
     
@@ -109,13 +121,15 @@ def parse_args():
 def load_tokenizer(model_name, model_type, hf_token, cache_dir):
     tokenizer = AutoTokenizer.from_pretrained(
         model_name,
-        token=hf_token if model_type == "general-purpose" else None,
-        cache_dir=cache_dir
+        token=hf_token if model_type == "general" else None,
+        cache_dir=cache_dir,
+        force_download=True,
+        local_files_only=False
     )
     return tokenizer
 
 def load_model(model_name, model_type, tokenizer, cache_dir, hf_token, use_peft, use_quantization):
-    if model_type == "general-purpose":
+    if model_type == "general":
 
         if use_quantization:
             bnb_config = BitsAndBytesConfig(
@@ -129,12 +143,12 @@ def load_model(model_name, model_type, tokenizer, cache_dir, hf_token, use_peft,
 
         model = AutoModelForSequenceClassification.from_pretrained(
             model_name,
-            num_labels=2,
+            num_labels=2, # TODO: avoid to hard-code this
             torch_dtype=torch.bfloat16,
             device_map='auto',
             token=hf_token,
             cache_dir=cache_dir,
-            quantization_config=None if use_quantization else bnb_config  # Use bnb for quantization
+            quantization_config=bnb_config if use_quantization else None  # Use bnb for quantization
         )
         model.config.pad_token_id = tokenizer.eos_token_id
         if use_peft:
@@ -149,15 +163,13 @@ def load_model(model_name, model_type, tokenizer, cache_dir, hf_token, use_peft,
             )
             model = get_peft_model(model, lora_config)
             model.print_trainable_parameters()
-    elif model_type == "medical-purpose":
+    else:
         # For clinical models like MedBERT or similar
         model = AutoModelForSequenceClassification.from_pretrained(
             model_name,
-            num_labels=2,
+            num_labels=2, # TODO: avoid to hard-code this
             cache_dir=cache_dir
         )
-    else:
-        raise ValueError("Invalid model type. Use 'general-purpose' or 'medical-purpose'.")
     return model
 
 class ClinicalDataset(Dataset):
@@ -263,7 +275,7 @@ def train_and_evaluate(model, train_loader, val_loader, args, landmark_visit):
         else:
             raise ValueError("Invalid early stopping criterion. Use 'auc', 'loss' or 'f1'.")
 
-        if condition == True:
+        if condition:
             logger.info(f"Improvement detected at epoch {epoch+1}. Saving model.")
             best_auc = val_auc
             best_f1 = val_f1
@@ -282,7 +294,7 @@ def train_and_evaluate(model, train_loader, val_loader, args, landmark_visit):
 def get_best_model_path(args, landmark_visit):
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     safe_model_name = args.model_name.replace("/", "_")
-    filename = f"best_model_{safe_model_name}_landmark{landmark_visit}_{args.prompt_type}_{args.max_visits}_{args.max_length}_all_landmarks_{args.all_landmarks}_{timestamp}_.pt"
+    filename = f"best_model_{safe_model_name}_{args.seed}_landmark{landmark_visit}_{args.prompt_type}_{args.max_visits}_{args.max_length}_{args.when_counting_death}_all_landmarks_{args.all_landmarks}_{timestamp}_.pt"
     best_model_dir = os.path.join(args.cache_dir, 'best')
     os.makedirs(best_model_dir, exist_ok=True)
     return os.path.join(best_model_dir, filename)
@@ -328,6 +340,12 @@ def main():
         narrative_prompt = full_narrative_no_time
     elif args.prompt_type == "full_no_time_rnd":
         narrative_prompt = full_narrative_no_time_rnd
+    elif args.prompt_type == "compact_narrative":
+        narrative_prompt = compact_narrative_humanstyle_prompt
+    elif args.prompt_type == "semi_full_narrative":
+        narrative_prompt = semi_full_narrative
+    elif args.prompt_type == "reversed_naive_narrative_prompt":
+        narrative_prompt = reversed_naive_narrative_prompt
     else:
         raise ValueError("Invalid prompt type. Use 'naive' or 'compact'.")
     logger.info(f"Using prompt type: {args.prompt_type}")
@@ -353,7 +371,7 @@ def main():
 
     train_df_selected, val_df_selected, test_df_selected = filtered_datasets
 
-    results = [], [], []
+    results = []
 
     if args.all_landmarks:
         logger.info(f"Processing all landmarks from 1 to {args.max_visits}")
@@ -367,12 +385,35 @@ def main():
     for landmark_visit in range(start, end):
         logger.info(f"Preparing data for Landmark {landmark_visit}")
         
-        # df_subset = df_selected[df_selected['landmark_visit'] == landmark_visit]
-        # patients = df_subset['subject_id'].unique()
-        # train_patients, test_patients = train_test_split(
-        #     patients, test_size=0.2, random_state=args.seed,
-        #     stratify=df_subset.groupby('subject_id')['death_in_90days'].max()
-        # )
+        # Set the seed for reproducibility (for each landmark visit)
+        set_seed(args.seed)
+
+        # First, clean
+        if 'model' in globals():
+            del model
+        if 'tokenizer' in globals():
+            del tokenizer
+        
+        torch.cuda.empty_cache()
+
+        # Load model and tokenizer
+        hf_token = "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"
+        if args.model_type == "general" and hf_token is None:
+            raise ValueError("Set the HF_TOKEN environment variable for authentication.")
+        if args.model_type == "general":
+            login(hf_token)
+
+        tokenizer = load_tokenizer(args.model_name, args.model_type, hf_token, args.cache_dir)    
+        model = load_model(args.model_name, args.model_type, tokenizer, args.cache_dir, hf_token, args.peft, args.use_quantization).to(device="cpu")
+    
+        if tokenizer.pad_token is None:
+            logger.warning("Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].")
+            tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+            model.resize_token_embeddings(len(tokenizer))
+            
+        # After having resized the model, move it to the appropriate device    
+        model.to("cuda" if torch.cuda.is_available() else "cpu")
+
         train_df = train_df_selected[train_df_selected['landmark_visit'] == landmark_visit].copy()
         val_df = val_df_selected[val_df_selected['landmark_visit'] == landmark_visit].copy()
         test_df = test_df_selected[test_df_selected['landmark_visit'] == landmark_visit].copy()
@@ -380,16 +421,30 @@ def main():
         train_texts = train_df.apply(narrative_prompt, axis=1).tolist()
         val_texts = val_df.apply(narrative_prompt, axis=1).tolist()
         test_texts = test_df.apply(narrative_prompt, axis=1).tolist()
-        train_labels = train_df['death_in_90days'].tolist()
-        val_labels = val_df['death_in_90days'].tolist()
-        test_labels = test_df['death_in_90days'].tolist()
+        
+        logger.info(f"Example train text: {train_texts[0]}")
+
+        if args.when_counting_death == "last_visit":
+            # Here we are considering for each landmark if the patient dies in the 90 days after the very last visit
+            # (useful to test whether temporal information is more important if we are not considering the last visit which
+            # it could contain all the relevant information to determine wheter the patient will die or not)
+            train_labels = train_df['death_in_90days'].tolist()
+            val_labels = val_df['death_in_90days'].tolist()
+            test_labels = test_df['death_in_90days'].tolist()
+
+        elif args.when_counting_death == "landmark":
+            # Here we are considering for each landmark if the patient dies in the 90 days after the current landmark (we can determine this sinc
+            # we have the information of the date of the death - dod)
+            train_labels = train_df['death_90days_landmark'].tolist()
+            val_labels = val_df['death_90days_landmark'].tolist()
+            test_labels = test_df['death_90days_landmark'].tolist()
 
         # Media di lunghezza dei testi
         avg_train_length = np.mean([len(text.split()) for text in train_texts])
         avg_val_length = np.mean([len(text.split()) for text in val_texts])
         avg_test_length = np.mean([len(text.split()) for text in test_texts])
         logger.info(f"Average train text length: {avg_train_length:.2f} words")
-        logger.info(f"Average validation text length: {avg_val_length:.2f} words")      
+        logger.info(f"Average validation text length: {avg_val_length:.2f} words")
         logger.info(f"Average test text length: {avg_test_length:.2f} words")
         logger.info(f"Training on {len(train_texts)} samples, validating on {len(val_texts)}, testing on {len(test_texts)} samples")
 
@@ -410,11 +465,13 @@ def main():
         logger.info(f"Tempo impiegato per Landmark {landmark_visit}: {elapsed_seconds:.1f} secondi")
         logger.info(f"Tempo medio per epoca: {elapsed_seconds / epochs_done:.1f} secondi") # This is the important one
 
-        # Final evaluation on the test set
-        model.eval()
-        test_preds, test_labels = [], []
+        # VALUTAZIONE FINALE SUL TEST SET
         device = "cuda" if torch.cuda.is_available() else "cpu"
         model = model.to(device)
+        logger.info(f"Loading best model from {best_model_path} for final evaluation on test set")
+        model.load_state_dict(torch.load(best_model_path, map_location=device))
+        model.eval()
+        test_preds, test_labels = [], []
 
         with torch.no_grad():
             for batch in test_loader:
@@ -443,16 +500,18 @@ def main():
             'Validation Loss': f"{best_val_loss:.4f}",
             'Training Time (s)': f"{elapsed_seconds:.1f}"
         })
-
+   
     results_df = pd.DataFrame(results)
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     model_tag = args.model_name.replace("/", "_")
     peft_tag = "_peft" if args.peft else ""
     output_filename = (
-        f"results_{args.model_type}_{model_tag}_visits{args.max_visits}{peft_tag}_{args.seed}_{args.prompt_type}_{timestamp}.csv"
+        f"results_{args.model_type}_{args.all_landmarks}_{model_tag}_{args.when_counting_death}_visits{args.max_visits}{peft_tag}_{args.seed}_{args.max_length}_{args.prompt_type}_{timestamp}.csv"
     )
     logger.info(f"Saving results to {output_filename}")
-    results_df.to_csv(os.path.join(args.cache_dir, output_filename), index=False)
+    file_dir = f"{args.cache_dir}/results/{args.model_type}/{args.all_landmarks}/{args.when_counting_death}/visits{args.max_visits}" 
+    os.makedirs(file_dir, exist_ok=True)
+    results_df.to_csv(os.path.join(file_dir, output_filename), index=False)
 
     print(results_df)
 

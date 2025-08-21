@@ -22,7 +22,8 @@ from itertools import product
 from prompts import (
     no_narrative_prompt, naive_narrative_prompt, compact_narrative_prompt,
     full_narrative, full_narrative_no_time, full_narrative_no_time_rnd,
-    compact_no_time_prompt, compact_no_time_prompt_rnd, compact_narrative_humanstyle_prompt
+    compact_no_time_prompt, compact_no_time_prompt_rnd, compact_narrative_humanstyle_prompt,
+    reversed_time_naive_narrative_prompt, reversed_naive_narrative_prompt
 )
 
 import matplotlib.pyplot as plt
@@ -72,7 +73,9 @@ def parse_args():
     parser.add_argument("--test_csv", type=str, default="/mnt/vdb/data/landmark_evo_test.csv",
                         help="Path to file CSV di test") # evo as well 
     
-    parser.add_argument("--prompt_type", type=str, choices=["naive", "compact", "compact_no_time", "compact_narrative", "no", "no_set", "full", "full_no_time", "full_no_time_rnd"], default="compact",
+    parser.add_argument("--prompt_type", type=str, choices=["naive", "compact", "compact_no_time", "compact_narrative",\
+         "no", "no_set", "full", "full_no_time", "full_no_time_rnd", \
+            "reversed_time_naive_narrative_prompt", "reversed_naive_narrative_prompt"], default="compact",
                         help="Prompting type to use: 'naive', 'compact'  o 'no' (nessuna narrativa)")
     
     parser.add_argument("--max_visits", type=int, default=3,
@@ -327,7 +330,7 @@ sys.argv = [''] + [
 ]
 
 models = ["Charangan/MedBERT", "emilyalsentzer/Bio_ClinicalBERT","meta-llama/Llama-3.1-8B", "answerdotai/ModernBERT-large"] # "Charangan/MedBERT", "emilyalsentzer/Bio_ClinicalBERT",
-prompts = ["no", "naive", "full_no_time", "compact_no_time", "compact", "compact_narrative", "full", "full_no_time_rnd", "compact_no_time_rnd"] # "no", "naive", "full_no_time", "compact_no_time", "compact", "compact_narrative", "full"
+prompts = ["no", "naive", "full_no_time", "compact_no_time", "compact", "compact_narrative", "full", "full_no_time_rnd", "compact_no_time_rnd", "reversed_time_naive_narrative_prompt", "reversed_naive_narrative_prompt"] # "no", "naive", "full_no_time", "compact_no_time", "compact", "compact_narrative", "full"
 
 
 
@@ -358,6 +361,10 @@ def do_prompt_sample(prompt):
         narrative_prompt = full_narrative_no_time
     elif args.prompt_type == "full_no_time_rnd":
         narrative_prompt = full_narrative_no_time_rnd
+    elif args.prompt_type == "reversed_time_naive_narrative_prompt":
+        narrative_prompt = reversed_time_naive_narrative_prompt
+    elif args.prompt_type == "reversed_naive_narrative_prompt":
+        narrative_prompt = reversed_naive_narrative_prompt
     else:
         raise ValueError("Invalid prompt type. Use 'naive' or 'compact'.")
     logger.info(f"Using prompt type: {args.prompt_type}")

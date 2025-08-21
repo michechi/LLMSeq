@@ -452,3 +452,34 @@ def reversed_naive_narrative_prompt(row):
         narrative += f"\n\tProcedures: {'; '.join(ast.literal_eval(row['proc_per_visit'])[visit])}"
     
     return narrative
+
+def reversed_time_naive_narrative_prompt(row):
+    narrative = 'Based on this information, what is the probability of mortality within 90 days?'
+    narrative += f"\nPatient is a {row['age_at_landmark']}-year-old {row['gender']}."
+    narrative += f" This is the patient history till visit {row['landmark_visit']}."
+
+    max_visit = int(row['landmark_visit'])
+
+    for visit in reversed(range(1, max_visit+1)):
+        if visit == max_visit:
+            narrative += "\nToday:"
+        else:
+            narrative += f"\n{int(ast.literal_eval(row['days_since_last_visit_cumulate_sum'])[visit - 1])} days ago"
+        
+        narrative += f"\n\tDiagnosis: {'; '.join(ast.literal_eval(row['diag_per_visit'])[visit])}"
+        narrative += f"\n\tMedications: {'; '.join(ast.literal_eval(row['meds_per_visit'])[visit])}"
+        narrative += f"\n\tProcedures: {'; '.join(ast.literal_eval(row['proc_per_visit'])[visit])}"
+    
+    return narrative
+
+    
+
+    # if row['days_since_previous_visit'] != -1:
+    #     narrative += f"Last visit happened {row['days_since_previous_visit']} days ago."
+
+    narrative += "\nDiagnosis history:"
+    for past_visit, diags in reversed(list(ast.literal_eval(row['diag_per_visit']).items())):
+        if past_visit == max_visit:
+            narrative += "\n\t" + f"Today: {'; '.join(diags)}".strip()
+        else:
+            narrative += "\n\t" + f"{int(ast.literal_eval(row['days_since_last_visit_cumulate_sum'])[past_visit -1])} days ago: {'; '.join(diags)}".strip()
