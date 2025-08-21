@@ -3,7 +3,7 @@ import ast
 import pandas as pd
 
 from collections import Counter
-
+from num2words import num2words
 
 # def no_narrative_prompt(row):
 #     narrative = "Based on this information, what is the probability of mortality within 90 days?"
@@ -338,12 +338,12 @@ def full_narrative_no_time_rnd(row):
 def compact_narrative_humanstyle_prompt(row):
     
     narrative = f"You are a Doctor.\n"
-    narrative += f"A {row['age_at_landmark']}-year-old {row['gender']} patient is currently hospitalized for a {row['admission_category'].lower()} admission (visit number {row['landmark_visit']})."
-    narrative += "\nGiven the following clinical history, what is the probability of death in the next 90 days?"
+    narrative += f"A {num2words(row['age_at_landmark'])}-years-old {row['gender']} patient is currently hospitalized for a {row['admission_category'].lower()} admission (visit number {num2words(row['landmark_visit'])})."
+    narrative += "\nGiven the following clinical history, what is the probability of death in the next ninety days?"
 
     # Temporal hint if available
     if row['days_since_previous_visit'] != -1:
-        narrative += f"\nThe previous visit occurred {row['days_since_previous_visit']} days ago."
+        narrative += f"\nThe previous visit occurred {num2words(row['days_since_previous_visit'])} days ago."
 
     current_visit = int(row['landmark_visit'])
 
@@ -398,4 +398,57 @@ def compact_narrative_humanstyle_prompt(row):
     if not chronic_procs and not new_procs:
         narrative += "\n\t"+"No procedures have been recorded"
 
+    return narrative
+
+def semi_full_narrative(row, to_split='\n'):
+    """Diagnoses not for all visit, but just the set of them. All the rest is the same as full_narrative"""
+    narrative = f"You are a Doctor.\nWhat is the probability of death in the next 90 days from today for this {row['age_at_landmark']}-year-old {row['gender']} patient?\n"
+    current_visit = row['landmark_visit']
+    type = row['admission_category']
+    narrative += f"Today is the {current_visit} visit and the visit type is: {type}"
+    max_visit = int(row['landmark_visit'])
+
+    # if row['days_since_previous_visit'] != -1:
+    #     narrative += f"Last visit happened {row['days_since_previous_visit']} days ago."
+
+    narrative += "\nDiagnosis history:"
+    for past_visit, diags in reversed(list(ast.literal_eval(row['diag_per_visit']).items())):
+        if past_visit == max_visit:
+            narrative += "\n\t" + f"Today: {'; '.join(diags)}".strip()
+        else:
+            narrative += "\n\t" + f"{int(ast.literal_eval(row['days_since_last_visit_cumulate_sum'])[past_visit -1])} days ago: {'; '.join(diags)}".strip()
+
+    narrative += "\nPrescriptions history:"
+    # for past_visit, meds in reversed(ast.literal_eval(row['meds_per_visit']).items()):
+    #     if past_visit ==  max_visit:
+    #         narrative += "\n\t" + f"Today: {'; '.join(meds)}\n".strip()
+    #     else:
+    #         narrative += "\n\t" + f"{int(ast.literal_eval(row['days_since_last_visit_cumulate_sum'])[past_visit-1])} days ago: {'; '.join(meds)}".strip()
+    if pd.notna(row['med_text']) and row['med_text'].strip():
+        narrative += f'\n{"; ".join(set(row["med_text"].split(f"{to_split}")))}'
+
+    narrative += "\nProcedures history:"
+    # for past_visit, proc in reversed(ast.literal_eval(row['proc_per_visit']).items()):
+    #     if past_visit == max_visit:
+    #         narrative += "\n\t" + f"Today: {'; '.join(proc)}\n".strip()
+    #     else:
+    #         narrative += "\n\t" + f"{int(ast.literal_eval(row['days_since_last_visit_cumulate_sum'])[past_visit-1])} days ago: {'; '.join(proc)}".strip()
+    if pd.notna(row['proc_text']) and row['proc_text'].strip():
+        narrative += f'\n{"; ".join(set(row["proc_text"].split(f"{to_split}")))}'
+    
+    return narrative
+
+def reversed_naive_narrative_prompt(row):
+    narrative = 'Based on this information, what is the probability of mortality within 90 days?'
+    narrative += f"\nPatient is a {row['age_at_landmark']}-year-old {row['gender']}."
+    narrative += f" This is the patient history till visit {row['landmark_visit']}."
+
+    max_visit = int(row['landmark_visit'])
+
+    for visit in reversed(range(1, max_visit+1)):
+        narrative += f"\nDuring visit {visit}:"
+        narrative += f"\n\tDiagnosis: {'; '.join(ast.literal_eval(row['diag_per_visit'])[visit])}"
+        narrative += f"\n\tMedications: {'; '.join(ast.literal_eval(row['meds_per_visit'])[visit])}"
+        narrative += f"\n\tProcedures: {'; '.join(ast.literal_eval(row['proc_per_visit'])[visit])}"
+    
     return narrative

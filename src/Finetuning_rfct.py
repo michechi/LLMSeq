@@ -17,7 +17,8 @@ from transformers import (
 from prompts import (
     no_narrative_prompt, naive_narrative_prompt, compact_narrative_prompt,
     full_narrative, full_narrative_no_time, full_narrative_no_time_rnd,
-    compact_no_time_prompt, compact_no_time_prompt_rnd, compact_narrative_humanstyle_prompt
+    compact_no_time_prompt, compact_no_time_prompt_rnd, compact_narrative_humanstyle_prompt, 
+    semi_full_narrative, reversed_naive_narrative_prompt
 )
 
 from seed_parsing import set_seed, parse_args
@@ -69,6 +70,10 @@ def main():
         narrative_prompt = full_narrative_no_time_rnd
     elif args.prompt_type == "compact_narrative":
         narrative_prompt = compact_narrative_humanstyle_prompt
+    elif args.prompt_type == "semi_full_narrative":
+        narrative_prompt = semi_full_narrative
+    elif args.prompt_type == "reversed_naive_narrative_prompt":
+        narrative_prompt = reversed_naive_narrative_prompt
     else:
         raise ValueError("Invalid prompt type. Use 'naive' or 'compact'.")
     logger.info(f"Using prompt type: {args.prompt_type}")
@@ -232,7 +237,9 @@ def main():
         f"results_{args.model_type}_{args.all_landmarks}_{model_tag}_{args.when_counting_death}_visits{args.max_visits}{peft_tag}_{args.seed}_{args.max_length}_{args.prompt_type}_{timestamp}.csv"
     )
     logger.info(f"Saving results to {output_filename}")
-    results_df.to_csv(os.path.join(args.cache_dir, output_filename), index=False)
+    file_dir = f"{args.cache_dir}/results/{args.model_type}/{args.all_landmarks}/{args.when_counting_death}/visits{args.max_visits}" 
+    os.makedirs(file_dir, exist_ok=True)
+    results_df.to_csv(os.path.join(file_dir, output_filename), index=False)
 
     print(results_df)
 

@@ -8,6 +8,7 @@
 #SBATCH --partition=accel --gpus=1
 #SBATCH --exclude=gpu-14
 #SBATCH --exclude=gpu-4
+#SBATCH --nodelist=gpu-9
 # Increase this number when you really need parallel computing
 #SBATCH --cpus-per-task=16
 

@@ -57,7 +57,8 @@ def parse_args():
                         help="When counting death: 'last_visit' (considering the last visit) or 'landmark' (considering the current landmark visit)")
 
     parser.add_argument("--prompt_type", type=str, choices=["naive", "compact", "compact_no_time", "compact_no_time_rnd", 
-                                                            "no", "full", "full_no_time", "full_no_time_rnd", "compact_narrative"], default="compact",
+                                                            "no", "full", "full_no_time", "full_no_time_rnd", "compact_narrative",
+                                                            "semi_full_narrative", "reversed_naive_narrative_prompt"], default="compact",
                         help="Prompting type to use: 'naive', 'compact'  o 'no' (nessuna narrativa)")
 
     parser.add_argument("--max_visits", type=int, default=3,
