@@ -59,7 +59,7 @@ def parse_args():
     parser.add_argument("--prompt_type", type=str, choices=["naive", "compact", "compact_no_time", "compact_no_time_rnd", 
                                                             "no", "full", "full_no_time", "full_no_time_rnd", "compact_narrative",
                                                             "semi_full_narrative", "reversed_naive_narrative_prompt", "reversed_time_naive_narrative_prompt",
-                                                            "last_info_prompt"], default="compact",
+                                                            "last_info_prompt", "full_narrative_num2words"], default="compact",
                         help="Prompting type to use: 'naive', 'compact'  o 'no' (nessuna narrativa)")
 
     parser.add_argument("--max_visits", type=int, default=3,
