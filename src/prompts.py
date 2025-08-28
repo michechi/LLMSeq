@@ -518,3 +518,36 @@ def full_narrative_num2words(row):
             narrative += "\n\t" + f"{num2words(int(ast.literal_eval(row['days_since_last_visit_cumulate_sum'])[past_visit-1]))} days ago: {'; '.join(proc)}".strip()
     
     return narrative
+
+def temporal_causal_prompt(row):
+    """
+    Prompt ottimizzato per causal learning temporale
+    Basato sul tuo naive_narrative_prompt ma strutturato per next-token prediction
+    """
+    prompt = f"Patient: {row['age_at_landmark']}-year-old {row['gender']}."
+    prompt += f" Medical history over {row['landmark_visit']} visits:"
+    
+    max_visit = int(row['landmark_visit'])
+    
+    for visit in range(1, max_visit + 1):
+        prompt += f" Visit-{visit}:"
+        
+        # Diagnoses
+        diagnoses = ast.literal_eval(row['diag_per_visit'])[visit]
+        if diagnoses:
+            prompt += f" diagnoses: {', '.join(diagnoses)}."
+        
+        # Medications  
+        medications = ast.literal_eval(row['meds_per_visit'])[visit]
+        if medications:
+            prompt += f" medications: {', '.join(medications)}."
+            
+        # Procedures
+        procedures = ast.literal_eval(row['proc_per_visit'])[visit]
+        if procedures:
+            prompt += f" procedures: {', '.join(procedures)}."
+    
+    # Target finale che il modello deve imparare a predire
+    prompt += " Clinical assessment: 90-day mortality risk is"
+    
+    return prompt

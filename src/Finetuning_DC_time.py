@@ -1,4 +1,6 @@
 import os
+import gc
+import ast
 import random
 import logging
 import datetime
@@ -6,9 +8,10 @@ import argparse
 import pandas as pd
 import numpy as np
 import torch
+import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
 from transformers import (
-    AutoTokenizer, AutoModelForSequenceClassification, get_linear_schedule_with_warmup, BitsAndBytesConfig
+    AutoTokenizer, AutoModelForSequenceClassification, get_linear_schedule_with_warmup, BitsAndBytesConfig, AutoModelForCausalLM
 )
 from peft import LoraConfig, get_peft_model
 from sklearn.model_selection import train_test_split
@@ -19,7 +22,7 @@ from prompts import (
     no_narrative_prompt, naive_narrative_prompt, compact_narrative_prompt,
     full_narrative, full_narrative_no_time, full_narrative_no_time_rnd,
     compact_no_time_prompt, compact_no_time_prompt_rnd, compact_narrative_humanstyle_prompt, 
-    semi_full_narrative, reversed_naive_narrative_prompt, last_info_prompt, full_narrative_num2words
+    semi_full_narrative, reversed_naive_narrative_prompt, last_info_prompt, full_narrative_num2words, temporal_causal_prompt
 )
 
 torch.set_float32_matmul_precision('high') 
@@ -77,7 +80,8 @@ def parse_args():
 
     parser.add_argument("--prompt_type", type=str, choices=["naive", "compact", "compact_no_time", "compact_no_time_rnd", 
                                                             "no", "full", "full_no_time", "full_no_time_rnd", "compact_narrative",
-                                                            "semi_full_narrative", "reversed_naive_narrative_prompt", "last_info_prompt", "full_narrative_num2words"], default="compact",
+                                                            "semi_full_narrative", "reversed_naive_narrative_prompt", "last_info_prompt", 
+                                                            "full_narrative_num2words", "temporal_causal_prompt"], default="compact",
                         help="Prompting type to use: 'naive', 'compact'  o 'no' (nessuna narrativa)")
 
     parser.add_argument("--max_visits", type=int, default=3,
@@ -118,6 +122,124 @@ def parse_args():
 
     return args
 
+# New class - CausalLM
+class CausalLMWithClassificationHead(nn.Module):
+    """
+    Wrapper che combina CausalLM con testa di classificazione
+    
+    Il modello impara CONTEMPORANEAMENTE:
+    1. Next token prediction (per imparare pattern temporali)
+    2. Mortality classification (per il task finale)
+    """
+    
+    def __init__(self, backbone_model, num_classes=2):
+        super().__init__()
+        
+        self.backbone = backbone_model
+        self.config = backbone_model.config
+        self.num_classes = num_classes
+        
+        # Testa di classificazione che opera sugli hidden states
+        self.classification_head = nn.Sequential(
+            nn.Linear(self.config.hidden_size, self.config.hidden_size // 2),
+            nn.Tanh(),
+            nn.Dropout(0.1),
+            nn.Linear(self.config.hidden_size // 2, num_classes)
+        )
+
+        self.classification_head = self.classification_head.to(
+            dtype=backbone_model.dtype, 
+            device=backbone_model.device
+            )
+        
+        
+    def forward(self, input_ids, attention_mask=None, labels=None, mortality_labels=None):
+        """
+        Forward pass che calcola ENTRAMBE le loss:
+        1. Causal LM loss (next token prediction)
+        2. Classification loss (mortality prediction)
+        """
+        
+        # 1. Pass attraverso il backbone CausalLM
+        causal_outputs = self.backbone(
+            input_ids=input_ids,
+            attention_mask=attention_mask,
+            labels=labels,  # Per next token prediction
+            output_hidden_states=True,
+            return_dict=True
+        )
+        
+        # 2. Estrai hidden states per la classificazione
+        hidden_states = causal_outputs.hidden_states[-1]  # Ultimo layer
+        
+        if mortality_labels is not None:
+            # Estrai rappresentazioni alle posizioni del token mortality
+            batch_size = input_ids.shape[0]
+            classification_representations = []
+            
+            for b in range(batch_size):
+                # Trova ultima posizione non-padding per questo esempio
+                if attention_mask is not None:
+                    # Usa l'ultimo token non-padding
+                    last_token_pos = attention_mask[b].sum().item() - 1
+                else:
+                    # Usa l'ultimo token della sequenza
+                    last_token_pos = input_ids.shape[1] - 1
+                    
+                # Estrai rappresentazione per classificazione
+                classification_representations.append(hidden_states[b, last_token_pos, :])
+            
+            # Stack in un tensor
+            classification_input = torch.stack(classification_representations)
+            
+            # 4. Calcola logits di classificazione
+            classification_logits = self.classification_head(classification_input)
+            
+            # 5. Calcola classification loss
+            classification_loss = nn.functional.cross_entropy(
+                classification_logits, mortality_labels
+            )
+            
+            # 6. Combina le loss
+            total_loss = causal_outputs.loss + classification_loss
+            
+            return {
+                'loss': total_loss,
+                'causal_loss': causal_outputs.loss,
+                'classification_loss': classification_loss,
+                'logits': classification_logits,  # Per compatibilità con il tuo codice
+                'causal_logits': causal_outputs.logits,
+                'hidden_states': hidden_states
+            }
+        
+        else:
+            # Solo inference - estrai rappresentazioni per classificazione
+            batch_size = input_ids.shape[0]
+            classification_representations = []
+            
+            for b in range(batch_size):
+                if attention_mask is not None:
+                    last_token_pos = attention_mask[b].sum().item() - 1
+                else:
+                    last_token_pos = input_ids.shape[1] - 1
+                    
+                classification_representations.append(hidden_states[b, last_token_pos, :])
+            
+            classification_input = torch.stack(classification_representations)
+            classification_logits = self.classification_head(classification_input)
+            
+            return {
+                'loss': causal_outputs.loss,
+                'logits': classification_logits,
+                'causal_logits': causal_outputs.logits,
+                'hidden_states': hidden_states
+            }
+
+    def resize_token_embeddings(self, new_num_tokens):
+        """Delega al modello backbone"""
+        return self.backbone.resize_token_embeddings(new_num_tokens)
+
+
 def load_tokenizer(model_name, model_type, hf_token, cache_dir):
     tokenizer = AutoTokenizer.from_pretrained(
         model_name,
@@ -128,9 +250,11 @@ def load_tokenizer(model_name, model_type, hf_token, cache_dir):
     )
     return tokenizer
 
-def load_model(model_name, model_type, tokenizer, cache_dir, hf_token, use_peft, use_quantization):
+def load_model_causal(model_name, model_type, tokenizer, cache_dir, hf_token, use_peft, use_quantization):
+    """
+    Versione modificata che carica CausalLM invece di SequenceClassification
+    """
     if model_type == "general":
-
         if use_quantization:
             bnb_config = BitsAndBytesConfig(
                 load_in_4bit=True,
@@ -141,36 +265,83 @@ def load_model(model_name, model_type, tokenizer, cache_dir, hf_token, use_peft,
         else:
             bnb_config = None
 
-        model = AutoModelForSequenceClassification.from_pretrained(
+        # CARICA CAUSAL LM INVECE DI SEQUENCE CLASSIFICATION
+        base_model = AutoModelForCausalLM.from_pretrained(
             model_name,
-            num_labels=2, # TODO: avoid to hard-code this
             torch_dtype=torch.bfloat16,
             device_map='auto',
             token=hf_token,
             cache_dir=cache_dir,
-            quantization_config=bnb_config if use_quantization else None  # Use bnb for quantization
+            quantization_config=bnb_config if use_quantization else None
         )
-        model.config.pad_token_id = tokenizer.eos_token_id
+        
+        base_model.config.pad_token_id = tokenizer.pad_token_id
+        
+        # WRAPPER CON TESTA DI CLASSIFICAZIONE
+        model = CausalLMWithClassificationHead(base_model, num_classes=2)
+        
         if use_peft:
-            # TODO: test different settings for LoraConfig
+            # PEFT solo sul backbone, non sulla testa
             lora_config = LoraConfig(
                 r=8,
                 lora_alpha=16,
                 target_modules=['q_proj', 'k_proj', 'v_proj', 'o_proj'],
                 lora_dropout=0.1,
                 bias='none',
-                task_type="SEQ_CLS"
+                task_type="CAUSAL_LM"  # Cambiato da SEQ_CLS
             )
-            model = get_peft_model(model, lora_config)
-            model.print_trainable_parameters()
+            model.backbone = get_peft_model(model.backbone, lora_config)
+            model.backbone.print_trainable_parameters()
     else:
-        # For clinical models like MedBERT or similar
+        # Per modelli medici, mantieni il comportamento originale
         model = AutoModelForSequenceClassification.from_pretrained(
             model_name,
-            num_labels=2, # TODO: avoid to hard-code this
+            num_labels=2,
             cache_dir=cache_dir
         )
+    
     return model
+
+class TemporalCausalDataset:
+    """
+    Dataset che prepara sequenze per apprendimento causale + classificazione
+    """
+    
+    def __init__(self, texts, labels, tokenizer, max_length=512):
+        self.texts = texts
+        self.labels = labels
+        self.tokenizer = tokenizer
+        self.max_length = max_length
+        
+            
+    def __len__(self):
+        return len(self.texts)
+    
+    def __getitem__(self, idx):
+        text = self.texts[idx]
+        label = self.labels[idx]
+        
+        
+        # Tokenizza la sequenza completa
+        encoding = self.tokenizer(
+            text,
+            truncation=True,
+            padding='max_length',
+            max_length=self.max_length,
+            return_tensors='pt'
+        )
+        
+        input_ids = encoding['input_ids'].squeeze()
+        
+        # Per causal LM: labels = input_ids shifted
+        causal_labels = input_ids.clone()
+
+        return {
+            'input_ids': input_ids,
+            'labels': causal_labels,  # Per next token prediction
+            'mortality_labels': torch.tensor(label, dtype=torch.long)  # Per classificazione
+        }
+
 
 class ClinicalDataset(Dataset):
     def __init__(self, texts, labels, tokenizer, max_length=512): # depending on the model!! 
@@ -187,10 +358,14 @@ class ClinicalDataset(Dataset):
     def __len__(self):
         return len(self.labels)
 
-def train_and_evaluate(model, train_loader, val_loader, args, landmark_visit):
+def train_and_evaluate_causal(model, train_loader, val_loader, args, landmark_visit):
+    """
+    Training loop modificato per gestire loss combinate
+    """
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"Using device: {device}")
     model = model.to(device)
+    
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr)
     total_steps = args.epochs * len(train_loader)
     scheduler = get_linear_schedule_with_warmup(
@@ -198,9 +373,8 @@ def train_and_evaluate(model, train_loader, val_loader, args, landmark_visit):
         num_warmup_steps=int(0.06 * total_steps),
         num_training_steps=total_steps
     )
-    best_auc = 0.0
-    best_val_loss = float("inf")
-    best_f1 = 0.0
+    
+    best_auc, best_f1, best_val_loss = 0.0, 0.0, float("inf")
     epochs_no_improve = 0
     best_model_path = get_best_model_path(args, landmark_visit)
     
@@ -209,13 +383,23 @@ def train_and_evaluate(model, train_loader, val_loader, args, landmark_visit):
     for epoch in range(args.epochs):
         model.train()
         total_train_loss = 0
+        total_causal_loss = 0
+        total_classification_loss = 0
+        
         optimizer.zero_grad()
+        
         for step, batch in enumerate(train_loader):
             inputs = {k: v.to(device) for k, v in batch.items()}
+            
             outputs = model(**inputs)
-            loss = outputs.loss / args.gradient_accumulation_steps
+            
+            # Loss totale (causal + classification)
+            loss = outputs['loss'] / args.gradient_accumulation_steps
             loss.backward()
+            
             total_train_loss += loss.item()
+            total_causal_loss += outputs['causal_loss'].item()
+            total_classification_loss += outputs['classification_loss'].item()
 
             if (step + 1) % args.gradient_accumulation_steps == 0 or (step + 1) == len(train_loader):
                 optimizer.step()
@@ -223,48 +407,45 @@ def train_and_evaluate(model, train_loader, val_loader, args, landmark_visit):
                 optimizer.zero_grad()
 
         avg_train_loss = total_train_loss / len(train_loader)
+        avg_causal_loss = total_causal_loss / len(train_loader)
+        avg_classification_loss = total_classification_loss / len(train_loader)
 
-        # Old without gradient accumulation
-        # for batch in train_loader:
-        #     optimizer.zero_grad()
-        #     inputs = {k: v.to(device) for k, v in batch.items()}
-        #     outputs = model(**inputs)
-        #     loss = outputs.loss
-        #     loss.backward()
-        #     optimizer.step()
-        #     scheduler.step()
-        #     total_train_loss += loss.item()
-        # avg_train_loss = total_train_loss / len(train_loader)
-
+        # VALIDATION
         model.eval()
         total_val_loss = 0
         val_preds, val_labels = [], []
+        
         with torch.no_grad():
             for batch in val_loader:
                 inputs = {k: v.to(device) for k, v in batch.items()}
                 outputs = model(**inputs)
-                val_loss = outputs.loss
+                
+                val_loss = outputs['loss']
                 total_val_loss += val_loss.item()
-                probs = torch.softmax(outputs.logits, dim=-1)[:, 1].cpu().float().numpy() # Try
+                
+                # Usa i logits di classificazione (non quelli causali)
+                probs = torch.softmax(outputs['logits'], dim=-1)[:, 1].cpu().float().numpy()
                 val_preds.extend(probs)
-                val_labels.extend(batch['labels'].cpu().numpy())
+                val_labels.extend(batch['mortality_labels'].cpu().numpy())
+                
         avg_val_loss = total_val_loss / len(val_loader)
         val_auc = roc_auc_score(val_labels, val_preds)
-
-        # Compute F1-score
+        
         threshold = 0.5
         val_preds_binary = (np.array(val_preds) >= threshold).astype(int)
         val_f1 = f1_score(val_labels, val_preds_binary, zero_division=0)
 
         logger.info(
             f"Landmark {landmark_visit} | Epoch {epoch+1}/{args.epochs} | "
-            f"Train Loss: {avg_train_loss:.4f} | "
+            f"Total Loss: {avg_train_loss:.4f} | "
+            f"Causal Loss: {avg_causal_loss:.4f} | "
+            f"Classification Loss: {avg_classification_loss:.4f} | "
             f"Val Loss: {avg_val_loss:.4f} | "
-            f"Validation AUC: {val_auc:.4f} | "
+            f"Val AUC: {val_auc:.4f} | "
             f"F1-Score: {val_f1:.4f}"
         )
         
-        # Early stopping based on the specified criterion
+        # Early stopping (stesso del tuo codice)
         condition = False
         if args.early == "auc":
             condition = val_auc > best_auc
@@ -272,22 +453,20 @@ def train_and_evaluate(model, train_loader, val_loader, args, landmark_visit):
             condition = avg_val_loss < best_val_loss
         elif args.early == "f1":
             condition = val_f1 > best_f1
-        else:
-            raise ValueError("Invalid early stopping criterion. Use 'auc', 'loss' or 'f1'.")
 
         if condition:
-            logger.info(f"Improvement detected at epoch {epoch+1}. Saving model.")
             best_auc = val_auc
             best_f1 = val_f1
             best_val_loss = avg_val_loss
             epochs_no_improve = 0
             torch.save(model.state_dict(), best_model_path)
+            logger.info(f"New best model saved with AUC: {best_auc:.4f}")
         else:
             epochs_no_improve += 1
             if epochs_no_improve >= args.patience:
-                    logger.info(f"Early stopping triggered at epoch {epoch+1}")
-                    break
-    
+                logger.info(f"Early stopping at epoch {epoch+1}")
+                break
+
     model.load_state_dict(torch.load(best_model_path))
     return best_auc, best_model_path, best_f1, best_val_loss, epoch + 1
 
@@ -308,13 +487,8 @@ def main():
     #hf_token = os.getenv("HF_TOKEN")
     hf_token = "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"
 
-    if args.model_type == "general-purpose" and hf_token is None:
-        raise ValueError("Set the HF_TOKEN environment variable for authentication.")
-    if args.model_type == "general-purpose":
-        login(hf_token)
-
     tokenizer = load_tokenizer(args.model_name, args.model_type, hf_token, args.cache_dir)
-    model = load_model(args.model_name, args.model_type, tokenizer, args.cache_dir, hf_token, args.peft, args.use_quantization).to(device="cpu")
+    model = load_model_causal(args.model_name, args.model_type, tokenizer, args.cache_dir, hf_token, args.peft, args.use_quantization).to(device="cpu")
     
     if tokenizer.pad_token is None:
         logger.warning("Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].")
@@ -350,6 +524,8 @@ def main():
         narrative_prompt = last_info_prompt
     elif args.prompt_type == "full_narrative_num2words":
        narrative_prompt = full_narrative_num2words
+    elif args.prompt_type == "temporal_causal_prompt":
+        narrative_prompt = temporal_causal_prompt
     else:
         raise ValueError("Invalid prompt type. Use 'naive' or 'compact'.")
     logger.info(f"Using prompt type: {args.prompt_type}")
@@ -398,6 +574,7 @@ def main():
         if 'tokenizer' in globals():
             del tokenizer
         
+        gc.collect()
         torch.cuda.empty_cache()
 
         # Load model and tokenizer
@@ -408,7 +585,7 @@ def main():
             login(hf_token)
 
         tokenizer = load_tokenizer(args.model_name, args.model_type, hf_token, args.cache_dir)    
-        model = load_model(args.model_name, args.model_type, tokenizer, args.cache_dir, hf_token, args.peft, args.use_quantization).to(device="cpu")
+        model = load_model_causal(args.model_name, args.model_type, tokenizer, args.cache_dir, hf_token, args.peft, args.use_quantization).to(device="cpu")
     
         if tokenizer.pad_token is None:
             logger.warning("Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].")
@@ -452,16 +629,16 @@ def main():
         logger.info(f"Average test text length: {avg_test_length:.2f} words")
         logger.info(f"Training on {len(train_texts)} samples, validating on {len(val_texts)}, testing on {len(test_texts)} samples")
 
-        train_dataset = ClinicalDataset(train_texts, train_labels, tokenizer, max_length=args.max_length)
-        val_dataset = ClinicalDataset(val_texts, val_labels, tokenizer, max_length=args.max_length)
-        test_dataset = ClinicalDataset(test_texts, test_labels, tokenizer, max_length=args.max_length)
+        train_dataset = TemporalCausalDataset(train_texts, train_labels, tokenizer, max_length=args.max_length)
+        val_dataset = TemporalCausalDataset(val_texts, val_labels, tokenizer, max_length=args.max_length)
+        test_dataset = TemporalCausalDataset(test_texts, test_labels, tokenizer, max_length=args.max_length)
         train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
         val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False)
         test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False)
         
         logger.info(f"Fine-tuning at Landmark {landmark_visit}")
         start_time = datetime.datetime.now()
-        best_auc, best_model_path, best_val_f1, best_val_loss, epochs_done = train_and_evaluate(
+        best_auc, best_model_path, best_val_f1, best_val_loss, epochs_done = train_and_evaluate_causal(
             model, train_loader, val_loader, args, landmark_visit
         )
         elapsed_time = datetime.datetime.now() - start_time
@@ -483,7 +660,7 @@ def main():
                 outputs = model(**inputs)
                 probs = torch.softmax(outputs.logits, dim=-1)[:, 1].cpu().float().numpy() # on cpu for sklearn metrics
                 test_preds.extend(probs)
-                test_labels.extend(batch['labels'].cpu().float().numpy()) # on cpu for sklearn metrics
+                test_labels.extend(batch['mortality_labels'].cpu().float().numpy()) # on cpu for sklearn metrics
 
         test_auc = roc_auc_score(test_labels, test_preds)
         test_f1 = f1_score(test_labels, np.array(test_preds) >= 0.5)
