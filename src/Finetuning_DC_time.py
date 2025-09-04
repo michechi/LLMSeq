@@ -476,8 +476,10 @@ def train_and_evaluate_causal(model, train_loader, val_loader, args, landmark_vi
             if epochs_no_improve >= args.patience:
                 logger.info(f"Early stopping at epoch {epoch+1}")
                 break
-
-    model.load_state_dict(torch.load(best_model_path))
+    if args.use_quantization:
+        model.load_state_dict(torch.load(best_model_path), strict=False)
+    else:
+        model.load_state_dict(torch.load(best_model_path), strict=True)
     return best_auc, best_model_path, best_f1, best_val_loss, epoch + 1
 
 def get_best_model_path(args, landmark_visit):
@@ -660,7 +662,10 @@ def main():
         device = "cuda" if torch.cuda.is_available() else "cpu"
         model = model.to(device)
         logger.info(f"Loading best model from {best_model_path} for final evaluation on test set")
-        model.load_state_dict(torch.load(best_model_path, map_location=device))
+        if args.use_quantization:
+            model.load_state_dict(torch.load(best_model_path, map_location=device), strict=False)
+        else:
+            model.load_state_dict(torch.load(best_model_path, map_location=device), strict=True)
         model.eval()
         test_preds, test_labels = [], []
 
