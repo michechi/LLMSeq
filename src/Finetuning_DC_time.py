@@ -178,13 +178,21 @@ class CausalLMWithClassificationHead(nn.Module):
             classification_representations = []
             
             for b in range(batch_size):
-                # Trova ultima posizione non-padding per questo esempio
                 if attention_mask is not None:
-                    # Usa l'ultimo token non-padding
+                    # Usa attention mask
                     last_token_pos = attention_mask[b].sum().item() - 1
                 else:
-                    # Usa l'ultimo token della sequenza
-                    last_token_pos = input_ids.shape[1] - 1
+                    # Trova l'ultimo token non-padding manualmente
+                    sequence = input_ids[b]
+                    pad_token_id = self.backbone.config.pad_token_id
+                    
+                    # Trova l'ultima posizione che non è padding
+                    last_token_pos = len(sequence) - 1
+                    while last_token_pos >= 0 and sequence[last_token_pos] == pad_token_id:
+                        last_token_pos -= 1
+                    
+                    # Failsafe: se tutto è padding, usa posizione 0
+                    last_token_pos = max(0, last_token_pos)
                     
                 # Estrai rappresentazione per classificazione
                 classification_representations.append(hidden_states[b, last_token_pos, :])
@@ -207,7 +215,7 @@ class CausalLMWithClassificationHead(nn.Module):
                 'loss': total_loss,
                 'causal_loss': causal_outputs.loss,
                 'classification_loss': classification_loss,
-                'logits': classification_logits,  # Per compatibilità con il tuo codice
+                'logits': classification_logits,  
                 'causal_logits': causal_outputs.logits,
                 'hidden_states': hidden_states
             }
@@ -395,11 +403,13 @@ def train_and_evaluate_causal(model, train_loader, val_loader, args, landmark_vi
             
             # Loss totale (causal + classification)
             loss = outputs['loss'] / args.gradient_accumulation_steps
+            causal_loss = outputs['causal_loss'] / args.gradient_accumulation_steps
+            classification_loss = outputs['classification_loss'] / args.gradient_accumulation_steps
             loss.backward()
             
             total_train_loss += loss.item()
-            total_causal_loss += outputs['causal_loss'].item()
-            total_classification_loss += outputs['classification_loss'].item()
+            total_causal_loss += causal_loss.item()
+            total_classification_loss += classification_loss.item()
 
             if (step + 1) % args.gradient_accumulation_steps == 0 or (step + 1) == len(train_loader):
                 optimizer.step()
