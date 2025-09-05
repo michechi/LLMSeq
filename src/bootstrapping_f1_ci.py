@@ -22,7 +22,7 @@ class BootstrapModelEvaluator:
     Framework-agnostic - works with any model that can predict on data.
     """
     
-    def __init__(self, n_bootstrap: int = 500, confidence_level: float = 0.95, random_state: int = 42):
+    def __init__(self, n_bootstrap: int = 100, confidence_level: float = 0.95, random_state: int = 42):
         self.n_bootstrap = n_bootstrap
         self.confidence_level = confidence_level
         self.random_state = random_state
@@ -153,7 +153,7 @@ class HuggingFaceBootstrapEvaluator(BootstrapModelEvaluator):
         self, 
         test_texts: List[str], 
         test_labels: np.ndarray,
-        batch_size: int = 16, # TODO change
+        batch_size: int = 24, # TODO change
         max_length: int = 2048, # TODO change
         metrics: List[str] = ['f1_weighted', 'f1_macro', 'precision_weighted', 'recall_weighted']
     ) -> Dict[str, Dict[str, float]]:
@@ -217,7 +217,7 @@ class PyTorchBootstrapEvaluator(BootstrapModelEvaluator):
         self,
         dataset,  # PyTorch Dataset
         test_labels: np.ndarray,
-        batch_size: int = 16,
+        batch_size: int = 24,
         num_workers: int = 4,
         metrics: List[str] = ['f1_weighted', 'f1_macro']
     ) -> Dict[str, Dict[str, float]]:
@@ -348,7 +348,7 @@ def example_usage():
         return test_predictions[indices]
     
     # Bootstrap evaluate
-    evaluator = BootstrapModelEvaluator(n_bootstrap=1000)
+    evaluator = BootstrapModelEvaluator(n_bootstrap=100)
     results = evaluator.bootstrap_evaluate(
         simple_predict_fn, 
         np.arange(n_test), 
@@ -386,7 +386,7 @@ if __name__ == "__main__":
     prompt_type = "full_no_time_rnd"  # To change
     path_test_csv = "/root/MIMICIV/data/splitted/landmark_evo_test_dod_fxd.csv" # To change
     max_visits = 4 # To change
-    batch_size = 16 # To change
+    batch_size = 24 # To change
     max_length = 2048 # To change
     model_name = "meta-llama/Llama-3.1-8B" # To change
     model_type = "general" # To change
