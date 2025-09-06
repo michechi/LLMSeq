@@ -17,7 +17,7 @@ from num2words import num2words
 #     return narrative
 
 def no_narrative_prompt(row, to_split='\n'):
-    information_set = {}
+    information_set = set()
     narrative = 'Based on this information, what is the probability of mortality within 90 days?'
     if pd.notna(row['diag_text']) and row['diag_text'].strip():
         information_set = information_set.union(set(row["diag_text"].split(f"{to_split}")))
@@ -27,9 +27,10 @@ def no_narrative_prompt(row, to_split='\n'):
         information_set = information_set.union(set(row["proc_text"].split(f"{to_split}")))
     
     # shuffling the set
-    random.shuffle(information_set)
+    information_list = list(information_set)
+    random.shuffle(information_list)
 
-    narrative += '; '.join(information_set).strip()
+    narrative += '; '.join(information_list).strip()
 
     return narrative
 
