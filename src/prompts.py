@@ -17,13 +17,20 @@ from num2words import num2words
 #     return narrative
 
 def no_narrative_prompt(row, to_split='\n'):
+    information_set = {}
     narrative = 'Based on this information, what is the probability of mortality within 90 days?'
     if pd.notna(row['diag_text']) and row['diag_text'].strip():
-        narrative += f'\n{"; ".join(set(row["diag_text"].split(f"{to_split}")))}'
+        information_set = information_set.union(set(row["diag_text"].split(f"{to_split}")))
     if pd.notna(row['med_text']) and row['med_text'].strip():
-        narrative += f'\n{"; ".join(set(row["med_text"].split(f"{to_split}")))}'
+        information_set = information_set.union(set(row["med_text"].split(f"{to_split}")))
     if pd.notna(row['proc_text']) and row['proc_text'].strip():
-        narrative += f'\n{"; ".join(set(row["proc_text"].split(f"{to_split}")))}'
+        information_set = information_set.union(set(row["proc_text"].split(f"{to_split}")))
+    
+    # shuffling the set
+    random.shuffle(information_set)
+
+    narrative += '; '.join(information_set).strip()
+
     return narrative
 
 def naive_narrative_prompt(row):

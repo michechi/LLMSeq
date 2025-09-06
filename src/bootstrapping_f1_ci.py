@@ -33,7 +33,7 @@ class BootstrapModelEvaluator:
         model_predict_fn: Callable, 
         test_data: Any,
         test_labels: np.ndarray,
-        metrics: List[str] = ['f1_weighted', 'f1_macro', 'f1_micro', 'precision_weighted', 'recall_weighted', 'AUC'],
+        metrics: List[str] = ['f1_weighted', 'f1_macro', 'f1_micro','f1', 'precision_weighted', 'recall_weighted', 'AUC'],
         verbose: bool = True
     ) -> Dict[str, Dict[str, float]]:
         """
@@ -123,6 +123,8 @@ class BootstrapModelEvaluator:
                 results[metric] = f1_score(y_true, y_pred, average='macro')
             elif metric == 'f1_micro':
                 results[metric] = f1_score(y_true, y_pred, average='micro')
+            elif metric == "f1":
+                results[metric] = f1_score(y_true, y_pred, average='binary') # default
             elif metric == 'precision_weighted':
                 p, _, _, _ = precision_recall_fscore_support(y_true, y_pred, average='weighted')
                 results[metric] = p
@@ -155,7 +157,7 @@ class HuggingFaceBootstrapEvaluator(BootstrapModelEvaluator):
         test_labels: np.ndarray,
         batch_size: int = 24, # TODO change
         max_length: int = 2048, # TODO change
-        metrics: List[str] = ['f1_weighted', 'f1_macro', 'precision_weighted', 'recall_weighted']
+        metrics: List[str] = ['f1_weighted', 'f1_macro', 'f1', 'precision_weighted', 'recall_weighted', 'AUC']
     ) -> Dict[str, Dict[str, float]]:
         """
         Bootstrap evaluate a Hugging Face model.
@@ -394,6 +396,7 @@ if __name__ == "__main__":
     hf_token = "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" # To change
     use_peft = True # To change
     use_quantization = False # To change
+    checkpoint_path = "best_model_meta-llama_Llama-3.1-8B_4550_landmark4_full_no_time_rnd_4_2048_last_visit_all_landmarks_False_20250905_160549_.pt" # To change 
     # END TO CHANGE PARAMETERS
     # ======================= #
 
@@ -449,7 +452,7 @@ if __name__ == "__main__":
         tokenizer.add_special_tokens({'pad_token': '[PAD]'})
         model.resize_token_embeddings(len(tokenizer))
 
-    model.load_state_dict(torch.load("/root/MIMICIV/cache/best/best_model_meta-llama_Llama-3.1-8B_4550_landmark4_full_no_time_rnd_4_2048_last_visit_all_landmarks_False_20250827_133041_.pt"))
+    model.load_state_dict(torch.load(f"{cache_dir}/best/{checkpoint_path}"))
 
     # test_dataset = ClinicalDataset(test_texts, test_labels, tokenizer, max_length=max_length)
     # test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
