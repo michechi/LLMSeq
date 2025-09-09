@@ -385,7 +385,7 @@ if __name__ == "__main__":
 
     # ======================= #
     # TO CHANGE PARAMETERS
-    prompt_type = "full_no_time_rnd"  # To change
+    prompt_type = "no"  # To change
     path_test_csv = "/root/MIMICIV/data/splitted/landmark_evo_test_dod_fxd.csv" # To change
     max_visits = 4 # To change
     batch_size = 24 # To change
@@ -396,7 +396,7 @@ if __name__ == "__main__":
     hf_token = "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" # To change
     use_peft = True # To change
     use_quantization = False # To change
-    checkpoint_path = "best_model_meta-llama_Llama-3.1-8B_4550_landmark4_full_no_time_rnd_4_2048_last_visit_all_landmarks_False_20250905_160549_.pt" # To change 
+    checkpoint_path = "best_model_meta-llama_Llama-3.1-8B_4550_landmark4_no_4_2048_last_visit_all_landmarks_False_20250906_190031_.pt" # To change 
     # END TO CHANGE PARAMETERS
     # ======================= #
 
