@@ -1,9 +1,9 @@
-#%%
+
 import pandas as pd
 import numpy as np
 
 # ------------------------- STEP 1: LOAD DATA -------------------------
-#%%
+
 # Load patient demographics
 patients = pd.read_csv("/root/MIMICIV/data/mimic-iv-3.1/hosp/patients.csv")
 
@@ -30,7 +30,6 @@ icd_procedures = pd.read_csv("/root/MIMICIV/data/mimic-iv-3.1/hosp/d_icd_procedu
 icustays['intime'] = pd.to_datetime(icustays['intime'], errors='coerce')
 icustays['outtime'] = pd.to_datetime(icustays['outtime'], errors='coerce')
 
-#%%
 # Define mapping for admission types
 emergency_types = ['DIRECT EMER.', 'EW EMER.', 'URGENT']
 normal_types = ['AMBULATORY OBSERVATION', 'DIRECT OBSERVATION', 'ELECTIVE', 
