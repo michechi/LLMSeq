@@ -22,7 +22,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 def standard_narrative_prompt(row, to_split='\x1f'):
-    events = row.split(to_split)
+    events = row["Sequences"].split(to_split)
     prompt = f'Sequential events: {" ".join(events)}\n'
     prompt += 'Outcome (0 or 1):'
     return prompt
@@ -41,7 +41,7 @@ def set_seed(seed_value=5550):
     # torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = True
 
-def parse_args():
+def parse_args(args=None):
 
     parser = argparse.ArgumentParser(description="Testing LLMs on Generated Dataset")
 
@@ -98,7 +98,7 @@ def parse_args():
                         help="Early stopping patience")
 
     parser.add_argument("--max_length", type=int, default=512,
-                        help="Token Max lenght")
+                        help="Token Max length")
 
     parser.add_argument("--lr", type=float, default=2e-5,
                         help="Learning rate")
@@ -109,7 +109,10 @@ def parse_args():
     parser.add_argument("--seed", type=int, default=9550,
                         help="Seed for riproducibility")
     
-    args = parser.parse_args()
+    if args:
+        args = parser.parse_args(args)
+    else:
+        args = parser.parse_args()
 
     # Log arguemnts values
     for arg, value in sorted(vars(args).items()):
@@ -342,7 +345,7 @@ class TemporalCausalDataset:
         return {
             'input_ids': input_ids,
             'labels': causal_labels,  # Per next token prediction
-            'mortality_labels': torch.tensor(label, dtype=torch.long)  # Per classificazione
+            'oucomes': torch.tensor(label, dtype=torch.long)  # Per classificazione
         }
 
 def train_and_evaluate_causal(model, train_loader, val_loader, args):
@@ -415,7 +418,7 @@ def train_and_evaluate_causal(model, train_loader, val_loader, args):
                 # Usa i logits di classificazione (non quelli causali)
                 probs = torch.softmax(outputs['logits'], dim=-1)[:, 1].cpu().float().numpy()
                 val_preds.extend(probs)
-                val_labels.extend(batch['mortality_labels'].cpu().numpy())
+                val_labels.extend(batch['outcomes'].cpu().numpy())
                 
         avg_val_loss = total_val_loss / len(val_loader)
         val_auc = roc_auc_score(val_labels, val_preds)
@@ -464,160 +467,169 @@ def train_and_evaluate_causal(model, train_loader, val_loader, args):
 def get_best_model_path(args):
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     safe_model_name = args.model_name.replace("/", "_")
-    filename = f"best_model_{safe_model_name}_{args.seed}_{args.prompt_type}_{args.max_visits}_{args.max_length}_{args.when_counting_death}_{timestamp}_.pt"
+    filename = f"best_model_{safe_model_name}_{args.seed}_{args.prompt_type}_{args.max_length}_{timestamp}_.pt"
     best_model_dir = os.path.join(args.cache_dir, 'best')
     os.makedirs(best_model_dir, exist_ok=True)
     return os.path.join(best_model_dir, filename)
 
-def main():
-    args = parse_args()
 
-    # Set seed for reproducibility
-    set_seed(args.seed)
+# MAIN
+list_args = [
+    "--model_name", "meta-llama/Llama-3.1-8B",
+    "--peft",
+    "--batch_size", "32",
+    "--max_length", "1024"
+]
 
-    #hf_token = os.getenv("HF_TOKEN")
-    hf_token = "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"
+args = parse_args(list_args)
 
-    tokenizer = load_tokenizer(args.model_name, args.model_type, hf_token, args.cache_dir)
-    model = load_model_causal(args.model_name, args.model_type, tokenizer, args.cache_dir, hf_token, args.peft, args.use_quantization).to(device="cpu")
+# Set seed for reproducibility
+set_seed(args.seed)
+
+#hf_token = os.getenv("HF_TOKEN")
+hf_token = "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"
+
+tokenizer = load_tokenizer(args.model_name, args.model_type, hf_token, args.cache_dir)
+model = load_model_causal(args.model_name, args.model_type, tokenizer, args.cache_dir, hf_token, args.peft, args.use_quantization).to(device="cpu")
+
+if tokenizer.pad_token is None:
+    logger.warning("Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].")
+    tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+    model.resize_token_embeddings(len(tokenizer))
     
-    if tokenizer.pad_token is None:
-        logger.warning("Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].")
-        tokenizer.add_special_tokens({'pad_token': '[PAD]'})
-        model.resize_token_embeddings(len(tokenizer))
-        
-    # After having resized the model, move it to the appropriate device    
-    model.to("cuda" if torch.cuda.is_available() else "cpu")
+# After having resized the model, move it to the appropriate device    
+model.to("cuda" if torch.cuda.is_available() else "cpu")
 
-    if args.prompt_type == "standard":
-        narrative_prompt = standard_narrative_prompt
-    else:
-        raise ValueError("Invalid prompt type. Use 'naive' or 'compact'.")
-    logger.info(f"Using prompt type: {args.prompt_type}")
+if args.prompt_type == "standard":
+    narrative_prompt = standard_narrative_prompt
+else:
+    raise ValueError("Invalid prompt type. Use 'naive' or 'compact'.")
+
+logger.info(f"Using prompt type: {args.prompt_type}")
+
+logger.info(f"Model type: {args.model_type}, Model name: {args.model_name}") 
+
+# Reading data - already splitted!
+X_train = pd.read_csv(args.X_train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+y_train = pd.read_csv(args.y_train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+
+X_val = pd.read_csv(args.X_val_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+y_val = pd.read_csv(args.y_val_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+
+X_test = pd.read_csv(args.X_test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+y_test = pd.read_csv(args.y_test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+
+results = []
+
+# Set the seed for reproducibility
+set_seed(args.seed)
+
+gc.collect()
+torch.cuda.empty_cache()
+
+# Load model and tokenizer
+hf_token = "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"
+if args.model_type == "general" and hf_token is None:
+    raise ValueError("Set the HF_TOKEN environment variable for authentication.")
+if args.model_type == "general":
+    login(hf_token)
+
+tokenizer = load_tokenizer(args.model_name, args.model_type, hf_token, args.cache_dir)    
+model = load_model_causal(args.model_name, args.model_type, tokenizer, args.cache_dir, hf_token, args.peft, args.use_quantization).to(device="cpu")
+
+if tokenizer.pad_token is None:
+    logger.warning("Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].")
+    tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+    model.resize_token_embeddings(len(tokenizer))
     
-    logger.info(f"Model type: {args.model_type}, Model name: {args.model_name}") 
+# After having resized the model, move it to the appropriate device    
+model.to("cuda" if torch.cuda.is_available() else "cpu")
 
-    # Reading data - already splitted!
-    X_train = pd.read_csv(args.X_train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
-    y_train = pd.read_csv(args.y_train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
-    
-    X_val = pd.read_csv(args.X_val_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
-    y_val = pd.read_csv(args.y_val_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+train_texts = X_train.apply(narrative_prompt, axis=1).tolist()
+val_texts = X_val.apply(narrative_prompt, axis=1).tolist()
+test_texts = X_test.apply(narrative_prompt, axis=1).tolist()
 
-    X_test = pd.read_csv(args.X_test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
-    y_test = pd.read_csv(args.y_test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
-    
-    results = []
-    
-    # Set the seed for reproducibility
-    set_seed(args.seed)
-    
-    gc.collect()
-    torch.cuda.empty_cache()
+logger.info(f"Example train text: {train_texts[0]}")
 
-    # Load model and tokenizer
-    hf_token = "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"
-    if args.model_type == "general" and hf_token is None:
-        raise ValueError("Set the HF_TOKEN environment variable for authentication.")
-    if args.model_type == "general":
-        login(hf_token)
+train_labels = y_train["Outcome"].tolist()
+val_labels = y_val["Outcome"].tolist()
+test_labels = y_test["Outcome"].tolist()
 
-    tokenizer = load_tokenizer(args.model_name, args.model_type, hf_token, args.cache_dir)    
-    model = load_model_causal(args.model_name, args.model_type, tokenizer, args.cache_dir, hf_token, args.peft, args.use_quantization).to(device="cpu")
+# Media di lunghezza dei testi
+avg_train_length = np.mean([len(text.split()) for text in train_texts])
+avg_val_length = np.mean([len(text.split()) for text in val_texts])
+avg_test_length = np.mean([len(text.split()) for text in test_texts])
+logger.info(f"Average train text length: {avg_train_length:.2f} words")
+logger.info(f"Average validation text length: {avg_val_length:.2f} words")
+logger.info(f"Average test text length: {avg_test_length:.2f} words")
+logger.info(f"Training on {len(train_texts)} samples, validating on {len(val_texts)}, testing on {len(test_texts)} samples")
 
-    if tokenizer.pad_token is None:
-        logger.warning("Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].")
-        tokenizer.add_special_tokens({'pad_token': '[PAD]'})
-        model.resize_token_embeddings(len(tokenizer))
-        
-    # After having resized the model, move it to the appropriate device    
-    model.to("cuda" if torch.cuda.is_available() else "cpu")
+train_dataset = TemporalCausalDataset(train_texts, train_labels, tokenizer, max_length=args.max_length)
+val_dataset = TemporalCausalDataset(val_texts, val_labels, tokenizer, max_length=args.max_length)
+test_dataset = TemporalCausalDataset(test_texts, test_labels, tokenizer, max_length=args.max_length)
+train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
+val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False)
+test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False)
 
-    train_texts = X_train.apply(narrative_prompt, axis=1).tolist()
-    val_texts = X_val.apply(narrative_prompt, axis=1).tolist()
-    test_texts = X_test.apply(narrative_prompt, axis=1).tolist()
-    
-    logger.info(f"Example train text: {train_texts[0]}")
+start_time = datetime.datetime.now()
+best_auc, best_model_path, best_val_f1, best_val_loss, epochs_done = train_and_evaluate_causal(
+    model, train_loader, val_loader, args
+)
+elapsed_time = datetime.datetime.now() - start_time
+elapsed_seconds = elapsed_time.total_seconds()
+logger.info(f"Tempo medio per epoca: {elapsed_seconds / epochs_done:.1f} secondi") # This is the important one
 
-    train_labels = y_train["Outcome"].tolist()
-    val_labels = y_val["Outcome"].tolist()
-    test_labels = y_test["Outcome"].tolist()
+# VALUTAZIONE FINALE SUL TEST SET
+device = "cuda" if torch.cuda.is_available() else "cpu"
+model = model.to(device)
+logger.info(f"Loading best model from {best_model_path} for final evaluation on test set")
+if args.use_quantization:
+    model.load_state_dict(torch.load(best_model_path, map_location=device), strict=False)
+else:
+    model.load_state_dict(torch.load(best_model_path, map_location=device), strict=True)
+model.eval()
+test_preds, test_labels = [], []
 
-    # Media di lunghezza dei testi
-    avg_train_length = np.mean([len(text.split()) for text in train_texts])
-    avg_val_length = np.mean([len(text.split()) for text in val_texts])
-    avg_test_length = np.mean([len(text.split()) for text in test_texts])
-    logger.info(f"Average train text length: {avg_train_length:.2f} words")
-    logger.info(f"Average validation text length: {avg_val_length:.2f} words")
-    logger.info(f"Average test text length: {avg_test_length:.2f} words")
-    logger.info(f"Training on {len(train_texts)} samples, validating on {len(val_texts)}, testing on {len(test_texts)} samples")
+with torch.no_grad():
+    for batch in test_loader:
+        inputs = {k: v.to(device) for k, v in batch.items()}
+        outputs = model(**inputs)
+        probs = torch.softmax(outputs.logits, dim=-1)[:, 1].cpu().float().numpy() # on cpu for sklearn metrics
+        test_preds.extend(probs)
+        test_labels.extend(batch['outcomes'].cpu().float().numpy()) # on cpu for sklearn metrics
 
-    train_dataset = TemporalCausalDataset(train_texts, train_labels, tokenizer, max_length=args.max_length)
-    val_dataset = TemporalCausalDataset(val_texts, val_labels, tokenizer, max_length=args.max_length)
-    test_dataset = TemporalCausalDataset(test_texts, test_labels, tokenizer, max_length=args.max_length)
-    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False)
-    test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False)
-    
-    start_time = datetime.datetime.now()
-    best_auc, best_model_path, best_val_f1, best_val_loss, epochs_done = train_and_evaluate_causal(
-        model, train_loader, val_loader, args
-    )
-    elapsed_time = datetime.datetime.now() - start_time
-    elapsed_seconds = elapsed_time.total_seconds()
-    logger.info(f"Tempo medio per epoca: {elapsed_seconds / epochs_done:.1f} secondi") # This is the important one
+test_auc = roc_auc_score(test_labels, test_preds)
+test_f1 = f1_score(test_labels, np.array(test_preds) >= 0.5)
 
-    # VALUTAZIONE FINALE SUL TEST SET
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    model = model.to(device)
-    logger.info(f"Loading best model from {best_model_path} for final evaluation on test set")
-    if args.use_quantization:
-        model.load_state_dict(torch.load(best_model_path, map_location=device), strict=False)
-    else:
-        model.load_state_dict(torch.load(best_model_path, map_location=device), strict=True)
-    model.eval()
-    test_preds, test_labels = [], []
+logger.info(
+    f"Final Test AUC: {test_auc:.4f} | "
+    f"Test F1-Score: {test_f1:.4f}"
+)
 
-    with torch.no_grad():
-        for batch in test_loader:
-            inputs = {k: v.to(device) for k, v in batch.items()}
-            outputs = model(**inputs)
-            probs = torch.softmax(outputs.logits, dim=-1)[:, 1].cpu().float().numpy() # on cpu for sklearn metrics
-            test_preds.extend(probs)
-            test_labels.extend(batch['mortality_labels'].cpu().float().numpy()) # on cpu for sklearn metrics
+results.append({
+    'Val AUC': f"{best_auc:.4f}",
+    'Val F1-Score': f"{best_val_f1:.4f}",
+    'Test AUC': f"{test_auc:.4f}",
+    'Test F1-Score': f"{test_f1:.4f}",
+    'Patients (Test)': len(X_test),
+    'Model Path': best_model_path,
+    'Validation Loss': f"{best_val_loss:.4f}",
+    'Training Time (s)': f"{elapsed_seconds:.1f}"
+})
 
-    test_auc = roc_auc_score(test_labels, test_preds)
-    test_f1 = f1_score(test_labels, np.array(test_preds) >= 0.5)
+results_df = pd.DataFrame(results)
+timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+model_tag = args.model_name.replace("/", "_")
+peft_tag = "_peft" if args.peft else ""
+output_filename = (
+    f"results_{args.model_type}_{model_tag}_{peft_tag}_{args.seed}_{args.max_length}_{args.prompt_type}_{timestamp}.csv"
+)
+logger.info(f"Saving results to {output_filename}")
+file_dir = f"{args.cache_dir}/results/{args.model_type}/simulation" 
+os.makedirs(file_dir, exist_ok=True)
+results_df.to_csv(os.path.join(file_dir, output_filename), index=False)
 
-    logger.info(
-        f"Final Test AUC: {test_auc:.4f} | "
-        f"Test F1-Score: {test_f1:.4f}"
-    )
-
-    results.append({
-        'Val AUC': f"{best_auc:.4f}",
-        'Val F1-Score': f"{best_val_f1:.4f}",
-        'Test AUC': f"{test_auc:.4f}",
-        'Test F1-Score': f"{test_f1:.4f}",
-        'Patients (Test)': len(X_test),
-        'Model Path': best_model_path,
-        'Validation Loss': f"{best_val_loss:.4f}",
-        'Training Time (s)': f"{elapsed_seconds:.1f}"
-    })
-   
-    results_df = pd.DataFrame(results)
-    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    model_tag = args.model_name.replace("/", "_")
-    peft_tag = "_peft" if args.peft else ""
-    output_filename = (
-        f"results_{args.model_type}_{model_tag}_{args.when_counting_death}_visits{args.max_visits}{peft_tag}_{args.seed}_{args.max_length}_{args.prompt_type}_{timestamp}.csv"
-    )
-    logger.info(f"Saving results to {output_filename}")
-    file_dir = f"{args.cache_dir}/results/{args.model_type}/{args.when_counting_death}/visits{args.max_visits}" 
-    os.makedirs(file_dir, exist_ok=True)
-    results_df.to_csv(os.path.join(file_dir, output_filename), index=False)
-
-    print(results_df)
+print(results_df)
 
 if __name__ == "__main__":
-    main()
+    pass
