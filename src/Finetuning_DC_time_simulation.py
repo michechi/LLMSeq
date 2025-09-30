@@ -145,20 +145,21 @@ class CausalLMWithClassificationHead(nn.Module):
             nn.Linear(self.config.hidden_size // 2, num_classes)
         )
 
+        # Be sure to have my classification head on the same device
+        # of the backbone model and of the same data-type
         self.classification_head = self.classification_head.to(
             dtype=backbone_model.dtype, 
             device=backbone_model.device
             )
         
-        
     def forward(self, input_ids, attention_mask=None, labels=None, outcome_labels=None):
         """
-        Forward pass che calcola ENTRAMBE le loss:
+        Forward pass che computing both losses:
         1. Causal LM loss (next token prediction)
-        2. Classification loss (mortality prediction)
+        2. Classification loss (outcome prediction)
         """
         
-        # 1. Pass attraverso il backbone CausalLM
+        # 1. First, go through backbone CausalLM
         causal_outputs = self.backbone(
             input_ids=input_ids,
             attention_mask=attention_mask,
@@ -167,11 +168,11 @@ class CausalLMWithClassificationHead(nn.Module):
             return_dict=True
         )
         
-        # 2. Estrai hidden states per la classificazione
-        hidden_states = causal_outputs.hidden_states[-1]  # Ultimo layer
+        # 2. Extract hidden states for classification
+        hidden_states = causal_outputs.hidden_states[-1]  # Last layer
         
         if outcome_labels is not None:
-            # Estrai rappresentazioni alle posizioni del token mortality
+            # Estrai representation wrt positions of outputs token
             batch_size = input_ids.shape[0]
             classification_representations = []
             
@@ -312,7 +313,6 @@ class TemporalCausalDataset:
     """
     Dataset che prepara sequenze per apprendimento causale + classificazione
     """
-    
     def __init__(self, texts, labels, tokenizer, max_length=512):
         self.texts = texts
         self.labels = labels
@@ -338,14 +338,17 @@ class TemporalCausalDataset:
         )
         
         input_ids = encoding['input_ids'].squeeze()
+        attention_mask = encoding['attention_mask'].squeeze() 
         
         # Per causal LM: labels = input_ids shifted
         causal_labels = input_ids.clone()
+        causal_labels[attention_mask == 0] = -100
 
         return {
             'input_ids': input_ids,
+            'attention_mask': attention_mask,
             'labels': causal_labels,  # Per next token prediction
-            'oucomes': torch.tensor(label, dtype=torch.long)  # Per classificazione
+            'outcome_labels': torch.tensor(label, dtype=torch.long)  # Per classificazione
         }
 
 def train_and_evaluate_causal(model, train_loader, val_loader, args):
@@ -418,7 +421,7 @@ def train_and_evaluate_causal(model, train_loader, val_loader, args):
                 # Usa i logits di classificazione (non quelli causali)
                 probs = torch.softmax(outputs['logits'], dim=-1)[:, 1].cpu().float().numpy()
                 val_preds.extend(probs)
-                val_labels.extend(batch['outcomes'].cpu().numpy())
+                val_labels.extend(batch['outcome_labels'].cpu().numpy())
                 
         avg_val_loss = total_val_loss / len(val_loader)
         val_auc = roc_auc_score(val_labels, val_preds)
@@ -477,7 +480,7 @@ def get_best_model_path(args):
 list_args = [
     "--model_name", "meta-llama/Llama-3.1-8B",
     "--peft",
-    "--batch_size", "32",
+    "--batch_size", "16",
     "--max_length", "1024"
 ]
 
@@ -519,31 +522,26 @@ y_val = pd.read_csv(args.y_val_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).
 X_test = pd.read_csv(args.X_test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
 y_test = pd.read_csv(args.y_test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
 
+# Check data leakage
+train_sequences = set(X_train['Sequences'].values)
+val_sequences = set(X_val['Sequences'].values)
+test_sequences = set(X_test['Sequences'].values)
+
+overlap_train_val = train_sequences.intersection(val_sequences)
+overlap_train_test = train_sequences.intersection(test_sequences)
+overlap_val_test = val_sequences.intersection(test_sequences)
+
+print(f"Overlap train-val: {len(overlap_train_val)} ({len(overlap_train_val)/len(val_sequences)*100:.1f}%)")
+print(f"Overlap train-test: {len(overlap_train_test)} ({len(overlap_train_test)/len(test_sequences)*100:.1f}%)")
+print(f"Overlap val-test: {len(overlap_val_test)} ({len(overlap_val_test)/len(test_sequences)*100:.1f}%)")
+
+if overlap_train_val:
+    print(f"Esempio di sequenza duplicata: {list(overlap_train_val)[0]}")
+
 results = []
 
 # Set the seed for reproducibility
 set_seed(args.seed)
-
-gc.collect()
-torch.cuda.empty_cache()
-
-# Load model and tokenizer
-hf_token = "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"
-if args.model_type == "general" and hf_token is None:
-    raise ValueError("Set the HF_TOKEN environment variable for authentication.")
-if args.model_type == "general":
-    login(hf_token)
-
-tokenizer = load_tokenizer(args.model_name, args.model_type, hf_token, args.cache_dir)    
-model = load_model_causal(args.model_name, args.model_type, tokenizer, args.cache_dir, hf_token, args.peft, args.use_quantization).to(device="cpu")
-
-if tokenizer.pad_token is None:
-    logger.warning("Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].")
-    tokenizer.add_special_tokens({'pad_token': '[PAD]'})
-    model.resize_token_embeddings(len(tokenizer))
-    
-# After having resized the model, move it to the appropriate device    
-model.to("cuda" if torch.cuda.is_available() else "cpu")
 
 train_texts = X_train.apply(narrative_prompt, axis=1).tolist()
 val_texts = X_val.apply(narrative_prompt, axis=1).tolist()
