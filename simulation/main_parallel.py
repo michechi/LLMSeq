@@ -6,30 +6,10 @@ import random
 import collections
 
 from sklearn.model_selection import train_test_split
-# import re
+from multiprocessing import Pool, cpu_count
 
 def rm_all():
     [globals().pop(var) for var in list(globals()) if not var.startswith('_')]
-
-random.seed(999)
-
-n_events = 5
-n_seq = 100_000_000
-
-n_0s = 200_000
-n_1s = 100_000
-n_tot = n_0s + n_1s
-n_train = n_tot * 0.80 # 80% of n_tot
-n_val = n_tot * 0.10
-n_test = n_tot * 0.10
-
-#sum([n_train, n_test, n_val]) == n_tot
-
-letters = list(string.ascii_uppercase)
-digits = list(map(str, range(10)))
-
-random.shuffle(letters)
-random.shuffle(digits)
 
 def generate_sequences(
     letters:list, digits:list, n:int=10, m:int=10_000, replacement:bool=False, seed:int=None, batch_size:int=None, duplicates:bool=False
@@ -98,10 +78,14 @@ def generate_sequences(
 
     return out_rows
 
-c_vocab = {w:p for p,w in enumerate(letters,start=1)}
-d_vocab = {d:p for p,d in enumerate(digits,start=1)}
+# For parallelization
+def worker_generate(args):
+    letters, digits, n, m_chunk, replacement, seed = args
+    # Import inside worker if needed (like clusterEvalQ)
+    # import pandas as pd  
+    return generate_sequences(letters, digits, n, m_chunk, replacement, seed)
 
-def assign_outcome(seq:str, rnd:bool=False, c_ord:dict=c_vocab, d_ord:dict=d_vocab, sep:str="\x1f", already_splitted=False) -> int:
+def assign_outcome(seq:str, c_ord:dict, d_ord:dict, rnd:bool=False, sep:str="\x1f", already_splitted=False) -> int:
     """
     function that, given a sequence, says 1 or 0, depending on ordering.
     It allows for just one cycle.
@@ -129,7 +113,46 @@ def assign_outcome(seq:str, rnd:bool=False, c_ord:dict=c_vocab, d_ord:dict=d_voc
     # if we exit for cycle then it's all ordered
     return 1
 
-sequences = generate_sequences(letters=letters, digits=digits, n=n_events, m=n_seq, replacement=False)
+random.seed(999)
+
+n_events = 5
+n_seq = 100_000_000
+
+n_0s = 200_000
+n_1s = 100_000
+n_tot = n_0s + n_1s
+n_train = n_tot * 0.80 # 80% of n_tot
+n_val = n_tot * 0.10
+n_test = n_tot * 0.10
+
+#sum([n_train, n_test, n_val]) == n_tot
+
+letters = list(string.ascii_uppercase)
+digits = list(map(str, range(10)))
+
+random.shuffle(letters)
+random.shuffle(digits)
+
+c_vocab = {w:p for p,w in enumerate(letters,start=1)}
+d_vocab = {d:p for p,d in enumerate(digits,start=1)}
+
+# # This is sequential
+# sequences = generate_sequences(letters=letters, digits=digits, n=n_events, m=n_seq, replacement=False)
+
+# Parallel version
+n_cores = cpu_count()-1
+rng = np.random.default_rng(999)
+seeds = rng.integers(0, 2**31, size=n_cores)
+m_per_core = int(n_seq * 1.2 / n_cores)  # 20% oversample
+tasks = [(letters, digits, n_events, m_per_core, False, seed) 
+             for seed in seeds]
+
+with Pool(processes=n_cores) as pool:
+    results = pool.map(worker_generate, tasks)
+
+# Deduplicate and trim
+all_sequences = [seq for result in results for seq in result]
+sequences = list(dict.fromkeys(all_sequences))[:n_seq]
 
 set_seq = set(sequences)
 n_set_seq = len(set_seq)
@@ -141,7 +164,7 @@ if n_seq != n_set_seq:
     del set_seq, n_set_seq
     print("Done!")
 
-check=list(map(lambda x: assign_outcome(x), sequences))
+check=list(map(lambda x: assign_outcome(x, c_vocab, d_vocab), sequences))
 
 if sum(check) > 0:
     # There are some valid sequences
@@ -149,7 +172,7 @@ if sum(check) > 0:
     n_1s = len(which_1s)
     print(f"There are {n_1s} ordered sequences! ({n_1s/len(sequences)*100:.2f}%)")
 
-which_0s = list(filter(lambda x: assign_outcome(x, already_splitted=False)==0, sequences))
+which_0s = list(filter(lambda x: assign_outcome(x, c_vocab, d_vocab, already_splitted=False)==0, sequences))
 n_0s = len(which_0s)
 if (n_0s + n_1s) == len(sequences):
     print("All good!")
