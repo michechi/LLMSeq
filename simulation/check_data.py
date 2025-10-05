@@ -5,8 +5,8 @@ import collections
 import string
 
 # Read df
-X_train = pd.read_csv("data/simulation/X_train.csv")
-y_train = pd.read_csv("data/simulation/y_train.csv")
+X_train = pd.read_csv("data/simulation/X_s_train_2.csv")
+y_train = pd.read_csv("data/simulation/y_s_train_2.csv")
 
 train_df = X_train.copy()
 train_df["y_train"] = y_train
