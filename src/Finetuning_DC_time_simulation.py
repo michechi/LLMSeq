@@ -22,7 +22,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 def standard_narrative_prompt(row, to_split='\x1f'):
-    events = row["Sequences"].split(to_split)
+    events = row["Sequences"].split(to_split)[:3] # Testing on third-letter
     prompt = f'Sequential events: {" ".join(events)}\n'
     prompt += 'Outcome (0 or 1):'
     return prompt
@@ -62,22 +62,22 @@ def parse_args(args=None):
 
     # Data
     ## Train
-    parser.add_argument("--X_train_csv", type=str, default="/root/MIMICIV/data/simulation/X_train.csv",
+    parser.add_argument("--X_train_csv", type=str, default="/root/MIMICIV/data/simulation/X_s_train_2.csv",
                         help="Path to file CSV di training")
     
-    parser.add_argument("--y_train_csv", type=str, default="/root/MIMICIV/data/simulation/y_train.csv",
+    parser.add_argument("--y_train_csv", type=str, default="/root/MIMICIV/data/simulation/y_s_train_2.csv",
                         help="Path to file CSV di training")
     ## Val
-    parser.add_argument("--X_val_csv", type=str, default="/root/MIMICIV/data/simulation/X_val.csv",
+    parser.add_argument("--X_val_csv", type=str, default="/root/MIMICIV/data/simulation/X_s_val_2.csv",
                         help="Path to file CSV di validation")
     
-    parser.add_argument("--y_val_csv", type=str, default="/root/MIMICIV/data/simulation/y_val.csv",
+    parser.add_argument("--y_val_csv", type=str, default="/root/MIMICIV/data/simulation/y_s_val_2.csv",
                         help="Path to file CSV di training")
     ## Test
-    parser.add_argument("--X_test_csv", type=str, default="/root/MIMICIV/data/simulation/X_test.csv",
+    parser.add_argument("--X_test_csv", type=str, default="/root/MIMICIV/data/simulation/X_s_test_2.csv",
                         help="Path to file CSV di validation")
     
-    parser.add_argument("--y_test_csv", type=str, default="/root/MIMICIV/data/simulation/y_test.csv",
+    parser.add_argument("--y_test_csv", type=str, default="/root/MIMICIV/data/simulation/y_s_test_2.csv",
                         help="Path to file CSV di training")
 
     # Prompts
@@ -484,7 +484,7 @@ list_args = [
     "--max_length", "1024"
 ]
 
-args = parse_args(list_args)
+args = parse_args()
 
 # Set seed for reproducibility
 set_seed(args.seed)
@@ -592,9 +592,9 @@ with torch.no_grad():
     for batch in test_loader:
         inputs = {k: v.to(device) for k, v in batch.items()}
         outputs = model(**inputs)
-        probs = torch.softmax(outputs.logits, dim=-1)[:, 1].cpu().float().numpy() # on cpu for sklearn metrics
+        probs = torch.softmax(outputs['logits'], dim=-1)[:, 1].cpu().float().numpy() # on cpu for sklearn metrics
         test_preds.extend(probs)
-        test_labels.extend(batch['outcomes'].cpu().float().numpy()) # on cpu for sklearn metrics
+        test_labels.extend(batch['outcome_labels'].cpu().float().numpy()) # on cpu for sklearn metrics
 
 test_auc = roc_auc_score(test_labels, test_preds)
 test_f1 = f1_score(test_labels, np.array(test_preds) >= 0.5)
