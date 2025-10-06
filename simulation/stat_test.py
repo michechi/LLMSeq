@@ -1,31 +1,37 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 from collections import defaultdict, Counter
 from sklearn.metrics import roc_auc_score, f1_score
 
+
 # Reading data - already splitted!
-X_train = pd.read_csv("data/simulation/X_s_train_2.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
-y_train = pd.read_csv("data/simulation/y_s_train_2.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
-X_val = pd.read_csv("data/simulation/X_s_val_2.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
-y_val = pd.read_csv("data/simulation/y_s_val_2.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+X_train = pd.read_csv("data/simulation/X_train_2.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+y_train = pd.read_csv("data/simulation/y_train_2.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+X_val = pd.read_csv("data/simulation/X_val_2.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+y_val = pd.read_csv("data/simulation/y_val_2.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+X_test = pd.read_csv("data/simulation/X_test_2.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+y_test = pd.read_csv("data/simulation/y_test_2.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
 
 # Estrai prima lettera
 train_first = [seq.split('\x1f')[0] for seq in X_train['Sequences']]
 val_first = [seq.split('\x1f')[0] for seq in X_val['Sequences']]
+test_first = [seq.split('\x1f')[0] for seq in X_test['Sequences']]
+
 
 # Calcola P(label=1 | lettera) dal training
 letter_stats = defaultdict(lambda: [0, 0])  # [count_label_0, count_label_1]
 for letter, label in zip(train_first, y_train['Outcome']):
     letter_stats[letter][label] += 1
 
-# Predici sul validation
-val_preds = []
-for letter in val_first:
+# Predici sul test
+test_preds = []
+for letter in test_first:
     counts = letter_stats[letter]
     prob = counts[1] / sum(counts) if sum(counts) > 0 else 0.5
-    val_preds.append(prob)
+    test_preds.append(prob)
 
-baseline_auc = roc_auc_score(y_val['Outcome'], val_preds)
+baseline_auc = roc_auc_score(y_val['Outcome'], test_preds)
 print(f"Baseline AUC (solo prima lettera): {baseline_auc:.4f}")
 
 # Test on all letters
@@ -36,14 +42,14 @@ for pos in range(9):
     for letter, label in zip(pos_letters, y_train['Outcome']):
         letter_stats[letter][label] += 1
     
-    val_pos_letters = [seq.split('\x1f')[pos] for seq in X_val['Sequences']]
-    val_preds = []
-    for letter in val_pos_letters:
+    test_pos_letters = [seq.split('\x1f')[pos] for seq in X_test['Sequences']]
+    test_preds = []
+    for letter in test_pos_letters:
         counts = letter_stats[letter]
         prob = counts[1] / sum(counts) if sum(counts) > 0 else 0.5
-        val_preds.append(prob)
+        test_preds.append(prob)
     
-    pos_auc = roc_auc_score(y_val['Outcome'], val_preds)
+    pos_auc = roc_auc_score(y_test['Outcome'], test_preds)
     print(f"Position {pos+1} AUC: {pos_auc:.4f}")
 
 # Test on all letters cumulating
@@ -78,7 +84,7 @@ def cumulative_position_analysis(X_train, y_train, X_val, y_val):
         
         print(f"Prime {k} lettere | AUC: {auc:.4f} | "
               f"Unique train: {unique_train:,} | "
-              f"Coverage val: {coverage:.1f}%")
+              f"Coverage test: {coverage:.1f}%")
         
         results.append({
             'k': k,
@@ -89,7 +95,7 @@ def cumulative_position_analysis(X_train, y_train, X_val, y_val):
     
     return results
 
-results = cumulative_position_analysis(X_train, y_train, X_val, y_val)
+results = cumulative_position_analysis(X_train, y_train, X_test, y_test)
 
 # Test on bigrams
 def extract_bigrams(seq):
@@ -228,3 +234,78 @@ def bigram_baseline_classifier_with_f1(X_train, y_train, X_val, y_val):
 
 # Esegui
 auc, f1, best_f1 = bigram_baseline_classifier_with_f1(X_train, y_train, X_val, y_val)
+
+# Let's visualize bigrams
+def plot_bigram_distribution(X_train, y_train, top_n=30):
+    """
+    Crea un grafico che mostra i bigrammi più discriminativi
+    tra le due classi
+    """
+    
+    # Funzione per estrarre bigrammi
+    def extract_bigrams(seq):
+        letters = seq.split('\x1f')
+        return [f"{letters[i]}-{letters[i+1]}" for i in range(len(letters)-1)]
+    
+    # Conta bigrammi per classe
+    bigrams_0 = Counter()
+    bigrams_1 = Counter()
+    
+    for seq, label in zip(X_train['Sequences'], y_train['Outcome']):
+        bigrams = extract_bigrams(seq)
+        if label == 0:
+            bigrams_0.update(bigrams)
+        else:
+            bigrams_1.update(bigrams)
+    
+    # Calcola frequenze normalizzate
+    total_0 = sum(bigrams_0.values())
+    total_1 = sum(bigrams_1.values())
+    
+    # Trova bigrammi più discriminativi
+    all_bigrams = set(bigrams_0.keys()) | set(bigrams_1.keys())
+    bigram_diff = {}
+    
+    for bg in all_bigrams:
+        freq_0 = bigrams_0.get(bg, 0)
+        freq_1 = bigrams_1.get(bg, 0)
+        diff = abs(freq_0 - freq_1)
+        bigram_diff[bg] = (freq_0, freq_1, diff)
+    
+    # Ordina per differenza e prendi top N
+    top_bigrams = sorted(bigram_diff.items(), key=lambda x: x[1][2], reverse=True)[:top_n]
+    
+    # Prepara dati per il grafico
+    bigram_labels = [bg for bg, _ in top_bigrams]
+    counts_0 = [data[0] for _, data in top_bigrams]
+    counts_1 = [data[1] for _, data in top_bigrams]
+    
+    # Crea il grafico
+    x = np.arange(len(bigram_labels))
+    width = 0.35
+    
+    fig, ax = plt.subplots(figsize=(16, 8))
+    bars1 = ax.bar(x - width/2, counts_1, width, label='Label=1 (Ordered)', alpha=0.8)
+    bars0 = ax.bar(x + width/2, counts_0, width, label='Label=0 (Unordered)', alpha=0.8)
+    
+    ax.set_xlabel('Bigrams', fontsize=12)
+    ax.set_ylabel('Count', fontsize=12)
+    ax.set_title(f'Top {top_n} Most Discriminative Bigrams by Label', fontsize=14)
+    ax.set_xticks(x)
+    ax.set_xticklabels(bigram_labels, rotation=45, ha='right')
+    ax.legend()
+    ax.grid(axis='y', alpha=0.3)
+    
+    plt.tight_layout()
+    plt.savefig('bigram_distribution.png', dpi=300, bbox_inches='tight')
+    plt.show()
+    
+    # Stampa statistiche
+    print(f"\nTop {min(10, top_n)} most discriminative bigrams:")
+    print(f"{'Bigram':<10} {'Count(Label=0)':<15} {'Count(Label=1)':<15} {'Difference':<12}")
+    print("-" * 60)
+    for bg, (c0, c1, diff) in top_bigrams[:10]:
+        print(f"{bg:<10} {c0:<15} {c1:<15} {diff:<12.0f}")
+
+# Esegui
+plot_bigram_distribution(X_train, y_train, top_n=30)
