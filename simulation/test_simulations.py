@@ -12,7 +12,7 @@ def rm_all():
     [globals().pop(var) for var in list(globals()) if not var.startswith('_')]
 
 def generate_sequences(
-    letters:list, digits:list, n:int=10, m:int=10_000, replacement:bool=False, seed:int=None, batch_size:int=None, duplicates:bool=False
+    letters:list, n:int=10, m:int=10_000, replacement:bool=False, seed:int=None, batch_size:int=None, duplicates:bool=False
 ):
     """
     Generate exactly m unique sequences (rows) of length n where each event is 'Letter' + 'Digit' (A1, Z0, H4, ...).
@@ -21,11 +21,10 @@ def generate_sequences(
     """
     rng = np.random.default_rng(seed)
     L = np.asarray(letters, dtype='<U8')
-    D = np.asarray(digits,  dtype='<U8')
-    Llen, Dlen = len(L), len(D)
+    Llen = len(L)
 
-    if not replacement and (n > Llen or n > Dlen):
-        raise ValueError("n must be <= len(letters) and len(digits) when replacement=False")
+    if not replacement and n > Llen:
+        raise ValueError("n must be <= len(letters) when replacement=False")
 
     # Choose a sensible batch size (oversample a bit to reduce iterations)
     if batch_size is None:
@@ -42,15 +41,12 @@ def generate_sequences(
         if replacement:
             print("replacement!\n")
             li = rng.integers(0, Llen, size=(k, n))
-            di = rng.integers(0, Dlen, size=(k, n))
         else:
             print("no replacement!\n")
             # Per-row permutations (no repeats within a row)
             l_scores = rng.random((k, Llen))
-            d_scores = rng.random((k, Dlen))
             li = np.argsort(l_scores, axis=1)[:, :n]
-            di = np.argsort(d_scores, axis=1)[:, :n]
-        seq = L[li] + D[di]  # shape (k, n), dtype '<U...'
+        seq = L[li]  # shape (k, n), dtype '<U...'
         return seq
 
     while len(out_rows) < m:
@@ -58,7 +54,7 @@ def generate_sequences(
         k = max(batch_size, need)  # at least batch_size to amortize costs
         seq = _gen_batch(k)        # (k, n)
 
-        # Build vectorized keys for dedup: "A1|B2|..."
+        # Build vectorized keys for dedup: "A|B|..."
         keys = [SEP.join(key) for key in seq.tolist()]
         # Inefficient! (?)
         # for j in range(1, n):
@@ -78,48 +74,44 @@ def generate_sequences(
 
     return out_rows
 
+
 # For parallelization
 def worker_generate(args):
-    letters, digits, n, m_chunk, replacement, seed = args
+    letters, n, m_chunk, replacement, seed = args
     # Import inside worker if needed (like clusterEvalQ)
     # import pandas as pd  
-    return generate_sequences(letters, digits, n, m_chunk, replacement, seed)
+    return generate_sequences(letters, n, m_chunk, replacement, seed)
 
-def assign_outcome(seq:str, c_ord:dict, d_ord:dict, rnd:bool=False, sep:str="\x1f", already_splitted=False) -> int:
+def assign_outcome(seq:str, c_ord:dict, rnd:bool=False, sep:str="\x1f", already_splitted=False) -> int:
     """
     function that, given a sequence, says 1 or 0, depending on ordering.
-    It allows for just one cycle.
     """
     # test_seq = 'D7\x1fH5\x1fA7\x1fR5\x1fL1\x1fE4\x1fF8\x1fC0\x1fA8\x1fN0' # sequences[0]
     # test_seq_splt = test_seq.split("\x1f")
+    l_keys = c_ord.keys()
+
     if not already_splitted:
-        test_seq_splt = seq.split(sep)
+        test_seq_splt = [x for x in seq.split(sep) if x in l_keys] # avoiding noising letters
     else: 
-        test_seq_splt = seq
+        test_seq_splt = [x for x in seq if x in l_keys]
     
-    still_cycle_1 = True
+    tolerance=False # For the cyclic ordering
     for x,y in zip(test_seq_splt[:-1], test_seq_splt[1:]):
         if ((2*c_ord[x[0]])>(2*c_ord[y[0]])):
-            if still_cycle_1:
-                still_cycle_1 = False
-            else:
-                return 0
-        elif x[0]==y[0]:
-            if(2*d_ord[str(x[1])])>(2*d_ord[str(y[1])]):
-                if still_cycle_1:
-                    still_cycle_1 = False
+                if tolerance:
+                    tolerance=False
                 else:
                     return 0
     # if we exit for cycle then it's all ordered
     return 1
 
-random.seed(999)
+random.seed(1234)
 
-n_events = 9
+n_events = 10
 n_seq = 500_000_000
-
-n_0s = 200_000
-n_1s = 100_000
+k =4
+n_0s = 500_000
+n_1s = 500_000
 n_tot = n_0s + n_1s
 n_train = n_tot * 0.80 # 80% of n_tot
 n_val = n_tot * 0.10
@@ -128,23 +120,23 @@ n_test = n_tot * 0.10
 #sum([n_train, n_test, n_val]) == n_tot
 
 letters = list(string.ascii_uppercase)
-digits = list(map(str, range(10)))
+letters_4_key = random.sample(letters, k=n_events-k)
+# digits = list(map(str, range(10)))
 
-random.shuffle(letters)
-random.shuffle(digits)
+random.shuffle(letters_4_key)
+# random.shuffle(digits)
 
-c_vocab = {w:p for p,w in enumerate(letters,start=1)}
-d_vocab = {d:p for p,d in enumerate(digits,start=1)}
+c_vocab = {w:p for p,w in enumerate(letters_4_key,start=1)}
 
 # # This is sequential
-# sequences = generate_sequences(letters=letters, digits=digits, n=n_events, m=n_seq, replacement=False)
+# sequences = generate_sequences(letters=letters, n=n_events, m=n_seq, replacement=False)
 
 # Parallel version
 n_cores = cpu_count()-1
 rng = np.random.default_rng(999)
 seeds = rng.integers(0, 2**31, size=n_cores)
 m_per_core = int(n_seq * 1.2 / n_cores)  # 20% oversample
-tasks = [(letters, digits, n_events, m_per_core, False, seed) 
+tasks = [(letters, n_events, m_per_core, False, seed) 
              for seed in seeds]
 
 with Pool(processes=n_cores) as pool:
@@ -164,15 +156,15 @@ if n_seq != n_set_seq:
     del set_seq, n_set_seq
     print("Done!")
 
-check=list(map(lambda x: assign_outcome(x, c_vocab, d_vocab), sequences))
+check=list(map(lambda x: assign_outcome(x, c_vocab), sequences))
 
 if sum(check) > 0:
     # There are some valid sequences
-    which_1s = list(filter(lambda x: assign_outcome(x, c_vocab, d_vocab, already_splitted=False)==1, sequences))
+    which_1s = list(filter(lambda x: assign_outcome(x, c_vocab, already_splitted=False)==1, sequences))
     n_1s = len(which_1s)
     print(f"There are {n_1s} ordered sequences! ({n_1s/len(sequences)*100:.2f}%)")
 
-which_0s = list(filter(lambda x: assign_outcome(x, c_vocab, d_vocab, already_splitted=False)==0, sequences))
+which_0s = list(filter(lambda x: assign_outcome(x, c_vocab, already_splitted=False)==0, sequences))
 n_0s = len(which_0s)
 if (n_0s + n_1s) == len(sequences):
     print("All good!")
@@ -223,44 +215,125 @@ ax.legend()
 plt.show()
 
 
-# # Test debug why we cannot find valid sequences in sequences in all_valid_seq_str
-# # I think in all_valid_seq_str we have always a correct number combo which in our 
-# # setup shouldn't be always the case (if we have a correct alphabet placement)
-# p=re.compile(r'^B\d\x1fM\d\x1fU\d\x1fY\d\x1fQ\d\x1fD\d\x1fT\d\x1fR\d\x1fS\d$')
-# check_presence = [s for s in all_valid_seq_str if p.match(s)]
-# # There are sequences with that enumeration. Hence the problem is given by the numbers. 
+# Create Dataset
 
-seq_0s = random.sample(sequences, k=n_0s)
-check_seq_0s = list(map(lambda x: assign_outcome(x, already_splitted=False), seq_0s))
-are_there_1s = sum(check_seq_0s) > 0 # 0
+df = pd.DataFrame({"Sequences":sequences})
+df["Outcome"] = list(map(lambda x: assign_outcome(x, c_vocab), sequences))
 
-if are_there_1s:
-    which_1 = list(filter(lambda x: assign_outcome(x, already_splitted=False)==1, seq_0s))
-    if not set(which_1).issubset(set(all_valid_seq_str)): # empty set is subset by definition
-        print("Attention! Something is wrong!")
-    idx_2_modify = seq_0s.index(which_1[0])
+df_1s = df.loc[df["Outcome"]==1, ].sample(n_1s)
+df_0s = df.loc[df["Outcome"]==0, ].sample(n_0s)
+df_full = pd.concat([df_1s, df_0s], ignore_index=True)
 
-seq_1s = random.sample(all_valid_seq_str, k=n_1s)
+# Diagnostics graphs
+which_1s_sel = list(df_full.loc[df_full["Outcome"]==1, "Sequences"])
+which_0s_sel = list(df_full.loc[df_full["Outcome"]==0, "Sequences"])
 
-all_seq = seq_1s + seq_0s
+chr_seq_1s=list(map(extract_characters, which_1s_sel))
+chr_seq_0s=list(map(extract_characters, which_0s_sel))
 
-# Now we need to create a df
-df_seq = pd.DataFrame({'Sequences':all_seq})
+i = 0
+stats_1s, stats_0s = collections.Counter(x[i*2] for x in chr_seq_1s), collections.Counter(x[i*2] for x in chr_seq_0s)
 
-df_seq["Outcome"] = list(map(lambda x: assign_outcome(x) , df_seq['Sequences']))
+letters_ord = string.ascii_uppercase
+counts_1s = [stats_1s.get(letter, 0) for letter in letters_ord]
+counts_0s = [stats_0s.get(letter, 0) for letter in letters_ord]
 
-# Check duplicates
-duplicates = df_seq.duplicated()
-if any(duplicates):
-    # If there are duplicates, show them
-    print(df_seq[duplicates])
-else:
-    print("No duplicates!")
+# Plot affiancato
+x = np.arange(len(letters_ord))
+width = 0.35  # Larghezza barre
 
+fig, ax = plt.subplots(figsize=(12, 6))
+ax.bar(x - width/2, counts_1s, width, label='Label=1', alpha=0.8)
+ax.bar(x + width/2, counts_0s, width, label='Label=0', alpha=0.8)
+ax.set_xlabel('Letters')
+ax.set_ylabel('Count')
+ax.set_title(f'{i+1}st/nd Letter Frequency by Label')
+ax.set_xticks(x)
+ax.set_xticklabels(letters_ord)
+ax.legend()
+plt.show()
+
+# Splitting Train Val Test
 # Now train_val_test split:
-X, y = df_seq["Sequences"], df_seq["Outcome"]
+X, y = df_full["Sequences"], df_full["Outcome"]
 X_train, X_val_test, y_train, y_val_test = train_test_split(X, y, train_size=0.80, random_state=999)
 X_val, X_test, y_val, y_test = train_test_split(X_val_test, y_val_test, train_size=0.50, random_state=999)
 
-for df, name in zip([X_train, X_val, X_test, y_train, y_val, y_test], ["X_train", "X_val", "X_test", "y_train", "y_val", "y_test"]):
+for df, name in zip([X_train, X_val, X_test, y_train, y_val, y_test], ["X_train_2", "X_val_2", "X_test_2", "y_train_2", "y_val_2", "y_test_2"]):
     df.to_csv(f"data/simulation/{name}.csv", index=False)
+
+
+# Let's visualize bigrams
+def plot_bigram_distribution(X_train, y_train, top_n=30):
+    """
+    Crea un grafico che mostra i bigrammi più discriminativi
+    tra le due classi
+    """
+    
+    # Funzione per estrarre bigrammi
+    def extract_bigrams(seq):
+        letters = seq.split('\x1f')
+        return [f"{letters[i]}-{letters[i+1]}" for i in range(len(letters)-1)]
+    
+    # Conta bigrammi per classe
+    bigrams_0 = Counter()
+    bigrams_1 = Counter()
+    
+    for seq, label in zip(X_train['Sequences'], y_train['Outcome']):
+        bigrams = extract_bigrams(seq)
+        if label == 0:
+            bigrams_0.update(bigrams)
+        else:
+            bigrams_1.update(bigrams)
+    
+    # Calcola frequenze normalizzate
+    total_0 = sum(bigrams_0.values())
+    total_1 = sum(bigrams_1.values())
+    
+    # Trova bigrammi più discriminativi
+    all_bigrams = set(bigrams_0.keys()) | set(bigrams_1.keys())
+    bigram_diff = {}
+    
+    for bg in all_bigrams:
+        freq_0 = bigrams_0.get(bg, 0)
+        freq_1 = bigrams_1.get(bg, 0)
+        diff = abs(freq_0 - freq_1)
+        bigram_diff[bg] = (freq_0, freq_1, diff)
+    
+    # Ordina per differenza e prendi top N
+    top_bigrams = sorted(bigram_diff.items(), key=lambda x: x[1][2], reverse=True)[:top_n]
+    
+    # Prepara dati per il grafico
+    bigram_labels = [bg for bg, _ in top_bigrams]
+    counts_0 = [data[0] for _, data in top_bigrams]
+    counts_1 = [data[1] for _, data in top_bigrams]
+    
+    # Crea il grafico
+    x = np.arange(len(bigram_labels))
+    width = 0.35
+    
+    fig, ax = plt.subplots(figsize=(16, 8))
+    bars1 = ax.bar(x - width/2, counts_1, width, label='Label=1 (Ordered)', alpha=0.8)
+    bars0 = ax.bar(x + width/2, counts_0, width, label='Label=0 (Unordered)', alpha=0.8)
+    
+    ax.set_xlabel('Bigrams', fontsize=12)
+    ax.set_ylabel('Count', fontsize=12)
+    ax.set_title(f'Top {top_n} Most Discriminative Bigrams by Label', fontsize=14)
+    ax.set_xticks(x)
+    ax.set_xticklabels(bigram_labels, rotation=45, ha='right')
+    ax.legend()
+    ax.grid(axis='y', alpha=0.3)
+    
+    plt.tight_layout()
+    plt.savefig('bigram_distribution.png', dpi=300, bbox_inches='tight')
+    plt.show()
+    
+    # Stampa statistiche
+    print(f"\nTop {min(10, top_n)} most discriminative bigrams:")
+    print(f"{'Bigram':<10} {'Count(Label=0)':<15} {'Count(Label=1)':<15} {'Difference':<12}")
+    print("-" * 60)
+    for bg, (c0, c1, diff) in top_bigrams[:10]:
+        print(f"{bg:<10} {c0:<15} {c1:<15} {diff:<12.0f}")
+
+# Esegui
+plot_bigram_distribution(X_train, y_train, top_n=30)
