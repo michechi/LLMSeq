@@ -62,22 +62,22 @@ def parse_args(args=None):
 
     # Data
     ## Train
-    parser.add_argument("--X_train_csv", type=str, default="/root/MIMICIV/data/simulation/X_s_train_2.csv",
+    parser.add_argument("--X_train_csv", type=str, default="/root/MIMICIV/data/simulation/X_train_3.csv",
                         help="Path to file CSV di training")
     
-    parser.add_argument("--y_train_csv", type=str, default="/root/MIMICIV/data/simulation/y_s_train_2.csv",
+    parser.add_argument("--y_train_csv", type=str, default="/root/MIMICIV/data/simulation/y_train_3.csv",
                         help="Path to file CSV di training")
     ## Val
-    parser.add_argument("--X_val_csv", type=str, default="/root/MIMICIV/data/simulation/X_s_val_2.csv",
+    parser.add_argument("--X_val_csv", type=str, default="/root/MIMICIV/data/simulation/X_val_3.csv",
                         help="Path to file CSV di validation")
     
-    parser.add_argument("--y_val_csv", type=str, default="/root/MIMICIV/data/simulation/y_s_val_2.csv",
+    parser.add_argument("--y_val_csv", type=str, default="/root/MIMICIV/data/simulation/y_val_3.csv",
                         help="Path to file CSV di training")
     ## Test
-    parser.add_argument("--X_test_csv", type=str, default="/root/MIMICIV/data/simulation/X_s_test_2.csv",
+    parser.add_argument("--X_test_csv", type=str, default="/root/MIMICIV/data/simulation/X_test_3.csv",
                         help="Path to file CSV di validation")
     
-    parser.add_argument("--y_test_csv", type=str, default="/root/MIMICIV/data/simulation/y_s_test_2.csv",
+    parser.add_argument("--y_test_csv", type=str, default="/root/MIMICIV/data/simulation/y_test_3.csv",
                         help="Path to file CSV di training")
 
     # Prompts

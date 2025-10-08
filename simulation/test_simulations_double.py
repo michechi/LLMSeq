@@ -75,8 +75,6 @@ def generate_sequences(
 
     return out_rows
 
-def generate_sequences_intervals():
-    pass
 
 # For parallelization
 def worker_generate(args):
@@ -98,7 +96,7 @@ def assign_outcome(seq:str, c_ord:dict, rnd:bool=False, sep:str="\x1f", already_
     else: 
         test_seq_splt = [x for x in seq if x in l_keys]
     
-    tolerance=False # For the cyclic ordering
+    tolerance=True # For the cyclic ordering
     for x,y in zip(test_seq_splt[:-1], test_seq_splt[1:]):
         if ((2*c_ord[x[0]])>(2*c_ord[y[0]])):
                 if tolerance:
@@ -130,8 +128,8 @@ def assign_outcome_numeric(seq:str, c_ord:dict, rnd:bool=False, sep:str="\x1f", 
 
 random.seed(959693)
 
-n_events = 9
-n_seq = 500_000_000
+n_events = 5
+n_seq = 1_000_000
 k =4
 n_0s = 1_000_000
 n_1s = 1_000_000
@@ -143,8 +141,9 @@ n_test = n_tot * 0.10
 #sum([n_train, n_test, n_val]) == n_tot
 
 letters = list(string.ascii_uppercase)
-letters_4_key = letters.copy()
-random.shuffle(letters_4_key)
+
+# letters_4_key = letters.copy()
+# random.shuffle(letters_4_key)
 # letters_4_key = ["W", "D", "Q", "J", "U", "H"]
 # digits = list(map(str, range(10)))
 
@@ -153,7 +152,7 @@ random.shuffle(letters_4_key)
 
 # c_vocab = {w:p for p,w in enumerate(letters_4_key,start=0)}
 
-# Test mio numerico
+# # Test mio numerico
 # c_vocab = {
 # 'C': 2, 
 # 'Q': 1,
@@ -182,47 +181,82 @@ random.shuffle(letters_4_key)
 # 'M': 2,
 # 'R': 1}
 
+# Test double alphabet
+start_n_stop = len(letters)//2
+train_letters = letters[:start_n_stop]
+test_letters = letters[start_n_stop:]
+
+key_order=random.sample(range(0, start_n_stop), k=start_n_stop)
+train_c_vocab, test_c_vocab = dict(zip(train_letters, key_order)), dict(zip(test_letters, key_order))
+
 
 # # This is sequential
-# sequences = generate_sequences(letters=letters, n=n_events, m=n_seq, replacement=False)
+train_sequences = generate_sequences(letters=train_letters, n=n_events, m=n_seq, replacement=True)
+test_sequences = generate_sequences(letters=test_letters, n=n_events, m=n_seq, replacement=True)
 
 # Parallel version
-n_cores = cpu_count()-1
-rng = np.random.default_rng(999)
-seeds = rng.integers(0, 2**31, size=n_cores)
-m_per_core = int(n_seq * 1.2 / n_cores)  # 20% oversample
-tasks = [(letters, n_events, m_per_core, True, seed) 
-             for seed in seeds]
+# n_cores = cpu_count()-1
+# rng = np.random.default_rng(999)
+# seeds = rng.integers(0, 2**31, size=n_cores)
+# m_per_core = int(n_seq * 1.2 / n_cores)  # 20% oversample
+# tasks = [(letters, n_events, m_per_core, True, seed) 
+#              for seed in seeds]
 
-with Pool(processes=n_cores) as pool:
-    results = pool.map(worker_generate, tasks)
+# with Pool(processes=n_cores) as pool:
+#     results = pool.map(worker_generate, tasks)
 
-# Deduplicate and trim
-all_sequences = [seq for result in results for seq in result]
-sequences = list(dict.fromkeys(all_sequences))[:n_seq]
+# # Deduplicate and trim
+# all_sequences = [seq for result in results for seq in result]
+# sequences = list(dict.fromkeys(all_sequences))[:n_seq]
 
-set_seq = set(sequences)
-n_set_seq = len(set_seq)
+train_set_seq = set(train_sequences)
+test_set_seq = set(test_sequences)
 
-if n_seq != n_set_seq:
-    print(f"Attention! There are {n_seq-n_set_seq} duplicates!\nRemoving them..")
-    sequences = set_seq.copy()
-    n_seq = n_set_seq
-    del set_seq, n_set_seq
+n_train_set_seq = len(train_set_seq)
+n_test_set_seq = len(test_set_seq)
+
+if n_seq != n_train_set_seq:
+    print(f"Attention! There are {n_seq-n_train_set_seq} trainig duplicates!\nRemoving them..")
+    train_sequences = train_set_seq.copy()
+    n_train_seq = n_train_set_seq
+    del train_set_seq, n_train_set_seq
     print("Done!")
 
-# check for my test:
-check=list(map(lambda x: assign_outcome_numeric(x, c_vocab), sequences))
+if n_seq != n_test_set_seq:
+    print(f"Attention! There are {n_seq-n_test_set_seq} trainig duplicates!\nRemoving them..")
+    test_sequences = test_set_seq.copy()
+    n_test_seq = n_test_set_seq
+    del test_set_seq, n_test_set_seq
+    print("Done!")
 
-if sum(check) > 0:
+# check for my training set:
+check_training=list(map(lambda x: assign_outcome(x, train_c_vocab), train_sequences))
+
+if sum(check_training) > 0:
     # There are some valid sequences
-    which_1s = list(filter(lambda x: assign_outcome_numeric(x, c_vocab, already_splitted=False)==1, sequences))
-    n_1s = len(which_1s)
-    print(f"There are {n_1s} ordered sequences! ({n_1s/len(sequences)*100:.2f}%)")
+    train_which_1s = list(filter(lambda x: assign_outcome(x, train_c_vocab, already_splitted=False)==1, train_sequences))
+    train_n_1s = len(train_which_1s)
+    print(f"There are {train_n_1s} ordered sequences! ({train_n_1s/len(train_sequences)*100:.2f}%)")
 
-which_0s = list(filter(lambda x: assign_outcome_numeric(x, c_vocab, already_splitted=False)==0, sequences))
-n_0s = len(which_0s)
-if (n_0s + n_1s) == len(sequences):
+train_which_0s = list(filter(lambda x: assign_outcome(x, train_c_vocab, already_splitted=False)==0, train_sequences))
+train_n_0s = len(train_which_0s)
+if (train_n_0s + train_n_1s) == len(train_sequences):
+    print("All good!")
+else:
+    print("Figures do not add up!")
+
+# check for my test set:
+check_test=list(map(lambda x: assign_outcome(x, test_c_vocab), test_sequences))
+
+if sum(check_test) > 0:
+    # There are some valid sequences
+    test_which_1s = list(filter(lambda x: assign_outcome(x, test_c_vocab, already_splitted=False)==1, test_sequences))
+    test_n_1s = len(test_which_1s)
+    print(f"There are {test_n_1s} ordered sequences! ({test_n_1s/len(test_sequences)*100:.2f}%)")
+
+test_which_0s = list(filter(lambda x: assign_outcome(x, test_c_vocab, already_splitted=False)==0, test_sequences))
+test_n_0s = len(test_which_0s)
+if (test_n_0s + test_n_1s) == len(test_sequences):
     print("All good!")
 else:
     print("Figures do not add up!")
@@ -245,15 +279,27 @@ def extract_characters(seq:str, sep:str="\x1f") -> str:
     seq_char = "-".join([x[0] for x in seq.split(sep)])
     return(seq_char)
 
-chr_seq_1s=list(map(extract_characters, which_1s))
-chr_seq_0s=list(map(extract_characters, which_0s))
+train_chr_seq_1s=list(map(extract_characters, train_which_1s))
+train_chr_seq_0s=list(map(extract_characters, train_which_0s))
 
 i = 0
-stats_1s, stats_0s = collections.Counter(x[i*2] for x in chr_seq_1s), collections.Counter(x[i*2] for x in chr_seq_0s)
+train_stats_1s, train_stats_0s = collections.Counter(x[i*2] for x in train_chr_seq_1s), collections.Counter(x[i*2] for x in train_chr_seq_0s)
 
 letters_ord = string.ascii_uppercase
-counts_1s = [stats_1s.get(letter, 0) for letter in letters_ord]
-counts_0s = [stats_0s.get(letter, 0) for letter in letters_ord]
+counts_1s = [train_stats_1s.get(letter, 0) for letter in letters_ord]
+counts_0s = [train_stats_0s.get(letter, 0) for letter in letters_ord]
+
+# Test
+test_chr_seq_1s=list(map(extract_characters, test_which_1s))
+test_chr_seq_0s=list(map(extract_characters, test_which_0s))
+
+i = 0
+test_stats_1s, test_stats_0s = collections.Counter(x[i*2] for x in test_chr_seq_1s), collections.Counter(x[i*2] for x in test_chr_seq_0s)
+
+letters_ord = string.ascii_uppercase
+counts_1s = [test_stats_1s.get(letter, 0) for letter in letters_ord]
+counts_0s = [test_stats_0s.get(letter, 0) for letter in letters_ord]
+
 
 # Plot affiancato
 x = np.arange(len(letters_ord))
@@ -271,53 +317,20 @@ ax.legend()
 plt.show()
 
 
-# Create Dataset
-df = pd.DataFrame({"Sequences":sequences})
-df["Outcome"] = list(map(lambda x: assign_outcome_numeric(x, c_vocab), sequences))
+# Create Training Dataset
+df_train = pd.DataFrame({"Sequences":list(train_sequences)})
+df_train["Outcome"] = list(map(lambda x: assign_outcome(x, train_c_vocab), df_train.Sequences))
 
-df_1s = df.loc[df["Outcome"]==1, ].sample(n_1s)
-df_0s = df.loc[df["Outcome"]==0, ].sample(n_0s)
-df_full = pd.concat([df_1s, df_0s], ignore_index=True)
+df_test = pd.DataFrame({"Sequences":list(test_sequences)})
+df_test["Outcome"] = list(map(lambda x: assign_outcome(x, test_c_vocab), df_test.Sequences))
 
-# Diagnostics graphs
-which_1s_sel = list(df_full.loc[df_full["Outcome"]==1, "Sequences"])
-which_0s_sel = list(df_full.loc[df_full["Outcome"]==0, "Sequences"])
 
-chr_seq_1s=list(map(extract_characters, which_1s_sel))
-chr_seq_0s=list(map(extract_characters, which_0s_sel))
-
-i = 0
-stats_1s, stats_0s = collections.Counter(x[i*2] for x in chr_seq_1s), collections.Counter(x[i*2] for x in chr_seq_0s)
-
-letters_ord = string.ascii_uppercase
-counts_1s = [stats_1s.get(letter, 0) for letter in letters_ord]
-counts_0s = [stats_0s.get(letter, 0) for letter in letters_ord]
-
-# Plot affiancato
-x = np.arange(len(letters_ord))
-width = 0.35  # Larghezza barre
-
-fig, ax = plt.subplots(figsize=(12, 6))
-ax.bar(x - width/2, counts_1s, width, label='Label=1', alpha=0.8)
-ax.bar(x + width/2, counts_0s, width, label='Label=0', alpha=0.8)
-ax.set_xlabel('Letters')
-ax.set_ylabel('Count')
-ax.set_title(f'{i+1}st/nd Letter Frequency by Label')
-ax.set_xticks(x)
-ax.set_xticklabels(letters_ord)
-ax.legend()
-plt.show()
 
 # Splitting Train Val Test
 # Now train_val_test split:
-X, y = df_full["Sequences"], df_full["Outcome"]
-X_train, X_val_test, y_train, y_val_test = train_test_split(X, y, train_size=0.80, random_state=999)
-X_val, X_test, y_val, y_test = train_test_split(X_val_test, y_val_test, train_size=0.50, random_state=999)
-
-# Uncomment just if you want to save data!
-# for df, name in zip([X_train, X_val, X_test, y_train, y_val, y_test], ["X_train_2", "X_val_2", "X_test_2", "y_train_2", "y_val_2", "y_test_2"]):
-#     df.to_csv(f"data/simulation/{name}.csv", index=False)
-
+X_train_val, y_train_val = df_train["Sequences"], df_train["Outcome"]
+X_train, X_val, y_train, y_val = train_test_split(X_train_val, y_train_val, train_size=0.90, random_state=999)
+X_test, y_test = df_test["Sequences"], df_test["Outcome"]
 
 # Let's visualize bigrams
 def plot_bigram_distribution(X_train, y_train, top_n=30):
@@ -393,3 +406,10 @@ def plot_bigram_distribution(X_train, y_train, top_n=30):
 
 # Esegui
 plot_bigram_distribution(X_train, y_train, top_n=1000)
+
+plot_bigram_distribution(X_test, y_test, top_n=1000)
+
+
+# Uncomment just if you want to save data!
+for df, name in zip([X_train, X_val, X_test, y_train, y_val, y_test], ["X_train_3", "X_val_3", "X_test_3", "y_train_3", "y_val_3", "y_test_3"]):
+    df.to_csv(f"data/simulation/{name}.csv", index=False)
