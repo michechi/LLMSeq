@@ -144,7 +144,7 @@ n_cores = cpu_count()-1
 rng = np.random.default_rng(999)
 seeds = rng.integers(0, 2**31, size=n_cores)
 m_per_core = int(n_seq * 1.2 / n_cores)  # 20% oversample
-tasks = [(letters, digits, n_events, m_per_core, False, seed) 
+tasks = [(letters, digits, n_events, m_per_core, True, seed) # True: with replacement
              for seed in seeds]
 
 with Pool(processes=n_cores) as pool:
