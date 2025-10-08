@@ -8,6 +8,7 @@ import argparse
 import pandas as pd
 import numpy as np
 import torch
+import string
 import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
 from transformers import (
@@ -22,8 +23,21 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 def standard_narrative_prompt(row, to_split='\x1f'):
-    events = row["Sequences"].split(to_split)[:3] # Testing on third-letter
+    events = row["Sequences"].split(to_split) # Testing on third-letter
     prompt = f'Sequential events: {" ".join(events)}\n'
+    prompt += 'Outcome (0 or 1):'
+    return prompt
+
+letters = list(string.ascii_uppercase)
+train_l = letters[:13]
+test_l  = letters[13:]
+mapping = "; ".join([str(l[0])+"="+str(l[1]) for l in zip(train_l, test_l) ])
+
+def standard_narrative_prompt_map(row, to_split='\x1f', mapping=mapping):
+    events = row["Sequences"].split(to_split) # Testing on third-letter
+    prompt = 'Determine whether the sequences are ordered. The alphabet is different now, but the ordering is the same as in the Training.\n'
+    prompt += f'The mapping is the following: {mapping}\n'
+    prompt += f'Sequential events: {" ".join(events)}\n'
     prompt += 'Outcome (0 or 1):'
     return prompt
 
@@ -480,8 +494,8 @@ def get_best_model_path(args):
 list_args = [
     "--model_name", "meta-llama/Llama-3.1-8B",
     "--peft",
-    "--batch_size", "16",
-    "--max_length", "1024"
+    "--batch_size", "128",
+    "--max_length", "50"
 ]
 
 args = parse_args()
@@ -545,9 +559,11 @@ set_seed(args.seed)
 
 train_texts = X_train.apply(narrative_prompt, axis=1).tolist()
 val_texts = X_val.apply(narrative_prompt, axis=1).tolist()
-test_texts = X_test.apply(narrative_prompt, axis=1).tolist()
+test_texts = X_test.apply(standard_narrative_prompt_map, axis=1).tolist()
 
 logger.info(f"Example train text: {train_texts[0]}")
+logger.info(f"Example test text: {test_texts[0]}")
+
 
 train_labels = y_train["Outcome"].tolist()
 val_labels = y_val["Outcome"].tolist()
@@ -580,6 +596,8 @@ logger.info(f"Tempo medio per epoca: {elapsed_seconds / epochs_done:.1f} secondi
 # VALUTAZIONE FINALE SUL TEST SET
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model = model.to(device)
+# # If skipping the trainin
+# best_model_path = "/root/MIMICIV/cache/best/best_model_meta-llama_Llama-3.1-8B_9550_standard_50_20251008_080744_.pt"
 logger.info(f"Loading best model from {best_model_path} for final evaluation on test set")
 if args.use_quantization:
     model.load_state_dict(torch.load(best_model_path, map_location=device), strict=False)
