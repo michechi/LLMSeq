@@ -5,9 +5,14 @@ import string
 import random
 import collections
 
+
 from sklearn.model_selection import train_test_split
 from multiprocessing import Pool, cpu_count
 from collections import Counter
+from scipy.stats import bernoulli
+from itertools import product
+from typing import List, Union
+from tqdm import tqdm
 
 def rm_all():
     [globals().pop(var) for var in list(globals()) if not var.startswith('_')]
@@ -85,12 +90,13 @@ def worker_generate(args):
     # import pandas as pd  
     return generate_sequences(letters, n, m_chunk, replacement, seed)
 
-def assign_outcome(seq:str, c_ord:dict, rnd:bool=False, sep:str="\x1f", already_splitted=False) -> int:
+def assign_outcome(seq:str, c_ord:dict, rnd:bool=False, sep:str="\x1f", already_splitted=False, pr_1=0.7) -> int:
     """
     function that, given a sequence, says 1 or 0, depending on ordering.
     """
     # test_seq = 'D7\x1fH5\x1fA7\x1fR5\x1fL1\x1fE4\x1fF8\x1fC0\x1fA8\x1fN0' # sequences[0]
     # test_seq_splt = test_seq.split("\x1f")
+    np.random.seed(seed=123456)
     l_keys = c_ord.keys()
 
     if not already_splitted:
@@ -105,11 +111,11 @@ def assign_outcome(seq:str, c_ord:dict, rnd:bool=False, sep:str="\x1f", already_
                     if tolerance:
                         tolerance=False
                     else:
-                        return 0
+                        return bernoulli.rvs(1-pr_1) # 1 with pr 1-0.7 => 0 with 0.7 pr
         # if we exit for cycle then it's all ordered
-        return 1
+        return bernoulli.rvs(pr_1)
     else:
-        return 0 # if test_seq_splt is void then there are no keys so not ordered
+        return bernoulli.rvs(1-pr_1) # if test_seq_splt is void then there are no keys so not ordered
 
 
 def assign_outcome_numeric(seq:str, c_ord:dict, rnd:bool=False, sep:str="\x1f", already_splitted=False) -> int:
@@ -131,40 +137,184 @@ def assign_outcome_numeric(seq:str, c_ord:dict, rnd:bool=False, sep:str="\x1f", 
     else:
         return 0
 
-def assign_outcome_positional(seq:str, c_ord:dict, rnd:bool=False, sep:str="\x1f", already_splitted=False) -> int:
+# def check_lag(seq:list, keys:list, lags:int=6):
+#     """given a sequence, a list of keys check that the keys are happening just after the lag"""
+    
+#     positions_key = [(i, seq[i]) for i in range(len(seq)) if seq[i] in keys]
+#     positions = [position_key[0] for position_key in positions_key]
+#     keys = [position_key[1] for position_key in positions_key]
+    
+#     if keys:
+#         obs_lags = [y-x for x,y in zip(positions[:-1], positions[1:])]
+#         if list(set(obs_lags))==[lags]:
+#             return keys
+#         else:
+#             return False
+#     else:
+#         return False
+
+def check_lag(seq: List, keys: List, lags: int = 6) -> Union[List[List], bool]:
+    """
+    Trova tutte le catene di elementi dalle chiavi che sono distanziati esattamente di 'lags'.
+    
+    Args:
+        seq: sequenza di elementi
+        keys: elementi da cercare nella sequenza
+        lags: distanza richiesta tra elementi consecutivi
+    
+    Returns:
+        False se non trova pattern validi
+        Lista di liste con i pattern trovati (es: [[A,B,C], [A,B,C,A]])
+    """
+    # Trova tutte le posizioni degli elementi chiave
+    key_positions = [(i, elem) for i, elem in enumerate(seq) if elem in keys]
+    
+    if not key_positions:
+        return False
+    
+    chains = []
+    used_positions = set()
+    
+    # Per ogni posizione di partenza possibile
+    for start_pos, start_elem in key_positions:
+        if start_pos in used_positions:
+            continue
+            
+        # Costruisci la catena più lunga possibile
+        chain = [start_elem]
+        chain_positions = [start_pos]
+        current_pos = start_pos
+        
+        # Continua a cercare elementi a distanza 'lags'
+        while True:
+            next_pos = current_pos + lags
+            
+            # Cerca un elemento chiave alla posizione attesa
+            found = False
+            for pos, elem in key_positions:
+                if pos == next_pos and elem in keys:
+                    chain.append(elem)
+                    chain_positions.append(pos)
+                    current_pos = next_pos
+                    found = True
+                    break
+            
+            if not found:
+                break
+        
+        # Salva la catena se ha almeno 2 elementi (pattern valido)
+        if len(chain) >= 2:
+            # Verifica che non sia sottoinsieme di una catena esistente
+            is_subset = False
+            for i, existing_chain in enumerate(chains):
+                existing_positions = [p for p, _ in existing_chain]
+                if set(chain_positions).issubset(set(existing_positions)):
+                    is_subset = True
+                    break
+                # Se questa catena contiene una esistente, sostituiscila
+                elif set(existing_positions).issubset(set(chain_positions)):
+                    chains[i] = list(zip(chain_positions, chain))
+                    used_positions.update(chain_positions)
+                    is_subset = True
+                    break
+            
+            if not is_subset:
+                chains.append(list(zip(chain_positions, chain)))
+                used_positions.update(chain_positions)
+    
+    if not chains:
+        return False
+    
+    # Ritorna solo le liste di elementi (senza le posizioni)
+    return [[elem for _, elem in chain] for chain in chains]
+
+# TESTING
+print("="*70)
+print("ESEMPIO 1: Sequenza con una sola combinazione valida")
+print("="*70)
+seq1 = ['A', 'X', 'X', 'B', 'Y', 'Y', 'C']
+keys = ['A', 'B', 'C']
+lag = 3
+check_lag(seq1, keys, lag)
+check_lag(["Z","Z","Z","Z"]+seq1, keys,lag)
+
+
+print("\n" + "="*70)
+print("ESEMPIO 2: Sequenza con MULTIPLE combinazioni valide")
+print("="*70)
+# Sequenza progettata per avere multiple combinazioni valide
+seq2 = ['A', 'X', 'X', 'B', 'Y', 'Y', 'C', 'Z', 'Z', 'A', 'W', 'W', 'B', 'V', 'V', 'C']
+check_lag(seq2, keys, lag)
+
+print("\n" + "="*70)
+print("ESEMPIO 3: Combinazioni sovrapposte (stessi elementi usati più volte)")
+print("="*70)
+# A appare 3 volte, B 2 volte, C 2 volte - possibili combinazioni sovrapposte
+seq3 = ['A', 'X', 'A', 'B', 'Y', 'C', 'A', 'Z', 'W', 'B', 'Q', 'R', 'C']
+check_lag(seq3, keys, lag)
+
+print("\n" + "="*70)
+print("ESEMPIO 4: Il tuo esempio originale")
+print("="*70)
+seq4 = ['A', 'A', 'C', 'D', 'B', 'A', 'Z', 'H', 'C']
+check_lag(seq4, keys, lag)
+
+
+def assign_outcome_positional(seq:str, c_ord:dict, rnd:bool=False, sep:str="\x1f", already_splitted=False, pr_1 = 0.7, lags=8) -> int:
     """
     function that, given a sequence, says 1 or 0, depending on ordering.
     """
     # test_seq = 'D7\x1fH5\x1fA7\x1fR5\x1fL1\x1fE4\x1fF8\x1fC0\x1fA8\x1fN0' # sequences[0]
     # test_seq_splt = test_seq.split("\x1f")
+    # np.random.seed(seed=123456)
+
     l_keys = c_ord.keys()
-    positions_2_check = [3,6]
 
     if not already_splitted:
-        test_seq_splt = [x for x in [seq.split(sep)[i] for i in positions_2_check] if x in l_keys] # avoiding noising letters
+        test_seq_splt = seq.split(sep) # avoiding noising letters
     else: 
-        test_seq_splt = [x for x in [seq[i] for i in positions_2_check] if x in l_keys]
+        test_seq_splt = seq
     
-    tolerance=False # For the cyclic ordering
-    if test_seq_splt:
-        for x,y in zip(test_seq_splt[:-1], test_seq_splt[1:]):
-            if ((2*c_ord[x[0]])>(2*c_ord[y[0]])):
-                    if tolerance:
-                        tolerance=False
-                    else:
-                        return 0
-        # if we exit for cycle then it's all ordered
-        return 1
+    # Check if there are key letters separated by lags.
+    are_lagged_keys = check_lag(test_seq_splt, l_keys, lags)
+
+    if are_lagged_keys:
+        n_seq=len(are_lagged_keys)
+        all_ordered = [True]*n_seq
+        for pos, seq in enumerate(are_lagged_keys):
+            # Check whether are ordered
+            tolerance=True # For the cyclic ordering
+            for x,y in zip(are_lagged_keys[:-1], are_lagged_keys[1:]):
+                if ((2*c_ord[x[0]])>(2*c_ord[y[0]])):
+                        if tolerance:
+                            tolerance=False
+                        else:
+                            all_ordered[pos]=False
+        if any(all_ordered):
+            # If there is at least one true, then there is one ordered sequence=> high probabilities of 1
+            pr_to_simulate = pr_1
+        else:
+            # If there is no true, then there are no one ordered sequence=> low probabilities of 1
+            pr_to_simulate = 1-pr_1
     else:
-        return 0 # if test_seq_splt is void then there are no keys so not ordered
+        # If there no keys, then there are no one ordered sequence=> low probabilities of 1
+        pr_to_simulate = 1-pr_1 # if test_seq_splt is void then there are no keys so not ordered
+    simulate = bernoulli.rvs(pr_to_simulate)
+    return(simulate)
+    
+seq4 = ['A', 'A', 'C', 'D', 'B', 'A', 'Z', 'H', 'C']
+# seqT = ['M','V','D','V','M','T','L','C','C','G','X','J','C','Y','J','B','C','Q','F','M']
+c_vocab = {w:p for p,w in enumerate(keys,start=0)}
+# check_lag(seqT, ["W", "D", "Q", "J", "U"], 7)
+assign_outcome_positional(seqT, c_vocab, lags=3, already_splitted=True)
 
 random.seed(959693)
 
-n_events = 9
+n_events = 20
 n_seq = 10_000_000
 k =4
-n_0s = 1_000_000
-n_1s = 1_000_000
+n_0s = 500_000
+n_1s = 500_000
 n_tot = n_0s + n_1s
 n_train = n_tot * 0.80 # 80% of n_tot
 n_val = n_tot * 0.10
@@ -175,7 +325,7 @@ n_test = n_tot * 0.10
 letters = list(string.ascii_uppercase)
 # letters_4_key = letters.copy()
 # random.shuffle(letters_4_key)
-letters_4_key = ["W", "D", "Q", "J", "U", "H"]
+letters_4_key = ["W", "D", "Q", "J", "U"]
 # digits = list(map(str, range(10)))
 
 # random.shuffle(letters_4_key)
@@ -241,21 +391,43 @@ if n_seq != n_set_seq:
     del set_seq, n_set_seq
     print("Done!")
 
-# check for my test:
-check=list(map(lambda x: assign_outcome_positional(x, c_vocab), sequences))
+def efficient_check_v1(sequences, c_vocab, assign_outcome_positional):
+    """Calcola una volta sola e poi usa i risultati"""
+    # Calcola UNA SOLA VOLTA per ogni sequenza
+    outcomes = []
+    
 
-if sum(check) > 0:
-    # There are some valid sequences
-    which_1s = list(filter(lambda x: assign_outcome_numeric(x, c_vocab, already_splitted=False)==1, sequences))
+    for seq in tqdm(sequences):
+    
+        outcomes += [assign_outcome_positional(seq, c_vocab, already_splitted=False, lags=7)]
+    # outcomes = [assign_outcome_positional(seq, c_vocab, already_splitted=False, lags=8) for seq in sequences]
+    
+    # Ora usa zip per associare sequenze ai loro outcomes
+    sequences_with_outcomes = list(zip(sequences, outcomes))
+    
+    # Filtra basandoti sui risultati già calcolati
+    which_1s = [seq for seq, outcome in sequences_with_outcomes if outcome == 1]
+    which_0s = [seq for seq, outcome in sequences_with_outcomes if outcome == 0]
+    
     n_1s = len(which_1s)
-    print(f"There are {n_1s} ordered sequences! ({n_1s/len(sequences)*100:.2f}%)")
+    n_0s = len(which_0s)
+    
+    if n_1s > 0:
+        print(f"There are {n_1s} ordered sequences! ({n_1s/len(sequences)*100:.2f}%)")
+        
+        if (n_0s + n_1s) == len(sequences):
+            print("All good!")
+        else:
+            print("Figures do not add up!")
+    else:
+        print("No valid sequences found")
+    
+    return {
+        'valid_sequences': which_1s,
+        'invalid_sequences': which_0s,
+        'outcomes': outcomes
+    }
 
-which_0s = list(filter(lambda x: assign_outcome_numeric(x, c_vocab, already_splitted=False)==0, sequences))
-n_0s = len(which_0s)
-if (n_0s + n_1s) == len(sequences):
-    print("All good!")
-else:
-    print("Figures do not add up!")
 
 # Before moving to the cyclic-ordering
 # l_all_valid_seq = list(itertools.combinations(letters, n_events)) # All possible valid letters combinations
@@ -271,14 +443,17 @@ else:
 
 # all_valid_seq_str = ["\x1f".join(x) for x in all_valid_seq]
 
+check = efficient_check_v1(sequences, c_vocab, assign_outcome_positional)
+
 def extract_characters(seq:str, sep:str="\x1f") -> str:
     seq_char = "-".join([x[0] for x in seq.split(sep)])
     return(seq_char)
 
-chr_seq_1s=list(map(extract_characters, which_1s))
-chr_seq_0s=list(map(extract_characters, which_0s))
+# check.keys()
+chr_seq_1s=list(map(extract_characters, check['valid_sequences']))
+chr_seq_0s=list(map(extract_characters, check['invalid_sequences']))
 
-i = 0
+i = 17
 stats_1s, stats_0s = collections.Counter(x[i*2] for x in chr_seq_1s), collections.Counter(x[i*2] for x in chr_seq_0s)
 
 letters_ord = string.ascii_uppercase
@@ -303,11 +478,14 @@ plt.show()
 
 # Create Dataset
 df = pd.DataFrame({"Sequences":sequences})
-df["Outcome"] = list(map(lambda x: assign_outcome_numeric(x, c_vocab), sequences))
+df["Outcome"] = list(map(lambda x: assign_outcome_positional(x, c_vocab, lags=8), sequences))
 
-df_1s = df.loc[df["Outcome"]==1, ].sample(n_1s)
-df_0s = df.loc[df["Outcome"]==0, ].sample(n_0s)
+df_1s = df.loc[df["Outcome"]==1, ]
+df_0s = df.loc[df["Outcome"]==0, ]
 df_full = pd.concat([df_1s, df_0s], ignore_index=True)
+
+# Let's try to reduce to 500_000 sample
+df_full = df_full.sample(n_1s)
 
 # Diagnostics graphs
 which_1s_sel = list(df_full.loc[df_full["Outcome"]==1, "Sequences"])
@@ -345,12 +523,12 @@ X_train, X_val_test, y_train, y_val_test = train_test_split(X, y, train_size=0.8
 X_val, X_test, y_val, y_test = train_test_split(X_val_test, y_val_test, train_size=0.50, random_state=999)
 
 # Uncomment just if you want to save data!
-# for df, name in zip([X_train, X_val, X_test, y_train, y_val, y_test], ["X_train_2", "X_val_2", "X_test_2", "y_train_2", "y_val_2", "y_test_2"]):
-#     df.to_csv(f"data/simulation/{name}.csv", index=False)
+for df, name in zip([X_train, X_val, X_test, y_train, y_val, y_test], ["X_train_5", "X_val_5", "X_test_5", "y_train_5", "y_val_5", "y_test_5"]):
+    df.to_csv(f"data/simulation/{name}.csv", index=False)
 
 
 # Let's visualize bigrams
-def plot_bigram_distribution(X_train, y_train, top_n=30):
+def plot_bigram_distribution(X_train, y_train, from_n=0, top_n=30):
     """
     Crea un grafico che mostra i bigrammi più discriminativi
     tra le due classi
@@ -387,7 +565,7 @@ def plot_bigram_distribution(X_train, y_train, top_n=30):
         bigram_diff[bg] = (freq_0, freq_1, diff)
     
     # Ordina per differenza e prendi top N
-    top_bigrams = sorted(bigram_diff.items(), key=lambda x: x[1][2], reverse=True)[:top_n]
+    top_bigrams = sorted(bigram_diff.items(), key=lambda x: x[1][2], reverse=True)[from_n:top_n]
     
     # Prepara dati per il grafico
     bigram_labels = [bg for bg, _ in top_bigrams]
@@ -422,4 +600,4 @@ def plot_bigram_distribution(X_train, y_train, top_n=30):
         print(f"{bg:<10} {c0:<15} {c1:<15} {diff:<12.0f}")
 
 # Esegui
-plot_bigram_distribution(X_train, y_train, top_n=1000)
+plot_bigram_distribution(X_train, y_train, from_n=400, top_n=500)
