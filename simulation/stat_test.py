@@ -6,12 +6,14 @@ from sklearn.metrics import roc_auc_score, f1_score
 
 
 # Reading data - already splitted!
-X_train = pd.read_csv("data/simulation/X_train_2.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
-y_train = pd.read_csv("data/simulation/y_train_2.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
-X_val = pd.read_csv("data/simulation/X_val_2.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
-y_val = pd.read_csv("data/simulation/y_val_2.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
-X_test = pd.read_csv("data/simulation/X_test_2.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
-y_test = pd.read_csv("data/simulation/y_test_2.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+X_train = pd.read_csv("data/simulation/X_train_5.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+y_train = pd.read_csv("data/simulation/y_train_5.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+X_val = pd.read_csv("data/simulation/X_val_5.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+y_val = pd.read_csv("data/simulation/y_val_5.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+X_test = pd.read_csv("data/simulation/X_test_5.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+y_test = pd.read_csv("data/simulation/y_test_5.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+
+
 
 # Estrai prima lettera
 train_first = [seq.split('\x1f')[0] for seq in X_train['Sequences']]
@@ -35,7 +37,7 @@ baseline_auc = roc_auc_score(y_val['Outcome'], test_preds)
 print(f"Baseline AUC (solo prima lettera): {baseline_auc:.4f}")
 
 # Test on all letters
-for pos in range(9):
+for pos in range(len(X_train["Sequences"][0].split("\x1f"))):
     pos_letters = [seq.split('\x1f')[pos] for seq in X_train['Sequences']]
     
     letter_stats = defaultdict(lambda: [0, 0])
@@ -58,7 +60,7 @@ def cumulative_position_analysis(X_train, y_train, X_val, y_val):
     
     results = []
     
-    for k in range(1, 10):  # Da 1 a 9 lettere
+    for k in range(1, 11):  # Da 1 a 9 lettere
         # Estrai prime k lettere da ogni sequenza
         train_prefixes = ['\x1f'.join(seq.split('\x1f')[:k]) for seq in X_train['Sequences']]
         val_prefixes = ['\x1f'.join(seq.split('\x1f')[:k]) for seq in X_val['Sequences']]
