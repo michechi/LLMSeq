@@ -319,7 +319,7 @@ n_tot = n_0s + n_1s
 n_train = n_tot * 0.80 # 80% of n_tot
 n_val = n_tot * 0.10
 n_test = n_tot * 0.10
-
+generate = False
 #sum([n_train, n_test, n_val]) == n_tot
 
 letters = list(string.ascii_uppercase)
@@ -364,7 +364,16 @@ c_vocab = {w:p for p,w in enumerate(letters_4_key,start=0)}
 
 
 # This is sequential
-sequences = generate_sequences(letters=letters, n=n_events, m=n_seq, replacement=True)
+if generate:
+    sequences = generate_sequences(letters=letters, n=n_events, m=n_seq, replacement=True)
+else:
+    # Load pre-generated sequences (from previous runs)
+    sequences = pd.read_csv("data/simulation/X_test_5.csv")["Sequences"].tolist()
+    sequences += pd.read_csv("data/simulation/X_train_5.csv")["Sequences"].tolist()
+    sequences += pd.read_csv("data/simulation/X_val_5.csv")["Sequences"].tolist()
+    n_seq = len(sequences)  
+
+
 
 # # Parallel version
 # n_cores = cpu_count()-1
