@@ -5,7 +5,6 @@ import string
 import random
 import collections
 
-
 from sklearn.model_selection import train_test_split
 from multiprocessing import Pool, cpu_count
 from collections import Counter
@@ -13,6 +12,7 @@ from scipy.stats import bernoulli
 from itertools import product
 from typing import List, Union
 from tqdm import tqdm
+from simulation.do_check_lag import check_lag
 
 def rm_all():
     [globals().pop(var) for var in list(globals()) if not var.startswith('_')]
@@ -153,80 +153,80 @@ def assign_outcome_numeric(seq:str, c_ord:dict, rnd:bool=False, sep:str="\x1f", 
 #     else:
 #         return False
 
-def check_lag(seq: List, keys: List, lags: int = 6) -> Union[List[List], bool]:
-    """
-    Trova tutte le catene di elementi dalle chiavi che sono distanziati esattamente di 'lags'.
+# def check_lag(seq: List, keys: List, lags: int = 6) -> Union[List[List], bool]:
+#     """
+#     Trova tutte le catene di elementi dalle chiavi che sono distanziati esattamente di 'lags'.
     
-    Args:
-        seq: sequenza di elementi
-        keys: elementi da cercare nella sequenza
-        lags: distanza richiesta tra elementi consecutivi
+#     Args:
+#         seq: sequenza di elementi
+#         keys: elementi da cercare nella sequenza
+#         lags: distanza richiesta tra elementi consecutivi
     
-    Returns:
-        False se non trova pattern validi
-        Lista di liste con i pattern trovati (es: [[A,B,C], [A,B,C,A]])
-    """
-    # Trova tutte le posizioni degli elementi chiave
-    key_positions = [(i, elem) for i, elem in enumerate(seq) if elem in keys]
+#     Returns:
+#         False se non trova pattern validi
+#         Lista di liste con i pattern trovati (es: [[A,B,C], [A,B,C,A]])
+#     """
+#     # Trova tutte le posizioni degli elementi chiave
+#     key_positions = [(i, elem) for i, elem in enumerate(seq) if elem in keys]
     
-    if not key_positions:
-        return False
+#     if not key_positions:
+#         return False
     
-    chains = []
-    used_positions = set()
+#     chains = []
+#     used_positions = set()
     
-    # Per ogni posizione di partenza possibile
-    for start_pos, start_elem in key_positions:
-        if start_pos in used_positions:
-            continue
+#     # Per ogni posizione di partenza possibile
+#     for start_pos, start_elem in key_positions:
+#         if start_pos in used_positions:
+#             continue
             
-        # Costruisci la catena più lunga possibile
-        chain = [start_elem]
-        chain_positions = [start_pos]
-        current_pos = start_pos
+#         # Costruisci la catena più lunga possibile
+#         chain = [start_elem]
+#         chain_positions = [start_pos]
+#         current_pos = start_pos
         
-        # Continua a cercare elementi a distanza 'lags'
-        while True:
-            next_pos = current_pos + lags
+#         # Continua a cercare elementi a distanza 'lags'
+#         while True:
+#             next_pos = current_pos + lags
             
-            # Cerca un elemento chiave alla posizione attesa
-            found = False
-            for pos, elem in key_positions:
-                if pos == next_pos and elem in keys:
-                    chain.append(elem)
-                    chain_positions.append(pos)
-                    current_pos = next_pos
-                    found = True
-                    break
+#             # Cerca un elemento chiave alla posizione attesa
+#             found = False
+#             for pos, elem in key_positions:
+#                 if pos == next_pos and elem in keys:
+#                     chain.append(elem)
+#                     chain_positions.append(pos)
+#                     current_pos = next_pos
+#                     found = True
+#                     break
             
-            if not found:
-                break
+#             if not found:
+#                 break
         
-        # Salva la catena se ha almeno 2 elementi (pattern valido)
-        if len(chain) >= 2:
-            # Verifica che non sia sottoinsieme di una catena esistente
-            is_subset = False
-            for i, existing_chain in enumerate(chains):
-                existing_positions = [p for p, _ in existing_chain]
-                if set(chain_positions).issubset(set(existing_positions)):
-                    is_subset = True
-                    break
-                # Se questa catena contiene una esistente, sostituiscila
-                elif set(existing_positions).issubset(set(chain_positions)):
-                    chains[i] = list(zip(chain_positions, chain))
-                    used_positions.update(chain_positions)
-                    is_subset = True
-                    break
+#         # Salva la catena se ha almeno 2 elementi (pattern valido)
+#         if len(chain) >= 2:
+#             # Verifica che non sia sottoinsieme di una catena esistente
+#             is_subset = False
+#             for i, existing_chain in enumerate(chains):
+#                 existing_positions = [p for p, _ in existing_chain]
+#                 if set(chain_positions).issubset(set(existing_positions)):
+#                     is_subset = True
+#                     break
+#                 # Se questa catena contiene una esistente, sostituiscila
+#                 elif set(existing_positions).issubset(set(chain_positions)):
+#                     chains[i] = list(zip(chain_positions, chain))
+#                     used_positions.update(chain_positions)
+#                     is_subset = True
+#                     break
             
-            if not is_subset:
-                chains.append(list(zip(chain_positions, chain)))
-                used_positions.update(chain_positions)
+#             if not is_subset:
+#                 chains.append(list(zip(chain_positions, chain)))
+#                 used_positions.update(chain_positions)
     
-    if not chains:
-        return False
+#     if not chains:
+#         return False
     
-    # Ritorna solo le liste di elementi (senza le posizioni)
-    return [[elem for _, elem in chain] for chain in chains]
+#     # Ritorna solo le liste di elementi (senza le posizioni)
+#     return [[elem for _, elem in chain] for chain in chains]
 
 # TESTING
 print("="*70)
@@ -251,6 +251,7 @@ print("ESEMPIO 3: Combinazioni sovrapposte (stessi elementi usati più volte)")
 print("="*70)
 # A appare 3 volte, B 2 volte, C 2 volte - possibili combinazioni sovrapposte
 seq3 = ['A', 'X', 'A', 'B', 'Y', 'C', 'A', 'Z', 'W', 'B', 'Q', 'R', 'C']
+lag = [3,2,4]
 check_lag(seq3, keys, lag)
 
 print("\n" + "="*70)
@@ -260,7 +261,16 @@ seq4 = ['A', 'A', 'C', 'D', 'B', 'A', 'Z', 'H', 'C']
 check_lag(seq4, keys, lag)
 
 
-def assign_outcome_positional(seq:str, c_ord:dict, rnd:bool=False, sep:str="\x1f", already_splitted=False, pr_1 = 0.7, lags=8) -> int:
+def assign_outcome_positional(
+    seq:str, 
+    c_ord:dict, 
+    lags:Union[int, List], 
+    rnd:bool=False, 
+    sep:str="\x1f", 
+    already_splitted=False, 
+    pr_1 = 0.7, 
+    tolerance=True
+    ) -> int:
     """
     function that, given a sequence, says 1 or 0, depending on ordering.
     """
@@ -281,13 +291,13 @@ def assign_outcome_positional(seq:str, c_ord:dict, rnd:bool=False, sep:str="\x1f
     if are_lagged_keys:
         n_seq=len(are_lagged_keys)
         all_ordered = [True]*n_seq
-        for pos, seq in enumerate(are_lagged_keys):
+        tol=tolerance # For the cyclic ordering
+        for pos, subseq in enumerate(are_lagged_keys):
             # Check whether are ordered
-            tolerance=True # For the cyclic ordering
-            for x,y in zip(are_lagged_keys[:-1], are_lagged_keys[1:]):
+            for x,y in zip(subseq[:-1], subseq[1:]):
                 if ((2*c_ord[x[0]])>(2*c_ord[y[0]])):
-                        if tolerance:
-                            tolerance=False
+                        if tol:
+                            tol=False
                         else:
                             all_ordered[pos]=False
         if any(all_ordered):
@@ -298,23 +308,40 @@ def assign_outcome_positional(seq:str, c_ord:dict, rnd:bool=False, sep:str="\x1f
             pr_to_simulate = 1-pr_1
     else:
         # If there no keys, then there are no one ordered sequence=> low probabilities of 1
+        all_ordered=False
         pr_to_simulate = 1-pr_1 # if test_seq_splt is void then there are no keys so not ordered
-    simulate = bernoulli.rvs(pr_to_simulate)
-    return(simulate)
+        
+
+    if rnd:
+        # Stochastics outcome
+        outcome = bernoulli.rvs(pr_to_simulate)
+    else:
+        # Deterministic outcome
+        outcome = int(np.where(pr_to_simulate==pr_1, 1, 0))
+    
+    results_2_debug = {
+        'outcome':[outcome],
+        'seq':seq,
+        'pr_2_sim':[pr_to_simulate],
+        'lagged_keys':[are_lagged_keys],
+        'all_ordered':[all_ordered]
+    }
+    return(results_2_debug)
     
 seq4 = ['A', 'A', 'C', 'D', 'B', 'A', 'Z', 'H', 'C']
 # seqT = ['M','V','D','V','M','T','L','C','C','G','X','J','C','Y','J','B','C','Q','F','M']
-c_vocab = {w:p for p,w in enumerate(keys,start=0)}
+keys = ['A', 'B', 'C']
+c_vocab4 = {w:p for p,w in enumerate(keys,start=0)}
 # check_lag(seqT, ["W", "D", "Q", "J", "U"], 7)
-assign_outcome_positional(seqT, c_vocab, lags=3, already_splitted=True)
+assign_outcome_positional(seq4, c_vocab4, lags=3, already_splitted=True)
 
 random.seed(959693)
 
-n_events = 20
-n_seq = 10_000_000
+n_events = 30 # More
+n_seq = 100_000_000
 k =4
-n_0s = 500_000
-n_1s = 500_000
+n_0s = 250_000
+n_1s = 250_000
 n_tot = n_0s + n_1s
 n_train = n_tot * 0.80 # 80% of n_tot
 n_val = n_tot * 0.10
@@ -325,7 +352,7 @@ generate = False
 letters = list(string.ascii_uppercase)
 # letters_4_key = letters.copy()
 # random.shuffle(letters_4_key)
-letters_4_key = ["W", "D", "Q", "J", "U"]
+letters_4_key = ["W", "D", "Q", "J", "X", "U"] # Added X
 # digits = list(map(str, range(10)))
 
 # random.shuffle(letters_4_key)
@@ -333,44 +360,20 @@ letters_4_key = ["W", "D", "Q", "J", "U"]
 
 c_vocab = {w:p for p,w in enumerate(letters_4_key,start=0)}
 
-# Test mio numerico
-# c_vocab = {
-# 'C': 2, 
-# 'Q': 1,
-# 'O': 0,
-# 'H': 2,
-# 'Y': 1,
-# 'X': 0,
-# 'S': 2,
-# 'U': 1,
-# 'N': 0,
-# 'J': 2,
-# 'F': 1,
-# 'E': 0,
-# 'W': 2,
-# 'Z': 1,
-# 'B': 0,
-# 'G': 2,
-# 'L': 1,
-# 'A': 0,
-# 'K': 2,
-# 'I': 1,
-# 'V': 0,
-# 'P': 2,
-# 'T': 1,
-# 'D': 0,
-# 'M': 2,
-# 'R': 1}
-
-
 # This is sequential
 if generate:
     sequences = generate_sequences(letters=letters, n=n_events, m=n_seq, replacement=True)
 else:
     # Load pre-generated sequences (from previous runs)
     sequences = pd.read_csv("data/simulation/X_test_5.csv")["Sequences"].tolist()
+    labels = pd.read_csv("data/simulation/y_test_5.csv")["Outcome"].tolist()
+
     sequences += pd.read_csv("data/simulation/X_train_5.csv")["Sequences"].tolist()
+    labels += pd.read_csv("data/simulation/y_train_5.csv")["Outcome"].tolist()
+
     sequences += pd.read_csv("data/simulation/X_val_5.csv")["Sequences"].tolist()
+    labels += pd.read_csv("data/simulation/y_val_5.csv")["Outcome"].tolist()
+
     n_seq = len(sequences)  
 
 
@@ -400,16 +403,27 @@ if n_seq != n_set_seq:
     del set_seq, n_set_seq
     print("Done!")
 
-def efficient_check_v1(sequences, c_vocab, assign_outcome_positional):
+def efficient_check_v1(sequences, c_vocab, assign_outcome_positional, tolerance=True, lags=7, rnd=False):
     """Calcola una volta sola e poi usa i risultati"""
     # Calcola UNA SOLA VOLTA per ogni sequenza
+    print(f"Tolerance: {tolerance}, lags: {lags}!\n")
     outcomes = []
-    
+
+    df_2_monitor = pd.DataFrame({
+        'outcome':[],
+        'seq':[],
+        'pr_2_sim':[],
+        'lagged_keys':[],
+        'all_ordered':[]
+    })
 
     for seq in tqdm(sequences):
-    
-        outcomes += [assign_outcome_positional(seq, c_vocab, already_splitted=False, lags=7)]
+        df_results = pd.DataFrame(assign_outcome_positional(seq, c_vocab, already_splitted=False, lags=lags, tolerance=tolerance, rnd=rnd))
+        df_2_monitor = pd.concat([df_2_monitor, df_results])
+        # outcomes += assign_outcome_positional(seq, c_vocab, already_splitted=False, lags=lags, tolerance=tolerance)
     # outcomes = [assign_outcome_positional(seq, c_vocab, already_splitted=False, lags=8) for seq in sequences]
+    
+    sequences, outcomes = df_2_monitor["seq"], df_2_monitor["outcome"]
     
     # Ora usa zip per associare sequenze ai loro outcomes
     sequences_with_outcomes = list(zip(sequences, outcomes))
@@ -431,11 +445,74 @@ def efficient_check_v1(sequences, c_vocab, assign_outcome_positional):
     else:
         print("No valid sequences found")
     
-    return {
+    return ({
         'valid_sequences': which_1s,
         'invalid_sequences': which_0s,
         'outcomes': outcomes
-    }
+    }, df_2_monitor)
+
+
+def process_single_sequence(args):
+    """Funzione helper per il multiprocessing"""
+    seq, c_vocab, assign_outcome_positional, lags, tolerance, rnd = args
+    result = assign_outcome_positional(
+        seq, c_vocab, 
+        already_splitted=False, 
+        lags=lags, 
+        tolerance=tolerance, 
+        rnd=rnd
+    )
+    # Converti il dizionario in DataFrame
+    return pd.DataFrame(result)
+
+def efficient_check_parallel(sequences, c_vocab, assign_outcome_positional, 
+                             tolerance=True, lags=7, rnd=False, n_workers=None):
+    """Versione parallelizzata con multiprocessing.Pool"""
+    print(f"Tolerance: {tolerance}, lags: {lags}!\n")
+    
+    # Usa tutti i core se non specificato
+    if n_workers is None:
+        n_workers = cpu_count()
+    
+    # Prepara gli argomenti per ogni sequenza
+    args_list = [
+        (seq, c_vocab, assign_outcome_positional, lags, tolerance, rnd) 
+        for seq in sequences
+    ]
+    
+    # Parallelizza con Pool
+    with Pool(processes=n_workers) as pool:
+        results = list(tqdm(
+            pool.imap(process_single_sequence, args_list), 
+            total=len(sequences)
+        ))
+    
+    # Combina tutti i DataFrame
+    df_2_monitor = pd.concat(results, ignore_index=True)
+    
+    sequences, outcomes = df_2_monitor["seq"], df_2_monitor["outcome"]
+    sequences_with_outcomes = list(zip(sequences, outcomes))
+    
+    which_1s = [seq for seq, outcome in sequences_with_outcomes if outcome == 1]
+    which_0s = [seq for seq, outcome in sequences_with_outcomes if outcome == 0]
+    
+    n_1s = len(which_1s)
+    n_0s = len(which_0s)
+    
+    if n_1s > 0:
+        print(f"There are {n_1s} ordered sequences! ({n_1s/len(sequences)*100:.2f}%)")
+        if (n_0s + n_1s) == len(sequences):
+            print("All good!")
+        else:
+            print("Figures do not add up!")
+    else:
+        print("No valid sequences found")
+    
+    return ({
+        'valid_sequences': which_1s,
+        'invalid_sequences': which_0s,
+        'outcomes': outcomes
+    }, df_2_monitor)
 
 
 # Before moving to the cyclic-ordering
@@ -451,18 +528,37 @@ def efficient_check_v1(sequences, c_vocab, assign_outcome_positional):
 # sum(check_valid) == len(check_valid) # True, all 1!
 
 # all_valid_seq_str = ["\x1f".join(x) for x in all_valid_seq]
+lags = 7
 
-check = efficient_check_v1(sequences, c_vocab, assign_outcome_positional)
+# Sequential:
+# check, df_2_monitor = efficient_check_v1(sequences=sequences, c_vocab=c_vocab, assign_outcome_positional=assign_outcome_positional, tolerance=False, lags=lags, rnd=True)
+
+n_cores = cpu_count()-1
+# Parallel:
+check, df_2_monitor = efficient_check_parallel(
+        sequences=sequences, 
+        c_vocab=c_vocab, 
+        assign_outcome_positional=assign_outcome_positional, 
+        tolerance=False, 
+        lags=lags, 
+        rnd=True,
+        n_workers=n_cores  # oppure None per usare tutti i core
+    )
+
 
 def extract_characters(seq:str, sep:str="\x1f") -> str:
     seq_char = "-".join([x[0] for x in seq.split(sep)])
     return(seq_char)
 
+# Check with reality
+if (not generate):
+    print(pd.Series(labels).value_counts()/500_000)
+
 # check.keys()
 chr_seq_1s=list(map(extract_characters, check['valid_sequences']))
 chr_seq_0s=list(map(extract_characters, check['invalid_sequences']))
 
-i = 17
+i = 0
 stats_1s, stats_0s = collections.Counter(x[i*2] for x in chr_seq_1s), collections.Counter(x[i*2] for x in chr_seq_0s)
 
 letters_ord = string.ascii_uppercase
@@ -486,8 +582,13 @@ plt.show()
 
 
 # Create Dataset
-df = pd.DataFrame({"Sequences":sequences})
-df["Outcome"] = list(map(lambda x: assign_outcome_positional(x, c_vocab, lags=8), sequences))
+# df = pd.DataFrame({"Sequences":sequences})
+# df["Outcome"] = list(map(lambda x: assign_outcome_positional(x, c_vocab, lags=7), sequences))
+
+df = pd.DataFrame({
+    "Sequences":df_2_monitor['seq'],
+    "Outcome":df_2_monitor['outcome']
+})
 
 df_1s = df.loc[df["Outcome"]==1, ]
 df_0s = df.loc[df["Outcome"]==0, ]
@@ -532,7 +633,7 @@ X_train, X_val_test, y_train, y_val_test = train_test_split(X, y, train_size=0.8
 X_val, X_test, y_val, y_test = train_test_split(X_val_test, y_val_test, train_size=0.50, random_state=999)
 
 # Uncomment just if you want to save data!
-for df, name in zip([X_train, X_val, X_test, y_train, y_val, y_test], ["X_train_5", "X_val_5", "X_test_5", "y_train_5", "y_val_5", "y_test_5"]):
+for df, name in zip([X_train, X_val, X_test, y_train, y_val, y_test], ["X_train_8", "X_val_8", "X_test_8", "y_train_8", "y_val_8", "y_test_8"]):
     df.to_csv(f"data/simulation/{name}.csv", index=False)
 
 
@@ -609,4 +710,4 @@ def plot_bigram_distribution(X_train, y_train, from_n=0, top_n=30):
         print(f"{bg:<10} {c0:<15} {c1:<15} {diff:<12.0f}")
 
 # Esegui
-plot_bigram_distribution(X_train, y_train, from_n=400, top_n=500)
+plot_bigram_distribution(X_train, y_train, from_n=600, top_n=700)
