@@ -6,12 +6,12 @@ from sklearn.metrics import roc_auc_score, f1_score
 
 
 # Reading data - already splitted!
-X_train = pd.read_csv("data/simulation/X_train_5.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
-y_train = pd.read_csv("data/simulation/y_train_5.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
-X_val = pd.read_csv("data/simulation/X_val_5.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
-y_val = pd.read_csv("data/simulation/y_val_5.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
-X_test = pd.read_csv("data/simulation/X_test_5.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
-y_test = pd.read_csv("data/simulation/y_test_5.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+X_train = pd.read_csv("data/simulation/X_train_8.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+y_train = pd.read_csv("data/simulation/y_train_8.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+X_val = pd.read_csv("data/simulation/X_val_8.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+y_val = pd.read_csv("data/simulation/y_val_8.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+X_test = pd.read_csv("data/simulation/X_test_8.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+y_test = pd.read_csv("data/simulation/y_test_8.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
 
 
 
