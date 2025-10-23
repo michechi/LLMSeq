@@ -295,7 +295,7 @@ def efficient_check_parallel(sequences, c_vocab, assign_outcome_positional,
     """Versione parallelizzata con multiprocessing.Pool"""
     print(f"Tolerance: {tolerance}, lags: {lags}!\n")
     
-    # Usa tutti i core se non specificato
+    # Use all cores-1 if not specified
     if n_workers is None:
         n_workers = cpu_count()
     
@@ -305,14 +305,14 @@ def efficient_check_parallel(sequences, c_vocab, assign_outcome_positional,
         for seq in sequences
     ]
     
-    # Parallelizza con Pool
+    # Parallelize with Pool
     with Pool(processes=n_workers) as pool:
         results = list(tqdm(
             pool.imap(process_single_sequence, args_list), 
             total=len(sequences)
         ))
     
-    # Combina tutti i DataFrame
+    # Combine all DF
     df_2_monitor = pd.concat(results, ignore_index=True)
     
     sequences, outcomes = df_2_monitor["seq"], df_2_monitor["outcome"]
@@ -339,7 +339,8 @@ def efficient_check_parallel(sequences, c_vocab, assign_outcome_positional,
         'outcomes': outcomes
     }, df_2_monitor)
 
-
+# Which lags do we prefer?
+# lags = [7,4,2] # is valid
 lags = 7
 
 if parallel:
@@ -373,6 +374,7 @@ def extract_characters(seq:str, sep:str="\x1f") -> str:
 if (not generate):
     print(pd.Series(labels).value_counts()/len(labels))
 
+# GRAPHICAL STUFF
 # check.keys()
 chr_seq_1s=list(map(extract_characters, check['valid_sequences']))
 chr_seq_0s=list(map(extract_characters, check['invalid_sequences']))
@@ -449,11 +451,11 @@ X_train, X_val_test, y_train, y_val_test = train_test_split(X, y, train_size=0.8
 X_val, X_test, y_val, y_test = train_test_split(X_val_test, y_val_test, train_size=0.50, random_state=999)
 
 # Uncomment just if you want to save data!
-number_csv = 9
-for df, name in zip([X_train, X_val, X_test, y_train, y_val, y_test], [f"X_train_{number_csv}", f"X_val_{number_csv}", f"X_test_{number_csv}", f"y_train_{number_csv}", f"y_val_{number_csv}", f"y_test_{number_csv}"]):
-    df.to_csv(f"data/simulation/{name}.csv", index=False)
+# number_csv = 9
+# for df, name in zip([X_train, X_val, X_test, y_train, y_val, y_test], [f"X_train_{number_csv}", f"X_val_{number_csv}", f"X_test_{number_csv}", f"y_train_{number_csv}", f"y_val_{number_csv}", f"y_test_{number_csv}"]):
+#     df.to_csv(f"data/simulation/{name}.csv", index=False)
 
-
+# GRAPHICAL STUFF
 # Let's visualize bigrams
 def plot_bigram_distribution(X_train, y_train, from_n=0, top_n=30):
     """
