@@ -6,13 +6,13 @@ from sklearn.metrics import roc_auc_score, f1_score
 
 
 # Reading data - already splitted!
-X_train = pd.read_csv("data/simulation/X_train_8.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
-y_train = pd.read_csv("data/simulation/y_train_8.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
-X_val = pd.read_csv("data/simulation/X_val_8.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
-y_val = pd.read_csv("data/simulation/y_val_8.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
-X_test = pd.read_csv("data/simulation/X_test_8.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
-y_test = pd.read_csv("data/simulation/y_test_8.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
-
+csv_number = 9
+X_train = pd.read_csv(f"data/simulation/X_train_{csv_number}.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+y_train = pd.read_csv(f"data/simulation/y_train_{csv_number}.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+X_val = pd.read_csv(f"data/simulation/X_val_{csv_number}.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+y_val = pd.read_csv(f"data/simulation/y_val_{csv_number}.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+X_test = pd.read_csv(f"data/simulation/X_test_{csv_number}.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+y_test = pd.read_csv(f"data/simulation/y_test_{csv_number}.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
 
 
 # Estrai prima lettera
@@ -24,7 +24,7 @@ test_first = [seq.split('\x1f')[0] for seq in X_test['Sequences']]
 # Calcola P(label=1 | lettera) dal training
 letter_stats = defaultdict(lambda: [0, 0])  # [count_label_0, count_label_1]
 for letter, label in zip(train_first, y_train['Outcome']):
-    letter_stats[letter][label] += 1
+    letter_stats[letter][int(label)] += 1
 
 # Predici sul test
 test_preds = []
@@ -42,7 +42,7 @@ for pos in range(len(X_train["Sequences"][0].split("\x1f"))):
     
     letter_stats = defaultdict(lambda: [0, 0])
     for letter, label in zip(pos_letters, y_train['Outcome']):
-        letter_stats[letter][label] += 1
+        letter_stats[letter][int(label)] += 1
     
     test_pos_letters = [seq.split('\x1f')[pos] for seq in X_test['Sequences']]
     test_preds = []
@@ -68,7 +68,7 @@ def cumulative_position_analysis(X_train, y_train, X_val, y_val):
         # Calcola P(label=1 | prefix) dal training
         prefix_stats = defaultdict(lambda: [0, 0])
         for prefix, label in zip(train_prefixes, y_train['Outcome']):
-            prefix_stats[prefix][label] += 1
+            prefix_stats[prefix][int(label)] += 1
         
         # Predici sul validation
         val_preds = []
@@ -196,7 +196,7 @@ def bigram_baseline_classifier_with_f1(X_train, y_train, X_val, y_val):
     for seq, label in zip(X_train['Sequences'], y_train['Outcome']):
         bigrams = extract_bigrams(seq)
         for bg in bigrams:
-            bigram_stats[bg][label] += 1
+            bigram_stats[bg][int(label)] += 1
     
     bigram_probs = {}
     for bg, counts in bigram_stats.items():
