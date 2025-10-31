@@ -151,4 +151,5 @@ def check_lag(seq: List, keys: List, lags: Union[int, List[int]] = 6,
         return False
     
     # Ritorna solo le liste di elementi (senza le posizioni)
+
     return [[elem for _, elem in chain] for chain in chains]

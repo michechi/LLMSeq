@@ -151,6 +151,95 @@ def assign_outcome_positional(
         'all_ordered':[all_ordered]
     }
     return(results_2_debug)
+
+
+def assign_outcome_positional_2_steps(
+    seq:str, 
+    c_ord:dict, # {1:{A:0, B:1, ...}, 2:{Z:0, T:2, ...}, 3:{F:0, G:1, ...}}
+    lags:Union[int, List], 
+    rnd:bool=False, 
+    sep:str="\x1f", 
+    already_splitted=False, 
+    pr_1 = 0.7, 
+    tolerance=True
+    ) -> int:
+    """
+    function that, given a sequence, says 1 or 0, depending on ordering.
+    """
+    # test_seq = 'D7\x1fH5\x1fA7\x1fR5\x1fL1\x1fE4\x1fF8\x1fC0\x1fA8\x1fN0' # sequences[0]
+    # test_seq_splt = test_seq.split("\x1f")
+    # np.random.seed(seed=123456)
+
+    if len(lags) != 4:
+        print("Attention, we need 4 different lags!\n")
+        return
+    else:
+        lag_1, lag_2, lag_3, lag_4 = lags
+
+    if len(c_ord) != 3:
+        print("Attention, we need 3 different set of keys!\n")
+        return
+    else:
+        l_keys_1, l_keys_2, l_keys_3 = c_ord[1].keys(), c_ord[2].keys(), c_ord[3].keys()
+
+    if not already_splitted:
+        test_seq_splt = seq.split(sep) # avoiding noising letters
+    else: 
+        test_seq_splt = seq
+    
+    # Making subsequences:
+    first = len(test_seq_splt)//2
+    test_seq_splt_1, test_seq_splt_2 = test_seq_splt[:first], test_seq_splt[first:]
+
+
+
+    # Check if there are key letters separated by lags.
+    are_lagged_keys_1 = check_lag(test_seq_splt_1, l_keys_1, lag_1)
+    are_lagged_keys_2 = check_lag(test_seq_splt_1, l_keys_1, lag_2)
+
+    # First, are both full?
+    to_check = [len(subs) > 0 for subs in [are_lagged_keys_1, are_lagged_keys_2]]
+
+    for are_lagged_keys in [are_lagged_keys_1, are_lagged_keys_2]:
+        if are_lagged_keys:
+            n_seq=len(are_lagged_keys)
+            all_ordered = [True]*n_seq
+            tol=tolerance # For the cyclic ordering
+            for pos, subseq in enumerate(are_lagged_keys):
+                # Check whether are ordered
+                for x,y in zip(subseq[:-1], subseq[1:]):
+                    if ((2*c_ord[x[0]])>(2*c_ord[y[0]])):
+                            if tol:
+                                tol=False
+                            else:
+                                all_ordered[pos]=False
+            if any(all_ordered):
+                # If there is at least one true, then there is one ordered sequence=> high probabilities of 1
+                pr_to_simulate = pr_1
+            else:
+                # If there is no true, then there are no one ordered sequence=> low probabilities of 1
+                pr_to_simulate = 1-pr_1
+        else:
+            # If there no keys, then there are no one ordered sequence=> low probabilities of 1
+            all_ordered=False
+            pr_to_simulate = 1-pr_1 # if test_seq_splt is void then there are no keys so not ordered
+            
+        if rnd:
+            # Stochastics outcome
+            outcome = bernoulli.rvs(pr_to_simulate)
+        else:
+            # Deterministic outcome
+            outcome = int(np.where(pr_to_simulate==pr_1, 1, 0))
+        
+        # Returning more, to be able to inspect results
+        results_2_debug = {
+            'outcome':[outcome],
+            'seq':seq,
+            'pr_2_sim':[pr_to_simulate],
+            'lagged_keys':[are_lagged_keys],
+            'all_ordered':[all_ordered]
+        }
+        return(results_2_debug)
     
 # seq4 = ['A', 'A', 'C', 'D', 'B', 'A', 'Z', 'H', 'C']
 # # seqT = ['M','V','D','V','M','T','L','C','C','G','X','J','C','Y','J','B','C','Q','F','M']

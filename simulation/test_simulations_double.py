@@ -186,8 +186,11 @@ start_n_stop = len(letters)//2
 train_letters = letters[:start_n_stop]
 test_letters = letters[start_n_stop:]
 
-key_order=random.sample(range(0, start_n_stop), k=start_n_stop)
-train_c_vocab, test_c_vocab = dict(zip(train_letters, key_order)), dict(zip(test_letters, key_order))
+key_order_train=random.sample(range(0, start_n_stop), k=start_n_stop)
+key_order_test=random.sample(range(0, start_n_stop), k=start_n_stop)
+
+# Two different ordering
+train_c_vocab, test_c_vocab = dict(zip(train_letters, key_order_train)), dict(zip(test_letters, key_order_test))
 
 
 # # This is sequential
@@ -411,5 +414,5 @@ plot_bigram_distribution(X_test, y_test, top_n=1000)
 
 
 # Uncomment just if you want to save data!
-for df, name in zip([X_train, X_val, X_test, y_train, y_val, y_test], ["X_train_3", "X_val_3", "X_test_3", "y_train_3", "y_val_3", "y_test_3"]):
+for df, name in zip([X_train, X_val, X_test, y_train, y_val, y_test], ["X_train_4", "X_val_4", "X_test_4", "y_train_4", "y_val_4", "y_test_4"]):
     df.to_csv(f"data/simulation/{name}.csv", index=False)
