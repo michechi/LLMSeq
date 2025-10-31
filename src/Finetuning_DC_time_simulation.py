@@ -23,7 +23,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 def standard_narrative_prompt(row, to_split='\x1f'):
-    events = row["Sequences"].split(to_split) # Testing on third-letter
+    events = row["Sequences"].split(to_split) 
     prompt = f'Sequential events: {" ".join(events)}\n'
     prompt += 'Outcome (0 or 1):'
     return prompt
@@ -76,22 +76,22 @@ def parse_args(args=None):
 
     # Data
     ## Train
-    parser.add_argument("--X_train_csv", type=str, default="/root/MIMICIV/data/simulation/X_train_3.csv",
+    parser.add_argument("--X_train_csv", type=str, default="/root/MIMICIV/data/simulation/X_train_9.csv",
                         help="Path to file CSV di training")
     
-    parser.add_argument("--y_train_csv", type=str, default="/root/MIMICIV/data/simulation/y_train_3.csv",
+    parser.add_argument("--y_train_csv", type=str, default="/root/MIMICIV/data/simulation/y_train_9.csv",
                         help="Path to file CSV di training")
     ## Val
-    parser.add_argument("--X_val_csv", type=str, default="/root/MIMICIV/data/simulation/X_val_3.csv",
+    parser.add_argument("--X_val_csv", type=str, default="/root/MIMICIV/data/simulation/X_val_9.csv",
                         help="Path to file CSV di validation")
     
-    parser.add_argument("--y_val_csv", type=str, default="/root/MIMICIV/data/simulation/y_val_3.csv",
+    parser.add_argument("--y_val_csv", type=str, default="/root/MIMICIV/data/simulation/y_val_9.csv",
                         help="Path to file CSV di training")
     ## Test
-    parser.add_argument("--X_test_csv", type=str, default="/root/MIMICIV/data/simulation/X_test_3.csv",
+    parser.add_argument("--X_test_csv", type=str, default="/root/MIMICIV/data/simulation/X_test_9.csv",
                         help="Path to file CSV di validation")
     
-    parser.add_argument("--y_test_csv", type=str, default="/root/MIMICIV/data/simulation/y_test_3.csv",
+    parser.add_argument("--y_test_csv", type=str, default="/root/MIMICIV/data/simulation/y_test_9.csv",
                         help="Path to file CSV di training")
 
     # Prompts
@@ -559,7 +559,7 @@ set_seed(args.seed)
 
 train_texts = X_train.apply(narrative_prompt, axis=1).tolist()
 val_texts = X_val.apply(narrative_prompt, axis=1).tolist()
-test_texts = X_test.apply(standard_narrative_prompt_map, axis=1).tolist()
+test_texts = X_test.apply(narrative_prompt, axis=1).tolist()
 
 logger.info(f"Example train text: {train_texts[0]}")
 logger.info(f"Example test text: {test_texts[0]}")
