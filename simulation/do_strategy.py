@@ -1,11 +1,13 @@
-def do_chek_order(are_lagged_keys, key_letters):
+from simulation.do_check_lag import check_lag
+
+def do_chek_order(are_lagged_keys, key_letters, cycle):
     n_seq=len(are_lagged_keys)
     all_ordered = [True]*n_seq
     tol=cycle # For the cyclic ordering
     for pos, subseq in enumerate(are_lagged_keys):
         # Check whether are ordered
         for x,y in zip(subseq[:-1], subseq[1:]):
-            if ((2*c_ord[x[0]])>(2*c_ord[y[0]])):
+            if ((2*key_letters[x[0]])>(2*key_letters[y[0]])):
                     if tol:
                         tol=False
                     else:
@@ -43,8 +45,10 @@ def do_strategy(subseq, lags1_2, key_letters, cycle=False):
         return "first_order"
     elif second_order:
         return "second_order"
+    else:
+        return "no_order"
 
-def do_order(subseq,lag, key_letters, strategy):
+def do_order(subseq,lag, key_letters, strategy, cycle=False):
     """on the second subsequence, check the order according to lag and key_letters and strategy"""
     
     if strategy == "no_order":
@@ -70,7 +74,7 @@ def do_order(subseq,lag, key_letters, strategy):
         return
 
     if are_lagged_keys:
-        is_ordered = do_chek_order(are_lagged_keys, key_letters)
+        is_ordered = do_chek_order(are_lagged_keys, key_letters, cycle)
         if is_ordered:
             return True
     
