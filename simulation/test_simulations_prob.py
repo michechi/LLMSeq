@@ -4,7 +4,9 @@ import pandas as pd
 import string
 import random
 import collections
+import sys
 
+from pathlib import Path
 from sklearn.model_selection import train_test_split
 from multiprocessing import Pool, cpu_count
 from collections import Counter
@@ -12,6 +14,11 @@ from scipy.stats import bernoulli
 from itertools import product
 from typing import List, Union
 from tqdm import tqdm
+
+# Aggiungi la directory MIMICIV al path
+root_dir = Path(__file__).parent.parent  # Sale di due livelli
+sys.path.insert(0, str(root_dir))
+
 from simulation.do_check_lag import check_lag
 from simulation.do_strategy import do_strategy, do_chek_order, do_order
 
@@ -183,10 +190,11 @@ def assign_outcome_positional_2_steps(
         return
     else:
         keys = dict(
-            "strategy"=c_ord[1].keys(),
-            "both_orders"=[c_ord[2].keys(), c_ord[3].keys()],
-            "first_order"= c_ord[2].keys(), 
-            "second_order"=c_ord[3].keys()
+            strategy=c_ord['strategy'],
+            both_orders=[c_ord['first_order'], c_ord['second_order']],
+            first_order= c_ord['first_order'], 
+            second_order=c_ord['second_order'],
+            no_order=None
             )
     
     if not already_splitted:
@@ -201,10 +209,10 @@ def assign_outcome_positional_2_steps(
     # We need to check both subsequences for lags
     # I need a function that given the firtst subsequence and lag, and K1, gives me the strategy to follow for the
     # second subsequence
-    strategy = do_strategy(test_seq_splt_1, lag_1_2, keys["strategy"])
-    print(f"Strategy chosen: {strategy}\n")
+    strategy = do_strategy(test_seq_splt_1, [lag_1, lag_2], keys["strategy"])
+    # print(f"Strategy chosen: {strategy}\n")
 
-    order = do_order(test_seq_splt_2, lag_3, keys[strategy])
+    order = do_order(test_seq_splt_2, lag_3, keys[strategy], strategy)
     if order:
         pr_to_simulate = pr_1
     else:
@@ -237,33 +245,53 @@ def assign_outcome_positional_2_steps(
 
 random.seed(959693)
 
-n_events = 30 # More
-n_seq = 100_000_000
-k =4
+n_events = 40 # More
+n_seq = 10_000_000
 n_0s = 250_000
 n_1s = 250_000
 n_tot = n_0s + n_1s
 n_train = n_tot * 0.80 # 80% of n_tot
 n_val = n_tot * 0.10
 n_test = n_tot * 0.10
-generate = False
+generate = True
 parallel = True
 #sum([n_train, n_test, n_val]) == n_tot
 
 letters = list(string.ascii_uppercase)
 # letters_4_key = letters.copy()
 # random.shuffle(letters_4_key)
-letters_4_key = ["W", "D", "Q", "J", "X", "U"] # Added X
+# letters_4_key = ["W", "D", "Q", "J", "X", "U"] # Added X
+set_1_key = ["W", "D", "Q", "J", "X", "U"]
+set_2_key = ["M", "A", "L", "J", "V", "I"]
+set_3_key = ["Q", "O", "Y", "D", "T", "S"]
+
 # digits = list(map(str, range(10)))
 
 # random.shuffle(letters_4_key)
 # random.shuffle(digits)
 
-c_vocab = {w:p for p,w in enumerate(letters_4_key,start=0)}
+c_vocab = dict(
+    strategy={w:p for p,w in enumerate(set_1_key,start=0)},
+    first_order={w:p for p,w in enumerate(set_2_key,start=0)},
+    second_order={w:p for p,w in enumerate(set_3_key,start=0)}
+)
 
 # This is sequential
 if generate:
-    sequences = generate_sequences(letters=letters, n=n_events, m=n_seq, replacement=True)
+    if not parallel:
+        sequences = generate_sequences(letters=letters, n=n_events, m=n_seq, replacement=True)
+    else:
+        # Parallel version
+        n_cores = cpu_count()-1
+        rng = np.random.default_rng(999)
+        seeds = rng.integers(0, 2**31, size=n_cores)
+        m_per_core = int(n_seq * 1.2 / n_cores)  # 20% oversample
+        tasks = [(letters, n_events, m_per_core, True, seed) for seed in seeds]
+        with Pool(processes=n_cores) as pool:
+            results = pool.map(worker_generate, tasks)
+        # Deduplicate and trim
+        all_sequences = [seq for result in results for seq in result]
+        sequences = list(dict.fromkeys(all_sequences))[:n_seq]
 else:
     # Load pre-generated sequences (from previous runs)
     sequences = pd.read_csv("data/simulation/X_test_5.csv")["Sequences"].tolist()
@@ -275,25 +303,7 @@ else:
     sequences += pd.read_csv("data/simulation/X_val_5.csv")["Sequences"].tolist()
     labels += pd.read_csv("data/simulation/y_val_5.csv")["Outcome"].tolist()
 
-    n_seq = len(sequences)  
-
-
-
-# # Parallel version
-# n_cores = cpu_count()-1
-# rng = np.random.default_rng(999)
-# seeds = rng.integers(0, 2**31, size=n_cores)
-# m_per_core = int(n_seq * 1.2 / n_cores)  # 20% oversample
-# tasks = [(letters, n_events, m_per_core, True, seed) 
-#              for seed in seeds]
-
-# with Pool(processes=n_cores) as pool:
-#     results = pool.map(worker_generate, tasks)
-
-# # Deduplicate and trim
-# all_sequences = [seq for result in results for seq in result]
-# sequences = list(dict.fromkeys(all_sequences))[:n_seq]
-
+n_seq = len(sequences)  
 set_seq = set(sequences)
 n_set_seq = len(set_seq)
 
@@ -314,8 +324,8 @@ def efficient_check_v1(sequences, c_vocab, assign_outcome_positional, tolerance=
         'outcome':[],
         'seq':[],
         'pr_2_sim':[],
-        'lagged_keys':[],
-        'all_ordered':[]
+        # 'lagged_keys':[],
+        # 'all_ordered':[]
     })
 
     for seq in tqdm(sequences):
@@ -351,7 +361,6 @@ def efficient_check_v1(sequences, c_vocab, assign_outcome_positional, tolerance=
         'invalid_sequences': which_0s,
         'outcomes': outcomes
     }, df_2_monitor)
-
 
 def process_single_sequence(args):
     """Funzione helper per il multiprocessing"""
@@ -417,7 +426,7 @@ def efficient_check_parallel(sequences, c_vocab, assign_outcome_positional,
 
 # Which lags do we prefer?
 # lags = [7,4,2] # is valid
-lags = 7
+lags = [7, 8, 5, 5]
 
 if parallel:
     # Parallel:
@@ -426,7 +435,7 @@ if parallel:
     check, df_2_monitor = efficient_check_parallel(
             sequences=sequences, 
             c_vocab=c_vocab, 
-            assign_outcome_positional=assign_outcome_positional, 
+            assign_outcome_positional=assign_outcome_positional_2_steps, 
             tolerance=False, 
             lags=lags, 
             rnd=True,
@@ -437,7 +446,7 @@ else:
     check, df_2_monitor = efficient_check_v1(
         sequences=sequences, 
         c_vocab=c_vocab, 
-        assign_outcome_positional=assign_outcome_positional, 
+        assign_outcome_positional=assign_outcome_positional_2_steps, 
         tolerance=False, 
         lags=lags, 
         rnd=True)
