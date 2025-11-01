@@ -13,6 +13,7 @@ from itertools import product
 from typing import List, Union
 from tqdm import tqdm
 from simulation.do_check_lag import check_lag
+from simulation.do_strategy import do_strategy, do_chek_order, do_order
 
 def rm_all():
     [globals().pop(var) for var in list(globals()) if not var.startswith('_')]
@@ -165,6 +166,7 @@ def assign_outcome_positional_2_steps(
     ) -> int:
     """
     function that, given a sequence, says 1 or 0, depending on ordering.
+    This is a two steps implementation (in two subsequences).
     """
     # test_seq = 'D7\x1fH5\x1fA7\x1fR5\x1fL1\x1fE4\x1fF8\x1fC0\x1fA8\x1fN0' # sequences[0]
     # test_seq_splt = test_seq.split("\x1f")
@@ -180,8 +182,13 @@ def assign_outcome_positional_2_steps(
         print("Attention, we need 3 different set of keys!\n")
         return
     else:
-        l_keys_1, l_keys_2, l_keys_3 = c_ord[1].keys(), c_ord[2].keys(), c_ord[3].keys()
-
+        keys = dict(
+            "strategy"=c_ord[1].keys(),
+            "both_orders"=[c_ord[2].keys(), c_ord[3].keys()],
+            "first_order"= c_ord[2].keys(), 
+            "second_order"=c_ord[3].keys()
+            )
+    
     if not already_splitted:
         test_seq_splt = seq.split(sep) # avoiding noising letters
     else: 
@@ -191,55 +198,35 @@ def assign_outcome_positional_2_steps(
     first = len(test_seq_splt)//2
     test_seq_splt_1, test_seq_splt_2 = test_seq_splt[:first], test_seq_splt[first:]
 
+    # We need to check both subsequences for lags
+    # I need a function that given the firtst subsequence and lag, and K1, gives me the strategy to follow for the
+    # second subsequence
+    strategy = do_strategy(test_seq_splt_1, lag_1_2, keys["strategy"])
+    print(f"Strategy chosen: {strategy}\n")
 
+    order = do_order(test_seq_splt_2, lag_3, keys[strategy])
+    if order:
+        pr_to_simulate = pr_1
+    else:
+        pr_to_simulate = 1-pr_1
 
-    # Check if there are key letters separated by lags.
-    are_lagged_keys_1 = check_lag(test_seq_splt_1, l_keys_1, lag_1)
-    are_lagged_keys_2 = check_lag(test_seq_splt_1, l_keys_1, lag_2)
-
-    # First, are both full?
-    to_check = [len(subs) > 0 for subs in [are_lagged_keys_1, are_lagged_keys_2]]
-
-    for are_lagged_keys in [are_lagged_keys_1, are_lagged_keys_2]:
-        if are_lagged_keys:
-            n_seq=len(are_lagged_keys)
-            all_ordered = [True]*n_seq
-            tol=tolerance # For the cyclic ordering
-            for pos, subseq in enumerate(are_lagged_keys):
-                # Check whether are ordered
-                for x,y in zip(subseq[:-1], subseq[1:]):
-                    if ((2*c_ord[x[0]])>(2*c_ord[y[0]])):
-                            if tol:
-                                tol=False
-                            else:
-                                all_ordered[pos]=False
-            if any(all_ordered):
-                # If there is at least one true, then there is one ordered sequence=> high probabilities of 1
-                pr_to_simulate = pr_1
-            else:
-                # If there is no true, then there are no one ordered sequence=> low probabilities of 1
-                pr_to_simulate = 1-pr_1
-        else:
-            # If there no keys, then there are no one ordered sequence=> low probabilities of 1
-            all_ordered=False
-            pr_to_simulate = 1-pr_1 # if test_seq_splt is void then there are no keys so not ordered
-            
-        if rnd:
-            # Stochastics outcome
-            outcome = bernoulli.rvs(pr_to_simulate)
-        else:
-            # Deterministic outcome
-            outcome = int(np.where(pr_to_simulate==pr_1, 1, 0))
-        
+    if rnd:
+        # Stochastics outcome
+        outcome = bernoulli.rvs(pr_to_simulate)
+    else:
+        # Deterministic outcome
+        outcome = int(np.where(pr_to_simulate==pr_1, 1, 0))
+    
         # Returning more, to be able to inspect results
-        results_2_debug = {
+    results_2_debug = {
             'outcome':[outcome],
             'seq':seq,
             'pr_2_sim':[pr_to_simulate],
-            'lagged_keys':[are_lagged_keys],
-            'all_ordered':[all_ordered]
+            # 'lagged_keys':[are_lagged_keys],
+            # 'all_ordered':[all_ordered]
         }
-        return(results_2_debug)
+    
+    return(results_2_debug)
     
 # seq4 = ['A', 'A', 'C', 'D', 'B', 'A', 'Z', 'H', 'C']
 # # seqT = ['M','V','D','V','M','T','L','C','C','G','X','J','C','Y','J','B','C','Q','F','M']
