@@ -15,10 +15,9 @@ from itertools import product
 from typing import List, Union
 from tqdm import tqdm
 
-# Aggiungi la directory MIMICIV al path
-root_dir = Path(__file__).parent.parent  # Sale di due livelli
-sys.path.insert(0, str(root_dir))
-
+# # Aggiungi la directory MIMICIV al path FOR DEBUG ONLY
+# root_dir = Path(__file__).parent.parent  # Sale di due livelli
+# sys.path.insert(0, str(root_dir))
 from simulation.do_check_lag import check_lag
 from simulation.do_strategy import do_strategy, do_chek_order, do_order
 
@@ -464,7 +463,7 @@ if (not generate):
 chr_seq_1s=list(map(extract_characters, check['valid_sequences']))
 chr_seq_0s=list(map(extract_characters, check['invalid_sequences']))
 
-i = 0
+i = 20
 stats_1s, stats_0s = collections.Counter(x[i*2] for x in chr_seq_1s), collections.Counter(x[i*2] for x in chr_seq_0s)
 
 letters_ord = string.ascii_uppercase
@@ -486,7 +485,6 @@ ax.set_xticklabels(letters_ord)
 ax.legend()
 plt.show()
 
-
 # Create Dataset
 df = pd.DataFrame({
     "Sequences":df_2_monitor['seq'],
@@ -507,7 +505,7 @@ which_0s_sel = list(df_full.loc[df_full["Outcome"]==0, "Sequences"])
 chr_seq_1s=list(map(extract_characters, which_1s_sel))
 chr_seq_0s=list(map(extract_characters, which_0s_sel))
 
-i = 0
+i = 39
 stats_1s, stats_0s = collections.Counter(x[i*2] for x in chr_seq_1s), collections.Counter(x[i*2] for x in chr_seq_0s)
 
 letters_ord = string.ascii_uppercase
@@ -536,9 +534,9 @@ X_train, X_val_test, y_train, y_val_test = train_test_split(X, y, train_size=0.8
 X_val, X_test, y_val, y_test = train_test_split(X_val_test, y_val_test, train_size=0.50, random_state=999)
 
 # Uncomment just if you want to save data!
-# number_csv = 9
-# for df, name in zip([X_train, X_val, X_test, y_train, y_val, y_test], [f"X_train_{number_csv}", f"X_val_{number_csv}", f"X_test_{number_csv}", f"y_train_{number_csv}", f"y_val_{number_csv}", f"y_test_{number_csv}"]):
-#     df.to_csv(f"data/simulation/{name}.csv", index=False)
+number_csv = 10
+for df, name in zip([X_train, X_val, X_test, y_train, y_val, y_test], [f"X_train_{number_csv}", f"X_val_{number_csv}", f"X_test_{number_csv}", f"y_train_{number_csv}", f"y_val_{number_csv}", f"y_test_{number_csv}"]):
+    df.to_csv(f"data/simulation/{name}.csv", index=False)
 
 # GRAPHICAL STUFF
 # Let's visualize bigrams
@@ -614,4 +612,4 @@ def plot_bigram_distribution(X_train, y_train, from_n=0, top_n=30):
         print(f"{bg:<10} {c0:<15} {c1:<15} {diff:<12.0f}")
 
 # Esegui
-plot_bigram_distribution(X_train, y_train, from_n=1, top_n=100)
+plot_bigram_distribution(X_train, y_train, from_n=200, top_n=400)
