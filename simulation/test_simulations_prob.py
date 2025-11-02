@@ -169,15 +169,20 @@ def assign_outcome_positional_2_steps(
     already_splitted=False, 
     pr_1 = 0.7, 
     tolerance=True
+    debugging=False
     ) -> int:
     """
     function that, given a sequence, says 1 or 0, depending on ordering.
     This is a two steps implementation (in two subsequences).
+    If `debugging==True` gives extra values to check validity of code  
+    TODO/LIST:
+        * Better management of lags values (different strategies)
+        * Better management of hardcoded values
+        * Debugging values
+        * Checkpoint loadings (to have the possibility)
+        * .. 
     """
-    # test_seq = 'D7\x1fH5\x1fA7\x1fR5\x1fL1\x1fE4\x1fF8\x1fC0\x1fA8\x1fN0' # sequences[0]
-    # test_seq_splt = test_seq.split("\x1f")
-    # np.random.seed(seed=123456)
-
+    
     if len(lags) != 4:
         print("Attention, we need 4 different lags!\n")
         return
@@ -208,10 +213,11 @@ def assign_outcome_positional_2_steps(
     # We need to check both subsequences for lags
     # I need a function that given the firtst subsequence and lag, and K1, gives me the strategy to follow for the
     # second subsequence
-    strategy = do_strategy(test_seq_splt_1, [lag_1, lag_2], keys["strategy"])
+    info_2_debug_1, strategy = do_strategy(test_seq_splt_1, [lag_1, lag_2], keys["strategy"], debugging)
     # print(f"Strategy chosen: {strategy}\n")
 
-    order = do_order(test_seq_splt_2, lag_3, keys[strategy], strategy)
+    # Now, check the order looking at the second subsequence given the strategy
+    info_2_debug_2, order = do_order(test_seq_splt_2, lag_3, keys[strategy], strategy, debugging)
     if order:
         pr_to_simulate = pr_1
     else:
@@ -224,15 +230,24 @@ def assign_outcome_positional_2_steps(
         # Deterministic outcome
         outcome = int(np.where(pr_to_simulate==pr_1, 1, 0))
     
-        # Returning more, to be able to inspect results
-    results_2_debug = {
-            'outcome':[outcome],
-            'seq':seq,
-            'pr_2_sim':[pr_to_simulate],
-            # 'lagged_keys':[are_lagged_keys],
-            # 'all_ordered':[all_ordered]
-        }
-    
+    # Returning more, to be able to inspect results
+    if not debugging:
+        results_2_debug = {
+                'outcome':[outcome],
+                'seq':seq,
+                'pr_2_sim':[pr_to_simulate]
+            }
+    else:
+        results_2_debug = {
+                'outcome':[outcome],
+                'seq':seq,
+                'pr_2_sim':[pr_to_simulate],
+                'lagged_keys':[info_2_debug_1['lagged_1'], info_2_debug_2['lagged_2'], info_2_debug_2['lagged_3']],
+                'all_ordered':[info_2_debug_1['order'], info_2_debug_2['final_order']],
+                'lags':lags
+            }
+
+
     return(results_2_debug)
     
 # seq4 = ['A', 'A', 'C', 'D', 'B', 'A', 'Z', 'H', 'C']
@@ -252,7 +267,7 @@ n_tot = n_0s + n_1s
 n_train = n_tot * 0.80 # 80% of n_tot
 n_val = n_tot * 0.10
 n_test = n_tot * 0.10
-generate = True
+generate = False
 parallel = True
 #sum([n_train, n_test, n_val]) == n_tot
 
@@ -293,14 +308,14 @@ if generate:
         sequences = list(dict.fromkeys(all_sequences))[:n_seq]
 else:
     # Load pre-generated sequences (from previous runs)
-    sequences = pd.read_csv("data/simulation/X_test_5.csv")["Sequences"].tolist()
-    labels = pd.read_csv("data/simulation/y_test_5.csv")["Outcome"].tolist()
+    sequences = pd.read_csv("data/simulation/X_test_10.csv")["Sequences"].tolist()
+    labels = pd.read_csv("data/simulation/y_test_10.csv")["Outcome"].tolist()
 
-    sequences += pd.read_csv("data/simulation/X_train_5.csv")["Sequences"].tolist()
-    labels += pd.read_csv("data/simulation/y_train_5.csv")["Outcome"].tolist()
+    sequences += pd.read_csv("data/simulation/X_train_10.csv")["Sequences"].tolist()
+    labels += pd.read_csv("data/simulation/y_train_10.csv")["Outcome"].tolist()
 
-    sequences += pd.read_csv("data/simulation/X_val_5.csv")["Sequences"].tolist()
-    labels += pd.read_csv("data/simulation/y_val_5.csv")["Outcome"].tolist()
+    sequences += pd.read_csv("data/simulation/X_val_10.csv")["Sequences"].tolist()
+    labels += pd.read_csv("data/simulation/y_val_10.csv")["Outcome"].tolist()
 
 n_seq = len(sequences)  
 set_seq = set(sequences)
