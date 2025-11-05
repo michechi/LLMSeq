@@ -4,7 +4,9 @@ import pandas as pd
 import string
 import random
 import collections
+import sys
 
+from pathlib import Path
 from sklearn.model_selection import train_test_split
 from multiprocessing import Pool, cpu_count
 from collections import Counter
@@ -12,6 +14,10 @@ from scipy.stats import bernoulli
 from itertools import product
 from typing import List, Union
 from tqdm import tqdm
+
+# # Aggiungi la directory MIMICIV al path FOR DEBUG ONLY
+# root_dir = Path(__file__).parent.parent  # Sale di due livelli
+# sys.path.insert(0, str(root_dir))
 from simulation.do_check_lag import check_lag
 from simulation.do_strategy import do_strategy, do_chek_order, do_order
 
@@ -163,15 +169,20 @@ def assign_outcome_positional_2_steps(
     already_splitted=False, 
     pr_1 = 0.7, 
     tolerance=True
+    debugging=False
     ) -> int:
     """
     function that, given a sequence, says 1 or 0, depending on ordering.
     This is a two steps implementation (in two subsequences).
+    If `debugging==True` gives extra values to check validity of code  
+    TODO/LIST:
+        * Better management of lags values (different strategies)
+        * Better management of hardcoded values
+        * Debugging values
+        * Checkpoint loadings (to have the possibility)
+        * .. 
     """
-    # test_seq = 'D7\x1fH5\x1fA7\x1fR5\x1fL1\x1fE4\x1fF8\x1fC0\x1fA8\x1fN0' # sequences[0]
-    # test_seq_splt = test_seq.split("\x1f")
-    # np.random.seed(seed=123456)
-
+    
     if len(lags) != 4:
         print("Attention, we need 4 different lags!\n")
         return
@@ -183,10 +194,11 @@ def assign_outcome_positional_2_steps(
         return
     else:
         keys = dict(
-            "strategy"=c_ord[1].keys(),
-            "both_orders"=[c_ord[2].keys(), c_ord[3].keys()],
-            "first_order"= c_ord[2].keys(), 
-            "second_order"=c_ord[3].keys()
+            strategy=c_ord['strategy'],
+            both_orders=[c_ord['first_order'], c_ord['second_order']],
+            first_order= c_ord['first_order'], 
+            second_order=c_ord['second_order'],
+            no_order=None
             )
     
     if not already_splitted:
@@ -201,10 +213,11 @@ def assign_outcome_positional_2_steps(
     # We need to check both subsequences for lags
     # I need a function that given the firtst subsequence and lag, and K1, gives me the strategy to follow for the
     # second subsequence
-    strategy = do_strategy(test_seq_splt_1, lag_1_2, keys["strategy"])
-    print(f"Strategy chosen: {strategy}\n")
+    info_2_debug_1, strategy = do_strategy(test_seq_splt_1, [lag_1, lag_2], keys["strategy"], debugging)
+    # print(f"Strategy chosen: {strategy}\n")
 
-    order = do_order(test_seq_splt_2, lag_3, keys[strategy])
+    # Now, check the order looking at the second subsequence given the strategy
+    info_2_debug_2, order = do_order(test_seq_splt_2, lag_3, keys[strategy], strategy, debugging)
     if order:
         pr_to_simulate = pr_1
     else:
@@ -217,15 +230,24 @@ def assign_outcome_positional_2_steps(
         # Deterministic outcome
         outcome = int(np.where(pr_to_simulate==pr_1, 1, 0))
     
-        # Returning more, to be able to inspect results
-    results_2_debug = {
-            'outcome':[outcome],
-            'seq':seq,
-            'pr_2_sim':[pr_to_simulate],
-            # 'lagged_keys':[are_lagged_keys],
-            # 'all_ordered':[all_ordered]
-        }
-    
+    # Returning more, to be able to inspect results
+    if not debugging:
+        results_2_debug = {
+                'outcome':[outcome],
+                'seq':seq,
+                'pr_2_sim':[pr_to_simulate]
+            }
+    else:
+        results_2_debug = {
+                'outcome':[outcome],
+                'seq':seq,
+                'pr_2_sim':[pr_to_simulate],
+                'lagged_keys':[info_2_debug_1['lagged_1'], info_2_debug_2['lagged_2'], info_2_debug_2['lagged_3']],
+                'all_ordered':[info_2_debug_1['order'], info_2_debug_2['final_order']],
+                'lags':lags
+            }
+
+
     return(results_2_debug)
     
 # seq4 = ['A', 'A', 'C', 'D', 'B', 'A', 'Z', 'H', 'C']
@@ -237,9 +259,8 @@ def assign_outcome_positional_2_steps(
 
 random.seed(959693)
 
-n_events = 30 # More
-n_seq = 100_000_000
-k =4
+n_events = 40 # More
+n_seq = 10_000_000
 n_0s = 250_000
 n_1s = 250_000
 n_tot = n_0s + n_1s
@@ -253,47 +274,50 @@ parallel = True
 letters = list(string.ascii_uppercase)
 # letters_4_key = letters.copy()
 # random.shuffle(letters_4_key)
-letters_4_key = ["W", "D", "Q", "J", "X", "U"] # Added X
+# letters_4_key = ["W", "D", "Q", "J", "X", "U"] # Added X
+set_1_key = ["W", "D", "Q", "J", "X", "U"]
+set_2_key = ["M", "A", "L", "J", "V", "I"]
+set_3_key = ["Q", "O", "Y", "D", "T", "S"]
+
 # digits = list(map(str, range(10)))
 
 # random.shuffle(letters_4_key)
 # random.shuffle(digits)
 
-c_vocab = {w:p for p,w in enumerate(letters_4_key,start=0)}
+c_vocab = dict(
+    strategy={w:p for p,w in enumerate(set_1_key,start=0)},
+    first_order={w:p for p,w in enumerate(set_2_key,start=0)},
+    second_order={w:p for p,w in enumerate(set_3_key,start=0)}
+)
 
 # This is sequential
 if generate:
-    sequences = generate_sequences(letters=letters, n=n_events, m=n_seq, replacement=True)
+    if not parallel:
+        sequences = generate_sequences(letters=letters, n=n_events, m=n_seq, replacement=True)
+    else:
+        # Parallel version
+        n_cores = cpu_count()-1
+        rng = np.random.default_rng(999)
+        seeds = rng.integers(0, 2**31, size=n_cores)
+        m_per_core = int(n_seq * 1.2 / n_cores)  # 20% oversample
+        tasks = [(letters, n_events, m_per_core, True, seed) for seed in seeds]
+        with Pool(processes=n_cores) as pool:
+            results = pool.map(worker_generate, tasks)
+        # Deduplicate and trim
+        all_sequences = [seq for result in results for seq in result]
+        sequences = list(dict.fromkeys(all_sequences))[:n_seq]
 else:
     # Load pre-generated sequences (from previous runs)
-    sequences = pd.read_csv("data/simulation/X_test_5.csv")["Sequences"].tolist()
-    labels = pd.read_csv("data/simulation/y_test_5.csv")["Outcome"].tolist()
+    sequences = pd.read_csv("data/simulation/X_test_10.csv")["Sequences"].tolist()
+    labels = pd.read_csv("data/simulation/y_test_10.csv")["Outcome"].tolist()
 
-    sequences += pd.read_csv("data/simulation/X_train_5.csv")["Sequences"].tolist()
-    labels += pd.read_csv("data/simulation/y_train_5.csv")["Outcome"].tolist()
+    sequences += pd.read_csv("data/simulation/X_train_10.csv")["Sequences"].tolist()
+    labels += pd.read_csv("data/simulation/y_train_10.csv")["Outcome"].tolist()
 
-    sequences += pd.read_csv("data/simulation/X_val_5.csv")["Sequences"].tolist()
-    labels += pd.read_csv("data/simulation/y_val_5.csv")["Outcome"].tolist()
+    sequences += pd.read_csv("data/simulation/X_val_10.csv")["Sequences"].tolist()
+    labels += pd.read_csv("data/simulation/y_val_10.csv")["Outcome"].tolist()
 
-    n_seq = len(sequences)  
-
-
-
-# # Parallel version
-# n_cores = cpu_count()-1
-# rng = np.random.default_rng(999)
-# seeds = rng.integers(0, 2**31, size=n_cores)
-# m_per_core = int(n_seq * 1.2 / n_cores)  # 20% oversample
-# tasks = [(letters, n_events, m_per_core, True, seed) 
-#              for seed in seeds]
-
-# with Pool(processes=n_cores) as pool:
-#     results = pool.map(worker_generate, tasks)
-
-# # Deduplicate and trim
-# all_sequences = [seq for result in results for seq in result]
-# sequences = list(dict.fromkeys(all_sequences))[:n_seq]
-
+n_seq = len(sequences)  
 set_seq = set(sequences)
 n_set_seq = len(set_seq)
 
@@ -314,8 +338,8 @@ def efficient_check_v1(sequences, c_vocab, assign_outcome_positional, tolerance=
         'outcome':[],
         'seq':[],
         'pr_2_sim':[],
-        'lagged_keys':[],
-        'all_ordered':[]
+        # 'lagged_keys':[],
+        # 'all_ordered':[]
     })
 
     for seq in tqdm(sequences):
@@ -351,7 +375,6 @@ def efficient_check_v1(sequences, c_vocab, assign_outcome_positional, tolerance=
         'invalid_sequences': which_0s,
         'outcomes': outcomes
     }, df_2_monitor)
-
 
 def process_single_sequence(args):
     """Funzione helper per il multiprocessing"""
@@ -417,7 +440,7 @@ def efficient_check_parallel(sequences, c_vocab, assign_outcome_positional,
 
 # Which lags do we prefer?
 # lags = [7,4,2] # is valid
-lags = 7
+lags = [7, 8, 5, 5]
 
 if parallel:
     # Parallel:
@@ -426,7 +449,7 @@ if parallel:
     check, df_2_monitor = efficient_check_parallel(
             sequences=sequences, 
             c_vocab=c_vocab, 
-            assign_outcome_positional=assign_outcome_positional, 
+            assign_outcome_positional=assign_outcome_positional_2_steps, 
             tolerance=False, 
             lags=lags, 
             rnd=True,
@@ -437,7 +460,7 @@ else:
     check, df_2_monitor = efficient_check_v1(
         sequences=sequences, 
         c_vocab=c_vocab, 
-        assign_outcome_positional=assign_outcome_positional, 
+        assign_outcome_positional=assign_outcome_positional_2_steps, 
         tolerance=False, 
         lags=lags, 
         rnd=True)
@@ -455,7 +478,7 @@ if (not generate):
 chr_seq_1s=list(map(extract_characters, check['valid_sequences']))
 chr_seq_0s=list(map(extract_characters, check['invalid_sequences']))
 
-i = 0
+i = 20
 stats_1s, stats_0s = collections.Counter(x[i*2] for x in chr_seq_1s), collections.Counter(x[i*2] for x in chr_seq_0s)
 
 letters_ord = string.ascii_uppercase
@@ -477,7 +500,6 @@ ax.set_xticklabels(letters_ord)
 ax.legend()
 plt.show()
 
-
 # Create Dataset
 df = pd.DataFrame({
     "Sequences":df_2_monitor['seq'],
@@ -498,7 +520,7 @@ which_0s_sel = list(df_full.loc[df_full["Outcome"]==0, "Sequences"])
 chr_seq_1s=list(map(extract_characters, which_1s_sel))
 chr_seq_0s=list(map(extract_characters, which_0s_sel))
 
-i = 0
+i = 39
 stats_1s, stats_0s = collections.Counter(x[i*2] for x in chr_seq_1s), collections.Counter(x[i*2] for x in chr_seq_0s)
 
 letters_ord = string.ascii_uppercase
@@ -527,9 +549,9 @@ X_train, X_val_test, y_train, y_val_test = train_test_split(X, y, train_size=0.8
 X_val, X_test, y_val, y_test = train_test_split(X_val_test, y_val_test, train_size=0.50, random_state=999)
 
 # Uncomment just if you want to save data!
-# number_csv = 9
-# for df, name in zip([X_train, X_val, X_test, y_train, y_val, y_test], [f"X_train_{number_csv}", f"X_val_{number_csv}", f"X_test_{number_csv}", f"y_train_{number_csv}", f"y_val_{number_csv}", f"y_test_{number_csv}"]):
-#     df.to_csv(f"data/simulation/{name}.csv", index=False)
+number_csv = 10
+for df, name in zip([X_train, X_val, X_test, y_train, y_val, y_test], [f"X_train_{number_csv}", f"X_val_{number_csv}", f"X_test_{number_csv}", f"y_train_{number_csv}", f"y_val_{number_csv}", f"y_test_{number_csv}"]):
+    df.to_csv(f"data/simulation/{name}.csv", index=False)
 
 # GRAPHICAL STUFF
 # Let's visualize bigrams
@@ -605,4 +627,4 @@ def plot_bigram_distribution(X_train, y_train, from_n=0, top_n=30):
         print(f"{bg:<10} {c0:<15} {c1:<15} {diff:<12.0f}")
 
 # Esegui
-plot_bigram_distribution(X_train, y_train, from_n=1, top_n=100)
+plot_bigram_distribution(X_train, y_train, from_n=200, top_n=400)
