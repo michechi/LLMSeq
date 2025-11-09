@@ -23,7 +23,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 def standard_narrative_prompt(row, to_split='\x1f'):
-    events = row["Sequences"].split(to_split) 
+    events = row["Med"].split(to_split) 
     prompt = f'Sequential events: {" ".join(events)}\n'
     prompt += 'Outcome (0 or 1):'
     return prompt
@@ -34,7 +34,7 @@ test_l  = letters[13:]
 mapping = "; ".join([str(l[0])+"="+str(l[1]) for l in zip(train_l, test_l) ])
 
 def standard_narrative_prompt_map(row, to_split='\x1f', mapping=mapping):
-    events = row["Sequences"].split(to_split) # Testing on third-letter
+    events = row["Med"].split(to_split) # Testing on third-letter
     prompt = 'Determine whether the sequences are ordered. The alphabet is different now, but the ordering is the same as in the Training.\n'
     prompt += f'The mapping is the following: {mapping}\n'
     prompt += f'Sequential events: {" ".join(events)}\n'
@@ -293,7 +293,6 @@ def load_model_causal(model_name, model_type, tokenizer, cache_dir, hf_token, us
             device_map='auto',
             token=hf_token,
             cache_dir=cache_dir,
-            tie_word_embeddings=True,
             quantization_config=bnb_config if use_quantization else None
         )
         
@@ -538,9 +537,9 @@ X_test = pd.read_csv(args.X_test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']
 y_test = pd.read_csv(args.y_test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
 
 # Check data leakage
-train_sequences = set(X_train['Sequences'].values)
-val_sequences = set(X_val['Sequences'].values)
-test_sequences = set(X_test['Sequences'].values)
+train_sequences = set(X_train['Med'].values)
+val_sequences = set(X_val['Med'].values)
+test_sequences = set(X_test['Med'].values)
 
 overlap_train_val = train_sequences.intersection(val_sequences)
 overlap_train_test = train_sequences.intersection(test_sequences)
