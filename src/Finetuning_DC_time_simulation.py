@@ -293,6 +293,7 @@ def load_model_causal(model_name, model_type, tokenizer, cache_dir, hf_token, us
             device_map='auto',
             token=hf_token,
             cache_dir=cache_dir,
+            tie_word_embeddings=True,
             quantization_config=bnb_config if use_quantization else None
         )
         
