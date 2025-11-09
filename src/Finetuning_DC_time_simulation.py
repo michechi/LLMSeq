@@ -76,22 +76,22 @@ def parse_args(args=None):
 
     # Data
     ## Train
-    parser.add_argument("--X_train_csv", type=str, default="/root/MIMICIV/data/simulation/X_train_9.csv",
+    parser.add_argument("--X_train_csv", type=str, default="/root/MIMICIV/data/simulation/X_train_10.csv",
                         help="Path to file CSV di training")
     
-    parser.add_argument("--y_train_csv", type=str, default="/root/MIMICIV/data/simulation/y_train_9.csv",
+    parser.add_argument("--y_train_csv", type=str, default="/root/MIMICIV/data/simulation/y_train_10.csv",
                         help="Path to file CSV di training")
     ## Val
-    parser.add_argument("--X_val_csv", type=str, default="/root/MIMICIV/data/simulation/X_val_9.csv",
+    parser.add_argument("--X_val_csv", type=str, default="/root/MIMICIV/data/simulation/X_val_10.csv",
                         help="Path to file CSV di validation")
     
-    parser.add_argument("--y_val_csv", type=str, default="/root/MIMICIV/data/simulation/y_val_9.csv",
+    parser.add_argument("--y_val_csv", type=str, default="/root/MIMICIV/data/simulation/y_val_10.csv",
                         help="Path to file CSV di training")
     ## Test
-    parser.add_argument("--X_test_csv", type=str, default="/root/MIMICIV/data/simulation/X_test_9.csv",
+    parser.add_argument("--X_test_csv", type=str, default="/root/MIMICIV/data/simulation/X_test_10.csv",
                         help="Path to file CSV di validation")
     
-    parser.add_argument("--y_test_csv", type=str, default="/root/MIMICIV/data/simulation/y_test_9.csv",
+    parser.add_argument("--y_test_csv", type=str, default="/root/MIMICIV/data/simulation/y_test_10.csv",
                         help="Path to file CSV di training")
 
     # Prompts
@@ -504,7 +504,7 @@ args = parse_args()
 set_seed(args.seed)
 
 #hf_token = os.getenv("HF_TOKEN")
-hf_token = "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"
+hf_token = "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"
 
 tokenizer = load_tokenizer(args.model_name, args.model_type, hf_token, args.cache_dir)
 model = load_model_causal(args.model_name, args.model_type, tokenizer, args.cache_dir, hf_token, args.peft, args.use_quantization).to(device="cpu")
