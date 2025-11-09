@@ -53,3 +53,6 @@ X_val['Med'] = X_val['Sequences'].apply(do_med_seq)
 X_test['Med'] = X_test['Sequences'].apply(do_med_seq)
 
 
+X_test.to_csv("/root/MIMICIV/data/simulation/X_test_9_med.csv", index=False)
+X_train.to_csv("/root/MIMICIV/data/simulation/X_train_9_med.csv", index=False)
+X_val.to_csv("/root/MIMICIV/data/simulation/X_val_9_med.csv", index=False)

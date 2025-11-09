@@ -21,6 +21,9 @@ from tqdm import tqdm
 from simulation.do_check_lag import check_lag
 from simulation.do_strategy import do_strategy, do_chek_order, do_order
 
+# For multi-ordering key test
+from simulation.do_multiple_key_ordering import do_keys, do_lags, do_multiple_key_ordering
+
 def rm_all():
     [globals().pop(var) for var in list(globals()) if not var.startswith('_')]
 
@@ -159,7 +162,6 @@ def assign_outcome_positional(
     }
     return(results_2_debug)
 
-
 def assign_outcome_positional_2_steps(
     seq:str, 
     c_ord:dict, # {1:{A:0, B:1, ...}, 2:{Z:0, T:2, ...}, 3:{F:0, G:1, ...}}
@@ -168,9 +170,9 @@ def assign_outcome_positional_2_steps(
     sep:str="\x1f", 
     already_splitted=False, 
     pr_1 = 0.7, 
-    tolerance=True
+    tolerance=True,
     debugging=False
-    ) -> int:
+    ) -> dict:
     """
     function that, given a sequence, says 1 or 0, depending on ordering.
     This is a two steps implementation (in two subsequences).
@@ -240,11 +242,11 @@ def assign_outcome_positional_2_steps(
     else:
         results_2_debug = {
                 'outcome':[outcome],
-                'seq':seq,
+                'seq':[seq],
                 'pr_2_sim':[pr_to_simulate],
-                'lagged_keys':[info_2_debug_1['lagged_1'], info_2_debug_2['lagged_2'], info_2_debug_2['lagged_3']],
+                'lagged_keys':[info_2_debug_1['lagged_1'], info_2_debug_1['lagged_2'], info_2_debug_2['lagged_3']],
                 'all_ordered':[info_2_debug_1['order'], info_2_debug_2['final_order']],
-                'lags':lags
+                'lags':[lags]
             }
 
 
@@ -267,28 +269,33 @@ n_tot = n_0s + n_1s
 n_train = n_tot * 0.80 # 80% of n_tot
 n_val = n_tot * 0.10
 n_test = n_tot * 0.10
-generate = False
+generate = True
 parallel = True
+debugging=False
+rnd=False # randomic outcome?
 #sum([n_train, n_test, n_val]) == n_tot
 
 letters = list(string.ascii_uppercase)
 # letters_4_key = letters.copy()
 # random.shuffle(letters_4_key)
 # letters_4_key = ["W", "D", "Q", "J", "X", "U"] # Added X
-set_1_key = ["W", "D", "Q", "J", "X", "U"]
-set_2_key = ["M", "A", "L", "J", "V", "I"]
-set_3_key = ["Q", "O", "Y", "D", "T", "S"]
+# Letter used for the test on two steps (10 rnd, 11nonrnd)
+# set_1_key = ["W", "D", "Q", "J", "X", "U"]
+# set_2_key = ["M", "A", "L", "J", "V", "I"]
+# set_3_key = ["Q", "O", "Y", "D", "T", "S"]
 
 # digits = list(map(str, range(10)))
 
 # random.shuffle(letters_4_key)
 # random.shuffle(digits)
 
-c_vocab = dict(
-    strategy={w:p for p,w in enumerate(set_1_key,start=0)},
-    first_order={w:p for p,w in enumerate(set_2_key,start=0)},
-    second_order={w:p for p,w in enumerate(set_3_key,start=0)}
-)
+# c_vocab = dict(
+#     strategy={w:p for p,w in enumerate(set_1_key,start=0)},
+#     first_order={w:p for p,w in enumerate(set_2_key,start=0)},
+#     second_order={w:p for p,w in enumerate(set_3_key,start=0)}
+# )
+
+c_vocab = do_keys(letters, 1234)
 
 # This is sequential
 if generate:
@@ -328,19 +335,29 @@ if n_seq != n_set_seq:
     del set_seq, n_set_seq
     print("Done!")
 
-def efficient_check_v1(sequences, c_vocab, assign_outcome_positional, tolerance=True, lags=7, rnd=False):
+def efficient_check_v1(sequences, c_vocab, assign_outcome_positional, tolerance=True, lags=7, rnd=False, debugging=False):
     """Calcola una volta sola e poi usa i risultati"""
     # Calcola UNA SOLA VOLTA per ogni sequenza
     print(f"Tolerance: {tolerance}, lags: {lags}!\n")
     outcomes = []
 
-    df_2_monitor = pd.DataFrame({
-        'outcome':[],
-        'seq':[],
-        'pr_2_sim':[],
-        # 'lagged_keys':[],
-        # 'all_ordered':[]
-    })
+    if not debugging:
+        df_2_monitor = pd.DataFrame({
+            'outcome':[],
+            'seq':[],
+            'pr_2_sim':[],
+            # 'lagged_keys':[],
+            # 'all_ordered':[]
+        })
+    else:
+        df_2_monitor = pd.DataFrame({
+            'outcome':[],
+            'seq':[],
+            'pr_2_sim':[],
+            'lagged_keys':[],
+            'all_ordered':[],
+            'lags':[]
+        })
 
     for seq in tqdm(sequences):
         df_results = pd.DataFrame(assign_outcome_positional(seq, c_vocab, already_splitted=False, lags=lags, tolerance=tolerance, rnd=rnd))
@@ -378,19 +395,20 @@ def efficient_check_v1(sequences, c_vocab, assign_outcome_positional, tolerance=
 
 def process_single_sequence(args):
     """Funzione helper per il multiprocessing"""
-    seq, c_vocab, assign_outcome_positional, lags, tolerance, rnd = args
+    seq, c_vocab, assign_outcome_positional, lags, tolerance, rnd, debugging = args
     result = assign_outcome_positional(
         seq, c_vocab, 
         already_splitted=False, 
         lags=lags, 
         tolerance=tolerance, 
-        rnd=rnd
+        rnd=rnd,
+        debugging=debugging
     )
     # Converti il dizionario in DataFrame
     return pd.DataFrame(result)
 
 def efficient_check_parallel(sequences, c_vocab, assign_outcome_positional, 
-                             tolerance=True, lags=7, rnd=False, n_workers=None):
+                             tolerance=True, lags=7, rnd=False, debugging=debugging, n_workers=None):
     """Versione parallelizzata con multiprocessing.Pool"""
     print(f"Tolerance: {tolerance}, lags: {lags}!\n")
     
@@ -400,7 +418,7 @@ def efficient_check_parallel(sequences, c_vocab, assign_outcome_positional,
     
     # Prepara gli argomenti per ogni sequenza
     args_list = [
-        (seq, c_vocab, assign_outcome_positional, lags, tolerance, rnd) 
+        (seq, c_vocab, assign_outcome_positional, lags, tolerance, rnd, debugging) 
         for seq in sequences
     ]
     
@@ -440,19 +458,24 @@ def efficient_check_parallel(sequences, c_vocab, assign_outcome_positional,
 
 # Which lags do we prefer?
 # lags = [7,4,2] # is valid
-lags = [7, 8, 5, 5]
+# lags = [7, 8, 5, 5]
+
+# Testing for multiple key ordering
+lags = do_lags(letters, 1234)
+function_2_use_4_outcome = do_multiple_key_ordering
 
 if parallel:
     # Parallel:
     n_cores = cpu_count()-1
     
     check, df_2_monitor = efficient_check_parallel(
-            sequences=sequences, 
-            c_vocab=c_vocab, 
-            assign_outcome_positional=assign_outcome_positional_2_steps, 
-            tolerance=False, 
-            lags=lags, 
-            rnd=True,
+            sequences=sequences,
+            c_vocab=c_vocab,
+            assign_outcome_positional=function_2_use_4_outcome,
+            tolerance=False,
+            lags=lags,
+            rnd=rnd,
+            debugging=debugging,
             n_workers=n_cores  # oppure None per usare tutti i core
         )
 else:
@@ -463,7 +486,8 @@ else:
         assign_outcome_positional=assign_outcome_positional_2_steps, 
         tolerance=False, 
         lags=lags, 
-        rnd=True)
+        rnd=rnd,
+        debugging=debugging)
 
 def extract_characters(seq:str, sep:str="\x1f") -> str:
     seq_char = "-".join([x[0] for x in seq.split(sep)])
@@ -478,7 +502,7 @@ if (not generate):
 chr_seq_1s=list(map(extract_characters, check['valid_sequences']))
 chr_seq_0s=list(map(extract_characters, check['invalid_sequences']))
 
-i = 20
+i = 0
 stats_1s, stats_0s = collections.Counter(x[i*2] for x in chr_seq_1s), collections.Counter(x[i*2] for x in chr_seq_0s)
 
 letters_ord = string.ascii_uppercase
@@ -510,8 +534,8 @@ df_1s = df.loc[df["Outcome"]==1, ]
 df_0s = df.loc[df["Outcome"]==0, ]
 df_full = pd.concat([df_1s, df_0s], ignore_index=True)
 
-# Let's try to reduce to 500_000 sample
-df_full = df_full.sample(n_tot)
+# Let's try to reduce the sample
+df_full = pd.concat([df_1s, df_0s.sample(len(df_1s)*3)], ignore_index=True)
 
 # Diagnostics graphs
 which_1s_sel = list(df_full.loc[df_full["Outcome"]==1, "Sequences"])
@@ -520,7 +544,7 @@ which_0s_sel = list(df_full.loc[df_full["Outcome"]==0, "Sequences"])
 chr_seq_1s=list(map(extract_characters, which_1s_sel))
 chr_seq_0s=list(map(extract_characters, which_0s_sel))
 
-i = 39
+i = 0
 stats_1s, stats_0s = collections.Counter(x[i*2] for x in chr_seq_1s), collections.Counter(x[i*2] for x in chr_seq_0s)
 
 letters_ord = string.ascii_uppercase
@@ -549,7 +573,7 @@ X_train, X_val_test, y_train, y_val_test = train_test_split(X, y, train_size=0.8
 X_val, X_test, y_val, y_test = train_test_split(X_val_test, y_val_test, train_size=0.50, random_state=999)
 
 # Uncomment just if you want to save data!
-number_csv = 10
+number_csv = "test"
 for df, name in zip([X_train, X_val, X_test, y_train, y_val, y_test], [f"X_train_{number_csv}", f"X_val_{number_csv}", f"X_test_{number_csv}", f"y_train_{number_csv}", f"y_val_{number_csv}", f"y_test_{number_csv}"]):
     df.to_csv(f"data/simulation/{name}.csv", index=False)
 
@@ -627,4 +651,4 @@ def plot_bigram_distribution(X_train, y_train, from_n=0, top_n=30):
         print(f"{bg:<10} {c0:<15} {c1:<15} {diff:<12.0f}")
 
 # Esegui
-plot_bigram_distribution(X_train, y_train, from_n=200, top_n=400)
+plot_bigram_distribution(X_train, y_train, from_n=400, top_n=600)
