@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
 from scipy.stats import bernoulli
->>>>>>> 11877782a05dd44c0dd9ab4aa1db7e0923bd5f18
 import numpy as np
 import random
 import string
@@ -51,34 +48,6 @@ def do_lags(letters:list, seed:int) -> dict:
 
     return lag_dict
 
-<<<<<<< HEAD
-def do_multiple_key_ordering(seq:str, key_dict:dict, lag_dict:dict):
-    """
-    Function to do multiple key ordering strategy on a sequence.
-    seq: input sequence
-    ordering_dict: dictionary containing ordering information for different keys (one for each letter of the alphabet)
-    """
-    
-    # for each sequence:
-    # - 1: given the first letter, understand the ordering and the lag
-    ordered=True
-    current_position, lag =0, 0
-    n_max = len(seq)-1
-    while ordered:
-        pivot_letter = seq[current_position]
-        current_dict = key_dict[pivot_letter]
-        current_lag  = lag_dict[lag][pivot_letter]
-        next_position=current_position+current_lag
-        if next_position < n_max:
-            next_letter  = seq[next_position]
-        else:
-            return ordered
-        
-        ordered = (current_dict[pivot_letter] <= current_dict[next_letter])
-        current_position = next_position
-        lag +=1
-    return ordered
-=======
 def do_order_multiple_key(test_seq_splt:list, lags:dict, c_ord:dict):
     ordered = True
     current_position = 0
@@ -157,4 +126,3 @@ def do_multiple_key_ordering(
     
     return(results_2_debug)
     
->>>>>>> 11877782a05dd44c0dd9ab4aa1db7e0923bd5f18
