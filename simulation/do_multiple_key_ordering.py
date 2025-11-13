@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+from scipy.stats import bernoulli
+>>>>>>> 11877782a05dd44c0dd9ab4aa1db7e0923bd5f18
 import numpy as np
 import random
 import string
@@ -47,6 +51,7 @@ def do_lags(letters:list, seed:int) -> dict:
 
     return lag_dict
 
+<<<<<<< HEAD
 def do_multiple_key_ordering(seq:str, key_dict:dict, lag_dict:dict):
     """
     Function to do multiple key ordering strategy on a sequence.
@@ -73,3 +78,83 @@ def do_multiple_key_ordering(seq:str, key_dict:dict, lag_dict:dict):
         current_position = next_position
         lag +=1
     return ordered
+=======
+def do_order_multiple_key(test_seq_splt:list, lags:dict, c_ord:dict):
+    ordered = True
+    current_position = 0
+    lag_step = 0
+    n_max = len(test_seq_splt) - 1
+    max_lag_steps = len(lags)  # Numero massimo di step disponibili
+    
+    while ordered:
+        # Controlla se abbiamo esaurito i lag disponibili
+        if lag_step >= max_lag_steps:
+            return ordered  # Ritorna True perché non abbiamo trovato violazioni
+        
+        pivot_letter = test_seq_splt[current_position]
+        current_dict = c_ord[pivot_letter]
+        current_lag = lags[lag_step][pivot_letter]
+        next_position = current_position + current_lag
+        
+        # Se andiamo out of range, ritorna ordered (che è ancora True)
+        if next_position > n_max:
+            return ordered
+        
+        next_letter = test_seq_splt[next_position]
+        
+        # Verifica ordinamento
+        ordered = (current_dict[pivot_letter] <= current_dict[next_letter])
+        
+        # Prepara per la prossima iterazione
+        current_position = next_position
+        lag_step += 1
+    
+    return ordered  # Sarà False se siamo usciti dal loop
+
+def do_multiple_key_ordering(
+    seq:str, 
+    c_ord: dict, 
+    lags:dict,
+    rnd:bool,
+    sep:str='\x1f',
+    already_splitted=False,
+    pr_1=0.7,
+    tolerance=True,
+    debugging=False):
+    """
+    Function to do multiple key ordering strategy on a sequence.
+    seq: input sequence
+    key_dict: dictionary containing ordering information for different keys (one for each letter)
+    lag_dict: dictionary containing lag information for each step
+    """
+    if not already_splitted:
+        test_seq_splt = seq.split(sep) # avoiding noising letters
+    else: 
+        test_seq_splt = seq
+    # Caso base: sequenza troppo corta
+
+    if len(test_seq_splt) < 2:
+        return True
+    
+    order = do_order_multiple_key(test_seq_splt, lags, c_ord)
+    if order:
+        pr_to_simulate = pr_1
+    else:
+        pr_to_simulate = 1-pr_1
+    if rnd:
+        # Stochastics outcome
+        outcome = bernoulli.rvs(pr_to_simulate)
+    else:
+        # Deterministic outcome
+        outcome = int(np.where(pr_to_simulate==pr_1, 1, 0))
+    
+    # Returning more, to be able to inspect results
+    results_2_debug = {
+            'outcome':[outcome],
+            'seq':seq,
+            'pr_2_sim':[pr_to_simulate]
+        }
+    
+    return(results_2_debug)
+    
+>>>>>>> 11877782a05dd44c0dd9ab4aa1db7e0923bd5f18

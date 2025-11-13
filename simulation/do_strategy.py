@@ -20,8 +20,11 @@ def do_chek_order(are_lagged_keys, key_letters, cycle):
         # If there is no true, then there are no one ordered sequence=> low probabilities of 1
         return all_ordered, False
 
-def do_strategy(subseq, lags1_2, key_letters, cycle=False, debugging=False):
+def do_strategy(subseq, lags1_2, key_letters, debugging, cycle=False):
     # Check if there are key letters separated by lags.
+    all_ordered_1 = False
+    all_ordered_2 = False
+
     lag_1, lag_2 = lags1_2
     are_lagged_keys_1 = check_lag(subseq, key_letters, lag_1)
     are_lagged_keys_2 = check_lag(subseq, key_letters, lag_2)
@@ -61,7 +64,7 @@ def do_strategy(subseq, lags1_2, key_letters, cycle=False, debugging=False):
     else:
         return info_2_debug, "no_order"
 
-def do_order(subseq,lag, key_letters, strategy, cycle=False, debugging=False):
+def do_order(subseq,lag, key_letters, strategy, debugging, cycle=False):
     """on the second subsequence, check the order according to lag and key_letters and strategy"""
     
     if strategy == "no_order":
@@ -86,21 +89,23 @@ def do_order(subseq,lag, key_letters, strategy, cycle=False, debugging=False):
         print("Strategy not recognized!\n")
         return
 
+    if debugging:
+        info_2_debug = dict(
+            lagged_3 = are_lagged_keys,
+            final_order =  [False]
+        )
+    else: 
+        info_2_debug = None
+
     if are_lagged_keys:
         all_ordered_3, is_ordered = do_chek_order(are_lagged_keys, key_letters, cycle)
 
         if debugging:
-            info_2_debug = dict(
-                lagged_3 = are_lagged_keys,
-                final_order =  all_ordered_3
-            )
-        else: 
-            info_2_debug = None
-
+            info_2_debug['final_order'] = all_ordered_3
 
         return info_2_debug, is_ordered
     
-    return False
+    return info_2_debug, False
     
 
 
