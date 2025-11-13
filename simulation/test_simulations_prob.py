@@ -159,17 +159,17 @@ def assign_outcome_positional(
     }
     return(results_2_debug)
 
-
+# TODO: DEBUG!
 def assign_outcome_positional_2_steps(
     seq:str, 
     c_ord:dict, # {1:{A:0, B:1, ...}, 2:{Z:0, T:2, ...}, 3:{F:0, G:1, ...}}
     lags:Union[int, List], 
-    rnd:bool=False, 
-    sep:str="\x1f", 
-    already_splitted=False, 
-    pr_1 = 0.7, 
-    tolerance=True
-    debugging=False
+    rnd:bool=False,
+    sep:str="\x1f",
+    already_splitted=False,
+    pr_1 = 0.7,
+    tolerance=True,
+    debugging=False,
     ) -> int:
     """
     function that, given a sequence, says 1 or 0, depending on ordering.
