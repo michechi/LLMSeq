@@ -186,70 +186,78 @@ def assign_outcome_positional_2_steps(
     """
     
     if len(lags) != 4:
-        print("Attention, we need 4 different lags!\n")
-        return
-    else:
-        lag_1, lag_2, lag_3, lag_4 = lags
-
-    if len(c_ord) != 3:
-        print("Attention, we need 3 different set of keys!\n")
-        return
-    else:
-        keys = dict(
-            strategy=c_ord['strategy'],
-            both_orders=[c_ord['first_order'], c_ord['second_order']],
-            first_order= c_ord['first_order'], 
-            second_order=c_ord['second_order'],
-            no_order=None
-            )
+        raise ValueError("Need exactly 4 lags")
     
-    if not already_splitted:
-        test_seq_splt = seq.split(sep) # avoiding noising letters
-    else: 
-        test_seq_splt = seq
+    lag_1, lag_2, lag_3, lag_4 = lags
+
+    required_keys = ['strategy', 'first_order', 'second_order']
+    if not all(k in c_ord for k in required_keys):
+        raise ValueError(f"c_ord must contain keys: {required_keys}")
+
+    keys = dict(
+        strategy=c_ord['strategy'],
+        both_orders=[c_ord['first_order'], c_ord['second_order']],
+        first_order= c_ord['first_order'], 
+        second_order=c_ord['second_order'],
+        no_order=None
+        )
+    
+    test_seq_splt = seq if already_splitted else seq.split(sep) 
     
     # Making subsequences:
-    first = len(test_seq_splt)//2
-    test_seq_splt_1, test_seq_splt_2 = test_seq_splt[:first], test_seq_splt[first:]
+    midpoint = len(test_seq_splt)//2
+    test_seq_splt_1 = test_seq_splt[:midpoint]
+    test_seq_splt_2 = test_seq_splt[midpoint:]
 
-    # We need to check both subsequences for lags
-    # I need a function that given the firtst subsequence and lag, and K1, gives me the strategy to follow for the
-    # second subsequence
-    info_2_debug_1, strategy = do_strategy(test_seq_splt_1, [lag_1, lag_2], keys["strategy"], debugging)
-    # print(f"Strategy chosen: {strategy}\n")
+    # Determine the strategy looking at the first subsequence
+    info_2_debug_1, strategy = do_strategy(
+        test_seq_splt_1, 
+        [lag_1, lag_2], 
+        keys["strategy"], 
+        debugging)
+    
 
     # Now, check the order looking at the second subsequence given the strategy
-    info_2_debug_2, order = do_order(test_seq_splt_2, lag_3, keys[strategy], strategy, debugging)
-    if order:
-        pr_to_simulate = pr_1
-    else:
-        pr_to_simulate = 1-pr_1
+    info_2_debug_2, order = do_order(
+        test_seq_splt_2,
+        lag_3, 
+        keys[strategy], 
+        strategy, 
+        debugging
+        )
+    
+    # Calcolate the probability to simulate
+    pr_to_simulate = pr_1 if order else 1-pr_1
+    
 
     if rnd:
         # Stochastics outcome
         outcome = bernoulli.rvs(pr_to_simulate)
     else:
         # Deterministic outcome
-        outcome = int(np.where(pr_to_simulate==pr_1, 1, 0))
+        outcome = 1 if pr_to_simulate==pr_1 else 0
     
-    # Returning more, to be able to inspect results
-    if not debugging:
-        results_2_debug = {
-                'outcome':[outcome],
-                'seq':seq,
-                'pr_2_sim':[pr_to_simulate]
-            }
-    else:
-        results_2_debug = {
-                'outcome':[outcome],
-                'seq':[seq],
-                'pr_2_sim':[pr_to_simulate],
-                'lagged_keys':[info_2_debug_1['lagged_1'], info_2_debug_1['lagged_2'], info_2_debug_2['lagged_3']],
-                'all_ordered':[info_2_debug_1['order'], info_2_debug_2['final_order']],
-                'lags':[lags]
-            }
+    # Build conistent return dict
+    results_2_debug = {
+        'outcome': outcome,
+        'seq': seq,
+        'pr_2_sim': pr_to_simulate
+    }
 
-
+    if debugging:
+        results_2_debug.update({
+            'lagged_keys': [
+                info_2_debug_1['lagged_1'], 
+                info_2_debug_1['lagged_2'], 
+                info_2_debug_2['lagged_3']
+            ],
+            'all_ordered': [
+                info_2_debug_1['order'], 
+                info_2_debug_2['final_order']
+            ],
+            'lags': lags
+        })
+        
     return(results_2_debug)
     
 # seq4 = ['A', 'A', 'C', 'D', 'B', 'A', 'Z', 'H', 'C']
