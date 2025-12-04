@@ -14,7 +14,7 @@ from sklearn.model_selection import RandomizedSearchCV
 from sklearn.metrics import roc_auc_score, f1_score, accuracy_score, \
     precision_score, recall_score, classification_report, confusion_matrix
 from scipy.stats import randint, uniform
-from transformers import AutoTokenizer, AutoModel
+from transformers import AutoTokenizer, AutoModel, LlamaConfig
 
 # Setting Parsing & Logger ---------------------------------------------------------
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -64,6 +64,10 @@ def parse_args(args=None):
         parser.add_argument("--first_time", action="store_true",
                         help="First time of encoding embeddings?")
 
+        parser.add_argument("--tiny", action="store_true",
+                        help="Use a tiny model for testing purposes")
+
+
     # Final parse
     if args:
         args = parser.parse_args(args)
@@ -98,40 +102,74 @@ def standard_narrative_prompt(row, to_split='\x1f', column_name="Sequences"):
     prompt += 'Outcome (0 or 1):'
     return prompt
 
+def mean_pooling_masked(last_hidden_state, attention_mask, eps=1e-9):
+    """
+    last_hidden_state: (batch, seq_len, hidden_dim)
+    attention_mask: (batch, seq_len) with 1 for real tokens and 0 for padding
+    returns: (batch, hidden_dim)
+    """
+    mask = attention_mask.unsqueeze(-1).to(last_hidden_state.dtype)    # (batch, seq_len, 1)
+    masked_embeddings = last_hidden_state * mask                        # zeros out padding tokens
+    summed = masked_embeddings.sum(dim=1)                               # (batch, hidden_dim)
+    counts = mask.sum(dim=1).clamp(min=eps)                             # (batch, 1)
+    return summed / counts                                              # (batch, hidden_dim)
+
 def get_embeddings(texts,
-                    model_name,
-                    batch_size,
-                    max_length,
-                    device):
-    
+                   model_name,
+                   batch_size,
+                   max_length,
+                   device,
+                   l2_normalize=False,
+                   dtype=torch.bfloat16,
+                   cache_dir=args.cache_dir,
+                   tiny=args.tiny, # TO ADD
+                   hf_token="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"):
+
     logger.info(f"Loading {model_name} on {device}...")
     logger.info(f"Batch size: {batch_size}, Max length: {max_length}")
-    
-    tokenizer = AutoTokenizer.from_pretrained(model_name,
-                                            token="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",
-                                                cache_dir=args.cache_dir,
-                                                force_download=True, 
-                                                local_files_only=False)
-    
-    # Carica modello in FP16 se richiesto
-    model = AutoModel.from_pretrained(
+
+    tokenizer = AutoTokenizer.from_pretrained(
         model_name,
-        token="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",
-        torch_dtype=torch.bfloat16,
-        device_map='auto',
-        cache_dir=args.cache_dir,
-        tie_word_embeddings=True
-    ).to(device)
-    model.eval()
-    
+        use_fast=True,
+        cache_dir=cache_dir,
+        token=hf_token
+    )
+    if tiny:
+        hidden_size, num_layers, num_heads, intermediate_size, vocab_size = [128, 4, 4, 512, 100]
+        tiny_config = LlamaConfig(
+                hidden_size=hidden_size,
+                num_hidden_layers=num_layers,
+                num_attention_heads=num_heads,
+                num_key_value_heads=num_heads//2, 
+                intermediate_size=intermediate_size,
+                vocab_size=vocab_size,
+                max_position_embeddings=512,  
+                rope_theta=10000.0,
+                torch_dtype=torch.bfloat16,
+                tie_word_embeddings=True
+            )
+        model = AutoModel.from_config(tiny_config).to(device)
+        model.eval()
+
+    else:
+        model = AutoModel.from_pretrained(
+            model_name,
+            torch_dtype=dtype,
+            device_map='auto',
+            cache_dir=cache_dir,
+            token=hf_token,
+            tie_word_embeddings=True
+        ).to(device)
+        model.eval()
+
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
-    
+
     all_embeddings = []
-    
+
     for i in range(0, len(texts), batch_size):
-        batch_texts = texts[i:i+batch_size]
-        
+        batch_texts = texts[i:i + batch_size]
+
         inputs = tokenizer(
             batch_texts,
             return_tensors='pt',
@@ -139,21 +177,21 @@ def get_embeddings(texts,
             truncation=True,
             max_length=max_length
         ).to(device)
-        
+
         with torch.no_grad():
             outputs = model(**inputs)
-            # Mean pooling
-            embeddings = outputs.last_hidden_state.mean(dim=1)
-        
-        # Converti a CPU e float32 per compatibilità con XGBoost
-        all_embeddings.append(embeddings.cpu().float().numpy())
-        
-        # Libera memoria GPU
-        del outputs, embeddings, inputs
-        torch.cuda.empty_cache()
-    
-    return np.vstack(all_embeddings)
+            # Use masked mean pooling over the last hidden state
+            pooled = mean_pooling_masked(outputs.last_hidden_state, inputs['attention_mask'])
+            if l2_normalize:
+                pooled = F.normalize(pooled, p=2, dim=1)
 
+        all_embeddings.append(pooled.cpu().float().numpy())
+
+        # free GPU memory
+        del outputs, pooled, inputs
+        torch.cuda.empty_cache()
+
+    return np.vstack(all_embeddings)
 
 if __name__ == "__main__":
     args = parse_args()
@@ -179,7 +217,7 @@ if __name__ == "__main__":
 
     elif args.tokenizer == "LLM":
         safe_model_name = args.model_name.replace("/", "_")
-
+        tiny = "" if args.tiny else "_Tiny"
         if args.first_time:
             # Apply tokenizer
             X_train['prompt'] = X_train.apply(standard_narrative_prompt, axis=1)
@@ -189,25 +227,25 @@ if __name__ == "__main__":
             # Train
             logger.info("\nProcessing train set...")
             X_train_encoded = get_embeddings(X_train['prompt'].tolist(), args.model_name, args.batch_size, args.max_length, device)
-            np.save(f"{args.embedding_dir}X_train_{safe_model_name}_embeddings.npy", X_train_encoded)
+            np.save(f"{args.embedding_dir}X_train_{safe_model_name}_{args.csv_to_use}{tiny}_embeddings.npy", X_train_encoded)
             logger.info(f"Train embeddings shape: {X_train_encoded.shape}")
 
             # Val
             logger.info("\nProcessing validation set...")
             X_val_encoded = get_embeddings(X_val['prompt'].tolist(), args.model_name, args.batch_size, args.max_length, device)
-            np.save(f"{args.embedding_dir}X_val_{safe_model_name}_embeddings.npy", X_val_encoded)
+            np.save(f"{args.embedding_dir}X_val_{safe_model_name}_{args.csv_to_use}{tiny}_embeddings.npy", X_val_encoded)
             logger.info(f"Val embeddings shape: {X_val_encoded.shape}")
 
             # Test
             logger.info("\nProcessing test set...")
             X_test_encoded = get_embeddings(X_test['prompt'].tolist(), args.model_name, args.batch_size, args.max_length, device)
-            np.save(f"{args.embedding_dir}X_test_{safe_model_name}_embeddings.npy", X_test_encoded)
+            np.save(f"{args.embedding_dir}X_test_{safe_model_name}_{args.csv_to_use}{tiny}_embeddings.npy", X_test_encoded)
             logger.info(f"Test embeddings shape: {X_test_encoded.shape}")
         else:
             # If not first time, let's re-load embeddings
-            X_train_encoded = np.load(f"{args.embedding_dir}X_train_{safe_model_name}_embeddings.npy")
-            X_val_encoded = np.load(f"{args.embedding_dir}X_val_{safe_model_name}_embeddings.npy")
-            X_test_encoded = np.load(f"{args.embedding_dir}X_test_{safe_model_name}_embeddings.npy")
+            X_train_encoded = np.load(f"{args.embedding_dir}X_train_{safe_model_name}_{args.csv_to_use}{tiny}_embeddings.npy")
+            X_val_encoded = np.load(f"{args.embedding_dir}X_val_{safe_model_name}_{args.csv_to_use}{tiny}_embeddings.npy")
+            X_test_encoded = np.load(f"{args.embedding_dir}X_test_{safe_model_name}_{args.csv_to_use}{tiny}_embeddings.npy")
 
     # Preparing data (merging train + val for CV)
     X_train_val = np.vstack([X_train_encoded, X_val_encoded])
