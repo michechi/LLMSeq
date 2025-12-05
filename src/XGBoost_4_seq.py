@@ -10,7 +10,7 @@ import os
 
 from tqdm import tqdm
 from xgboost import XGBClassifier
-from sklearn.model_selection import RandomizedSearchCV
+from sklearn.model_selection import RandomizedSearchCV, StratifiedKFold
 from sklearn.metrics import roc_auc_score, f1_score, accuracy_score, \
     precision_score, recall_score, classification_report, confusion_matrix
 from scipy.stats import randint, uniform
@@ -119,10 +119,10 @@ def get_embeddings(texts,
                    batch_size,
                    max_length,
                    device,
+                   cache_dir=None,
+                   tiny=False, # TO ADD
                    l2_normalize=False,
                    dtype=torch.bfloat16,
-                   cache_dir=args.cache_dir,
-                   tiny=args.tiny, # TO ADD
                    hf_token="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"):
 
     logger.info(f"Loading {model_name} on {device}...")
@@ -163,7 +163,9 @@ def get_embeddings(texts,
         model.eval()
 
     if tokenizer.pad_token is None:
-        tokenizer.pad_token = tokenizer.eos_token
+        logger.warning("Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].")
+        tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+        model.resize_token_embeddings(len(tokenizer))
 
     all_embeddings = []
 
@@ -217,7 +219,7 @@ if __name__ == "__main__":
 
     elif args.tokenizer == "LLM":
         safe_model_name = args.model_name.replace("/", "_")
-        tiny = "" if args.tiny else "_Tiny"
+        tiny = "_Tiny" if args.tiny else ""
         if args.first_time:
             # Apply tokenizer
             X_train['prompt'] = X_train.apply(standard_narrative_prompt, axis=1)
@@ -226,19 +228,19 @@ if __name__ == "__main__":
             
             # Train
             logger.info("\nProcessing train set...")
-            X_train_encoded = get_embeddings(X_train['prompt'].tolist(), args.model_name, args.batch_size, args.max_length, device)
+            X_train_encoded = get_embeddings(X_train['prompt'].tolist(), args.model_name, args.batch_size, args.max_length, device, args.cache_dir, args.tiny)
             np.save(f"{args.embedding_dir}X_train_{safe_model_name}_{args.csv_to_use}{tiny}_embeddings.npy", X_train_encoded)
             logger.info(f"Train embeddings shape: {X_train_encoded.shape}")
 
             # Val
             logger.info("\nProcessing validation set...")
-            X_val_encoded = get_embeddings(X_val['prompt'].tolist(), args.model_name, args.batch_size, args.max_length, device)
+            X_val_encoded = get_embeddings(X_val['prompt'].tolist(), args.model_name, args.batch_size, args.max_length, device, args.cache_dir, args.tiny)
             np.save(f"{args.embedding_dir}X_val_{safe_model_name}_{args.csv_to_use}{tiny}_embeddings.npy", X_val_encoded)
             logger.info(f"Val embeddings shape: {X_val_encoded.shape}")
 
             # Test
             logger.info("\nProcessing test set...")
-            X_test_encoded = get_embeddings(X_test['prompt'].tolist(), args.model_name, args.batch_size, args.max_length, device)
+            X_test_encoded = get_embeddings(X_test['prompt'].tolist(), args.model_name, args.batch_size, args.max_length, device, args.cache_dir, args.tiny)
             np.save(f"{args.embedding_dir}X_test_{safe_model_name}_{args.csv_to_use}{tiny}_embeddings.npy", X_test_encoded)
             logger.info(f"Test embeddings shape: {X_test_encoded.shape}")
         else:
@@ -249,7 +251,7 @@ if __name__ == "__main__":
 
     # Preparing data (merging train + val for CV)
     X_train_val = np.vstack([X_train_encoded, X_val_encoded])
-    y_train_val = np.concatenate([y_train, y_val])
+    y_train_val = np.concatenate([y_train, y_val]).ravel()
 
 
     # Definisci il modello base
@@ -258,20 +260,24 @@ if __name__ == "__main__":
         random_state=42,
         eval_metric='aucpr',
         tree_method='hist',
-        device='cuda' 
+        device='cuda',
+        scale_pos_weight=len(y_train_val[y_train_val==0]) / len(y_train_val[y_train_val==1])  # for dealing with class imbalance
+
     )
 
     # Distribuzioni per sampling
     logger.info("Defining hyperparameter distributions...")
     param_distributions = {
-        'n_estimators': randint(50, 500),
-        'max_depth': randint(3, 15),
-        'learning_rate': uniform(0.01, 0.3),  # uniform tra 0.01 e 0.31
-        'subsample': uniform(0.5, 0.5),  # uniform tra 0.5 e 1.0
-        'colsample_bytree': uniform(0.5, 0.5),
-        'min_child_weight': randint(1, 10),
-        'gamma': uniform(0, 0.5)
-    }
+        'n_estimators': randint(100, 300),  # Narrower range
+        'max_depth': randint(4, 10),  # Shallower trees
+        'learning_rate': uniform(0.01, 0.15),
+        'subsample': uniform(0.7, 0.3),
+        'colsample_bytree': uniform(0.7, 0.3),
+        'min_child_weight': randint(1, 5),
+        'gamma': uniform(0, 0.2),
+        'reg_alpha': uniform(0, 1),  # Add L1 regularization
+        'reg_lambda': uniform(1, 2)  # Add L2 regularization
+    }   
     logger.info(f"Parameter distributions: {param_distributions}")
 
     scoring = {
@@ -286,8 +292,8 @@ if __name__ == "__main__":
     random_search = RandomizedSearchCV(
         estimator=xgb_base,
         param_distributions=param_distributions,
-        n_iter=50,  # try 100 random combinations
-        cv=5,
+        n_iter=50,
+        cv=StratifiedKFold(n_splits=5, shuffle=True, random_state=args.seed),,
         scoring=scoring,
         refit='f1',
         n_jobs=1,
