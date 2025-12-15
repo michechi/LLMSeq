@@ -48,6 +48,9 @@ def check_lag(seq: List, keys: List, lags: Union[int, List[int]] = 6,
     if not lag_list:
         raise ValueError("La lista dei lag non può essere vuota")
     
+    if lags == 0:
+        return [elem for elem in seq if elem in keys]
+    
     # Trova tutte le posizioni degli elementi chiave
     key_positions = [(i, elem) for i, elem in enumerate(seq) if elem in keys]
     

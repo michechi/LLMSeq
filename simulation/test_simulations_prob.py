@@ -103,6 +103,8 @@ def assign_outcome_positional(
     sep:str="\x1f", 
     already_splitted=False, 
     pr_1 = 0.7, 
+    debugging=True,
+    min_chain_length=2,
     tolerance=True
     ) -> int:
     """
@@ -122,11 +124,14 @@ def assign_outcome_positional(
     # Check if there are key letters separated by lags.
     are_lagged_keys = check_lag(test_seq_splt, l_keys, lags)
 
-    if are_lagged_keys:
+    if (are_lagged_keys and all(isinstance(item, list) for item in are_lagged_keys)):
         n_seq=len(are_lagged_keys)
         all_ordered = [True]*n_seq
         tol=tolerance # For the cyclic ordering
         for pos, subseq in enumerate(are_lagged_keys):
+            if len(subseq) < min_chain_length:
+                all_ordered[pos] = False
+                continue
             # Check whether are ordered
             for x,y in zip(subseq[:-1], subseq[1:]):
                 if ((2*c_ord[x[0]])>(2*c_ord[y[0]])):
@@ -140,6 +145,29 @@ def assign_outcome_positional(
         else:
             # If there is no true, then there are no one ordered sequence=> low probabilities of 1
             pr_to_simulate = 1-pr_1
+    
+    elif (are_lagged_keys and not all(isinstance(item, list) for item in are_lagged_keys)):
+        all_ordered = True
+        tol=tolerance # For the cyclic ordering
+        
+        if len(are_lagged_keys) < min_chain_length:
+            all_ordered = False
+        
+        else:
+            # Check whether are ordered
+            for x,y in zip(are_lagged_keys[:-1], are_lagged_keys[1:]):
+                if ((2*c_ord[x[0]])>(2*c_ord[y[0]])):
+                        if tol:
+                            tol=False
+                        else:
+                            all_ordered=False
+        if all_ordered:
+            # If there is at least one true, then there is one ordered sequence=> high probabilities of 1
+            pr_to_simulate = pr_1
+        else:
+            # If there is no true, then there are no one ordered sequence=> low probabilities of 1
+            pr_to_simulate = 1-pr_1
+    
     else:
         # If there no keys, then there are no one ordered sequence=> low probabilities of 1
         all_ordered=False
@@ -269,10 +297,10 @@ def assign_outcome_positional_2_steps(
 
 random.seed(959693)
 
-n_events = 40 # More
-n_seq = 10_000_000
-n_0s = 250_000
-n_1s = 250_000
+n_events = 20 # More
+n_seq = 100_000_000
+n_0s = 100_000
+n_1s = 100_000
 n_tot = n_0s + n_1s
 n_train = n_tot * 0.80 # 80% of n_tot
 n_val = n_tot * 0.10
@@ -281,12 +309,16 @@ generate = True
 parallel = True
 debugging=False
 rnd=False # randomic outcome?
+# pr_1=0.9 # If so, which is P(Y=1|X=Ordered)?
+number_csv=5 # If not generate, which csv has to be uploaded?
 #sum([n_train, n_test, n_val]) == n_tot
 
 letters = list(string.ascii_uppercase)
 # letters_4_key = letters.copy()
 # random.shuffle(letters_4_key)
-# letters_4_key = ["W", "D", "Q", "J", "X", "U"] # Added X
+letters_4_key = ["W", "D", "Q", "J", "X", "N"] # Added X Keep it fixed!!
+# letters_4_key = ["W", "D", "Q", "J", "U"] # TEST REPLICA CURRENT CSV 9
+c_vocab = {w:p for p,w in enumerate(letters_4_key,start=0)}
 # Letter used for the test on two steps (10 rnd, 11nonrnd)
 # set_1_key = ["W", "D", "Q", "J", "X", "U"]
 # set_2_key = ["M", "A", "L", "J", "V", "I"]
@@ -303,7 +335,7 @@ letters = list(string.ascii_uppercase)
 #     second_order={w:p for p,w in enumerate(set_3_key,start=0)}
 # )
 
-c_vocab = do_keys(letters, 1234)
+# c_vocab = do_keys(letters, 1234)
 
 # This is sequential
 if generate:
@@ -323,16 +355,16 @@ if generate:
         sequences = list(dict.fromkeys(all_sequences))[:n_seq]
 else:
     # Load pre-generated sequences (from previous runs)
-    sequences = pd.read_csv("data/simulation/X_test_10.csv")["Sequences"].tolist()
-    labels = pd.read_csv("data/simulation/y_test_10.csv")["Outcome"].tolist()
+    sequences = pd.read_csv(f"data/simulation/X_test_{number_csv}.csv")["Sequences"].tolist()
+    labels = pd.read_csv(f"data/simulation/y_test_{number_csv}.csv")["Outcome"].tolist()
 
-    sequences += pd.read_csv("data/simulation/X_train_10.csv")["Sequences"].tolist()
-    labels += pd.read_csv("data/simulation/y_train_10.csv")["Outcome"].tolist()
+    sequences += pd.read_csv(f"data/simulation/X_train_{number_csv}.csv")["Sequences"].tolist()
+    labels += pd.read_csv(f"data/simulation/y_train_{number_csv}.csv")["Outcome"].tolist()
 
-    sequences += pd.read_csv("data/simulation/X_val_10.csv")["Sequences"].tolist()
-    labels += pd.read_csv("data/simulation/y_val_10.csv")["Outcome"].tolist()
+    sequences += pd.read_csv(f"data/simulation/X_val_{number_csv}.csv")["Sequences"].tolist()
+    labels += pd.read_csv(f"data/simulation/y_val_{number_csv}.csv")["Outcome"].tolist()
 
-n_seq = len(sequences)  
+n_seq = len(sequences)
 set_seq = set(sequences)
 n_set_seq = len(set_seq)
 
@@ -403,20 +435,21 @@ def efficient_check_v1(sequences, c_vocab, assign_outcome_positional, tolerance=
 
 def process_single_sequence(args):
     """Funzione helper per il multiprocessing"""
-    seq, c_vocab, assign_outcome_positional, lags, tolerance, rnd, debugging = args
+    seq, c_vocab, assign_outcome_positional, lags, tolerance, rnd, debugging, min_chain_length = args
     result = assign_outcome_positional(
         seq, c_vocab, 
         already_splitted=False, 
         lags=lags, 
         tolerance=tolerance, 
         rnd=rnd,
-        debugging=debugging
+        debugging=debugging,
+        min_chain_length=min_chain_length
     )
     # Converti il dizionario in DataFrame
     return pd.DataFrame(result)
 
 def efficient_check_parallel(sequences, c_vocab, assign_outcome_positional, 
-                             tolerance=True, lags=7, rnd=False, debugging=debugging, n_workers=None):
+                             tolerance=True, lags=7, rnd=False, debugging=debugging, min_chain_length=3, n_workers=None):
     """Versione parallelizzata con multiprocessing.Pool"""
     print(f"Tolerance: {tolerance}, lags: {lags}!\n")
     
@@ -426,7 +459,7 @@ def efficient_check_parallel(sequences, c_vocab, assign_outcome_positional,
     
     # Prepara gli argomenti per ogni sequenza
     args_list = [
-        (seq, c_vocab, assign_outcome_positional, lags, tolerance, rnd, debugging) 
+        (seq, c_vocab, assign_outcome_positional, lags, tolerance, rnd, debugging, min_chain_length) 
         for seq in sequences
     ]
     
@@ -465,16 +498,18 @@ def efficient_check_parallel(sequences, c_vocab, assign_outcome_positional,
     }, df_2_monitor)
 
 # Which lags do we prefer?
-# lags = [7,4,2] # is valid
-# lags = [7, 8, 5, 5]
+# lags = [9,8,7,6] # csv 2
+# lags = [7] # csv 1
+lags = [4, 3, 2] # csv 0
+# lags = 0
 
 # Testing for multiple key ordering
-lags = do_lags(letters, 1234)
-function_2_use_4_outcome = do_multiple_key_ordering
+# lags = do_lags(letters, 1234)
+function_2_use_4_outcome = assign_outcome_positional
 
 if parallel:
     # Parallel:
-    n_cores = cpu_count()-1
+    n_cores = cpu_count()-4
     
     check, df_2_monitor = efficient_check_parallel(
             sequences=sequences,
@@ -482,8 +517,9 @@ if parallel:
             assign_outcome_positional=function_2_use_4_outcome,
             tolerance=False,
             lags=lags,
-            rnd=rnd,
+            rnd=rnd,              #### >>>>>>>>> CHANGE HERE PARAMETER !!!
             debugging=debugging,
+            min_chain_length=3,   #### >>>>>>>>> CHANGE HERE PARAMETER !!!
             n_workers=n_cores  # oppure None per usare tutti i core
         )
 else:
@@ -491,7 +527,7 @@ else:
     check, df_2_monitor = efficient_check_v1(
         sequences=sequences, 
         c_vocab=c_vocab, 
-        assign_outcome_positional=assign_outcome_positional_2_steps, 
+        assign_outcome_positional=function_2_use_4_outcome, 
         tolerance=False, 
         lags=lags, 
         rnd=rnd,
@@ -510,27 +546,110 @@ if (not generate):
 chr_seq_1s=list(map(extract_characters, check['valid_sequences']))
 chr_seq_0s=list(map(extract_characters, check['invalid_sequences']))
 
-i = 0
-stats_1s, stats_0s = collections.Counter(x[i*2] for x in chr_seq_1s), collections.Counter(x[i*2] for x in chr_seq_0s)
+def plot_positions_heatmap(chr_seq_1s, chr_seq_0s, n_positions=40, cmap='coolwarm'):
+    """
+    Heatmap showing difference in letter frequencies between labels.
+    
+    chr_seq_1s and chr_seq_0s should be lists of strings like "A-B-C-D-..."
+    """
+    letters_ord = string.ascii_uppercase
+    
+    # Create matrices for heatmap
+    diff_matrix = np.zeros((len(letters_ord), n_positions))
+    
+    for i in range(n_positions):
+        stats_1s = collections.Counter()
+        stats_0s = collections.Counter()
+        
+        # Extract i-th letter from each sequence
+        for seq in chr_seq_1s:
+            seq_split = seq.split('-')
+            if i < len(seq_split):
+                stats_1s[seq_split[i]] += 1
+        
+        for seq in chr_seq_0s:
+            seq_split = seq.split('-')
+            if i < len(seq_split):
+                stats_0s[seq_split[i]] += 1
+        
+        # Normalize by total counts
+        total_1s = sum(stats_1s.values()) or 1
+        total_0s = sum(stats_0s.values()) or 1
+        
+        for j, letter in enumerate(letters_ord):
+            freq_1s = stats_1s.get(letter, 0) / total_1s
+            freq_0s = stats_0s.get(letter, 0) / total_0s
+            diff_matrix[j, i] = freq_1s - freq_0s
+    
+    # Plot
+    fig, ax = plt.subplots(figsize=(20, 8))
+    im = ax.imshow(diff_matrix, aspect='auto', cmap=cmap, vmin=-0.1, vmax=0.1)
+    
+    ax.set_xticks(np.arange(n_positions))
+    ax.set_xticklabels(np.arange(1, n_positions+1))
+    ax.set_yticks(np.arange(len(letters_ord)))
+    ax.set_yticklabels(letters_ord)
+    
+    ax.set_xlabel('Position', fontsize=12)
+    ax.set_ylabel('Letter', fontsize=12)
+    ax.set_title('Letter Frequency Difference (Label=1 - Label=0) by Position', fontsize=14)
+    
+    cbar = plt.colorbar(im, ax=ax)
+    cbar.set_label('Frequency Difference', fontsize=10)
+    
+    plt.tight_layout()
+    plt.savefig('positions_heatmap.png', dpi=300, bbox_inches='tight')
+    plt.show()
 
-letters_ord = string.ascii_uppercase
-counts_1s = [stats_1s.get(letter, 0) for letter in letters_ord]
-counts_0s = [stats_0s.get(letter, 0) for letter in letters_ord]
+# Usage
+# plot_positions_heatmap(chr_seq_1s, chr_seq_0s, n_positions=20, cmap='PiYG')
 
-# Plot affiancato
-x = np.arange(len(letters_ord))
-width = 0.35  # Larghezza barre
+def plot_all_positions_compact(chr_seq_1s, chr_seq_0s, n_positions=40):
+    """
+    Compact version with smaller, denser plots.
+    """
+    letters_ord = string.ascii_uppercase
+    
+    n_cols = 8  # More columns for compact view
+    n_rows = int(np.ceil(n_positions / n_cols))
+    
+    fig, axes = plt.subplots(n_rows, n_cols, figsize=(24, 3*n_rows))
+    axes = axes.flatten()
+    
+    for i in range(n_positions):
+        ax = axes[i]
+        
+        stats_1s = collections.Counter(x[i*2] for x in chr_seq_1s if len(x) > i*2)
+        stats_0s = collections.Counter(x[i*2] for x in chr_seq_0s if len(x) > i*2)
+        
+        counts_1s = [stats_1s.get(letter, 0) for letter in letters_ord]
+        counts_0s = [stats_0s.get(letter, 0) for letter in letters_ord]
+        
+        x_pos = np.arange(len(letters_ord))
+        width = 0.35
+        
+        ax.bar(x_pos - width/2, counts_1s, width, label='Label=1', alpha=0.8, color='C0')
+        ax.bar(x_pos + width/2, counts_0s, width, label='Label=0', alpha=0.8, color='C1')
+        
+        ax.set_title(f'Pos {i+1}', fontsize=8)
+        ax.set_xticks([])  # Remove x-ticks for compactness
+        ax.tick_params(labelsize=6)
+        
+        # Add legend only once
+        if i == 0:
+            ax.legend(fontsize=6, loc='upper right')
+    
+    # Hide unused subplots
+    for j in range(n_positions, len(axes)):
+        axes[j].set_visible(False)
+    
+    plt.suptitle('Letter Frequency by Position and Label', fontsize=14, y=1.00)
+    plt.tight_layout()
+    plt.savefig('all_positions_frequency_compact.png', dpi=300, bbox_inches='tight')
+    plt.show()
 
-fig, ax = plt.subplots(figsize=(12, 6))
-ax.bar(x - width/2, counts_1s, width, label='Label=1', alpha=0.8)
-ax.bar(x + width/2, counts_0s, width, label='Label=0', alpha=0.8)
-ax.set_xlabel('Letters')
-ax.set_ylabel('Count')
-ax.set_title(f'{i+1}st/nd Letter Frequency by Label')
-ax.set_xticks(x)
-ax.set_xticklabels(letters_ord)
-ax.legend()
-plt.show()
+# Usage
+plot_all_positions_compact(chr_seq_1s, chr_seq_0s, n_positions=20)
 
 # Create Dataset
 df = pd.DataFrame({
@@ -542,37 +661,59 @@ df_1s = df.loc[df["Outcome"]==1, ]
 df_0s = df.loc[df["Outcome"]==0, ]
 df_full = pd.concat([df_1s, df_0s], ignore_index=True)
 
-# Let's try to reduce the sample
-df_full = pd.concat([df_1s, df_0s.sample(len(df_1s)*3)], ignore_index=True)
+def sample_with_proportion(df, n, pi, label_col='Outcome', random_state=9550):
+    """
+    Sample n rows from df with specified proportion of positive class.
+    
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        Input dataframe
+    n : int
+        Total number of samples to return
+    pi : float
+        Proportion of positive class (label=1), between 0 and 1
+    label_col : str
+        Name of the label column
+    random_state : int, optional
+        Random seed for reproducibility
+    
+    Returns:
+    --------
+    pd.DataFrame
+        Sampled dataframe with desired proportion
+    """
+    # Calculate number of samples per class
+    n_pos = int(n * pi)
+    n_neg = n - n_pos
+    
+    # Separate by class
+    df_pos = df[df[label_col] == 1]
+    df_neg = df[df[label_col] == 0]
+    
+    # Check if we have enough samples
+    if len(df_pos) < n_pos:
+        raise ValueError(f"Not enough positive samples: need {n_pos}, have {len(df_pos)}")
+    if len(df_neg) < n_neg:
+        raise ValueError(f"Not enough negative samples: need {n_neg}, have {len(df_neg)}")
+    
+    # Sample from each class
+    sampled_pos = df_pos.sample(n=n_pos, random_state=random_state)
+    sampled_neg = df_neg.sample(n=n_neg, random_state=random_state)
+    
+    # Combine and shuffle
+    sampled_df = pd.concat([sampled_pos, sampled_neg], axis=0)
+    sampled_df = sampled_df.sample(frac=1, random_state=random_state)  # shuffle
+    
+    return sampled_df.reset_index(drop=True)
 
-# Diagnostics graphs
-which_1s_sel = list(df_full.loc[df_full["Outcome"]==1, "Sequences"])
-which_0s_sel = list(df_full.loc[df_full["Outcome"]==0, "Sequences"])
-
-chr_seq_1s=list(map(extract_characters, which_1s_sel))
-chr_seq_0s=list(map(extract_characters, which_0s_sel))
-
-i = 0
-stats_1s, stats_0s = collections.Counter(x[i*2] for x in chr_seq_1s), collections.Counter(x[i*2] for x in chr_seq_0s)
-
-letters_ord = string.ascii_uppercase
-counts_1s = [stats_1s.get(letter, 0) for letter in letters_ord]
-counts_0s = [stats_0s.get(letter, 0) for letter in letters_ord]
-
-# Plot affiancato
-x = np.arange(len(letters_ord))
-width = 0.35  # Larghezza barre
-
-fig, ax = plt.subplots(figsize=(12, 6))
-ax.bar(x - width/2, counts_1s, width, label='Label=1', alpha=0.8)
-ax.bar(x + width/2, counts_0s, width, label='Label=0', alpha=0.8)
-ax.set_xlabel('Letters')
-ax.set_ylabel('Count')
-ax.set_title(f'{i+1}st/nd Letter Frequency by Label')
-ax.set_xticks(x)
-ax.set_xticklabels(letters_ord)
-ax.legend()
-plt.show()
+# Ratio of Label:
+df_full.Outcome.value_counts()/len(df_full)
+# df_full = df_full.groupby('Outcome')[['Sequences', 'Outcome']].apply(lambda x: x.sample(frac=0.2))
+# df_full = pd.concat([df_1s.sample(n_1s), df_0s.sample(n_0s*2)])
+df_full = sample_with_proportion(df_full, 69924*2, 0.5)
+df_full.Outcome.value_counts()/len(df_full)
+len(df_full)
 
 # Splitting Train Val Test
 # Now train_val_test split:
@@ -581,7 +722,7 @@ X_train, X_val_test, y_train, y_val_test = train_test_split(X, y, train_size=0.8
 X_val, X_test, y_val, y_test = train_test_split(X_val_test, y_val_test, train_size=0.50, random_state=999)
 
 # Uncomment just if you want to save data!
-number_csv = "test"
+number_csv = "3"
 for df, name in zip([X_train, X_val, X_test, y_train, y_val, y_test], [f"X_train_{number_csv}", f"X_val_{number_csv}", f"X_test_{number_csv}", f"y_train_{number_csv}", f"y_val_{number_csv}", f"y_test_{number_csv}"]):
     df.to_csv(f"data/simulation/{name}.csv", index=False)
 
@@ -659,4 +800,101 @@ def plot_bigram_distribution(X_train, y_train, from_n=0, top_n=30):
         print(f"{bg:<10} {c0:<15} {c1:<15} {diff:<12.0f}")
 
 # Esegui
-plot_bigram_distribution(X_train, y_train, from_n=400, top_n=600)
+plot_bigram_distribution(X_train, y_train, from_n=1, top_n=800)
+
+
+
+def plot_ngram_vignette(X_train, y_train, max_n=7, top_n=700):
+    """
+    Create a vignette (faceted) plot showing n-gram distributions from 2-grams to max_n-grams.
+    Each subplot shows the top_n most discriminative n-grams.
+    """
+    
+    def extract_ngrams(seq, n):
+        """Extract n-grams from a sequence"""
+        letters = seq.split('\x1f')
+        if len(letters) < n:
+            return []
+        return ["-".join(letters[i:i+n]) for i in range(len(letters)-n+1)]
+    
+    # Prepare subplots
+    n_grams = list(range(2, max_n + 1))
+    n_plots = len(n_grams)
+    n_cols = 2  # 2 columns
+    n_rows = int(np.ceil(n_plots / n_cols))
+    
+    fig, axes = plt.subplots(n_rows, n_cols, figsize=(24, 6*n_rows))
+    axes = axes.flatten() if n_plots > 1 else [axes]
+    
+    for idx, n in enumerate(n_grams):
+        ax = axes[idx]
+        
+        # Count n-grams per class
+        ngrams_0 = Counter()
+        ngrams_1 = Counter()
+        
+        for seq, label in zip(pd.DataFrame(X_train)['Sequences'], pd.DataFrame(y_train)['Outcome']):
+            ngrams = extract_ngrams(seq, n)
+            if label == 0:
+                ngrams_0.update(ngrams)
+            else:
+                ngrams_1.update(ngrams)
+        
+        # Find most discriminative n-grams
+        all_ngrams = set(ngrams_0.keys()) | set(ngrams_1.keys())
+        ngram_diff = {}
+        
+        for ng in all_ngrams:
+            freq_0 = ngrams_0.get(ng, 0)
+            freq_1 = ngrams_1.get(ng, 0)
+            diff = abs(freq_0 - freq_1)
+            ngram_diff[ng] = (freq_0, freq_1, diff)
+        
+        # Sort and take top N
+        top_ngrams = sorted(ngram_diff.items(), key=lambda x: x[1][2], reverse=True)[:top_n]
+        
+        # Prepare data
+        ngram_labels = [ng for ng, _ in top_ngrams]
+        counts_0 = [data[0] for _, data in top_ngrams]
+        counts_1 = [data[1] for _, data in top_ngrams]
+        
+        # Plot
+        x = np.arange(len(ngram_labels))
+        width = 0.35
+        
+        ax.bar(x - width/2, counts_1, width, label='Label=1', alpha=0.8, color='C0')
+        ax.bar(x + width/2, counts_0, width, label='Label=0', alpha=0.8, color='C1')
+        
+        ngram_name = {2: 'Bigrams', 3: 'Trigrams', 4: '4-grams', 5: '5-grams', 6: '6-grams', 7: '7-grams'}
+        ax.set_title(f'Top {len(ngram_labels)} {ngram_name.get(n, f"{n}-grams")}', fontsize=12, fontweight='bold')
+        
+        ax.set_xlabel(f'{ngram_name.get(n, f"{n}-grams")}', fontsize=10)
+        ax.set_ylabel('Count', fontsize=10)
+        
+        # Don't show x-tick labels for top_n=100 (too crowded)
+        ax.set_xticks([])
+        
+        if idx == 0:  # Legend only on first plot
+            ax.legend(fontsize=10)
+        
+        ax.grid(axis='y', alpha=0.3)
+        
+        # Print top 5 for each n-gram
+        print(f"\nTop 5 most discriminative {ngram_name.get(n, f'{n}-grams')}:")
+        print(f"{f'{n}-gram':<30} {'Count(0)':<12} {'Count(1)':<12} {'Diff':<10}")
+        print("-" * 70)
+        for ng, (c0, c1, diff) in top_ngrams[:5]:
+            print(f"{ng:<30} {c0:<12} {c1:<12} {diff:<10.0f}")
+    
+    # Hide unused subplots
+    for j in range(n_plots, len(axes)):
+        axes[j].set_visible(False)
+    
+    plt.suptitle(f'N-gram Distribution Analysis (Top {top_n} Most Discriminative)', 
+                 fontsize=16, fontweight='bold', y=0.995)
+    plt.tight_layout()
+    plt.savefig('ngram_vignette.png', dpi=300, bbox_inches='tight')
+    plt.show()
+
+# Usage
+plot_ngram_vignette(X_train, y_train, max_n=7, top_n=700)
