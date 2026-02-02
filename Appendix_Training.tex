@@ -1,0 +1,265 @@
+% ============================================================================
+% APPENDIX: TRAINING CONFIGURATIONS
+% ============================================================================
+
+\appendix
+
+\section{Hyperparameter Configurations}
+\label{appendix:training}
+
+This appendix provides complete hyperparameter configurations for all models evaluated in our experiments.
+
+% ----------------------------------------------------------------------------
+\subsection{Pretrained Language Models}
+\label{appendix:pretrained}
+
+Table~\ref{tab:llm_config} summarizes the fine-tuning configuration for pretrained LLMs.
+
+\begin{table}[h]
+\centering
+\caption{Fine-tuning configuration for pretrained LLMs (Llama, Qwen).}
+\label{tab:llm_config}
+\begin{tabular}{ll}
+\toprule
+Hyperparameter & Value \\
+\midrule
+\multicolumn{2}{l}{\textit{Training}} \\
+Learning rate & $2 \times 10^{-5}$ \\
+Optimizer & AdamW \\
+Batch size & 16 \\
+Max epochs & 20 \\
+Early stopping patience & 3 \\
+Early stopping criterion & Validation loss \\
+Warmup ratio & 6\% of total steps \\
+Scheduler & Linear decay \\
+\midrule
+\multicolumn{2}{l}{\textit{LoRA Configuration}} \\
+Rank ($r$) & 8 \\
+Alpha ($\alpha$) & 16 \\
+Dropout & 0.1 \\
+Target modules & \texttt{q\_proj}, \texttt{k\_proj}, \texttt{v\_proj}, \texttt{o\_proj} \\
+Bias & None \\
+Task type & \texttt{CAUSAL\_LM} \\
+\midrule
+\multicolumn{2}{l}{\textit{Input Processing}} \\
+Max sequence length & 512 tokens \\
+Padding & Max length \\
+Truncation & True \\
+\midrule
+\multicolumn{2}{l}{\textit{Memory Optimization}} \\
+Precision & bfloat16 \\
+Gradient checkpointing & Enabled \\
+Use cache & Disabled \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:tiny_llm_config} shows the architecture configurations for small-scale Llama models trained from scratch.
+
+\begin{table}[h]
+\centering
+\caption{Architecture configurations for Llama models trained from scratch.}
+\label{tab:tiny_llm_config}
+\begin{tabular}{lrrrrr}
+\toprule
+Model & Hidden size & Layers & Heads & KV Heads & Intermediate size \\
+\midrule
+Llama-0.2M & 64 & 4 & 4 & 2 & 256 \\
+Llama-1M & 128 & 4 & 4 & 2 & 512 \\
+Llama-5M & 256 & 6 & 6 & 3 & 820 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ----------------------------------------------------------------------------
+\subsection{BERT Models}
+\label{appendix:bert}
+
+Table~\ref{tab:bert_config} summarizes the fine-tuning configuration for BERT-based models.
+
+\begin{table}[h]
+\centering
+\caption{Fine-tuning configuration for BERT models.}
+\label{tab:bert_config}
+\begin{tabular}{ll}
+\toprule
+Hyperparameter & Value \\
+\midrule
+\multicolumn{2}{l}{\textit{Training}} \\
+Learning rate & $2 \times 10^{-5}$ \\
+Optimizer & AdamW \\
+Batch size & 16 \\
+Max epochs & 20 \\
+Early stopping patience & 3 \\
+Early stopping criterion & Validation loss \\
+Warmup ratio & 6\% of total steps \\
+Scheduler & Linear decay \\
+\midrule
+\multicolumn{2}{l}{\textit{LoRA Configuration (when used)}} \\
+Rank ($r$) & 8 \\
+Alpha ($\alpha$) & 16 \\
+Dropout & 0.1 \\
+Target modules & \texttt{query}, \texttt{key}, \texttt{value} \\
+Bias & None \\
+Task type & \texttt{SEQ\_CLS} \\
+\midrule
+\multicolumn{2}{l}{\textit{Input Processing}} \\
+Max sequence length & 512 tokens \\
+Padding & Max length \\
+Truncation & True \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:tiny_bert_config} shows the architecture configurations for small-scale BERT models.
+
+\begin{table}[h]
+\centering
+\caption{Architecture configurations for BERT models trained from scratch.}
+\label{tab:tiny_bert_config}
+\begin{tabular}{lrrrr}
+\toprule
+Model & Hidden size & Layers & Heads & Intermediate size \\
+\midrule
+BERT-0.2M & 64 & 2 & 2 & 256 \\
+BERT-1M & 128 & 4 & 4 & 512 \\
+BERT-5M & 256 & 6 & 4 & 1024 \\
+BERT-10M & 384 & 6 & 6 & 1536 \\
+BERT-25M & 512 & 8 & 8 & 2048 \\
+BERT-50M & 768 & 12 & 12 & 3072 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ----------------------------------------------------------------------------
+\subsection{Recurrent and Transformer Architectures (From Scratch)}
+\label{appendix:dl_scratch}
+
+Table~\ref{tab:dl_training} summarizes the training configuration shared across all models trained from scratch.
+
+\begin{table}[h]
+\centering
+\caption{Training configuration for models trained from scratch.}
+\label{tab:dl_training}
+\begin{tabular}{ll}
+\toprule
+Hyperparameter & Value \\
+\midrule
+Optimizer & Adam \\
+Batch size & 64 \\
+Max epochs & 30 \\
+Early stopping patience & 5 \\
+Early stopping criterion & Validation F1 \\
+Loss function & Cross-entropy \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:dl_default_config} and Table~\ref{tab:dl_optimal_config} present the default and optimized architecture configurations, respectively.
+
+\begin{table}[h]
+\centering
+\caption{Default architecture configurations for models trained from scratch.}
+\label{tab:dl_default_config}
+\begin{tabular}{llllll}
+\toprule
+Model & Embed. dim & Hidden dim & Layers & Dropout & Learning rate \\
+\midrule
+MLP & -- & [256, 128] & 2 & 0.3 & $10^{-3}$ \\
+CNN1D & 64 & 128 filters & 3 kernels & 0.3 & $10^{-3}$ \\
+Transformer & 64 & 256 (FFN) & 2 & 0.3 & $5 \times 10^{-4}$ \\
+LSTM & 32 & 64 & 2 & 0.3 & $10^{-3}$ \\
+BiLSTM & 32 & 64 & 2 & 0.3 & $10^{-3}$ \\
+GRU & 32 & 64 & 2 & 0.3 & $10^{-3}$ \\
+BiLSTM-Transformer & 64 & 64 (RNN) / 256 (FFN) & 1+2 & 0.3 & $5 \times 10^{-4}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Optimized architecture configurations for models trained from scratch.}
+\label{tab:dl_optimal_config}
+\begin{tabular}{llllll}
+\toprule
+Model & Embed. dim & Hidden dim & Layers & Dropout & Learning rate \\
+\midrule
+MLP & -- & [512, 256, 128] & 3 & 0.3 & $10^{-3}$ \\
+CNN1D & 32 & 128 filters & 4 kernels & 0.2 & $2 \times 10^{-3}$ \\
+Transformer & 64 & 128 (FFN) & 3 & 0.3 & $5 \times 10^{-4}$ \\
+LSTM & 32 & 128 & 2 & 0.2 & $2 \times 10^{-3}$ \\
+BiLSTM & 64 & 64 & 3 & 0.2 & $10^{-3}$ \\
+GRU & 64 & 128 & 2 & 0.3 & $10^{-3}$ \\
+BiLSTM-Transformer & 128 & 32 (RNN) / 256 (FFN) & 1+3 & 0.3 & $10^{-4}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Additional architecture details:
+\begin{itemize}
+    \item \textbf{MLP}: One-hot encoding of input sequences, flattened to $n \times 26$ dimensions.
+    \item \textbf{CNN1D}: Kernel sizes [3, 4, 5] (default) or [3, 4, 5, 6] (optimized); max pooling over sequence dimension.
+    \item \textbf{Transformer}: 4 attention heads; GELU activation; learnable positional encodings; mean pooling with padding mask.
+    \item \textbf{LSTM/BiLSTM/GRU}: Final hidden state used for classification.
+    \item \textbf{BiLSTM-Transformer}: BiLSTM output projected to embedding dimension, then processed by Transformer encoder.
+\end{itemize}
+
+% ----------------------------------------------------------------------------
+\subsection{XGBoost Baselines}
+\label{appendix:xgboost}
+
+Table~\ref{tab:xgboost_config} presents the XGBoost configuration.
+
+\begin{table}[h]
+\centering
+\caption{XGBoost hyperparameter configuration.}
+\label{tab:xgboost_config}
+\begin{tabular}{ll}
+\toprule
+Hyperparameter & Value \\
+\midrule
+\multicolumn{2}{l}{\textit{Tree Parameters}} \\
+Max depth & 6 \\
+Min child weight & 2 \\
+Gamma (min split loss) & 0.1 \\
+Subsample & 0.8 \\
+Column sample by tree & 0.8 \\
+\midrule
+\multicolumn{2}{l}{\textit{Regularization}} \\
+L1 regularization ($\alpha$) & 0.5 \\
+L2 regularization ($\lambda$) & 1.5 \\
+\midrule
+\multicolumn{2}{l}{\textit{Training}} \\
+Learning rate ($\eta$) & 0.05 \\
+Max boosting rounds & 200 \\
+Early stopping patience & 10 \\
+Early stopping criterion & Validation log-loss \\
+Tree method & \texttt{hist} \\
+\midrule
+\multicolumn{2}{l}{\textit{Class Imbalance}} \\
+Scale pos weight & $N_{\text{negative}} / N_{\text{positive}}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+For XGBoost-LLM, embeddings are extracted from Llama-3.2-1B using the prompt format described in Section~\ref{subsec:encoding}, with mean pooling over the last hidden layer (dimension 2048).
+
+% ----------------------------------------------------------------------------
+\subsection{Data Fractions}
+\label{appendix:fractions}
+
+To assess data efficiency, we train each model on the following fractions of the training set: $\{1\%, 10\%, 30\%, 50\%, 75\%, 100\%\}$. Subsampling is performed using stratified sampling to maintain class balance across all fractions.
+
+% ----------------------------------------------------------------------------
+\subsection{Hardware and Software}
+\label{appendix:hardware}
+
+All experiments were conducted on:
+\begin{itemize}
+    \item \textbf{GPU}: NVIDIA A100 (80GB HBM2e)
+    \item \textbf{CPU Memory}: 128GB RAM
+    \item \textbf{Software}: PyTorch 2.x, Transformers 4.x, XGBoost 2.x, PEFT 0.x
+\end{itemize}
+
+Training times vary from approximately 2 minutes (small models, 1\% data) to 6+ hours (Llama-8B, full data).
+

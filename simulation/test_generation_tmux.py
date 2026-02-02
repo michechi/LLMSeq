@@ -6,6 +6,7 @@ import random
 import collections
 import sys
 
+from joblib import dump
 from pathlib import Path
 from sklearn.model_selection import train_test_split
 from multiprocessing import Pool, cpu_count
@@ -102,7 +103,7 @@ def assign_outcome_positional(
     rnd:bool=False, 
     sep:str="\x1f", 
     already_splitted=False, 
-    pr_1 = 0.7, 
+    pr_1 = 0.9, 
     debugging=True,
     min_chain_length=2,
     tolerance=True
@@ -197,7 +198,7 @@ def assign_outcome_positional_2_steps(
     rnd:bool=False, 
     sep:str="\x1f", 
     already_splitted=False, 
-    pr_1 = 0.7, 
+    pr_1 = 0.9, 
     tolerance=True,
     debugging=False
     ) -> dict:
@@ -297,8 +298,8 @@ def assign_outcome_positional_2_steps(
 
 random.seed(959693)
 
-n_events = 20 # More
-n_seq = 5_000_000
+n_events = 40 # More
+n_seq = 50_000_000
 n_0s = 100_000
 n_1s = 100_000
 n_tot = n_0s + n_1s
@@ -308,7 +309,7 @@ n_test = n_tot * 0.10
 generate = True
 parallel = True
 debugging=False
-rnd=False # randomic outcome?
+rnd=True # randomic outcome?
 # pr_1=0.9 # If so, which is P(Y=1|X=Ordered)?
 number_csv=5 # If not generate, which csv has to be uploaded?
 #sum([n_train, n_test, n_val]) == n_tot
@@ -316,8 +317,7 @@ number_csv=5 # If not generate, which csv has to be uploaded?
 letters = list(string.ascii_uppercase)
 # letters_4_key = letters.copy()
 # random.shuffle(letters_4_key)
-# letters_4_key = ["W", "D", "Q", "J", "X", "N"] # Added X Keep it fixed!!
-letters_4_key=letters
+letters_4_key = ["W", "D", "Q", "J", "X", "N"] # Added X Keep it fixed!!
 # letters_4_key = ["W", "D", "Q", "J", "U"] # TEST REPLICA CURRENT CSV 9
 c_vocab = {w:p for p,w in enumerate(letters_4_key,start=0)}
 # Letter used for the test on two steps (10 rnd, 11nonrnd)
@@ -502,7 +502,7 @@ def efficient_check_parallel(sequences, c_vocab, assign_outcome_positional,
 # lags = [9,8,7,6] # csv 2
 # lags = [7] # csv 1
 # lags = [4, 3, 2] # csv 0
-lags = 0
+lags = 7
 
 # Testing for multiple key ordering
 # lags = do_lags(letters, 1234)
@@ -510,7 +510,7 @@ function_2_use_4_outcome = assign_outcome_positional
 
 if parallel:
     # Parallel:
-    n_cores = cpu_count()-4
+    n_cores = cpu_count()-1
     
     check, df_2_monitor = efficient_check_parallel(
             sequences=sequences,
@@ -520,7 +520,7 @@ if parallel:
             lags=lags,
             rnd=rnd,              #### >>>>>>>>> CHANGE HERE PARAMETER !!!
             debugging=debugging,
-            min_chain_length=3,   #### >>>>>>>>> CHANGE HERE PARAMETER !!!
+            min_chain_length=5,   #### >>>>>>>>> CHANGE HERE PARAMETER !!!
             n_workers=n_cores  # oppure None per usare tutti i core
         )
 else:
@@ -534,368 +534,13 @@ else:
         rnd=rnd,
         debugging=debugging)
 
-def extract_characters(seq:str, sep:str="\x1f") -> str:
-    seq_char = "-".join([x[0] for x in seq.split(sep)])
-    return(seq_char)
 
-# Check with reality
-if (not generate):
-    print(pd.Series(labels).value_counts()/len(labels))
-
-# GRAPHICAL STUFF
-# check.keys()
-chr_seq_1s=list(map(extract_characters, check['valid_sequences']))
-chr_seq_0s=list(map(extract_characters, check['invalid_sequences']))
-
-def plot_positions_heatmap(chr_seq_1s, chr_seq_0s, n_positions=40, cmap='coolwarm'):
-    """
-    Heatmap showing difference in letter frequencies between labels.
-    
-    chr_seq_1s and chr_seq_0s should be lists of strings like "A-B-C-D-..."
-    """
-    letters_ord = string.ascii_uppercase
-    
-    # Create matrices for heatmap
-    diff_matrix = np.zeros((len(letters_ord), n_positions))
-    
-    for i in range(n_positions):
-        stats_1s = collections.Counter()
-        stats_0s = collections.Counter()
-        
-        # Extract i-th letter from each sequence
-        for seq in chr_seq_1s:
-            seq_split = seq.split('-')
-            if i < len(seq_split):
-                stats_1s[seq_split[i]] += 1
-        
-        for seq in chr_seq_0s:
-            seq_split = seq.split('-')
-            if i < len(seq_split):
-                stats_0s[seq_split[i]] += 1
-        
-        # Normalize by total counts
-        total_1s = sum(stats_1s.values()) or 1
-        total_0s = sum(stats_0s.values()) or 1
-        
-        for j, letter in enumerate(letters_ord):
-            freq_1s = stats_1s.get(letter, 0) / total_1s
-            freq_0s = stats_0s.get(letter, 0) / total_0s
-            diff_matrix[j, i] = freq_1s - freq_0s
-    
-    # Plot
-    fig, ax = plt.subplots(figsize=(20, 8))
-    im = ax.imshow(diff_matrix, aspect='auto', cmap=cmap, vmin=-0.1, vmax=0.1)
-    
-    ax.set_xticks(np.arange(n_positions))
-    ax.set_xticklabels(np.arange(1, n_positions+1))
-    ax.set_yticks(np.arange(len(letters_ord)))
-    ax.set_yticklabels(letters_ord)
-    
-    ax.set_xlabel('Position', fontsize=12)
-    ax.set_ylabel('Letter', fontsize=12)
-    ax.set_title('Letter Frequency Difference (Label=1 - Label=0) by Position', fontsize=14)
-    
-    cbar = plt.colorbar(im, ax=ax)
-    cbar.set_label('Frequency Difference', fontsize=10)
-    
-    plt.tight_layout()
-    plt.savefig('positions_heatmap.png', dpi=300, bbox_inches='tight')
-    plt.show()
-
-# Usage
-# plot_positions_heatmap(chr_seq_1s, chr_seq_0s, n_positions=20, cmap='PiYG')
-
-def plot_all_positions_compact(chr_seq_1s, chr_seq_0s, n_positions=40):
-    """
-    Compact version with smaller, denser plots.
-    """
-    letters_ord = string.ascii_uppercase
-    
-    n_cols = 8  # More columns for compact view
-    n_rows = int(np.ceil(n_positions / n_cols))
-    
-    fig, axes = plt.subplots(n_rows, n_cols, figsize=(24, 3*n_rows))
-    axes = axes.flatten()
-    
-    for i in range(n_positions):
-        ax = axes[i]
-        
-        stats_1s = collections.Counter(x[i*2] for x in chr_seq_1s if len(x) > i*2)
-        stats_0s = collections.Counter(x[i*2] for x in chr_seq_0s if len(x) > i*2)
-        
-        counts_1s = [stats_1s.get(letter, 0) for letter in letters_ord]
-        counts_0s = [stats_0s.get(letter, 0) for letter in letters_ord]
-        
-        x_pos = np.arange(len(letters_ord))
-        width = 0.35
-        
-        ax.bar(x_pos - width/2, counts_1s, width, label='Label=1', alpha=0.8, color='C0')
-        ax.bar(x_pos + width/2, counts_0s, width, label='Label=0', alpha=0.8, color='C1')
-        
-        ax.set_title(f'Pos {i+1}', fontsize=8)
-        ax.set_xticks([])  # Remove x-ticks for compactness
-        ax.tick_params(labelsize=6)
-        
-        # Add legend only once
-        if i == 0:
-            ax.legend(fontsize=6, loc='upper right')
-    
-    # Hide unused subplots
-    for j in range(n_positions, len(axes)):
-        axes[j].set_visible(False)
-    
-    plt.suptitle('Letter Frequency by Position and Label', fontsize=14, y=1.00)
-    plt.tight_layout()
-    plt.savefig('all_positions_frequency_compact.png', dpi=300, bbox_inches='tight')
-    plt.show()
-
-# Usage
-plot_all_positions_compact(chr_seq_1s, chr_seq_0s, n_positions=20)
-
-# Create Dataset
-df = pd.DataFrame({
-    "Sequences":df_2_monitor['seq'],
-    "Outcome":df_2_monitor['outcome']
-})
-
-df_1s = df.loc[df["Outcome"]==1, ]
-df_0s = df.loc[df["Outcome"]==0, ]
-df_full = pd.concat([df_1s, df_0s], ignore_index=True)
-
-def sample_with_proportion(df, n, pi, label_col='Outcome', random_state=9550):
-    """
-    Sample n rows from df with specified proportion of positive class.
-    
-    Parameters:
-    -----------
-    df : pd.DataFrame
-        Input dataframe
-    n : int
-        Total number of samples to return
-    pi : float
-        Proportion of positive class (label=1), between 0 and 1
-    label_col : str
-        Name of the label column
-    random_state : int, optional
-        Random seed for reproducibility
-    
-    Returns:
-    --------
-    pd.DataFrame
-        Sampled dataframe with desired proportion
-    """
-    # Calculate number of samples per class
-    n_pos = int(n * pi)
-    n_neg = n - n_pos
-    
-    # Separate by class
-    df_pos = df[df[label_col] == 1]
-    df_neg = df[df[label_col] == 0]
-    
-    # Check if we have enough samples
-    if len(df_pos) < n_pos:
-        raise ValueError(f"Not enough positive samples: need {n_pos}, have {len(df_pos)}")
-    if len(df_neg) < n_neg:
-        raise ValueError(f"Not enough negative samples: need {n_neg}, have {len(df_neg)}")
-    
-    # Sample from each class
-    sampled_pos = df_pos.sample(n=n_pos, random_state=random_state)
-    sampled_neg = df_neg.sample(n=n_neg, random_state=random_state)
-    
-    # Combine and shuffle
-    sampled_df = pd.concat([sampled_pos, sampled_neg], axis=0)
-    sampled_df = sampled_df.sample(frac=1, random_state=random_state)  # shuffle
-    
-    return sampled_df.reset_index(drop=True)
-
-# Ratio of Label:
-df_full.Outcome.value_counts()/len(df_full)
-# df_full = df_full.groupby('Outcome')[['Sequences', 'Outcome']].apply(lambda x: x.sample(frac=0.2))
-# df_full = pd.concat([df_1s.sample(n_1s), df_0s.sample(n_0s*2)])
-df_full = sample_with_proportion(df_full, 69924*2, 0.5)
-df_full.Outcome.value_counts()/len(df_full)
-len(df_full)
-
-# Splitting Train Val Test
-# Now train_val_test split:
-X, y = df_full["Sequences"], df_full["Outcome"]
-X_train, X_val_test, y_train, y_val_test = train_test_split(X, y, train_size=0.80, random_state=999)
-X_val, X_test, y_val, y_test = train_test_split(X_val_test, y_val_test, train_size=0.50, random_state=999)
-
-# Uncomment just if you want to save data!
-number_csv = "3"
-for df, name in zip([X_train, X_val, X_test, y_train, y_val, y_test], [f"X_train_{number_csv}", f"X_val_{number_csv}", f"X_test_{number_csv}", f"y_train_{number_csv}", f"y_val_{number_csv}", f"y_test_{number_csv}"]):
-    df.to_csv(f"data/simulation/{name}.csv", index=False)
-
-# GRAPHICAL STUFF
-# Let's visualize bigrams
-def plot_bigram_distribution(X_train, y_train, from_n=0, top_n=30):
-    """
-    Crea un grafico che mostra i bigrammi più discriminativi
-    tra le due classi
-    """
-    
-    # Funzione per estrarre bigrammi
-    def extract_bigrams(seq):
-        letters = seq.split('\x1f')
-        return [f"{letters[i]}-{letters[i+1]}" for i in range(len(letters)-1)]
-    
-    # Conta bigrammi per classe
-    bigrams_0 = Counter()
-    bigrams_1 = Counter()
-    
-    for seq, label in zip(pd.DataFrame(X_train)['Sequences'], pd.DataFrame(y_train)['Outcome']):
-        bigrams = extract_bigrams(seq)
-        if label == 0:
-            bigrams_0.update(bigrams)
-        else:
-            bigrams_1.update(bigrams)
-    
-    # Calcola frequenze normalizzate
-    total_0 = sum(bigrams_0.values())
-    total_1 = sum(bigrams_1.values())
-    
-    # Trova bigrammi più discriminativi
-    all_bigrams = set(bigrams_0.keys()) | set(bigrams_1.keys())
-    bigram_diff = {}
-    
-    for bg in all_bigrams:
-        freq_0 = bigrams_0.get(bg, 0)
-        freq_1 = bigrams_1.get(bg, 0)
-        diff = abs(freq_0 - freq_1)
-        bigram_diff[bg] = (freq_0, freq_1, diff)
-    
-    # Ordina per differenza e prendi top N
-    top_bigrams = sorted(bigram_diff.items(), key=lambda x: x[1][2], reverse=True)[from_n:top_n]
-    
-    # Prepara dati per il grafico
-    bigram_labels = [bg for bg, _ in top_bigrams]
-    counts_0 = [data[0] for _, data in top_bigrams]
-    counts_1 = [data[1] for _, data in top_bigrams]
-    
-    # Crea il grafico
-    x = np.arange(len(bigram_labels))
-    width = 0.35
-    
-    fig, ax = plt.subplots(figsize=(16, 8))
-    bars1 = ax.bar(x - width/2, counts_1, width, label='Label=1 (Ordered)', alpha=0.8)
-    bars0 = ax.bar(x + width/2, counts_0, width, label='Label=0 (Unordered)', alpha=0.8)
-    
-    ax.set_xlabel('Bigrams', fontsize=12)
-    ax.set_ylabel('Count', fontsize=12)
-    ax.set_title(f'Top {top_n} Most Discriminative Bigrams by Label', fontsize=14)
-    ax.set_xticks(x)
-    ax.set_xticklabels(bigram_labels, rotation=45, ha='right')
-    ax.legend()
-    ax.grid(axis='y', alpha=0.3)
-    
-    plt.tight_layout()
-    plt.savefig('bigram_distribution.png', dpi=300, bbox_inches='tight')
-    plt.show()
-    
-    # Stampa statistiche
-    print(f"\nTop {min(10, top_n)} most discriminative bigrams:")
-    print(f"{'Bigram':<10} {'Count(Label=0)':<15} {'Count(Label=1)':<15} {'Difference':<12}")
-    print("-" * 60)
-    for bg, (c0, c1, diff) in top_bigrams[:10]:
-        print(f"{bg:<10} {c0:<15} {c1:<15} {diff:<12.0f}")
-
-# Esegui
-plot_bigram_distribution(X_train, y_train, from_n=1, top_n=800)
-
-
-
-def plot_ngram_vignette(X_train, y_train, max_n=7, top_n=700):
-    """
-    Create a vignette (faceted) plot showing n-gram distributions from 2-grams to max_n-grams.
-    Each subplot shows the top_n most discriminative n-grams.
-    """
-    
-    def extract_ngrams(seq, n):
-        """Extract n-grams from a sequence"""
-        letters = seq.split('\x1f')
-        if len(letters) < n:
-            return []
-        return ["-".join(letters[i:i+n]) for i in range(len(letters)-n+1)]
-    
-    # Prepare subplots
-    n_grams = list(range(2, max_n + 1))
-    n_plots = len(n_grams)
-    n_cols = 2  # 2 columns
-    n_rows = int(np.ceil(n_plots / n_cols))
-    
-    fig, axes = plt.subplots(n_rows, n_cols, figsize=(24, 6*n_rows))
-    axes = axes.flatten() if n_plots > 1 else [axes]
-    
-    for idx, n in enumerate(n_grams):
-        ax = axes[idx]
-        
-        # Count n-grams per class
-        ngrams_0 = Counter()
-        ngrams_1 = Counter()
-        
-        for seq, label in zip(pd.DataFrame(X_train)['Sequences'], pd.DataFrame(y_train)['Outcome']):
-            ngrams = extract_ngrams(seq, n)
-            if label == 0:
-                ngrams_0.update(ngrams)
-            else:
-                ngrams_1.update(ngrams)
-        
-        # Find most discriminative n-grams
-        all_ngrams = set(ngrams_0.keys()) | set(ngrams_1.keys())
-        ngram_diff = {}
-        
-        for ng in all_ngrams:
-            freq_0 = ngrams_0.get(ng, 0)
-            freq_1 = ngrams_1.get(ng, 0)
-            diff = abs(freq_0 - freq_1)
-            ngram_diff[ng] = (freq_0, freq_1, diff)
-        
-        # Sort and take top N
-        top_ngrams = sorted(ngram_diff.items(), key=lambda x: x[1][2], reverse=True)[:top_n]
-        
-        # Prepare data
-        ngram_labels = [ng for ng, _ in top_ngrams]
-        counts_0 = [data[0] for _, data in top_ngrams]
-        counts_1 = [data[1] for _, data in top_ngrams]
-        
-        # Plot
-        x = np.arange(len(ngram_labels))
-        width = 0.35
-        
-        ax.bar(x - width/2, counts_1, width, label='Label=1', alpha=0.8, color='C0')
-        ax.bar(x + width/2, counts_0, width, label='Label=0', alpha=0.8, color='C1')
-        
-        ngram_name = {2: 'Bigrams', 3: 'Trigrams', 4: '4-grams', 5: '5-grams', 6: '6-grams', 7: '7-grams'}
-        ax.set_title(f'Top {len(ngram_labels)} {ngram_name.get(n, f"{n}-grams")}', fontsize=12, fontweight='bold')
-        
-        ax.set_xlabel(f'{ngram_name.get(n, f"{n}-grams")}', fontsize=10)
-        ax.set_ylabel('Count', fontsize=10)
-        
-        # Don't show x-tick labels for top_n=100 (too crowded)
-        ax.set_xticks([])
-        
-        if idx == 0:  # Legend only on first plot
-            ax.legend(fontsize=10)
-        
-        ax.grid(axis='y', alpha=0.3)
-        
-        # Print top 5 for each n-gram
-        print(f"\nTop 5 most discriminative {ngram_name.get(n, f'{n}-grams')}:")
-        print(f"{f'{n}-gram':<30} {'Count(0)':<12} {'Count(1)':<12} {'Diff':<10}")
-        print("-" * 70)
-        for ng, (c0, c1, diff) in top_ngrams[:5]:
-            print(f"{ng:<30} {c0:<12} {c1:<12} {diff:<10.0f}")
-    
-    # Hide unused subplots
-    for j in range(n_plots, len(axes)):
-        axes[j].set_visible(False)
-    
-    plt.suptitle(f'N-gram Distribution Analysis (Top {top_n} Most Discriminative) - data: {number_csv}', 
-                 fontsize=16, fontweight='bold', y=0.995)
-    plt.tight_layout()
-    plt.savefig('ngram_vignette.png', dpi=300, bbox_inches='tight')
-    plt.show()
-
-# Usage
-plot_ngram_vignette(X_train, y_train, max_n=7, top_n=100)
+dump(
+    {
+        "check": check,
+        "df_2_monitor": df_2_monitor,
+        "sequences": sequences,
+    },
+    "simulation_results_rnd_09.joblib",
+    compress=3
+)

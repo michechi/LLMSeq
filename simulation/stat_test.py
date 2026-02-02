@@ -2,14 +2,13 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from collections import defaultdict, Counter
-from sklearn.metrics import roc_auc_score, f1_score
-
+from sklearn.metrics import roc_auc_score, f1_score, precision_score, recall_score
 
 # Reading data - already splitted!
 # 1: lags [7,5,4,2]
 # 2: lags [9,8,7,6]
 
-csv_number = '1_2'
+csv_number = 'alph'
 X_train = pd.read_csv(f"data/simulation/X_train_{csv_number}.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
 y_train = pd.read_csv(f"data/simulation/y_train_{csv_number}.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
 X_val = pd.read_csv(f"data/simulation/X_val_{csv_number}.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
@@ -17,10 +16,35 @@ y_val = pd.read_csv(f"data/simulation/y_val_{csv_number}.csv", na_values=['', 'N
 X_test = pd.read_csv(f"data/simulation/X_test_{csv_number}.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
 y_test = pd.read_csv(f"data/simulation/y_test_{csv_number}.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
 
+# Subsample 50% stratificato se csv_number == "test_just_pair"
+if csv_number == "test_just_pair":
+    from sklearn.model_selection import train_test_split
+
+    def stratified_subsample(X, y, fraction=0.5, random_state=42):
+        """Subsample mantenendo la distribuzione originale delle classi"""
+        _, X_sub, _, y_sub = train_test_split(
+            X, y, test_size=fraction, stratify=y['Outcome'], random_state=random_state
+        )
+        return X_sub.reset_index(drop=True), y_sub.reset_index(drop=True)
+
+    print(f"Subsample 50% stratificato per csv_number='{csv_number}'")
+    print(f"  Train: {len(X_train)} -> ", end="")
+    X_train, y_train = stratified_subsample(X_train, y_train)
+    print(f"{len(X_train)}")
+
+    print(f"  Val:   {len(X_val)} -> ", end="")
+    X_val, y_val = stratified_subsample(X_val, y_val)
+    print(f"{len(X_val)}")
+
+    print(f"  Test:  {len(X_test)} -> ", end="")
+    X_test, y_test = stratified_subsample(X_test, y_test)
+    print(f"{len(X_test)}")
+
 df = pd.DataFrame({
     "Sequences":pd.concat([X_train.Sequences, X_val.Sequences, X_test.Sequences]),
     "Outcome":pd.concat([y_train.Outcome, y_val.Outcome, y_test.Outcome])
 })
+df['Outcome'].value_counts()/len(df)
 
 # Estrai prima lettera
 train_first = [seq.split('\x1f')[0] for seq in X_train['Sequences']]
@@ -40,7 +64,7 @@ for letter in test_first:
     prob = counts[1] / sum(counts) if sum(counts) > 0 else 0.5
     test_preds.append(prob)
 
-baseline_auc = roc_auc_score(y_val['Outcome'], test_preds)
+baseline_auc = roc_auc_score(y_test['Outcome'], test_preds)
 print(f"Baseline AUC (solo prima lettera): {baseline_auc:.4f}")
 
 # Test on all letters
@@ -152,7 +176,7 @@ def bigram_distribution_analysis(X_train, y_train, X_val, y_val):
     
     print("Top 20 bigrammi più discriminativi:")
     print("Bigram | P(bg) | P(bg|label=0) | P(bg|label=1) | Differenza")
-    for bg, ptot, p0, p1, diff in bigram_scores[:20]:
+    for bg, ptot, p0, p1, diff in bigram_scores[:40]:
         print(f"{bg:8} | {ptot:13.4f} | {p0:13.4f} | {p1:13.4f} | {diff:10.4f}")
     
     # Ordina per probabilità
@@ -290,29 +314,38 @@ def ngram_baseline_classifier_with_f1(X_train, y_train, X_val, y_val, n=2):
     
     # Calculate metrics
     auc = roc_auc_score(y_val['Outcome'], val_preds_prob)
-    
-    # Binarize with threshold 0.5 for F1
+
+    # Binarize with threshold 0.5 for F1, precision, recall
     val_preds_binary = [1 if p >= 0.5 else 0 for p in val_preds_prob]
     f1 = f1_score(y_val['Outcome'], val_preds_binary)
-    
+    precision = precision_score(y_val['Outcome'], val_preds_binary)
+    recall = recall_score(y_val['Outcome'], val_preds_binary)
+
     # Try with optimal threshold (that maximizes F1)
     thresholds = np.linspace(0, 1, 101)
     f1_scores = []
+    precisions = []
+    recalls = []
     for thresh in thresholds:
         preds = [1 if p >= thresh else 0 for p in val_preds_prob]
         f1_scores.append(f1_score(y_val['Outcome'], preds))
-    
+        precisions.append(precision_score(y_val['Outcome'], preds, zero_division=0))
+        recalls.append(recall_score(y_val['Outcome'], preds, zero_division=0))
+
     best_f1 = max(f1_scores)
-    best_threshold = thresholds[np.argmax(f1_scores)]
-    
+    best_idx = np.argmax(f1_scores)
+    best_threshold = thresholds[best_idx]
+    best_precision = precisions[best_idx]
+    best_recall = recalls[best_idx]
+
     ngram_name = {2: 'Bigram', 3: 'Trigram', 4: '4-gram', 5: '5-gram', 6: '6-gram', 7: '7-gram'}
     name = ngram_name.get(n, f'{n}-gram')
-    
+
     print(f"{name} Baseline AUC: {auc:.4f}")
-    print(f"{name} Baseline F1 (threshold=0.5): {f1:.4f}")
-    print(f"{name} Baseline F1 (best threshold={best_threshold:.2f}): {best_f1:.4f}")
-    
-    return auc, f1, best_f1, best_threshold
+    print(f"{name} Baseline F1 (threshold=0.5): {f1:.4f} | Precision: {precision:.4f} | Recall: {recall:.4f}")
+    print(f"{name} Baseline F1 (best threshold={best_threshold:.2f}): {best_f1:.4f} | Precision: {best_precision:.4f} | Recall: {best_recall:.4f}")
+
+    return auc, f1, best_f1, best_threshold, precision, recall, best_precision, best_recall
 
 # Run for all n-gram sizes
 print("N-gram Baseline Classifier Results")
@@ -322,111 +355,294 @@ results = {}
 for n in range(2, 8):  # 2 to 7
     print(f"\n{n}-gram results:")
     print("-"*70)
-    auc, f1, best_f1, best_thresh = ngram_baseline_classifier_with_f1(
+    auc, f1, best_f1, best_thresh, precision, recall, best_precision, best_recall = ngram_baseline_classifier_with_f1(
         X_train, y_train, X_val, y_val, n=n
     )
     results[n] = {
         'auc': auc,
         'f1': f1,
         'best_f1': best_f1,
-        'best_threshold': best_thresh
+        'best_threshold': best_thresh,
+        'precision': precision,
+        'recall': recall,
+        'best_precision': best_precision,
+        'best_recall': best_recall
     }
 
-
-# Find most frequent bigrams in both
-
-
-def plot_ngram_vignette(X_train, y_train, max_n=7, top_n=700):
+# N-gram cumulative analysis (similar to cumulative_position_analysis)
+def ngram_cumulative_analysis(X_train, y_train, X_test, y_test, max_n=7):
     """
-    Create a vignette (faceted) plot showing n-gram distributions from 2-grams to max_n-grams.
-    Each subplot shows the top_n most discriminative n-grams.
+    Analisi n-grammi con coverage, simile a cumulative_position_analysis.
+    Calcola AUC, unique train, unique test e coverage per n da 1 a max_n.
+    Coverage = % di n-grammi nel test che sono stati visti nel training.
     """
-    
-    def extract_ngrams(seq, n):
-        """Extract n-grams from a sequence"""
-        letters = seq.split('\x1f')
-        if len(letters) < n:
-            return []
-        return ["-".join(letters[i:i+n]) for i in range(len(letters)-n+1)]
-    
-    # Prepare subplots
-    n_grams = list(range(2, max_n + 1))
-    n_plots = len(n_grams)
-    n_cols = 2  # 2 columns
-    n_rows = int(np.ceil(n_plots / n_cols))
-    
-    fig, axes = plt.subplots(n_rows, n_cols, figsize=(24, 6*n_rows))
-    axes = axes.flatten() if n_plots > 1 else [axes]
-    
-    for idx, n in enumerate(n_grams):
-        ax = axes[idx]
-        
-        # Count n-grams per class
-        ngrams_0 = Counter()
-        ngrams_1 = Counter()
-        
-        for seq, label in zip(pd.DataFrame(X_train)['Sequences'], pd.DataFrame(y_train)['Outcome']):
+
+    results = []
+
+    print(f"\n{'='*80}")
+    print("N-gram Cumulative Analysis (con coverage)")
+    print(f"{'='*80}")
+    print(f"{'n':>3} | {'AUC':>8} | {'Unique Train':>14} | {'Unique Test':>12} | {'Coverage Test':>14}")
+    print("-"*65)
+
+    for n in range(1, max_n + 1):
+        # Estrai tutti gli n-grammi da ogni sequenza
+        train_ngrams_per_seq = [extract_ngrams(seq, n) for seq in X_train['Sequences']]
+        test_ngrams_per_seq = [extract_ngrams(seq, n) for seq in X_test['Sequences']]
+
+        # Calcola P(label=1 | n-gram) dal training
+        ngram_stats = defaultdict(lambda: [0, 0])
+        for ngrams, label in zip(train_ngrams_per_seq, y_train['Outcome']):
+            for ng in ngrams:
+                ngram_stats[ng][int(label)] += 1
+
+        # Predici sul test usando la media delle probabilità degli n-grammi
+        test_preds = []
+        for ngrams in test_ngrams_per_seq:
+            if not ngrams:
+                test_preds.append(0.5)
+                continue
+            probs = []
+            for ng in ngrams:
+                counts = ngram_stats[ng]
+                prob = counts[1] / sum(counts) if sum(counts) > 0 else 0.5
+                probs.append(prob)
+            test_preds.append(np.mean(probs))
+
+        auc = roc_auc_score(y_test['Outcome'], test_preds)
+
+        # Calcola unique e coverage
+        unique_train_ngrams = set()
+        for ngrams in train_ngrams_per_seq:
+            unique_train_ngrams.update(ngrams)
+
+        unique_test_ngrams = set()
+        for ngrams in test_ngrams_per_seq:
+            unique_test_ngrams.update(ngrams)
+
+        unique_train = len(unique_train_ngrams)
+        unique_test = len(unique_test_ngrams)
+        # Coverage: % di n-grammi del test visti nel training
+        coverage = len(unique_test_ngrams & unique_train_ngrams) / unique_test * 100 if unique_test > 0 else 0
+
+        ngram_name = {1: 'Unigram', 2: 'Bigram', 3: 'Trigram'}.get(n, f'{n}-gram')
+        print(f"{n:>3} | {auc:>8.4f} | {unique_train:>14,} | {unique_test:>12,} | {coverage:>13.1f}%")
+
+        results.append({
+            'n': n,
+            'name': ngram_name,
+            'auc': auc,
+            'unique_train': unique_train,
+            'unique_test': unique_test,
+            'coverage': coverage
+        })
+
+    return results
+
+# Esegui l'analisi n-gram cumulativa
+ngram_results = ngram_cumulative_analysis(X_train, y_train, X_test, y_test)
+
+
+# =============================================================================
+# N-gram Fraction Experiment (similar to XGBoost_fraction_experiment.py)
+# =============================================================================
+
+def find_best_ngram(X_train, y_train, X_test, y_test, ngram_sizes=[1, 2, 3, 4, 5, 6, 7]):
+    """
+    Find the best n-gram size using 100% of training data.
+
+    Returns:
+    --------
+    tuple: (best_n, results_dict)
+    """
+    print(f"\n{'='*70}")
+    print("Finding Best N-gram Size (100% training data)")
+    print(f"{'='*70}")
+    print(f"{'N':>3} | {'AUC':>8} | {'Best F1':>8} | {'Unique N-grams':>15}")
+    print("-"*45)
+
+    best_auc = 0
+    best_n = 2
+    results = {}
+
+    for n in ngram_sizes:
+        # Calculate P(label=1 | n-gram) from full training data
+        ngram_stats = defaultdict(lambda: [0, 0])
+
+        for seq, label in zip(X_train['Sequences'], y_train['Outcome']):
             ngrams = extract_ngrams(seq, n)
-            if label == 0:
-                ngrams_0.update(ngrams)
-            else:
-                ngrams_1.update(ngrams)
-        
-        # Find most discriminative n-grams
-        all_ngrams = set(ngrams_0.keys()) | set(ngrams_1.keys())
-        ngram_diff = {}
-        
-        for ng in all_ngrams:
-            freq_0 = ngrams_0.get(ng, 0)
-            freq_1 = ngrams_1.get(ng, 0)
-            diff = abs(freq_0 - freq_1)
-            ngram_diff[ng] = (freq_0, freq_1, diff)
-        
-        # Sort and take top N
-        top_ngrams = sorted(ngram_diff.items(), key=lambda x: x[1][2], reverse=True)[:top_n]
-        
-        # Prepare data
-        ngram_labels = [ng for ng, _ in top_ngrams]
-        counts_0 = [data[0] for _, data in top_ngrams]
-        counts_1 = [data[1] for _, data in top_ngrams]
-        
-        # Plot
-        x = np.arange(len(ngram_labels))
-        width = 0.35
-        
-        ax.bar(x - width/2, counts_1, width, label='Label=1', alpha=0.8, color='C0')
-        ax.bar(x + width/2, counts_0, width, label='Label=0', alpha=0.8, color='C1')
-        
-        ngram_name = {2: 'Bigrams', 3: 'Trigrams', 4: '4-grams', 5: '5-grams', 6: '6-grams', 7: '7-grams'}
-        ax.set_title(f'Top {len(ngram_labels)} {ngram_name.get(n, f"{n}-grams")}', fontsize=12, fontweight='bold')
-        
-        ax.set_xlabel(f'{ngram_name.get(n, f"{n}-grams")}', fontsize=10)
-        ax.set_ylabel('Count', fontsize=10)
-        
-        # Don't show x-tick labels for top_n=100 (too crowded)
-        ax.set_xticks([])
-        
-        if idx == 0:  # Legend only on first plot
-            ax.legend(fontsize=10)
-        
-        ax.grid(axis='y', alpha=0.3)
-        
-        # Print top 5 for each n-gram
-        print(f"\nTop 5 most discriminative {ngram_name.get(n, f'{n}-grams')}:")
-        print(f"{f'{n}-gram':<30} {'Count(0)':<12} {'Count(1)':<12} {'Diff':<10}")
-        print("-" * 70)
-        for ng, (c0, c1, diff) in top_ngrams[:5]:
-            print(f"{ng:<30} {c0:<12} {c1:<12} {diff:<10.0f}")
-    
-    # Hide unused subplots
-    for j in range(n_plots, len(axes)):
-        axes[j].set_visible(False)
-    
-    plt.suptitle(f'N-gram Distribution Analysis (Top {top_n} Most Discriminative)', 
-                 fontsize=16, fontweight='bold', y=0.995)
-    plt.tight_layout()
-    plt.savefig('ngram_vignette.png', dpi=300, bbox_inches='tight')
-    plt.show()
+            for ng in ngrams:
+                ngram_stats[ng][int(label)] += 1
 
-# Usage
-plot_ngram_vignette(X_train, y_train, max_n=7, top_n=700)
+        ngram_probs = {}
+        for ng, counts in ngram_stats.items():
+            total = sum(counts)
+            ngram_probs[ng] = counts[1] / total if total > 0 else 0.5
+
+        # Predict on test set
+        test_preds_prob = []
+        for seq in X_test['Sequences']:
+            ngrams = extract_ngrams(seq, n)
+            probs = [ngram_probs.get(ng, 0.5) for ng in ngrams]
+            avg_prob = np.mean(probs) if probs else 0.5
+            test_preds_prob.append(avg_prob)
+
+        # Calculate AUC
+        auc = roc_auc_score(y_test['Outcome'], test_preds_prob)
+
+        # Find best F1
+        thresholds = np.linspace(0, 1, 101)
+        f1_scores = [f1_score(y_test['Outcome'], [1 if p >= t else 0 for p in test_preds_prob], zero_division=0)
+                     for t in thresholds]
+        best_f1 = max(f1_scores)
+
+        results[n] = {'auc': auc, 'best_f1': best_f1, 'unique_ngrams': len(ngram_stats)}
+
+        print(f"{n:>3} | {auc:>8.4f} | {best_f1:>8.4f} | {len(ngram_stats):>15,}")
+
+        if auc > best_auc:
+            best_auc = auc
+            best_n = n
+
+    print(f"\n>>> Best N-gram: {best_n} (AUC: {best_auc:.4f})")
+    return best_n, results
+
+
+def ngram_fraction_experiment(X_train, y_train, X_test, y_test,
+                               fractions=[0.01, 0.10, 0.30, 0.50, 0.75, 1.00],
+                               ngram_sizes=[1, 2, 3, 4, 5, 6, 7],
+                               random_state=42):
+    """
+    Test n-gram baseline classifier across different training data fractions.
+    First finds the best n-gram on 100% data, then tests that n-gram on all fractions.
+
+    Parameters:
+    -----------
+    X_train, y_train : pd.DataFrame
+        Training data
+    X_test, y_test : pd.DataFrame
+        Test data (kept fixed)
+    fractions : list
+        Fractions of training data to test
+    ngram_sizes : list
+        N-gram sizes to consider for finding the best
+    random_state : int
+        Random seed for reproducibility
+
+    Returns:
+    --------
+    tuple: (best_n, fraction_results_df, all_ngram_results)
+    """
+    from sklearn.model_selection import train_test_split
+
+    # Step 1: Find best n-gram on 100% data
+    best_n, all_ngram_results = find_best_ngram(X_train, y_train, X_test, y_test, ngram_sizes)
+
+    # Step 2: Test best n-gram on different fractions
+    print(f"\n{'='*90}")
+    print(f"Fraction Experiment with Best N-gram (n={best_n})")
+    print(f"{'='*90}")
+    print(f"Training set size: {len(X_train)}")
+    print(f"Test set size: {len(X_test)}")
+    print(f"{'='*90}")
+    print(f"{'Fraction':>10} | {'Train Size':>12} | {'AUC':>8} | {'Best F1':>8} | {'Precision':>10} | {'Recall':>8} | {'Best Thresh':>11} | {'Coverage':>10}")
+    print("-"*95)
+
+    fraction_results = []
+
+    for fraction in fractions:
+        # Stratified subsample of training data
+        if fraction < 1.0:
+            _, X_train_sub, _, y_train_sub = train_test_split(
+                X_train, y_train,
+                test_size=fraction,
+                stratify=y_train['Outcome'],
+                random_state=random_state
+            )
+            X_train_sub = X_train_sub.reset_index(drop=True)
+            y_train_sub = y_train_sub.reset_index(drop=True)
+        else:
+            X_train_sub = X_train.copy()
+            y_train_sub = y_train.copy()
+
+        # Calculate P(label=1 | n-gram) from subsampled training data
+        ngram_stats = defaultdict(lambda: [0, 0])
+
+        for seq, label in zip(X_train_sub['Sequences'], y_train_sub['Outcome']):
+            ngrams = extract_ngrams(seq, best_n)
+            for ng in ngrams:
+                ngram_stats[ng][int(label)] += 1
+
+        ngram_probs = {}
+        for ng, counts in ngram_stats.items():
+            total = sum(counts)
+            ngram_probs[ng] = counts[1] / total if total > 0 else 0.5
+
+        # Calculate coverage (% of test n-grams seen in training)
+        train_ngrams = set(ngram_stats.keys())
+        test_ngrams = set()
+        for seq in X_test['Sequences']:
+            test_ngrams.update(extract_ngrams(seq, best_n))
+        coverage = len(test_ngrams & train_ngrams) / len(test_ngrams) * 100 if test_ngrams else 0
+
+        # Predict on test set
+        test_preds_prob = []
+        for seq in X_test['Sequences']:
+            ngrams = extract_ngrams(seq, best_n)
+            probs = [ngram_probs.get(ng, 0.5) for ng in ngrams]
+            avg_prob = np.mean(probs) if probs else 0.5
+            test_preds_prob.append(avg_prob)
+
+        # Calculate metrics
+        auc = roc_auc_score(y_test['Outcome'], test_preds_prob)
+
+        # Find best threshold for F1
+        thresholds = np.linspace(0, 1, 101)
+        f1_scores = [f1_score(y_test['Outcome'], [1 if p >= t else 0 for p in test_preds_prob], zero_division=0)
+                     for t in thresholds]
+        best_f1 = max(f1_scores)
+        best_threshold = thresholds[np.argmax(f1_scores)]
+
+        # Use best threshold for precision and recall (not 0.5, which often gives all zeros)
+        test_preds_binary = [1 if p >= best_threshold else 0 for p in test_preds_prob]
+        precision = precision_score(y_test['Outcome'], test_preds_binary, zero_division=0)
+        recall = recall_score(y_test['Outcome'], test_preds_binary, zero_division=0)
+
+        # Store results
+        result = {
+            'ngram_size': best_n,
+            'fraction': fraction,
+            'train_samples': len(X_train_sub),
+            'test_samples': len(X_test),
+            'unique_ngrams': len(ngram_stats),
+            'coverage': coverage,
+            'auc': auc,
+            'best_f1': best_f1,
+            'precision': precision,
+            'recall': recall,
+            'best_threshold': best_threshold
+        }
+        fraction_results.append(result)
+
+        print(f"{fraction*100:>9.0f}% | {len(X_train_sub):>12,} | {auc:>8.4f} | {best_f1:>8.4f} | {precision:>10.4f} | {recall:>8.4f} | {best_threshold:>11.2f} | {coverage:>9.1f}%")
+
+    # Convert to DataFrame
+    results_df = pd.DataFrame(fraction_results)
+
+    # Print summary
+    print(f"\n{'='*90}")
+    print(f"SUMMARY: Best {best_n}-gram performance by fraction")
+    print(f"{'='*90}")
+    print(f"\nAUC range: {results_df['auc'].min():.4f} - {results_df['auc'].max():.4f}")
+    print(f"Best F1 range: {results_df['best_f1'].min():.4f} - {results_df['best_f1'].max():.4f}")
+    print(f"Coverage range: {results_df['coverage'].min():.1f}% - {results_df['coverage'].max():.1f}%")
+
+    return best_n, results_df, all_ngram_results
+
+
+# Esegui l'esperimento con le frazioni
+best_n, fraction_results, all_ngram_results = ngram_fraction_experiment(
+    X_train, y_train, X_test, y_test,
+    fractions=[0.01, 0.10, 0.30, 0.50, 0.75, 1.00],
+    ngram_sizes=[1, 2, 3, 4, 5, 6, 7]
+)
