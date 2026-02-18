@@ -1,0 +1,87 @@
+Starting job 69011 on gpu-1-74 on Olivia at Wed Dec 24 19:31:10 CET 2025
+
+=== JOB CONFIGURATION ===
+Job ID: 69011
+Node: gpu-1-74
+Scratch Cache: /cluster/software/gpujobscratch/jobs/69011/hf_cache_69011
+Free space in SCRATCH: 472T
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) init-NRIS
+=== STARTING CONTAINER ===
+Container: /cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif
+Environment: HUGGING_FACE_HUB_TOKEN=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,HF_HOME=/cluster/software/gpujobscratch/jobs/69011/hf_cache_69011,HF_DATASETS_CACHE=/cluster/software/gpujobscratch/jobs/69011/hf_cache_69011,XDG_CACHE_HOME=/cluster/software/gpujobscratch/jobs/69011/hf_cache_69011
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+trainable params: 1,703,936 || all params: 1,237,518,336 || trainable%: 0.1377
+WARNING:__main__:Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+/usr/local/lib/python3.12/dist-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+  Val AUC Val F1-Score  ... Validation Loss Training Time (s)
+0  0.5681       0.1369  ...          5.0854           14924.3
+
+[1 rows x 8 columns]
+=== JOB FINISHED ===
+Exit code: 0
+Cleaning up cache: /cluster/software/gpujobscratch/jobs/69011/hf_cache_69011
+
+Job 69011 consumed 0.0 billing hours and 4.2 GPU hours from project nn12048k.
+
+Submitted 2025-12-24T19:31:09; waited 1.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 15.0 hours
+Elapsed wallclock time:   4.2 hours
+
+Job exited normally.
+
+Task and CPU statistics:
+ID               CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+69011               1            0.0 %  2025-12-24T19:31:10    4.2 h  0
+69011.batch         1      1     0.0 %  2025-12-24T19:31:10    4.2 h  0
+69011.apptainer     1      1     0.0 %  2025-12-24T19:31:11    4.2 h  0
+
+Used CPU time:   0.3 CPU seconds
+Unused CPU time: 4.2 CPU hours
+
+Memory statistics, in GiB:
+ID                Alloc   Usage
+69011             128.0        
+69011.batch       128.0     0.1
+69011.apptainer   128.0    10.8
+
+Job 69011 completed at Wed Dec 24 23:42:21 CET 2025

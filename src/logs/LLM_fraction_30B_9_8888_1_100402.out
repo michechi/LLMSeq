@@ -1,0 +1,83 @@
+Starting job 100402 on gpu-1-76 on Olivia at Tue Jan 27 12:07:16 CET 2026
+
+=== JOB CONFIGURATION ===
+Job ID: 100402
+Node: gpu-1-76
+Scratch Cache: /cluster/software/gpujobscratch/jobs/100402/hf_cache_100402
+Free space in SCRATCH: 471T
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) init-NRIS
+=== STARTING CONTAINER ===
+Container: /cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif
+Environment: HUGGING_FACE_HUB_TOKEN=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,HF_HOME=/cluster/software/gpujobscratch/jobs/100402/hf_cache_100402,HF_DATASETS_CACHE=/cluster/software/gpujobscratch/jobs/100402/hf_cache_100402,XDG_CACHE_HOME=/cluster/software/gpujobscratch/jobs/100402/hf_cache_100402,PYTHONUNBUFFERED=1
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+INFO:__main__:Argument batch_size: 64
+INFO:__main__:Argument cache_dir: '/cluster/work/projects/nn12048k/michechi/cache/'
+INFO:__main__:Argument cold_start: False
+INFO:__main__:Argument early: 'loss'
+INFO:__main__:Argument epochs: 20
+INFO:__main__:Argument fractions: '1.0'
+INFO:__main__:Argument gradient_accumulation_steps: 1
+INFO:__main__:Argument lr: 2e-05
+INFO:__main__:Argument max_length: 50
+INFO:__main__:Argument model_name: 'Qwen/Qwen3-30B-A3B'
+INFO:__main__:Argument model_type: 'general'
+INFO:__main__:Argument number_to_use: '9'
+INFO:__main__:Argument output_dir: '/cluster/work/projects/nn12048k/michechi/results/llm_fraction/'
+INFO:__main__:Argument path_csv: '/cluster/home/michechi/MIMICIV/data/simulation/tested/'
+INFO:__main__:Argument patience: 3
+INFO:__main__:Argument peft: True
+INFO:__main__:Argument seed: 8888
+INFO:__main__:Argument tiny: False
+INFO:__main__:Argument tiny_type: '1M'
+INFO:__main__:Argument use_quantization: True
+INFO:__main__:Using device: cuda
+INFO:__main__:Output directory: /cluster/work/projects/nn12048k/michechi/results/llm_fraction/
+INFO:__main__:Loading datasets...
+INFO:__main__:Dataset sizes - Train: 400000, Val: 50000, Test: 50000
+INFO:__main__:Testing fractions: [1.0]
+INFO:__main__:======================================================================
+INFO:__main__:Training with 100% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 400000
+INFO:__main__:Loading pre-trained CausalLM model (WARM START)
+`torch_dtype` is deprecated! Use `dtype` instead!
+Fetching 16 files:   0%|          | 0/16 [00:00<?, ?it/s]Fetching 16 files:   6%|▋         | 1/16 [03:47<56:57, 227.82s/it]Fetching 16 files:  19%|█▉        | 3/16 [04:16<15:07, 69.84s/it] Fetching 16 files:  44%|████▍     | 7/16 [04:18<03:24, 22.68s/it]Fetching 16 files:  56%|█████▋    | 9/16 [07:02<04:54, 42.09s/it]Fetching 16 files:  69%|██████▉   | 11/16 [07:05<02:25, 29.19s/it]Fetching 16 files:  75%|███████▌  | 12/16 [07:29<01:52, 28.14s/it]Fetching 16 files:  81%|████████▏ | 13/16 [07:31<01:07, 22.64s/it]Fetching 16 files: 100%|██████████| 16/16 [07:31<00:00, 28.20s/it]
+INFO:accelerate.utils.modeling:We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+Loading checkpoint shards:   0%|          | 0/16 [00:00<?, ?it/s]Loading checkpoint shards:   6%|▋         | 1/16 [00:01<00:29,  1.93s/it]Loading checkpoint shards:  12%|█▎        | 2/16 [00:04<00:28,  2.02s/it]Loading checkpoint shards:  19%|█▉        | 3/16 [00:06<00:26,  2.03s/it]Loading checkpoint shards:  25%|██▌       | 4/16 [00:08<00:24,  2.05s/it]Loading checkpoint shards:  31%|███▏      | 5/16 [00:10<00:22,  2.05s/it]Loading checkpoint shards:  38%|███▊      | 6/16 [00:12<00:20,  2.06s/it]Loading checkpoint shards:  44%|████▍     | 7/16 [00:14<00:19,  2.12s/it]Loading checkpoint shards:  50%|█████     | 8/16 [00:16<00:16,  2.10s/it]Loading checkpoint shards:  56%|█████▋    | 9/16 [00:18<00:14,  2.09s/it]Loading checkpoint shards:  62%|██████▎   | 10/16 [00:20<00:12,  2.08s/it]Loading checkpoint shards:  69%|██████▉   | 11/16 [00:22<00:10,  2.08s/it]Loading checkpoint shards:  75%|███████▌  | 12/16 [00:24<00:08,  2.07s/it]Loading checkpoint shards:  81%|████████▏ | 13/16 [00:26<00:06,  2.06s/it]Loading checkpoint shards:  88%|████████▊ | 14/16 [00:28<00:04,  2.07s/it]Loading checkpoint shards:  94%|█████████▍| 15/16 [00:31<00:02,  2.07s/it]Loading checkpoint shards: 100%|██████████| 16/16 [00:31<00:00,  1.54s/it]Loading checkpoint shards: 100%|██████████| 16/16 [00:31<00:00,  1.96s/it]
+trainable params: 6,684,672 || all params: 30,227,642,368 || trainable%: 0.0221
+INFO:__main__:Epoch 1/20 | Train Loss: 5.3611 | Val Loss: 2.8523 | Val AUC: 0.5623 | Val F1: 0.1277
+INFO:__main__:New best model (AUC: 0.5623)
+INFO:__main__:Epoch 2/20 | Train Loss: 2.8317 | Val Loss: 2.8004 | Val AUC: 0.6606 | Val F1: 0.5766
+INFO:__main__:New best model (AUC: 0.6606)
+[2026-01-29T12:07:25.025] error: *** STEP 100402.0 ON gpu-1-76 CANCELLED AT 2026-01-29T12:07:25 DUE TO TIME LIMIT ***
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+[2026-01-29T12:07:25.026] error: *** JOB 100402 ON gpu-1-76 CANCELLED AT 2026-01-29T12:07:25 DUE TO TIME LIMIT ***
+
+Job 100402 consumed 0.0 billing hours and 48.0 GPU hours from project nn12048k.
+
+Submitted 2026-01-27T12:07:15; waited 0.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 2.0 days
+Elapsed wallclock time:   2.0 days
+
+Job timed out.
+
+Task and CPU statistics:
+ID                CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+100402               1            0.0 %  2026-01-27T12:07:15   48.0 h  0
+100402.batch         1      1     0.0 %  2026-01-27T12:07:15   48.0 h  Signal 15
+100402.apptainer     1      1     0.0 %  2026-01-27T12:07:16   48.0 h  Signal 15
+
+Used CPU time:   0.2 CPU seconds
+Unused CPU time: 2.0 CPU days
+
+Memory statistics, in GiB:
+ID                 Alloc   Usage
+100402              90.0        
+100402.batch        90.0     0.0
+100402.apptainer    90.0    65.5
+
+Job 100402 completed at Thu Jan 29 12:07:30 CET 2026

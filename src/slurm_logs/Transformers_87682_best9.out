@@ -1,0 +1,292 @@
+Starting job 87682 on gpu-1-30 on Olivia at Sun Jan 18 09:52:36 CET 2026
+
+=== JOB CONFIGURATION ===
+Job ID: 87682
+Node: gpu-1-30
+Permanent Cache: /cluster/work/projects/nn12048k/michechi/cache
+=== STARTING CONTAINER ===
+Container: /cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif
+Environment: HUGGING_FACE_HUB_TOKEN=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,HF_HOME=/cluster/work/projects/nn12048k/michechi/cache,HF_DATASETS_CACHE=/cluster/work/projects/nn12048k/michechi/cache,XDG_CACHE_HOME=/cluster/work/projects/nn12048k/michechi/cache,PYTHONUNBUFFERED=1
+2026-01-18 09:52:44 - RNN_Baseline - INFO - Logging initialized. Log file: results_rnn_baseline/dataset_9/logs/training_20260118_095244.log
+2026-01-18 09:52:44 - RNN_Baseline - INFO - ======================================================================
+2026-01-18 09:52:44 - RNN_Baseline - INFO - RNN BASELINE TRAINING SCRIPT
+2026-01-18 09:52:44 - RNN_Baseline - INFO - ======================================================================
+2026-01-18 09:52:44 - RNN_Baseline - INFO - Arguments:
+2026-01-18 09:52:44 - RNN_Baseline - INFO -   path_csv: /cluster/home/michechi/MIMICIV/data/simulation/tested/
+2026-01-18 09:52:44 - RNN_Baseline - INFO -   number_to_use: 9
+2026-01-18 09:52:44 - RNN_Baseline - INFO -   sequence_column: Sequences
+2026-01-18 09:52:44 - RNN_Baseline - INFO -   label_column: Outcome
+2026-01-18 09:52:44 - RNN_Baseline - INFO -   test_rnd: False
+2026-01-18 09:52:44 - RNN_Baseline - INFO -   sequence_separator: 
+2026-01-18 09:52:44 - RNN_Baseline - INFO -   models: Transformer,RNNTransformer
+2026-01-18 09:52:44 - RNN_Baseline - INFO -   no_search: False
+2026-01-18 09:52:44 - RNN_Baseline - INFO -   search_trials: 5
+2026-01-18 09:52:44 - RNN_Baseline - INFO -   batch_size: 64
+2026-01-18 09:52:44 - RNN_Baseline - INFO -   final_epochs: 20
+2026-01-18 09:52:44 - RNN_Baseline - INFO -   seed: 12345
+2026-01-18 09:52:44 - RNN_Baseline - INFO -   save_models: True
+2026-01-18 09:52:44 - RNN_Baseline - INFO -   output_dir: results_rnn_baseline
+2026-01-18 09:52:44 - RNN_Baseline - INFO - Random seed set to: 12345
+2026-01-18 09:52:44 - RNN_Baseline - INFO - Using device: cuda
+2026-01-18 09:52:44 - RNN_Baseline - INFO -   GPU: NVIDIA GH200 120GB
+2026-01-18 09:52:44 - RNN_Baseline - INFO -   Memory: 102.01 GB
+2026-01-18 09:52:44 - RNN_Baseline - INFO - Loading data from: /cluster/home/michechi/MIMICIV/data/simulation/tested/
+2026-01-18 09:52:44 - RNN_Baseline - INFO - Using dataset number: 9
+2026-01-18 09:52:44 - RNN_Baseline - INFO - Sequence separator: '\x1f'
+2026-01-18 09:52:45 - RNN_Baseline - INFO - Preprocessing sequences (splitting by separator)...
+2026-01-18 09:52:45 - RNN_Baseline - INFO - Data loaded successfully:
+2026-01-18 09:52:45 - RNN_Baseline - INFO -   Train: 400000 sequences
+2026-01-18 09:52:45 - RNN_Baseline - INFO -   Val:   50000 sequences
+2026-01-18 09:52:45 - RNN_Baseline - INFO -   Test:  50000 sequences
+2026-01-18 09:52:45 - RNN_Baseline - INFO -   Class distribution (train): 232630 (label=0) / 167370 (label=1)
+2026-01-18 09:52:45 - RNN_Baseline - INFO -   Sequence length: min=20, max=20, mean=20.0
+2026-01-18 09:52:45 - RNN_Baseline - INFO - Maximum sequence length in dataset: 20
+2026-01-18 09:52:45 - RNN_Baseline - INFO - Creating PyTorch datasets...
+2026-01-18 09:52:45 - RNN_Baseline - INFO - Creating dataloaders (batch_size=64)...
+2026-01-18 09:52:45 - RNN_Baseline - INFO -   Train batches: 6250
+2026-01-18 09:52:45 - RNN_Baseline - INFO -   Val batches:   782
+2026-01-18 09:52:45 - RNN_Baseline - INFO -   Test batches:  782
+2026-01-18 09:52:45 - RNN_Baseline - INFO - Models to train: Transformer, RNNTransformer
+2026-01-18 09:52:45 - RNN_Baseline - INFO - 
+######################################################################
+2026-01-18 09:52:45 - RNN_Baseline - INFO - # TRAINING Transformer
+2026-01-18 09:52:45 - RNN_Baseline - INFO - ######################################################################
+2026-01-18 09:52:45 - RNN_Baseline - INFO - ============================================================
+2026-01-18 09:52:45 - RNN_Baseline - INFO - RANDOM SEARCH for Transformer (5 trials)
+2026-01-18 09:52:45 - RNN_Baseline - INFO - ============================================================
+2026-01-18 09:52:45 - RNN_Baseline - INFO - 
+Trial 1/5:
+2026-01-18 09:52:45 - RNN_Baseline - INFO -   Config: {'vocab_size': 26, 'embedding_dim': 128, 'num_heads': 4, 'num_layers': 3, 'dim_feedforward': 256, 'num_classes': 2, 'dropout': 0.1, 'max_seq_length': 30}
+2026-01-18 09:52:45 - RNN_Baseline - INFO -   LR: 0.0005
+2026-01-18 09:52:45 - RNN_Baseline - INFO - Starting training for Transformer_trial0
+2026-01-18 09:56:43 - RNN_Baseline - INFO -   Epoch [5/15] Train Loss: 0.6339, Val F1: 0.5589, Val AUC: 0.6564
+2026-01-18 09:57:30 - RNN_Baseline - INFO -   Early stopping at epoch 6
+2026-01-18 09:57:30 - RNN_Baseline - INFO - Training completed. Best epoch: 1, Best Val F1: 0.5690
+2026-01-18 09:57:30 - RNN_Baseline - INFO -   → Val F1: 0.5690
+2026-01-18 09:57:30 - RNN_Baseline - INFO - 
+Trial 2/5:
+2026-01-18 09:57:30 - RNN_Baseline - INFO -   Config: {'vocab_size': 26, 'embedding_dim': 128, 'num_heads': 4, 'num_layers': 3, 'dim_feedforward': 128, 'num_classes': 2, 'dropout': 0.2, 'max_seq_length': 30}
+2026-01-18 09:57:30 - RNN_Baseline - INFO -   LR: 0.0005
+2026-01-18 09:57:30 - RNN_Baseline - INFO - Starting training for Transformer_trial1
+2026-01-18 10:01:26 - RNN_Baseline - INFO -   Epoch [5/15] Train Loss: 0.6341, Val F1: 0.5572, Val AUC: 0.6583
+2026-01-18 10:02:13 - RNN_Baseline - INFO -   Early stopping at epoch 6
+2026-01-18 10:02:13 - RNN_Baseline - INFO - Training completed. Best epoch: 1, Best Val F1: 0.5775
+2026-01-18 10:02:13 - RNN_Baseline - INFO -   → Val F1: 0.5775
+2026-01-18 10:02:13 - RNN_Baseline - INFO - 
+Trial 3/5:
+2026-01-18 10:02:13 - RNN_Baseline - INFO -   Config: {'vocab_size': 26, 'embedding_dim': 64, 'num_heads': 4, 'num_layers': 3, 'dim_feedforward': 512, 'num_classes': 2, 'dropout': 0.3, 'max_seq_length': 30}
+2026-01-18 10:02:13 - RNN_Baseline - INFO -   LR: 0.0001
+2026-01-18 10:02:13 - RNN_Baseline - INFO - Starting training for Transformer_trial2
+2026-01-18 10:06:13 - RNN_Baseline - INFO -   Epoch [5/15] Train Loss: 0.6255, Val F1: 0.5769, Val AUC: 0.6671
+2026-01-18 10:10:13 - RNN_Baseline - INFO -   Epoch [10/15] Train Loss: 0.6170, Val F1: 0.5756, Val AUC: 0.6690
+2026-01-18 10:10:13 - RNN_Baseline - INFO -   Early stopping at epoch 10
+2026-01-18 10:10:13 - RNN_Baseline - INFO - Training completed. Best epoch: 5, Best Val F1: 0.5769
+2026-01-18 10:10:13 - RNN_Baseline - INFO -   → Val F1: 0.5769
+2026-01-18 10:10:13 - RNN_Baseline - INFO - 
+Trial 4/5:
+2026-01-18 10:10:13 - RNN_Baseline - INFO -   Config: {'vocab_size': 26, 'embedding_dim': 128, 'num_heads': 4, 'num_layers': 2, 'dim_feedforward': 128, 'num_classes': 2, 'dropout': 0.3, 'max_seq_length': 30}
+2026-01-18 10:10:13 - RNN_Baseline - INFO -   LR: 0.0001
+2026-01-18 10:10:13 - RNN_Baseline - INFO - Starting training for Transformer_trial3
+2026-01-18 10:13:14 - RNN_Baseline - INFO -   Epoch [5/15] Train Loss: 0.6233, Val F1: 0.5733, Val AUC: 0.6665
+2026-01-18 10:15:04 - RNN_Baseline - INFO -   Early stopping at epoch 8
+2026-01-18 10:15:04 - RNN_Baseline - INFO - Training completed. Best epoch: 3, Best Val F1: 0.5762
+2026-01-18 10:15:04 - RNN_Baseline - INFO -   → Val F1: 0.5762
+2026-01-18 10:15:04 - RNN_Baseline - INFO - 
+Trial 5/5:
+2026-01-18 10:15:04 - RNN_Baseline - INFO -   Config: {'vocab_size': 26, 'embedding_dim': 64, 'num_heads': 8, 'num_layers': 3, 'dim_feedforward': 128, 'num_classes': 2, 'dropout': 0.2, 'max_seq_length': 30}
+2026-01-18 10:15:04 - RNN_Baseline - INFO -   LR: 0.0005
+2026-01-18 10:15:04 - RNN_Baseline - INFO - Starting training for Transformer_trial4
+2026-01-18 10:19:07 - RNN_Baseline - INFO -   Epoch [5/15] Train Loss: 0.6195, Val F1: 0.5730, Val AUC: 0.6672
+2026-01-18 10:23:10 - RNN_Baseline - INFO -   Epoch [10/15] Train Loss: 0.6175, Val F1: 0.5728, Val AUC: 0.6644
+2026-01-18 10:27:13 - RNN_Baseline - INFO -   Epoch [15/15] Train Loss: 0.6165, Val F1: 0.5735, Val AUC: 0.6680
+2026-01-18 10:27:13 - RNN_Baseline - INFO - Training completed. Best epoch: 14, Best Val F1: 0.5754
+2026-01-18 10:27:13 - RNN_Baseline - INFO -   → Val F1: 0.5754
+2026-01-18 10:27:13 - RNN_Baseline - INFO - 
+============================================================
+2026-01-18 10:27:13 - RNN_Baseline - INFO - BEST CONFIGURATION (Trial 2):
+2026-01-18 10:27:13 - RNN_Baseline - INFO - ============================================================
+2026-01-18 10:27:13 - RNN_Baseline - INFO - Val F1: 0.5775
+2026-01-18 10:27:13 - RNN_Baseline - INFO - Parameters: 306,434
+2026-01-18 10:27:13 - RNN_Baseline - INFO - Config:
+2026-01-18 10:27:13 - RNN_Baseline - INFO -   embedding_dim: 128
+2026-01-18 10:27:13 - RNN_Baseline - INFO -   num_heads: 4
+2026-01-18 10:27:13 - RNN_Baseline - INFO -   num_layers: 3
+2026-01-18 10:27:13 - RNN_Baseline - INFO -   dim_feedforward: 128
+2026-01-18 10:27:13 - RNN_Baseline - INFO -   dropout: 0.2
+2026-01-18 10:27:13 - RNN_Baseline - INFO -   max_seq_length: 30
+2026-01-18 10:27:13 - RNN_Baseline - INFO -   lr: 0.0005
+2026-01-18 10:27:13 - RNN_Baseline - INFO - 
+============================================================
+2026-01-18 10:27:13 - RNN_Baseline - INFO - FINAL TRAINING with best configuration
+2026-01-18 10:27:13 - RNN_Baseline - INFO - ============================================================
+2026-01-18 10:27:13 - RNN_Baseline - INFO - Model parameters: 306,434
+2026-01-18 10:27:13 - RNN_Baseline - INFO - Starting training for Transformer
+2026-01-18 10:31:14 - RNN_Baseline - INFO -   Epoch [5/20] Train Loss: 0.6326, Val F1: 0.4987, Val AUC: 0.6643
+2026-01-18 10:32:03 - RNN_Baseline - INFO -   Early stopping at epoch 6
+2026-01-18 10:32:03 - RNN_Baseline - INFO - Training completed. Best epoch: 1, Best Val F1: 0.5718
+2026-01-18 10:32:03 - RNN_Baseline - INFO - Final Validation F1: 0.5718
+2026-01-18 10:32:03 - RNN_Baseline - INFO - 
+============================================================
+2026-01-18 10:32:03 - RNN_Baseline - INFO - TEST SET EVALUATION
+2026-01-18 10:32:03 - RNN_Baseline - INFO - ============================================================
+2026-01-18 10:32:04 - RNN_Baseline - INFO - 
+Test Results for Transformer:
+2026-01-18 10:32:04 - RNN_Baseline - INFO -   Accuracy:  0.6753
+2026-01-18 10:32:04 - RNN_Baseline - INFO -   Precision: 0.6650
+2026-01-18 10:32:04 - RNN_Baseline - INFO -   Recall:    0.4573
+2026-01-18 10:32:04 - RNN_Baseline - INFO -   F1 Score:  0.5419
+2026-01-18 10:32:04 - RNN_Baseline - INFO -   AUC:       0.6567
+2026-01-18 10:32:04 - RNN_Baseline - INFO -   Confusion Matrix:
+2026-01-18 10:32:04 - RNN_Baseline - INFO -     [[24159, 4838], [11399, 9604]]
+2026-01-18 10:32:05 - RNN_Baseline - INFO - Results saved:
+2026-01-18 10:32:05 - RNN_Baseline - INFO -   Predictions: results_rnn_baseline/dataset_9/Transformer_predictions_dataset9.csv
+2026-01-18 10:32:05 - RNN_Baseline - INFO -   Summary:     results_rnn_baseline/dataset_9/Transformer_summary_dataset9.json
+2026-01-18 10:32:05 - RNN_Baseline - INFO -   Model checkpoint: results_rnn_baseline/dataset_9/models/Transformer_best.pt
+2026-01-18 10:32:05 - RNN_Baseline - INFO - 
+######################################################################
+2026-01-18 10:32:05 - RNN_Baseline - INFO - # TRAINING RNNTransformer
+2026-01-18 10:32:05 - RNN_Baseline - INFO - ######################################################################
+2026-01-18 10:32:05 - RNN_Baseline - INFO - ============================================================
+2026-01-18 10:32:05 - RNN_Baseline - INFO - RANDOM SEARCH for RNNTransformer (5 trials)
+2026-01-18 10:32:05 - RNN_Baseline - INFO - ============================================================
+2026-01-18 10:32:05 - RNN_Baseline - INFO - 
+Trial 1/5:
+2026-01-18 10:32:05 - RNN_Baseline - INFO -   Config: {'vocab_size': 26, 'embedding_dim': 32, 'rnn_hidden_dim': 128, 'num_heads': 8, 'num_transformer_layers': 3, 'dim_feedforward': 256, 'num_classes': 2, 'dropout': 0.1, 'max_seq_length': 30}
+2026-01-18 10:32:05 - RNN_Baseline - INFO -   LR: 0.0001
+2026-01-18 10:32:05 - RNN_Baseline - INFO - Starting training for RNNTransformer_trial0
+2026-01-18 10:36:46 - RNN_Baseline - INFO -   Epoch [5/15] Train Loss: 0.6558, Val F1: 0.3800, Val AUC: 0.6301
+2026-01-18 10:41:35 - RNN_Baseline - INFO -   Epoch [10/15] Train Loss: 0.6335, Val F1: 0.5355, Val AUC: 0.6585
+2026-01-18 10:46:26 - RNN_Baseline - INFO -   Epoch [15/15] Train Loss: 0.6244, Val F1: 0.5494, Val AUC: 0.6657
+2026-01-18 10:46:26 - RNN_Baseline - INFO - Training completed. Best epoch: 14, Best Val F1: 0.5528
+2026-01-18 10:46:26 - RNN_Baseline - INFO -   → Val F1: 0.5528
+2026-01-18 10:46:26 - RNN_Baseline - INFO - 
+Trial 2/5:
+2026-01-18 10:46:26 - RNN_Baseline - INFO -   Config: {'vocab_size': 26, 'embedding_dim': 128, 'rnn_hidden_dim': 128, 'num_heads': 2, 'num_transformer_layers': 1, 'dim_feedforward': 256, 'num_classes': 2, 'dropout': 0.1, 'max_seq_length': 30}
+2026-01-18 10:46:26 - RNN_Baseline - INFO -   LR: 0.001
+2026-01-18 10:46:26 - RNN_Baseline - INFO - Starting training for RNNTransformer_trial1
+2026-01-18 10:49:14 - RNN_Baseline - INFO -   Epoch [5/15] Train Loss: 0.6651, Val F1: 0.2897, Val AUC: 0.6012
+2026-01-18 10:49:47 - RNN_Baseline - INFO -   Early stopping at epoch 6
+2026-01-18 10:49:47 - RNN_Baseline - INFO - Training completed. Best epoch: 1, Best Val F1: 0.3533
+2026-01-18 10:49:47 - RNN_Baseline - INFO -   → Val F1: 0.3533
+2026-01-18 10:49:47 - RNN_Baseline - INFO - 
+Trial 3/5:
+2026-01-18 10:49:47 - RNN_Baseline - INFO -   Config: {'vocab_size': 26, 'embedding_dim': 64, 'rnn_hidden_dim': 128, 'num_heads': 2, 'num_transformer_layers': 3, 'dim_feedforward': 128, 'num_classes': 2, 'dropout': 0.3, 'max_seq_length': 30}
+2026-01-18 10:49:47 - RNN_Baseline - INFO -   LR: 0.0005
+2026-01-18 10:49:47 - RNN_Baseline - INFO - Starting training for RNNTransformer_trial2
+2026-01-18 10:54:43 - RNN_Baseline - INFO -   Epoch [5/15] Train Loss: 0.6315, Val F1: 0.5683, Val AUC: 0.6649
+2026-01-18 10:59:41 - RNN_Baseline - INFO -   Epoch [10/15] Train Loss: 0.6258, Val F1: 0.5566, Val AUC: 0.6637
+2026-01-18 10:59:41 - RNN_Baseline - INFO -   Early stopping at epoch 10
+2026-01-18 10:59:41 - RNN_Baseline - INFO - Training completed. Best epoch: 5, Best Val F1: 0.5683
+2026-01-18 10:59:41 - RNN_Baseline - INFO -   → Val F1: 0.5683
+2026-01-18 10:59:41 - RNN_Baseline - INFO - 
+Trial 4/5:
+2026-01-18 10:59:41 - RNN_Baseline - INFO -   Config: {'vocab_size': 26, 'embedding_dim': 32, 'rnn_hidden_dim': 128, 'num_heads': 8, 'num_transformer_layers': 3, 'dim_feedforward': 256, 'num_classes': 2, 'dropout': 0.1, 'max_seq_length': 30}
+2026-01-18 10:59:41 - RNN_Baseline - INFO -   LR: 0.0001
+2026-01-18 10:59:41 - RNN_Baseline - INFO - Starting training for RNNTransformer_trial3
+2026-01-18 11:04:43 - RNN_Baseline - INFO -   Epoch [5/15] Train Loss: 0.6551, Val F1: 0.5144, Val AUC: 0.6293
+2026-01-18 11:09:44 - RNN_Baseline - INFO -   Epoch [10/15] Train Loss: 0.6341, Val F1: 0.5157, Val AUC: 0.6557
+2026-01-18 11:14:47 - RNN_Baseline - INFO -   Epoch [15/15] Train Loss: 0.6287, Val F1: 0.5314, Val AUC: 0.6599
+2026-01-18 11:14:47 - RNN_Baseline - INFO - Training completed. Best epoch: 14, Best Val F1: 0.5343
+2026-01-18 11:14:47 - RNN_Baseline - INFO -   → Val F1: 0.5343
+2026-01-18 11:14:47 - RNN_Baseline - INFO - 
+Trial 5/5:
+2026-01-18 11:14:47 - RNN_Baseline - INFO -   Config: {'vocab_size': 26, 'embedding_dim': 32, 'rnn_hidden_dim': 32, 'num_heads': 4, 'num_transformer_layers': 3, 'dim_feedforward': 512, 'num_classes': 2, 'dropout': 0.3, 'max_seq_length': 30}
+2026-01-18 11:14:47 - RNN_Baseline - INFO -   LR: 0.0001
+2026-01-18 11:14:47 - RNN_Baseline - INFO - Starting training for RNNTransformer_trial4
+2026-01-18 11:19:53 - RNN_Baseline - INFO -   Epoch [5/15] Train Loss: 0.6621, Val F1: 0.3951, Val AUC: 0.6194
+2026-01-18 11:24:59 - RNN_Baseline - INFO -   Epoch [10/15] Train Loss: 0.6335, Val F1: 0.5696, Val AUC: 0.6648
+2026-01-18 11:30:06 - RNN_Baseline - INFO -   Epoch [15/15] Train Loss: 0.6237, Val F1: 0.5768, Val AUC: 0.6688
+2026-01-18 11:30:06 - RNN_Baseline - INFO - Training completed. Best epoch: 12, Best Val F1: 0.5771
+2026-01-18 11:30:06 - RNN_Baseline - INFO -   → Val F1: 0.5771
+2026-01-18 11:30:06 - RNN_Baseline - INFO - 
+============================================================
+2026-01-18 11:30:06 - RNN_Baseline - INFO - BEST CONFIGURATION (Trial 5):
+2026-01-18 11:30:06 - RNN_Baseline - INFO - ============================================================
+2026-01-18 11:30:06 - RNN_Baseline - INFO - Val F1: 0.5771
+2026-01-18 11:30:06 - RNN_Baseline - INFO - Parameters: 133,890
+2026-01-18 11:30:06 - RNN_Baseline - INFO - Config:
+2026-01-18 11:30:06 - RNN_Baseline - INFO -   embedding_dim: 32
+2026-01-18 11:30:06 - RNN_Baseline - INFO -   rnn_hidden_dim: 32
+2026-01-18 11:30:06 - RNN_Baseline - INFO -   num_heads: 4
+2026-01-18 11:30:06 - RNN_Baseline - INFO -   num_transformer_layers: 3
+2026-01-18 11:30:06 - RNN_Baseline - INFO -   dim_feedforward: 512
+2026-01-18 11:30:06 - RNN_Baseline - INFO -   dropout: 0.3
+2026-01-18 11:30:06 - RNN_Baseline - INFO -   max_seq_length: 30
+2026-01-18 11:30:06 - RNN_Baseline - INFO -   lr: 0.0001
+2026-01-18 11:30:06 - RNN_Baseline - INFO - 
+============================================================
+2026-01-18 11:30:06 - RNN_Baseline - INFO - FINAL TRAINING with best configuration
+2026-01-18 11:30:06 - RNN_Baseline - INFO - ============================================================
+2026-01-18 11:30:06 - RNN_Baseline - INFO - Model parameters: 133,890
+2026-01-18 11:30:06 - RNN_Baseline - INFO - Starting training for RNNTransformer
+2026-01-18 11:35:14 - RNN_Baseline - INFO -   Epoch [5/20] Train Loss: 0.6632, Val F1: 0.3203, Val AUC: 0.6133
+2026-01-18 11:40:23 - RNN_Baseline - INFO -   Epoch [10/20] Train Loss: 0.6318, Val F1: 0.5749, Val AUC: 0.6666
+2026-01-18 11:45:27 - RNN_Baseline - INFO -   Epoch [15/20] Train Loss: 0.6235, Val F1: 0.5738, Val AUC: 0.6690
+2026-01-18 11:46:28 - RNN_Baseline - INFO -   Early stopping at epoch 16
+2026-01-18 11:46:28 - RNN_Baseline - INFO - Training completed. Best epoch: 11, Best Val F1: 0.5780
+2026-01-18 11:46:28 - RNN_Baseline - INFO - Final Validation F1: 0.5780
+2026-01-18 11:46:28 - RNN_Baseline - INFO - 
+============================================================
+2026-01-18 11:46:28 - RNN_Baseline - INFO - TEST SET EVALUATION
+2026-01-18 11:46:28 - RNN_Baseline - INFO - ============================================================
+2026-01-18 11:46:30 - RNN_Baseline - INFO - 
+Test Results for RNNTransformer:
+2026-01-18 11:46:30 - RNN_Baseline - INFO -   Accuracy:  0.6910
+2026-01-18 11:46:30 - RNN_Baseline - INFO -   Precision: 0.6800
+2026-01-18 11:46:30 - RNN_Baseline - INFO -   Recall:    0.4993
+2026-01-18 11:46:30 - RNN_Baseline - INFO -   F1 Score:  0.5758
+2026-01-18 11:46:30 - RNN_Baseline - INFO -   AUC:       0.6702
+2026-01-18 11:46:30 - RNN_Baseline - INFO -   Confusion Matrix:
+2026-01-18 11:46:30 - RNN_Baseline - INFO -     [[24061, 4936], [10516, 10487]]
+2026-01-18 11:46:30 - RNN_Baseline - INFO - Results saved:
+2026-01-18 11:46:30 - RNN_Baseline - INFO -   Predictions: results_rnn_baseline/dataset_9/RNNTransformer_predictions_dataset9.csv
+2026-01-18 11:46:30 - RNN_Baseline - INFO -   Summary:     results_rnn_baseline/dataset_9/RNNTransformer_summary_dataset9.json
+2026-01-18 11:46:30 - RNN_Baseline - INFO -   Model checkpoint: results_rnn_baseline/dataset_9/models/RNNTransformer_best.pt
+2026-01-18 11:46:30 - RNN_Baseline - INFO - 
+######################################################################
+2026-01-18 11:46:30 - RNN_Baseline - INFO - # FINAL COMPARISON OF ALL MODELS
+2026-01-18 11:46:30 - RNN_Baseline - INFO - ######################################################################
+
+2026-01-18 11:46:30 - RNN_Baseline - INFO - Model           Accuracy   Precision  Recall     F1         AUC       
+2026-01-18 11:46:30 - RNN_Baseline - INFO - ---------------------------------------------------------------------------
+2026-01-18 11:46:30 - RNN_Baseline - INFO - Transformer     0.6753     0.6650     0.4573     0.5419     0.6567    
+2026-01-18 11:46:30 - RNN_Baseline - INFO - RNNTransformer  0.6910     0.6800     0.4993     0.5758     0.6702    
+2026-01-18 11:46:30 - RNN_Baseline - INFO - 
+Comparison saved to: results_rnn_baseline/dataset_9/comparison_dataset9.json
+2026-01-18 11:46:30 - RNN_Baseline - INFO - 
+============================================================
+2026-01-18 11:46:30 - RNN_Baseline - INFO - BEST MODEL: RNNTransformer
+2026-01-18 11:46:30 - RNN_Baseline - INFO -   F1 Score: 0.5758
+2026-01-18 11:46:30 - RNN_Baseline - INFO -   AUC:      0.6702
+2026-01-18 11:46:30 - RNN_Baseline - INFO - ============================================================
+2026-01-18 11:46:30 - RNN_Baseline - INFO - 
+Training completed successfully!
+=== JOB FINISHED ===
+Exit code: 0
+Cache permanente mantenuta in: /cluster/work/projects/nn12048k/michechi/cache
+
+Job 87682 consumed 0.0 billing hours and 1.9 GPU hours from project nn12048k.
+
+Submitted 2026-01-18T09:52:15; waited 21.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 14.0 hours
+Elapsed wallclock time:   1.9 hours
+
+Job exited normally.
+
+Task and CPU statistics:
+ID               CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+87682               1            0.0 %  2026-01-18T09:52:36    1.9 h  0
+87682.batch         1      1     0.0 %  2026-01-18T09:52:36    1.9 h  0
+87682.apptainer     1      1     0.0 %  2026-01-18T09:52:37    1.9 h  0
+
+Used CPU time:   0.2 CPU seconds
+Unused CPU time: 1.9 CPU hours
+
+Memory statistics, in GiB:
+ID                Alloc   Usage
+87682             128.0        
+87682.batch       128.0     0.0
+87682.apptainer   128.0     5.7
+
+Job 87682 completed at Sun Jan 18 11:46:31 CET 2026

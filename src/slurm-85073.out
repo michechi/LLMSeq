@@ -1,0 +1,80 @@
+Starting job 85073 on gpu-1-76 on Olivia at Wed Jan 14 20:06:57 CET 2026
+
+=== JOB CONFIGURATION ===
+Job ID: 85073
+Node: gpu-1-76
+Scratch Cache: /cluster/software/gpujobscratch/jobs/85073/hf_cache_85073
+Free space in SCRATCH: 472T
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) init-NRIS
+=== STARTING CONTAINER ===
+Container: /cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif
+Environment: HUGGING_FACE_HUB_TOKEN=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,HF_HOME=/cluster/software/gpujobscratch/jobs/85073/hf_cache_85073,HF_DATASETS_CACHE=/cluster/software/gpujobscratch/jobs/85073/hf_cache_85073,XDG_CACHE_HOME=/cluster/software/gpujobscratch/jobs/85073/hf_cache_85073
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+2026-01-14 20:07:08,140 [INFO] Argument batch_size: 8
+2026-01-14 20:07:08,140 [INFO] Argument cache_dir: /cluster/work/projects/nn12048k/michechi/cache/
+2026-01-14 20:07:08,141 [INFO] Argument csv_to_use: 9
+2026-01-14 20:07:08,141 [INFO] Argument embedding_dir: /cluster/work/projects/nn12048k/michechi/cache/embeddings/
+2026-01-14 20:07:08,141 [INFO] Argument max_length: 512
+2026-01-14 20:07:08,141 [INFO] Argument model_name: meta-llama/Llama-3.1-8B
+2026-01-14 20:07:08,141 [INFO] Argument output_dir: results_XGB
+2026-01-14 20:07:08,141 [INFO] Argument path_csv: /cluster/home/michechi/MIMICIV/data/simulation/
+2026-01-14 20:07:08,141 [INFO] Argument run_basic: True
+2026-01-14 20:07:08,141 [INFO] Argument run_llm: False
+2026-01-14 20:07:08,141 [INFO] Argument seed: 9550
+2026-01-14 20:07:08,335 [INFO] Using device: cuda
+2026-01-14 20:07:08,335 [INFO] CUDA available: True
+2026-01-14 20:07:08,336 [INFO] Loading datasets...
+Traceback (most recent call last):
+  File "/cluster/home/michechi/MIMICIV/src/./XGBoost_fraction_experiment.py", line 580, in <module>
+    results_df = run_experiment(args)
+                 ^^^^^^^^^^^^^^^^^^^^
+  File "/cluster/home/michechi/MIMICIV/src/./XGBoost_fraction_experiment.py", line 398, in run_experiment
+    X_train = pd.read_csv(
+              ^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/pandas/io/parsers/readers.py", line 1026, in read_csv
+    return _read(filepath_or_buffer, kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/pandas/io/parsers/readers.py", line 620, in _read
+    parser = TextFileReader(filepath_or_buffer, **kwds)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/pandas/io/parsers/readers.py", line 1620, in __init__
+    self._engine = self._make_engine(f, self.engine)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/pandas/io/parsers/readers.py", line 1880, in _make_engine
+    self.handles = get_handle(
+                   ^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/pandas/io/common.py", line 873, in get_handle
+    handle = open(
+             ^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/cluster/home/michechi/MIMICIV/data/simulation/X_train_9.csv'
+srun: error: gpu-1-76: task 0: Exited with exit code 1
+srun: Terminating StepId=85073.0
+
+Job 85073 consumed 0.0 billing hours and 0.0 GPU hours from project nn12048k.
+
+Submitted 2026-01-14T20:06:56; waited 1.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 20.0 hours
+Elapsed wallclock time:   12.0 seconds
+
+Job failed.
+
+Task and CPU statistics:
+ID               CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+85073               1            0.0 %  2026-01-14T20:06:57   12.0 s  1
+85073.batch         1      1     1.7 %  2026-01-14T20:06:57   12.0 s  1
+85073.apptainer     1      1     0.0 %  2026-01-14T20:06:58   11.0 s  1
+
+Used CPU time:   0.2 CPU seconds
+Unused CPU time: 11.8 CPU seconds
+
+Memory statistics, in GiB:
+ID                Alloc   Usage
+85073             128.0        
+85073.batch       128.0     0.1
+85073.apptainer   128.0     3.8
+
+Job 85073 completed at Wed Jan 14 20:07:09 CET 2026

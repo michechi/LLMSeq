@@ -1,0 +1,152 @@
+Starting job 99965 on gpu-1-76 on Olivia at Mon Jan 26 23:36:12 CET 2026
+
+=== JOB CONFIGURATION ===
+Job ID: 99965
+Node: gpu-1-76
+Scratch Cache: /cluster/software/gpujobscratch/jobs/99965/hf_cache_99965
+Free space in SCRATCH: 471T
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) init-NRIS
+=== STARTING CONTAINER ===
+Container: /cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif
+Environment: HUGGING_FACE_HUB_TOKEN=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,HF_HOME=/cluster/software/gpujobscratch/jobs/99965/hf_cache_99965,HF_DATASETS_CACHE=/cluster/software/gpujobscratch/jobs/99965/hf_cache_99965,XDG_CACHE_HOME=/cluster/software/gpujobscratch/jobs/99965/hf_cache_99965
+=== CHECKING XGBOOST VERSION ===
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+XGBoost version: 2.1.4
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+2026-01-26 23:36:24,844 [INFO] Argument batch_size: 8
+2026-01-26 23:36:24,844 [INFO] Argument cache_dir: /cluster/work/projects/nn12048k/michechi/cache/
+2026-01-26 23:36:24,844 [INFO] Argument csv_to_use: alph
+2026-01-26 23:36:24,844 [INFO] Argument embedding_dir: /cluster/work/projects/nn12048k/michechi/cache/embeddings/
+2026-01-26 23:36:24,844 [INFO] Argument max_length: 512
+2026-01-26 23:36:24,844 [INFO] Argument model_name: meta-llama/Llama-3.1-8B
+2026-01-26 23:36:24,844 [INFO] Argument output_dir: results_XGB
+2026-01-26 23:36:24,845 [INFO] Argument path_csv: /cluster/home/michechi/MIMICIV/data/simulation/tested/
+2026-01-26 23:36:24,845 [INFO] Argument run_basic: False
+2026-01-26 23:36:24,845 [INFO] Argument run_categorical: False
+2026-01-26 23:36:24,845 [INFO] Argument run_llm: False
+2026-01-26 23:36:24,845 [INFO] Argument run_tfidf: True
+2026-01-26 23:36:24,845 [INFO] Argument seed: 666
+2026-01-26 23:36:25,444 [INFO] Using device: cuda
+2026-01-26 23:36:25,444 [INFO] CUDA available: True
+2026-01-26 23:36:25,445 [INFO] Loading datasets...
+2026-01-26 23:36:25,622 [INFO] Train set: 320000, Val set: 40000, Test set: 40000
+2026-01-26 23:36:25,622 [INFO] Will run: ['tfidf']
+2026-01-26 23:36:25,623 [INFO] ======================================================================
+2026-01-26 23:36:25,623 [INFO] Encoding: TFIDF, Fraction: 1%
+2026-01-26 23:36:25,623 [INFO] ======================================================================
+2026-01-26 23:36:25,676 [INFO] Subsampled 3200 samples (1.0%) from 320000
+2026-01-26 23:36:25,677 [INFO] Class distribution: [1600 1600] (50.00% positive)
+2026-01-26 23:36:25,677 [INFO] Encoding with TF-IDF n-gram method...
+/usr/local/lib/python3.12/dist-packages/sklearn/feature_extraction/text.py:556: UserWarning: The parameter 'token_pattern' will not be used since 'analyzer' != 'word'
+  warnings.warn(
+2026-01-26 23:36:26,756 [INFO] TF-IDF features: 79
+2026-01-26 23:36:26,757 [INFO] Scale pos weight: 1.0000
+2026-01-26 23:36:26,757 [INFO] Training XGBoost...
+2026-01-26 23:36:27,699 [INFO] Early stopping at round 10 (best: 0)
+2026-01-26 23:36:27,756 [INFO] AUC: 0.5096 | F1: 0.5183 | Accuracy: 0.5064 | Time: 2.11s
+2026-01-26 23:36:27,844 [INFO] ======================================================================
+2026-01-26 23:36:27,844 [INFO] Encoding: TFIDF, Fraction: 10%
+2026-01-26 23:36:27,844 [INFO] ======================================================================
+2026-01-26 23:36:27,901 [INFO] Subsampled 32000 samples (10.0%) from 320000
+2026-01-26 23:36:27,902 [INFO] Class distribution: [15997 16003] (50.01% positive)
+2026-01-26 23:36:27,902 [INFO] Encoding with TF-IDF n-gram method...
+/usr/local/lib/python3.12/dist-packages/sklearn/feature_extraction/text.py:556: UserWarning: The parameter 'token_pattern' will not be used since 'analyzer' != 'word'
+  warnings.warn(
+2026-01-26 23:36:29,354 [INFO] TF-IDF features: 79
+2026-01-26 23:36:29,355 [INFO] Scale pos weight: 0.9996
+2026-01-26 23:36:29,355 [INFO] Training XGBoost...
+2026-01-26 23:36:32,007 [INFO] Early stopping at round 10 (best: 0)
+2026-01-26 23:36:32,064 [INFO] AUC: 0.5310 | F1: 0.5885 | Accuracy: 0.5232 | Time: 4.20s
+2026-01-26 23:36:32,150 [INFO] ======================================================================
+2026-01-26 23:36:32,151 [INFO] Encoding: TFIDF, Fraction: 30%
+2026-01-26 23:36:32,151 [INFO] ======================================================================
+2026-01-26 23:36:32,207 [INFO] Subsampled 96000 samples (30.0%) from 320000
+2026-01-26 23:36:32,208 [INFO] Class distribution: [47992 48008] (50.01% positive)
+2026-01-26 23:36:32,208 [INFO] Encoding with TF-IDF n-gram method...
+/usr/local/lib/python3.12/dist-packages/sklearn/feature_extraction/text.py:556: UserWarning: The parameter 'token_pattern' will not be used since 'analyzer' != 'word'
+  warnings.warn(
+2026-01-26 23:36:34,541 [INFO] TF-IDF features: 79
+2026-01-26 23:36:34,541 [INFO] Scale pos weight: 0.9997
+2026-01-26 23:36:34,541 [INFO] Training XGBoost...
+2026-01-26 23:36:40,932 [INFO] Early stopping at round 10 (best: 0)
+2026-01-26 23:36:40,988 [INFO] AUC: 0.5574 | F1: 0.6509 | Accuracy: 0.5469 | Time: 8.82s
+2026-01-26 23:36:41,075 [INFO] ======================================================================
+2026-01-26 23:36:41,076 [INFO] Encoding: TFIDF, Fraction: 50%
+2026-01-26 23:36:41,076 [INFO] ======================================================================
+2026-01-26 23:36:41,131 [INFO] Subsampled 160000 samples (50.0%) from 320000
+2026-01-26 23:36:41,132 [INFO] Class distribution: [79986 80014] (50.01% positive)
+2026-01-26 23:36:41,132 [INFO] Encoding with TF-IDF n-gram method...
+/usr/local/lib/python3.12/dist-packages/sklearn/feature_extraction/text.py:556: UserWarning: The parameter 'token_pattern' will not be used since 'analyzer' != 'word'
+  warnings.warn(
+2026-01-26 23:36:44,357 [INFO] TF-IDF features: 79
+2026-01-26 23:36:44,358 [INFO] Scale pos weight: 0.9997
+2026-01-26 23:36:44,358 [INFO] Training XGBoost...
+2026-01-26 23:36:54,731 [INFO] Early stopping at round 10 (best: 0)
+2026-01-26 23:36:54,788 [INFO] AUC: 0.5584 | F1: 0.6568 | Accuracy: 0.5464 | Time: 13.69s
+2026-01-26 23:36:54,877 [INFO] ======================================================================
+2026-01-26 23:36:54,877 [INFO] Encoding: TFIDF, Fraction: 75%
+2026-01-26 23:36:54,878 [INFO] ======================================================================
+2026-01-26 23:36:54,933 [INFO] Subsampled 240000 samples (75.0%) from 320000
+2026-01-26 23:36:54,934 [INFO] Class distribution: [119980 120020] (50.01% positive)
+2026-01-26 23:36:54,935 [INFO] Encoding with TF-IDF n-gram method...
+/usr/local/lib/python3.12/dist-packages/sklearn/feature_extraction/text.py:556: UserWarning: The parameter 'token_pattern' will not be used since 'analyzer' != 'word'
+  warnings.warn(
+2026-01-26 23:36:59,265 [INFO] TF-IDF features: 79
+2026-01-26 23:36:59,266 [INFO] Scale pos weight: 0.9997
+2026-01-26 23:36:59,266 [INFO] Training XGBoost...
+2026-01-26 23:37:14,512 [INFO] Early stopping at round 10 (best: 0)
+2026-01-26 23:37:14,568 [INFO] AUC: 0.5623 | F1: 0.6652 | Accuracy: 0.5496 | Time: 19.67s
+2026-01-26 23:37:14,659 [INFO] ======================================================================
+2026-01-26 23:37:14,660 [INFO] Encoding: TFIDF, Fraction: 100%
+2026-01-26 23:37:14,660 [INFO] ======================================================================
+2026-01-26 23:37:14,662 [INFO] Encoding with TF-IDF n-gram method...
+/usr/local/lib/python3.12/dist-packages/sklearn/feature_extraction/text.py:556: UserWarning: The parameter 'token_pattern' will not be used since 'analyzer' != 'word'
+  warnings.warn(
+2026-01-26 23:37:20,078 [INFO] TF-IDF features: 79
+2026-01-26 23:37:20,079 [INFO] Scale pos weight: 0.9997
+2026-01-26 23:37:20,079 [INFO] Training XGBoost...
+2026-01-26 23:37:40,300 [INFO] Early stopping at round 10 (best: 0)
+2026-01-26 23:37:40,356 [INFO] AUC: 0.5632 | F1: 0.6734 | Accuracy: 0.5513 | Time: 25.68s
+2026-01-26 23:37:40,449 [INFO] ======================================================================
+2026-01-26 23:37:40,449 [INFO] Saving results...
+2026-01-26 23:37:40,454 [INFO] Results saved to results_XGB/xgb_fraction_experiment_results.csv
+2026-01-26 23:37:40,455 [INFO] 
+Final Results Summary:
+2026-01-26 23:37:40,458 [INFO]   encoding_method  fraction  train_samples  test_samples       auc        f1  accuracy  precision    recall  training_time_sec  seed dataset_id                   timestamp
+0           tfidf      0.01           3200         40000  0.509565  0.518300  0.506450   0.505666  0.531582           2.114690   666       alph  2026-01-26T23:36:27.756398
+1           tfidf      0.10          32000         40000  0.531033  0.588492  0.523175   0.517198  0.682583           4.201724   666       alph  2026-01-26T23:36:32.064625
+2           tfidf      0.30          96000         40000  0.557369  0.650912  0.546875   0.529038  0.845746           8.819741   666       alph  2026-01-26T23:36:40.988556
+3           tfidf      0.50         160000         40000  0.558388  0.656846  0.546350   0.527872  0.869219          13.694402   666       alph  2026-01-26T23:36:54.788260
+4           tfidf      0.75         240000         40000  0.562330  0.665217  0.549625   0.529041  0.895796          19.673590   666       alph  2026-01-26T23:37:14.568860
+5           tfidf      1.00         320000         40000  0.563191  0.673387  0.551250   0.529018  0.926126          25.679026   666       alph  2026-01-26T23:37:40.356472
+
+Job 99965 consumed 0.0 billing hours and 0.0 GPU hours from project nn12048k.
+
+Submitted 2026-01-26T23:36:11; waited 1.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 20.0 hours
+Elapsed wallclock time:   1.5 minutes
+
+Job exited normally.
+
+Task and CPU statistics:
+ID               CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+99965               1            0.0 %  2026-01-26T23:36:12   89.0 s  0
+99965.batch         1      1     0.2 %  2026-01-26T23:36:12   89.0 s  0
+99965.apptainer     1      1     0.0 %  2026-01-26T23:36:12    4.0 s  0
+99965.apptainer     1      1     0.0 %  2026-01-26T23:36:16   85.0 s  0
+
+Used CPU time:   0.2 CPU seconds
+Unused CPU time: 1.5 CPU minutes
+
+Memory statistics, in GiB:
+ID                Alloc   Usage
+99965             128.0        
+99965.batch       128.0     0.0
+99965.apptainer   128.0     0.5
+99965.apptainer   128.0     2.3
+
+Job 99965 completed at Mon Jan 26 23:37:41 CET 2026

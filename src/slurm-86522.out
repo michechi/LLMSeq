@@ -1,0 +1,293 @@
+Starting job 86522 on gpu-1-76 on Olivia at Thu Jan 15 11:18:26 CET 2026
+
+=== JOB CONFIGURATION ===
+Job ID: 86522
+Node: gpu-1-76
+Scratch Cache: /cluster/software/gpujobscratch/jobs/86522/hf_cache_86522
+Free space in SCRATCH: 472T
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) init-NRIS
+=== STARTING CONTAINER ===
+Container: /cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif
+Environment: HUGGING_FACE_HUB_TOKEN=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,HF_HOME=/cluster/software/gpujobscratch/jobs/86522/hf_cache_86522,HF_DATASETS_CACHE=/cluster/software/gpujobscratch/jobs/86522/hf_cache_86522,XDG_CACHE_HOME=/cluster/software/gpujobscratch/jobs/86522/hf_cache_86522,PYTHONUNBUFFERED=1
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+INFO:__main__:Argument batch_size: 16
+INFO:__main__:Argument cache_dir: '/cluster/work/projects/nn12048k/michechi/cache/'
+INFO:__main__:Argument cold_start: True
+INFO:__main__:Argument early: 'loss'
+INFO:__main__:Argument epochs: 20
+INFO:__main__:Argument fractions: '0.01,0.10,0.30,0.50,0.75,1.0'
+INFO:__main__:Argument gradient_accumulation_steps: 1
+INFO:__main__:Argument lr: 2e-05
+INFO:__main__:Argument max_length: 512
+INFO:__main__:Argument model_name: 'meta-llama/Llama-3.1-8B'
+INFO:__main__:Argument model_type: 'general'
+INFO:__main__:Argument number_to_use: 9
+INFO:__main__:Argument output_dir: '/cluster/work/projects/nn12048k/michechi/results/llm_fraction/'
+INFO:__main__:Argument path_csv: '/cluster/home/michechi/MIMICIV/data/simulation/tested/'
+INFO:__main__:Argument patience: 3
+INFO:__main__:Argument peft: False
+INFO:__main__:Argument seed: 9550
+INFO:__main__:Argument tiny: True
+INFO:__main__:Argument tiny_type: '1M'
+INFO:__main__:Argument use_quantization: False
+INFO:__main__:Using device: cuda
+INFO:__main__:Output directory: /cluster/work/projects/nn12048k/michechi/results/llm_fraction/
+WARNING:__main__:Tokenizer has no pad_token. Adding [PAD].
+INFO:__main__:Loading datasets...
+INFO:__main__:Dataset sizes - Train: 400000, Val: 50000, Test: 50000
+INFO:__main__:Testing fractions: [0.01, 0.1, 0.3, 0.5, 0.75, 1.0]
+INFO:__main__:======================================================================
+INFO:__main__:Training with 1% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 4000
+INFO:__main__:Loading TINY CausalLM model (1M)
+INFO:__main__:Tiny model config - Hidden: 128, Layers: 4, Heads: 4, Intermediate: 512, Vocab: 100
+INFO:__main__:Model parameters: 1,005,378
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+INFO:__main__:Epoch 1/20 | Train Loss: 12.3459 | Val Loss: 12.0751 | Val AUC: 0.5496 | Val F1: 0.0000
+INFO:__main__:New best model (AUC: 0.5496)
+INFO:__main__:Epoch 2/20 | Train Loss: 11.6126 | Val Loss: 11.2183 | Val AUC: 0.5648 | Val F1: 0.0002
+INFO:__main__:New best model (AUC: 0.5648)
+INFO:__main__:Epoch 3/20 | Train Loss: 11.0589 | Val Loss: 10.9504 | Val AUC: 0.5662 | Val F1: 0.0001
+INFO:__main__:New best model (AUC: 0.5662)
+INFO:__main__:Epoch 4/20 | Train Loss: 10.9007 | Val Loss: 10.8621 | Val AUC: 0.5658 | Val F1: 0.0021
+INFO:__main__:New best model (AUC: 0.5658)
+INFO:__main__:Epoch 5/20 | Train Loss: 10.8401 | Val Loss: 10.8286 | Val AUC: 0.5659 | Val F1: 0.0002
+INFO:__main__:New best model (AUC: 0.5659)
+INFO:__main__:Epoch 6/20 | Train Loss: 10.8213 | Val Loss: 10.8134 | Val AUC: 0.5664 | Val F1: 0.0024
+INFO:__main__:New best model (AUC: 0.5664)
+INFO:__main__:Epoch 7/20 | Train Loss: 10.8094 | Val Loss: 10.8067 | Val AUC: 0.5658 | Val F1: 0.0005
+INFO:__main__:New best model (AUC: 0.5658)
+INFO:__main__:Epoch 8/20 | Train Loss: 10.8020 | Val Loss: 10.8017 | Val AUC: 0.5655 | Val F1: 0.0145
+INFO:__main__:New best model (AUC: 0.5655)
+INFO:__main__:Epoch 9/20 | Train Loss: 10.7985 | Val Loss: 10.8001 | Val AUC: 0.5656 | Val F1: 0.0014
+INFO:__main__:New best model (AUC: 0.5656)
+INFO:__main__:Epoch 10/20 | Train Loss: 10.7996 | Val Loss: 10.7990 | Val AUC: 0.5658 | Val F1: 0.0217
+INFO:__main__:New best model (AUC: 0.5658)
+INFO:__main__:Epoch 11/20 | Train Loss: 10.7984 | Val Loss: 10.7983 | Val AUC: 0.5660 | Val F1: 0.0037
+INFO:__main__:New best model (AUC: 0.5660)
+INFO:__main__:Epoch 12/20 | Train Loss: 10.7963 | Val Loss: 10.7973 | Val AUC: 0.5660 | Val F1: 0.0124
+INFO:__main__:New best model (AUC: 0.5660)
+INFO:__main__:Epoch 13/20 | Train Loss: 10.7945 | Val Loss: 10.7968 | Val AUC: 0.5659 | Val F1: 0.0087
+INFO:__main__:New best model (AUC: 0.5659)
+INFO:__main__:Epoch 14/20 | Train Loss: 10.7957 | Val Loss: 10.7967 | Val AUC: 0.5661 | Val F1: 0.0101
+INFO:__main__:New best model (AUC: 0.5661)
+INFO:__main__:Epoch 15/20 | Train Loss: 10.7948 | Val Loss: 10.7966 | Val AUC: 0.5661 | Val F1: 0.0115
+INFO:__main__:New best model (AUC: 0.5661)
+INFO:__main__:Epoch 16/20 | Train Loss: 10.7967 | Val Loss: 10.7966 | Val AUC: 0.5661 | Val F1: 0.0123
+INFO:__main__:New best model (AUC: 0.5661)
+INFO:__main__:Epoch 17/20 | Train Loss: 10.7971 | Val Loss: 10.7966 | Val AUC: 0.5661 | Val F1: 0.0114
+INFO:__main__:Epoch 18/20 | Train Loss: 10.7945 | Val Loss: 10.7967 | Val AUC: 0.5660 | Val F1: 0.0121
+INFO:__main__:Epoch 19/20 | Train Loss: 10.7948 | Val Loss: 10.7967 | Val AUC: 0.5662 | Val F1: 0.0117
+INFO:__main__:Early stopping at epoch 19
+INFO:__main__:Optimal threshold: 0.36 (Val F1: 0.5930)
+INFO:__main__:Fraction 1% - Test AUC: 0.5655, Test F1: 0.5916, Time: 2038.1s
+INFO:__main__:======================================================================
+INFO:__main__:Training with 10% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 40000
+INFO:__main__:Loading TINY CausalLM model (1M)
+INFO:__main__:Tiny model config - Hidden: 128, Layers: 4, Heads: 4, Intermediate: 512, Vocab: 100
+INFO:__main__:Model parameters: 1,005,378
+INFO:__main__:Epoch 1/20 | Train Loss: 11.9393 | Val Loss: 11.3556 | Val AUC: 0.5743 | Val F1: 0.0098
+INFO:__main__:New best model (AUC: 0.5743)
+INFO:__main__:Epoch 2/20 | Train Loss: 10.9167 | Val Loss: 10.7766 | Val AUC: 0.5747 | Val F1: 0.0001
+INFO:__main__:New best model (AUC: 0.5747)
+INFO:__main__:Epoch 3/20 | Train Loss: 10.7493 | Val Loss: 10.7388 | Val AUC: 0.5752 | Val F1: 0.1051
+INFO:__main__:New best model (AUC: 0.5752)
+INFO:__main__:Epoch 4/20 | Train Loss: 10.7350 | Val Loss: 10.7319 | Val AUC: 0.5764 | Val F1: 0.0156
+INFO:__main__:New best model (AUC: 0.5764)
+INFO:__main__:Epoch 5/20 | Train Loss: 10.7312 | Val Loss: 10.7320 | Val AUC: 0.5766 | Val F1: 0.0122
+INFO:__main__:Epoch 6/20 | Train Loss: 10.7298 | Val Loss: 10.7285 | Val AUC: 0.5760 | Val F1: 0.0588
+INFO:__main__:New best model (AUC: 0.5760)
+INFO:__main__:Epoch 7/20 | Train Loss: 10.7281 | Val Loss: 10.7284 | Val AUC: 0.5764 | Val F1: 0.0297
+INFO:__main__:New best model (AUC: 0.5764)
+INFO:__main__:Epoch 8/20 | Train Loss: 10.7283 | Val Loss: 10.7285 | Val AUC: 0.5765 | Val F1: 0.0287
+INFO:__main__:Epoch 9/20 | Train Loss: 10.7280 | Val Loss: 10.7274 | Val AUC: 0.5761 | Val F1: 0.0596
+INFO:__main__:New best model (AUC: 0.5761)
+INFO:__main__:Epoch 10/20 | Train Loss: 10.7279 | Val Loss: 10.7274 | Val AUC: 0.5762 | Val F1: 0.0923
+INFO:__main__:Epoch 11/20 | Train Loss: 10.7274 | Val Loss: 10.7276 | Val AUC: 0.5764 | Val F1: 0.0645
+INFO:__main__:Epoch 12/20 | Train Loss: 10.7275 | Val Loss: 10.7273 | Val AUC: 0.5764 | Val F1: 0.0576
+INFO:__main__:New best model (AUC: 0.5764)
+INFO:__main__:Epoch 13/20 | Train Loss: 10.7273 | Val Loss: 10.7273 | Val AUC: 0.5765 | Val F1: 0.0591
+INFO:__main__:Epoch 14/20 | Train Loss: 10.7273 | Val Loss: 10.7277 | Val AUC: 0.5765 | Val F1: 0.0537
+INFO:__main__:Epoch 15/20 | Train Loss: 10.7271 | Val Loss: 10.7271 | Val AUC: 0.5765 | Val F1: 0.0686
+INFO:__main__:New best model (AUC: 0.5765)
+INFO:__main__:Epoch 16/20 | Train Loss: 10.7271 | Val Loss: 10.7271 | Val AUC: 0.5765 | Val F1: 0.0541
+INFO:__main__:New best model (AUC: 0.5765)
+INFO:__main__:Epoch 17/20 | Train Loss: 10.7268 | Val Loss: 10.7272 | Val AUC: 0.5764 | Val F1: 0.0672
+INFO:__main__:Epoch 18/20 | Train Loss: 10.7273 | Val Loss: 10.7271 | Val AUC: 0.5764 | Val F1: 0.0629
+INFO:__main__:Epoch 19/20 | Train Loss: 10.7272 | Val Loss: 10.7271 | Val AUC: 0.5765 | Val F1: 0.0623
+INFO:__main__:New best model (AUC: 0.5765)
+INFO:__main__:Epoch 20/20 | Train Loss: 10.7275 | Val Loss: 10.7273 | Val AUC: 0.5766 | Val F1: 0.0620
+INFO:__main__:Optimal threshold: 0.35 (Val F1: 0.5930)
+INFO:__main__:Fraction 10% - Test AUC: 0.5757, Test F1: 0.5913, Time: 4310.7s
+INFO:__main__:======================================================================
+INFO:__main__:Training with 30% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 120000
+INFO:__main__:Loading TINY CausalLM model (1M)
+INFO:__main__:Tiny model config - Hidden: 128, Layers: 4, Heads: 4, Intermediate: 512, Vocab: 100
+INFO:__main__:Model parameters: 1,005,378
+INFO:__main__:Epoch 1/20 | Train Loss: 11.8929 | Val Loss: 11.3917 | Val AUC: 0.5695 | Val F1: 0.1221
+INFO:__main__:New best model (AUC: 0.5695)
+INFO:__main__:Epoch 2/20 | Train Loss: 11.1101 | Val Loss: 11.0108 | Val AUC: 0.5805 | Val F1: 0.1242
+INFO:__main__:New best model (AUC: 0.5805)
+INFO:__main__:Epoch 3/20 | Train Loss: 10.9887 | Val Loss: 10.9675 | Val AUC: 0.5851 | Val F1: 0.2202
+INFO:__main__:New best model (AUC: 0.5851)
+INFO:__main__:Epoch 4/20 | Train Loss: 10.9545 | Val Loss: 10.9513 | Val AUC: 0.5874 | Val F1: 0.0596
+INFO:__main__:New best model (AUC: 0.5874)
+INFO:__main__:Epoch 5/20 | Train Loss: 10.9469 | Val Loss: 10.9439 | Val AUC: 0.5882 | Val F1: 0.1424
+INFO:__main__:New best model (AUC: 0.5882)
+INFO:__main__:Epoch 6/20 | Train Loss: 10.9444 | Val Loss: 10.9421 | Val AUC: 0.5885 | Val F1: 0.1547
+INFO:__main__:New best model (AUC: 0.5885)
+INFO:__main__:Epoch 7/20 | Train Loss: 10.9432 | Val Loss: 10.9420 | Val AUC: 0.5896 | Val F1: 0.1365
+INFO:__main__:New best model (AUC: 0.5896)
+INFO:__main__:Epoch 8/20 | Train Loss: 10.9423 | Val Loss: 10.9430 | Val AUC: 0.5896 | Val F1: 0.3195
+INFO:__main__:Epoch 9/20 | Train Loss: 10.9420 | Val Loss: 10.9412 | Val AUC: 0.5899 | Val F1: 0.1511
+INFO:__main__:New best model (AUC: 0.5899)
+INFO:__main__:Epoch 10/20 | Train Loss: 10.9419 | Val Loss: 10.9422 | Val AUC: 0.5899 | Val F1: 0.1201
+INFO:__main__:Epoch 11/20 | Train Loss: 10.9415 | Val Loss: 10.9407 | Val AUC: 0.5899 | Val F1: 0.1972
+INFO:__main__:New best model (AUC: 0.5899)
+INFO:__main__:Epoch 12/20 | Train Loss: 10.9414 | Val Loss: 10.9409 | Val AUC: 0.5899 | Val F1: 0.2315
+INFO:__main__:Epoch 13/20 | Train Loss: 10.9410 | Val Loss: 10.9411 | Val AUC: 0.5901 | Val F1: 0.1701
+INFO:__main__:Epoch 14/20 | Train Loss: 10.9414 | Val Loss: 10.9407 | Val AUC: 0.5898 | Val F1: 0.2174
+INFO:__main__:New best model (AUC: 0.5898)
+INFO:__main__:Epoch 15/20 | Train Loss: 10.9410 | Val Loss: 10.9412 | Val AUC: 0.5898 | Val F1: 0.1720
+INFO:__main__:Epoch 16/20 | Train Loss: 10.9410 | Val Loss: 10.9405 | Val AUC: 0.5899 | Val F1: 0.1953
+INFO:__main__:New best model (AUC: 0.5899)
+INFO:__main__:Epoch 17/20 | Train Loss: 10.9408 | Val Loss: 10.9406 | Val AUC: 0.5899 | Val F1: 0.1891
+INFO:__main__:Epoch 18/20 | Train Loss: 10.9411 | Val Loss: 10.9408 | Val AUC: 0.5902 | Val F1: 0.1921
+INFO:__main__:Epoch 19/20 | Train Loss: 10.9408 | Val Loss: 10.9405 | Val AUC: 0.5900 | Val F1: 0.2081
+INFO:__main__:New best model (AUC: 0.5900)
+INFO:__main__:Epoch 20/20 | Train Loss: 10.9409 | Val Loss: 10.9407 | Val AUC: 0.5900 | Val F1: 0.2080
+INFO:__main__:Optimal threshold: 0.30 (Val F1: 0.5932)
+INFO:__main__:Fraction 30% - Test AUC: 0.5895, Test F1: 0.5916, Time: 9170.4s
+INFO:__main__:======================================================================
+INFO:__main__:Training with 50% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 200000
+INFO:__main__:Loading TINY CausalLM model (1M)
+INFO:__main__:Tiny model config - Hidden: 128, Layers: 4, Heads: 4, Intermediate: 512, Vocab: 100
+INFO:__main__:Model parameters: 1,005,378
+INFO:__main__:Epoch 1/20 | Train Loss: 11.9029 | Val Loss: 11.3092 | Val AUC: 0.5727 | Val F1: 0.0666
+INFO:__main__:New best model (AUC: 0.5727)
+INFO:__main__:Epoch 2/20 | Train Loss: 11.0931 | Val Loss: 11.0333 | Val AUC: 0.5761 | Val F1: 0.0208
+INFO:__main__:New best model (AUC: 0.5761)
+INFO:__main__:Epoch 3/20 | Train Loss: 11.0231 | Val Loss: 11.0147 | Val AUC: 0.5776 | Val F1: 0.0601
+INFO:__main__:New best model (AUC: 0.5776)
+INFO:__main__:Epoch 4/20 | Train Loss: 11.0126 | Val Loss: 11.0085 | Val AUC: 0.5778 | Val F1: 0.0465
+INFO:__main__:New best model (AUC: 0.5778)
+INFO:__main__:Epoch 5/20 | Train Loss: 11.0086 | Val Loss: 11.0078 | Val AUC: 0.5783 | Val F1: 0.0381
+INFO:__main__:New best model (AUC: 0.5783)
+INFO:__main__:Epoch 6/20 | Train Loss: 11.0069 | Val Loss: 11.0048 | Val AUC: 0.5789 | Val F1: 0.0755
+INFO:__main__:New best model (AUC: 0.5789)
+INFO:__main__:Epoch 7/20 | Train Loss: 11.0061 | Val Loss: 11.0048 | Val AUC: 0.5787 | Val F1: 0.0653
+INFO:__main__:Epoch 8/20 | Train Loss: 11.0063 | Val Loss: 11.0046 | Val AUC: 0.5791 | Val F1: 0.0729
+INFO:__main__:New best model (AUC: 0.5791)
+INFO:__main__:Epoch 9/20 | Train Loss: 11.0056 | Val Loss: 11.0049 | Val AUC: 0.5789 | Val F1: 0.0994
+INFO:__main__:Epoch 10/20 | Train Loss: 11.0058 | Val Loss: 11.0048 | Val AUC: 0.5791 | Val F1: 0.0659
+INFO:__main__:Epoch 11/20 | Train Loss: 11.0059 | Val Loss: 11.0049 | Val AUC: 0.5791 | Val F1: 0.0665
+INFO:__main__:Early stopping at epoch 11
+INFO:__main__:Optimal threshold: 0.34 (Val F1: 0.5931)
+INFO:__main__:Fraction 50% - Test AUC: 0.5783, Test F1: 0.5913, Time: 7816.6s
+INFO:__main__:======================================================================
+INFO:__main__:Training with 75% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 300000
+INFO:__main__:Loading TINY CausalLM model (1M)
+INFO:__main__:Tiny model config - Hidden: 128, Layers: 4, Heads: 4, Intermediate: 512, Vocab: 100
+INFO:__main__:Model parameters: 1,005,378
+INFO:__main__:Epoch 1/20 | Train Loss: 11.8586 | Val Loss: 11.3753 | Val AUC: 0.5812 | Val F1: 0.0233
+INFO:__main__:New best model (AUC: 0.5812)
+INFO:__main__:Epoch 2/20 | Train Loss: 11.0661 | Val Loss: 10.9898 | Val AUC: 0.5809 | Val F1: 0.2245
+INFO:__main__:New best model (AUC: 0.5809)
+INFO:__main__:Epoch 3/20 | Train Loss: 10.9689 | Val Loss: 10.9564 | Val AUC: 0.5835 | Val F1: 0.0888
+INFO:__main__:New best model (AUC: 0.5835)
+INFO:__main__:Epoch 4/20 | Train Loss: 10.9511 | Val Loss: 10.9448 | Val AUC: 0.5851 | Val F1: 0.1238
+INFO:__main__:New best model (AUC: 0.5851)
+INFO:__main__:Epoch 5/20 | Train Loss: 10.9441 | Val Loss: 10.9422 | Val AUC: 0.5849 | Val F1: 0.1648
+INFO:__main__:New best model (AUC: 0.5849)
+INFO:__main__:Epoch 6/20 | Train Loss: 10.9424 | Val Loss: 10.9416 | Val AUC: 0.5854 | Val F1: 0.2602
+INFO:__main__:New best model (AUC: 0.5854)
+INFO:__main__:Epoch 7/20 | Train Loss: 10.9417 | Val Loss: 10.9408 | Val AUC: 0.5855 | Val F1: 0.1803
+INFO:__main__:New best model (AUC: 0.5855)
+INFO:__main__:Epoch 8/20 | Train Loss: 10.9415 | Val Loss: 10.9414 | Val AUC: 0.5860 | Val F1: 0.2715
+INFO:__main__:Epoch 9/20 | Train Loss: 10.9411 | Val Loss: 10.9403 | Val AUC: 0.5858 | Val F1: 0.2129
+INFO:__main__:New best model (AUC: 0.5858)
+INFO:__main__:Epoch 10/20 | Train Loss: 10.9409 | Val Loss: 10.9403 | Val AUC: 0.5861 | Val F1: 0.1625
+INFO:__main__:Epoch 11/20 | Train Loss: 10.9409 | Val Loss: 10.9405 | Val AUC: 0.5858 | Val F1: 0.1340
+INFO:__main__:Epoch 12/20 | Train Loss: 10.9407 | Val Loss: 10.9403 | Val AUC: 0.5857 | Val F1: 0.2038
+INFO:__main__:Early stopping at epoch 12
+INFO:__main__:Optimal threshold: 0.32 (Val F1: 0.5932)
+INFO:__main__:Fraction 75% - Test AUC: 0.5850, Test F1: 0.5914, Time: 12127.3s
+INFO:__main__:======================================================================
+INFO:__main__:Training with 100% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 400000
+INFO:__main__:Loading TINY CausalLM model (1M)
+INFO:__main__:Tiny model config - Hidden: 128, Layers: 4, Heads: 4, Intermediate: 512, Vocab: 100
+INFO:__main__:Model parameters: 1,005,378
+INFO:__main__:Epoch 1/20 | Train Loss: 11.9266 | Val Loss: 11.3944 | Val AUC: 0.5763 | Val F1: 0.0034
+INFO:__main__:New best model (AUC: 0.5763)
+INFO:__main__:Epoch 2/20 | Train Loss: 11.0903 | Val Loss: 11.0226 | Val AUC: 0.5759 | Val F1: 0.0596
+INFO:__main__:New best model (AUC: 0.5759)
+INFO:__main__:Epoch 3/20 | Train Loss: 11.0028 | Val Loss: 10.9898 | Val AUC: 0.5762 | Val F1: 0.0322
+INFO:__main__:New best model (AUC: 0.5762)
+INFO:__main__:Epoch 4/20 | Train Loss: 10.9881 | Val Loss: 10.9877 | Val AUC: 0.5754 | Val F1: 0.0238
+INFO:__main__:New best model (AUC: 0.5754)
+INFO:__main__:Epoch 5/20 | Train Loss: 10.9861 | Val Loss: 10.9833 | Val AUC: 0.5758 | Val F1: 0.0688
+INFO:__main__:New best model (AUC: 0.5758)
+INFO:__main__:Epoch 6/20 | Train Loss: 10.9851 | Val Loss: 10.9832 | Val AUC: 0.5762 | Val F1: 0.0673
+INFO:__main__:New best model (AUC: 0.5762)
+INFO:__main__:Epoch 7/20 | Train Loss: 10.9850 | Val Loss: 10.9831 | Val AUC: 0.5762 | Val F1: 0.0742
+INFO:__main__:New best model (AUC: 0.5762)
+INFO:__main__:Epoch 8/20 | Train Loss: 10.9847 | Val Loss: 10.9830 | Val AUC: 0.5760 | Val F1: 0.0747
+INFO:__main__:New best model (AUC: 0.5760)
+INFO:__main__:Epoch 9/20 | Train Loss: 10.9847 | Val Loss: 10.9831 | Val AUC: 0.5761 | Val F1: 0.0735
+INFO:__main__:Epoch 10/20 | Train Loss: 10.9845 | Val Loss: 10.9831 | Val AUC: 0.5760 | Val F1: 0.0777
+INFO:__main__:Epoch 11/20 | Train Loss: 10.9846 | Val Loss: 10.9831 | Val AUC: 0.5760 | Val F1: 0.0611
+INFO:__main__:Early stopping at epoch 11
+INFO:__main__:Optimal threshold: 0.36 (Val F1: 0.5932)
+INFO:__main__:Fraction 100% - Test AUC: 0.5752, Test F1: 0.5910, Time: 14504.0s
+INFO:__main__:Results saved to: /cluster/work/projects/nn12048k/michechi/results/llm_fraction/llm_fraction_experiment_meta-llama_Llama-3.1-8B_tiny_1M_9_20260116_011127.csv
+INFO:__main__:
+======================================================================
+INFO:__main__:EXPERIMENT SUMMARY
+INFO:__main__:======================================================================
+ fraction  train_samples  val_auc   val_f1  val_f1_optimal  val_loss  optimal_threshold  test_auc  test_f1  test_accuracy  test_precision  test_recall  epochs  training_time_s
+     0.01           4000 0.566074 0.012310        0.592975 10.796576               0.36  0.565469 0.591645        0.42128        0.420442     0.998048      19      2038.139946
+     0.10          40000 0.576498 0.062348        0.593034 10.727071               0.35  0.575708 0.591321        0.42346        0.421024     0.992953      20      4310.681065
+     0.30         120000 0.589960 0.208068        0.593158 10.940470               0.30  0.589539 0.591610        0.42056        0.420213     0.999143      20      9170.361815
+     0.50         200000 0.579081 0.072858        0.593063 11.004581               0.34  0.578282 0.591283        0.42326        0.420952     0.993144      11      7816.633675
+     0.75         300000 0.585772 0.212893        0.593154 10.940282               0.32  0.584956 0.591367        0.42122        0.420347     0.997000      12     12127.264256
+     1.00         400000 0.575978 0.074738        0.593152 10.982962               0.36  0.575207 0.590954        0.43712        0.425305     0.967957      11     14503.987232
+
+Job 86522 consumed 0.0 billing hours and 13.9 GPU hours from project nn12048k.
+
+Submitted 2026-01-15T11:18:25; waited 1.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 24.0 hours
+Elapsed wallclock time:   13.9 hours
+
+Job exited normally.
+
+Task and CPU statistics:
+ID               CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+86522               1            0.0 %  2026-01-15T11:18:26   13.9 h  0
+86522.batch         1      1     0.0 %  2026-01-15T11:18:26   13.9 h  0
+86522.apptainer     1      1     0.0 %  2026-01-15T11:18:27   13.9 h  0
+
+Used CPU time:   0.3 CPU seconds
+Unused CPU time: 13.9 CPU hours
+
+Memory statistics, in GiB:
+ID                Alloc   Usage
+86522             128.0        
+86522.batch       128.0     0.1
+86522.apptainer   128.0     6.4
+
+Job 86522 completed at Fri Jan 16 01:11:29 CET 2026

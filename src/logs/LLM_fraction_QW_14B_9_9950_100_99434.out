@@ -1,0 +1,104 @@
+Starting job 99434 on gpu-1-76 on Olivia at Mon Jan 26 13:29:15 CET 2026
+
+=== JOB CONFIGURATION ===
+Job ID: 99434
+Node: gpu-1-76
+Scratch Cache: /cluster/software/gpujobscratch/jobs/99434/hf_cache_99434
+Free space in SCRATCH: 468T
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) init-NRIS
+=== STARTING CONTAINER ===
+Container: /cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif
+Environment: HUGGING_FACE_HUB_TOKEN=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,HF_HOME=/cluster/software/gpujobscratch/jobs/99434/hf_cache_99434,HF_DATASETS_CACHE=/cluster/software/gpujobscratch/jobs/99434/hf_cache_99434,XDG_CACHE_HOME=/cluster/software/gpujobscratch/jobs/99434/hf_cache_99434,PYTHONUNBUFFERED=1
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+INFO:__main__:Argument batch_size: 32
+INFO:__main__:Argument cache_dir: '/cluster/work/projects/nn12048k/michechi/cache/'
+INFO:__main__:Argument cold_start: False
+INFO:__main__:Argument early: 'loss'
+INFO:__main__:Argument epochs: 20
+INFO:__main__:Argument fractions: '1.0'
+INFO:__main__:Argument gradient_accumulation_steps: 1
+INFO:__main__:Argument lr: 2e-05
+INFO:__main__:Argument max_length: 100
+INFO:__main__:Argument model_name: 'Qwen/Qwen2.5-14B'
+INFO:__main__:Argument model_type: 'general'
+INFO:__main__:Argument number_to_use: '9'
+INFO:__main__:Argument output_dir: '/cluster/work/projects/nn12048k/michechi/results/llm_fraction/'
+INFO:__main__:Argument path_csv: '/cluster/home/michechi/MIMICIV/data/simulation/tested/'
+INFO:__main__:Argument patience: 3
+INFO:__main__:Argument peft: True
+INFO:__main__:Argument seed: 9950
+INFO:__main__:Argument tiny: False
+INFO:__main__:Argument tiny_type: '1M'
+INFO:__main__:Argument use_quantization: False
+INFO:__main__:Using device: cuda
+INFO:__main__:Output directory: /cluster/work/projects/nn12048k/michechi/results/llm_fraction/
+INFO:__main__:Loading datasets...
+INFO:__main__:Dataset sizes - Train: 400000, Val: 50000, Test: 50000
+INFO:__main__:Testing fractions: [1.0]
+INFO:__main__:======================================================================
+INFO:__main__:Training with 100% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 400000
+INFO:__main__:Loading pre-trained CausalLM model (WARM START)
+`torch_dtype` is deprecated! Use `dtype` instead!
+INFO:accelerate.utils.modeling:We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+Loading checkpoint shards:   0%|          | 0/8 [00:00<?, ?it/s]Loading checkpoint shards:  12%|█▎        | 1/8 [00:00<00:03,  2.02it/s]Loading checkpoint shards:  25%|██▌       | 2/8 [00:01<00:03,  1.84it/s]Loading checkpoint shards:  38%|███▊      | 3/8 [00:01<00:02,  1.90it/s]Loading checkpoint shards:  50%|█████     | 4/8 [00:02<00:02,  1.96it/s]Loading checkpoint shards:  62%|██████▎   | 5/8 [00:02<00:01,  2.01it/s]Loading checkpoint shards:  75%|███████▌  | 6/8 [00:03<00:00,  2.03it/s]Loading checkpoint shards:  88%|████████▊ | 7/8 [00:03<00:00,  2.06it/s]Loading checkpoint shards: 100%|██████████| 8/8 [00:03<00:00,  2.52it/s]Loading checkpoint shards: 100%|██████████| 8/8 [00:03<00:00,  2.16it/s]
+trainable params: 12,582,912 || all params: 14,004,048,896 || trainable%: 0.0899
+INFO:__main__:Epoch 1/20 | Train Loss: 6.4597 | Val Loss: 2.9859 | Val AUC: 0.5564 | Val F1: 0.2226
+INFO:__main__:New best model (AUC: 0.5564)
+INFO:__main__:Epoch 2/20 | Train Loss: 2.9245 | Val Loss: 2.8892 | Val AUC: 0.5708 | Val F1: 0.2151
+INFO:__main__:New best model (AUC: 0.5708)
+INFO:__main__:Epoch 3/20 | Train Loss: 2.8920 | Val Loss: 2.8852 | Val AUC: 0.5735 | Val F1: 0.3476
+INFO:__main__:New best model (AUC: 0.5735)
+INFO:__main__:Epoch 4/20 | Train Loss: 2.8847 | Val Loss: 2.8876 | Val AUC: 0.5768 | Val F1: 0.0292
+INFO:__main__:Epoch 5/20 | Train Loss: 2.8821 | Val Loss: 2.8757 | Val AUC: 0.5786 | Val F1: 0.1070
+INFO:__main__:New best model (AUC: 0.5786)
+INFO:__main__:Epoch 6/20 | Train Loss: 2.8800 | Val Loss: 2.8741 | Val AUC: 0.5796 | Val F1: 0.2565
+INFO:__main__:New best model (AUC: 0.5796)
+INFO:__main__:Epoch 7/20 | Train Loss: 2.8790 | Val Loss: 2.8756 | Val AUC: 0.5791 | Val F1: 0.3944
+INFO:__main__:Epoch 8/20 | Train Loss: 2.8784 | Val Loss: 2.8734 | Val AUC: 0.5793 | Val F1: 0.2774
+INFO:__main__:New best model (AUC: 0.5793)
+INFO:__main__:Epoch 9/20 | Train Loss: 2.8775 | Val Loss: 2.8728 | Val AUC: 0.5806 | Val F1: 0.3137
+INFO:__main__:New best model (AUC: 0.5806)
+INFO:__main__:Epoch 10/20 | Train Loss: 2.8769 | Val Loss: 2.8747 | Val AUC: 0.5804 | Val F1: 0.3406
+INFO:__main__:Epoch 11/20 | Train Loss: 2.8764 | Val Loss: 2.8738 | Val AUC: 0.5806 | Val F1: 0.3305
+INFO:__main__:Epoch 12/20 | Train Loss: 2.8765 | Val Loss: 2.8732 | Val AUC: 0.5801 | Val F1: 0.1799
+INFO:__main__:Early stopping at epoch 12
+INFO:__main__:Optimal threshold: 0.30 (Val F1: 0.5932)
+INFO:__main__:Fraction 100% - Test AUC: 0.5784, Test F1: 0.5909, Time: 95798.4s
+INFO:__main__:Results saved to: /cluster/work/projects/nn12048k/michechi/results/llm_fraction/llm_fraction_experiment_Qwen_Qwen2.5-14B_9_20260127_160610.csv
+INFO:__main__:
+======================================================================
+INFO:__main__:EXPERIMENT SUMMARY
+INFO:__main__:======================================================================
+ fraction  train_samples  val_auc   val_f1  val_f1_optimal  val_loss  optimal_threshold  test_auc  test_f1  test_accuracy  test_precision  test_recall  epochs  training_time_s        test_confusion_matrix
+      1.0         400000 0.580645 0.313694        0.593248  2.872769                0.3  0.578399  0.59091        0.42212        0.420497     0.993572      12     95798.350894 [[238, 28759], [135, 20868]]
+
+Job 99434 consumed 0.0 billing hours and 26.6 GPU hours from project nn12048k.
+
+Submitted 2026-01-26T13:29:14; waited 1.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 2.0 days
+Elapsed wallclock time:   1.1 days
+
+Job exited normally.
+
+Task and CPU statistics:
+ID               CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+99434               1            0.0 %  2026-01-26T13:29:15   26.6 h  0
+99434.batch         1      1     0.0 %  2026-01-26T13:29:15   26.6 h  0
+99434.apptainer     1      1     0.0 %  2026-01-26T13:29:16   26.6 h  0
+
+Used CPU time:   0.3 CPU seconds
+Unused CPU time: 1.1 CPU days
+
+Memory statistics, in GiB:
+ID                Alloc   Usage
+99434              90.0        
+99434.batch        90.0     0.0
+99434.apptainer    90.0    61.5
+
+Job 99434 completed at Tue Jan 27 16:06:12 CET 2026

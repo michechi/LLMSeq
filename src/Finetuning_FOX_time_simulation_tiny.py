@@ -22,6 +22,8 @@ from huggingface_hub import login
 torch.set_float32_matmul_precision('high') 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s: %(message)s")
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+logging.getLogger().setLevel(logging.INFO)
 
 def standard_narrative_prompt(row, to_split='\x1f'):
     events = row["Sequences"].split(to_split) # Testing on third-letter
@@ -278,7 +280,7 @@ def load_model_causal(model_name, model_type, tokenizer, cache_dir, hf_token, us
                 logger.info("\nLoading pre-trained CausalLM model for WARM START!")
                 base_model = AutoModelForCausalLM.from_pretrained(
                     model_name,
-                    torch_dtype=torch.bfloat16,
+                    dtype=torch.bfloat16,
                     device_map='auto',
                     token=hf_token,
                     cache_dir=cache_dir,
@@ -307,6 +309,15 @@ def load_model_causal(model_name, model_type, tokenizer, cache_dir, hf_token, us
                 )
                 model.backbone = get_peft_model(model.backbone, lora_config)
                 model.backbone.print_trainable_parameters()
+
+                # model.backbone.gradient_checkpointing_enable()
+                # model.backbone.config.use_cache = False
+
+                for name, param in model.backbone.named_parameters():
+                    if 'lora' in name.lower():
+                        param.data = param.data.to(torch.bfloat16)
+                        param.requires_grad = True
+
         else:
             # Per modelli medici, mantieni il comportamento originale
             model = AutoModelForSequenceClassification.from_pretrained(
@@ -344,7 +355,7 @@ def load_model_causal(model_name, model_type, tokenizer, cache_dir, hf_token, us
                 vocab_size=vocab_size,
                 max_position_embeddings=512,  
                 rope_theta=10000.0,
-                torch_dtype=torch.bfloat16,
+                dtype=torch.bfloat16,
                 tie_word_embeddings=True
                 
             )
@@ -370,8 +381,8 @@ def load_model_causal(model_name, model_type, tokenizer, cache_dir, hf_token, us
         base_model = base_model.to(torch.bfloat16)
         base_model = base_model.cuda()
         
-        base_model.config.pad_token_id = tokenizer.pad_token_id
-        base_model.gradient_checkpointing_enable()
+        # base_model.config.pad_token_id = tokenizer.pad_token_id
+        # base_model.gradient_checkpointing_enable()
         
         # Wrapper con classificazione
         model = CausalLMWithClassificationHead(base_model, num_classes=2)
@@ -432,7 +443,7 @@ def train_and_evaluate_causal(model, train_loader, val_loader, args):
     """
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"Using device: {device}")
-    model = model.to(device)
+    # model = model.to(device)
     
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr)
     total_steps = args.epochs * len(train_loader)
@@ -468,9 +479,9 @@ def train_and_evaluate_causal(model, train_loader, val_loader, args):
             classification_loss = outputs['classification_loss'] / args.gradient_accumulation_steps
             loss.backward()
             
-            total_train_loss += loss.item()
-            total_causal_loss += causal_loss.item()
-            total_classification_loss += classification_loss.item()
+            total_train_loss += loss.detach().item()
+            total_causal_loss += causal_loss.detach().item()
+            total_classification_loss += classification_loss.detach().item()
 
             # scaler.scale(loss).backward() # Added
             if (step + 1) % args.gradient_accumulation_steps == 0 or (step + 1) == len(train_loader):
@@ -487,7 +498,7 @@ def train_and_evaluate_causal(model, train_loader, val_loader, args):
         total_val_loss = 0
         val_preds, val_labels = [], []
         
-        with torch.no_grad(), autocast(dtype=torch.bfloat16):
+        with torch.no_grad(), torch.amp.autocast(device, dtype=torch.bfloat16):
             for batch in val_loader:
                 inputs = {k: v.to(device) for k, v in batch.items()}
                 outputs = model(**inputs)
@@ -577,13 +588,15 @@ tokenizer = load_tokenizer(args.model_name, args.model_type, hf_token, args.cach
 model = load_model_causal(args.model_name, args.model_type, tokenizer, args.cache_dir, hf_token, args.peft, args.use_quantization, args.tiny)
 
 if tokenizer.pad_token is None:
-    logger.warning("Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].")
-    tokenizer.add_special_tokens({'pad_token': '[PAD]'})
-    model.resize_token_embeddings(len(tokenizer))
+    tokenizer.pad_token = tokenizer.eos_token
+    tokenizer.pad_token_id = tokenizer.eos_token_id
+    # logger.warning("Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].")
+    # tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+    # model.resize_token_embeddings(len(tokenizer))
     
 # After having resized the model, move it to the appropriate device
 device = "cuda" if torch.cuda.is_available() else "cpu" 
-model = model.to(device)
+# model = model.to(device)
 
 if args.prompt_type == "standard":
     narrative_prompt = standard_narrative_prompt
@@ -653,17 +666,17 @@ logger.info(f"Training on {len(train_texts)} samples, validating on {len(val_tex
 train_dataset = TemporalCausalDataset(train_texts, train_labels, tokenizer, max_length=args.max_length)
 val_dataset = TemporalCausalDataset(val_texts, val_labels, tokenizer, max_length=args.max_length)
 test_dataset = TemporalCausalDataset(test_texts, test_labels, tokenizer, max_length=args.max_length)
-train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, pin_memory=True, num_workers=4)
-val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, pin_memory=True, num_workers=4)
-test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False, pin_memory=True, num_workers=4)
+train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, pin_memory=True)
+val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, pin_memory=True)
+test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False, pin_memory=True)
 
 torch.cuda.empty_cache()
 gc.collect()
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb:64"
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model.backbone.gradient_checkpointing_enable()
-model.backbone.config.use_cache = False
-model = model.to(device, dtype=torch.bfloat16)
+# model.backbone.gradient_checkpointing_enable()
+# model.backbone.config.use_cache = False
+# model = model.to(device, dtype=torch.bfloat16) #test
 
 # Training and validation
 start_time = datetime.datetime.now()
@@ -675,7 +688,7 @@ elapsed_seconds = elapsed_time.total_seconds()
 logger.info(f"Tempo medio per epoca: {elapsed_seconds / epochs_done:.1f} secondi") # This is the important one
 
 # VALUTAZIONE FINALE SUL TEST SET
-model = model.to(device)
+# model = model.to(device)
 logger.info(f"Loading best model from {best_model_path} for final evaluation on test set")
 if args.use_quantization:
     model.load_state_dict(torch.load(best_model_path, map_location=device), strict=False)

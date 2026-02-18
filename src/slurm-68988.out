@@ -1,0 +1,59 @@
+Starting job 68988 on gpu-1-74 on Olivia at Wed Dec 24 19:04:11 CET 2025
+
+=== JOB CONFIGURATION ===
+Job ID: 68988
+Node: gpu-1-74
+Scratch Cache: /cluster/software/gpujobscratch/jobs/68988/hf_cache_68988
+Free space in SCRATCH: 472T
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) init-NRIS
+=== STARTING CONTAINER ===
+Container: /cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif
+Environment: HUGGING_FACE_HUB_TOKEN=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,HF_HOME=/cluster/software/gpujobscratch/jobs/68988/hf_cache_68988,HF_DATASETS_CACHE=/cluster/software/gpujobscratch/jobs/68988/hf_cache_68988,XDG_CACHE_HOME=/cluster/software/gpujobscratch/jobs/68988/hf_cache_68988
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+`torch_dtype` is deprecated! Use `dtype` instead!
+trainable params: 1,703,936 || all params: 1,237,518,336 || trainable%: 0.1377
+WARNING:__main__:Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+/usr/local/lib/python3.12/dist-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+/cluster/home/michechi/MIMICIV/src/./Finetuning_FOX_time_simulation_tiny.py:471: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /opt/pytorch/pytorch/aten/src/ATen/native/Scalar.cpp:22.)
+  total_train_loss += loss.item()
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+[2025-12-24T19:10:47.767] error: *** STEP 68988.0 ON gpu-1-74 CANCELLED AT 2025-12-24T19:10:47 DUE to SIGNAL Terminated ***
+[2025-12-24T19:10:47.768] error: *** JOB 68988 ON gpu-1-74 CANCELLED AT 2025-12-24T19:10:47 DUE to SIGNAL Terminated ***
+
+Job 68988 consumed 0.0 billing hours and 0.1 GPU hours from project nn12048k.
+
+Submitted 2025-12-24T19:04:10; waited 1.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 15.0 hours
+Elapsed wallclock time:   6.6 minutes
+
+Job was cancelled.
+
+Task and CPU statistics:
+ID               CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+68988               1            0.0 %  2025-12-24T19:04:11  396.0 s  0
+68988.batch         1      1     0.0 %  2025-12-24T19:04:11  397.0 s  Signal 15
+68988.apptainer     1      1     0.0 %  2025-12-24T19:04:12  398.0 s  Signal 15
+
+Used CPU time:   0.2 CPU seconds
+Unused CPU time: 6.6 CPU minutes
+
+Memory statistics, in GiB:
+ID                Alloc   Usage
+68988             128.0        
+68988.batch       128.0     0.0
+68988.apptainer   128.0     9.0
+
+Job 68988 completed at Wed Dec 24 19:10:51 CET 2025
