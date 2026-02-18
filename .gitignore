@@ -1,13 +1,46 @@
-*.txt
-src/preprocessing_no_pyhealth.ipynb
-src/mimiciv_clinical_dataset.csv
-src/landmark_df.csv
-*.pt
+# Data files
 *.csv
 *.gz
 *.json
-cache/
+*.pt
 *.joblib
-Miniforge3-*.sh
+
+# Allow specific data directories
 !data/simulation/tested/
-!data/simulation/tested/*.csvdata/simulation/holes/sequences_with_holes.jsonl
+!data/simulation/tested/*.csv
+
+# Large files
+data/simulation/holes/sequences_with_holes.jsonl
+Miniforge3-*.sh
+
+# Logs and outputs
+*.out
+*.err
+*.log
+src/logs/
+src/slurm_logs/
+src/slurm-*.out
+src/output_slurms_fox/
+src/results/
+src/results_rnn_baseline/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# IDE and environment
+.venv/
+.vscode/
+*.egg-info/
+.eggs/
+
+# Notebooks (specific)
+src/preprocessing_no_pyhealth.ipynb
+src/mimiciv_clinical_dataset.csv
+src/landmark_df.csv
+
+# Cache
+cache/
+.cache/

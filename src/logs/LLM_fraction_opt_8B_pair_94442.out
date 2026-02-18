@@ -1,194 +1,0 @@
-Starting job 94442 on gpu-1-50 on Olivia at Thu Jan 22 00:03:24 CET 2026
-
-=== JOB CONFIGURATION ===
-Job ID: 94442
-Node: gpu-1-50
-Scratch Cache: /cluster/software/gpujobscratch/jobs/94442/hf_cache_94442
-Free space in SCRATCH: 472T
-The following modules were not unloaded:
-  (Use "module --force purge" to unload all):
-
-  1) init-NRIS
-=== STARTING CONTAINER ===
-Container: /cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif
-Environment: HUGGING_FACE_HUB_TOKEN=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,HF_HOME=/cluster/software/gpujobscratch/jobs/94442/hf_cache_94442,HF_DATASETS_CACHE=/cluster/software/gpujobscratch/jobs/94442/hf_cache_94442,XDG_CACHE_HOME=/cluster/software/gpujobscratch/jobs/94442/hf_cache_94442,PYTHONUNBUFFERED=1
-INFO:    gocryptfs not found, will not be able to use gocryptfs
-/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
-rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
-INFO:__main__:Argument batch_size: 32
-INFO:__main__:Argument cache_dir: '/cluster/work/projects/nn12048k/michechi/cache/'
-INFO:__main__:Argument cold_start: False
-INFO:__main__:Argument early: 'loss'
-INFO:__main__:Argument epochs: 15
-INFO:__main__:Argument fractions: '0.01,0.10,0.30,0.50,0.75,1.0'
-INFO:__main__:Argument gradient_accumulation_steps: 1
-INFO:__main__:Argument lr: 2e-05
-INFO:__main__:Argument max_length: 50
-INFO:__main__:Argument model_name: 'meta-llama/Llama-3.1-8B'
-INFO:__main__:Argument model_type: 'general'
-INFO:__main__:Argument number_to_use: 'test_just_pair'
-INFO:__main__:Argument output_dir: '/cluster/work/projects/nn12048k/michechi/results/llm_fraction/'
-INFO:__main__:Argument path_csv: '/cluster/home/michechi/MIMICIV/data/simulation/tested/'
-INFO:__main__:Argument patience: 2
-INFO:__main__:Argument peft: False
-INFO:__main__:Argument seed: 9550
-INFO:__main__:Argument tiny: False
-INFO:__main__:Argument tiny_type: '1M'
-INFO:__main__:Argument use_quantization: False
-INFO:__main__:Using device: cuda
-INFO:__main__:Output directory: /cluster/work/projects/nn12048k/michechi/results/llm_fraction/
-WARNING:__main__:Tokenizer has no pad_token. Adding [PAD].
-INFO:__main__:Loading datasets...
-INFO:__main__:Dataset sizes - Train: 800000, Val: 100000, Test: 100000
-INFO:__main__:Testing fractions: [0.01, 0.1, 0.3, 0.5, 0.75, 1.0]
-INFO:__main__:======================================================================
-INFO:__main__:Training with 1% of training data
-INFO:__main__:======================================================================
-INFO:__main__:Training subset size: 8000
-INFO:__main__:Loading pre-trained CausalLM model (WARM START)
-`torch_dtype` is deprecated! Use `dtype` instead!
-INFO:accelerate.utils.modeling:We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
-Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:00<00:02,  1.26it/s]Loading checkpoint shards:  50%|█████     | 2/4 [00:01<00:01,  1.25it/s]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:02<00:00,  1.23it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:02<00:00,  1.78it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:02<00:00,  1.54it/s]
-The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
-INFO:__main__:Epoch 1/15 | Train Loss: 4.4195 | Val Loss: 2.8163 | Val AUC: 0.4961 | Val F1: 0.6682
-INFO:__main__:New best model (AUC: 0.4961)
-INFO:__main__:Epoch 2/15 | Train Loss: 2.8196 | Val Loss: 2.8093 | Val AUC: 0.5010 | Val F1: 0.6682
-INFO:__main__:New best model (AUC: 0.5010)
-INFO:__main__:Epoch 3/15 | Train Loss: 2.8175 | Val Loss: 2.8171 | Val AUC: 0.4990 | Val F1: 0.0000
-INFO:__main__:Epoch 4/15 | Train Loss: 2.8126 | Val Loss: 2.8024 | Val AUC: 0.4996 | Val F1: 0.0000
-INFO:__main__:New best model (AUC: 0.4996)
-INFO:__main__:Epoch 5/15 | Train Loss: 2.8047 | Val Loss: 2.8078 | Val AUC: 0.5009 | Val F1: 0.6682
-INFO:__main__:Epoch 6/15 | Train Loss: 2.8079 | Val Loss: 2.8051 | Val AUC: 0.5002 | Val F1: 0.6682
-INFO:__main__:Early stopping at epoch 6
-INFO:__main__:Optimal threshold: 0.10 (Val F1: 0.6682)
-INFO:__main__:Fraction 1% - Test AUC: 0.4993, Test F1: 0.6679, Time: 2797.9s
-INFO:__main__:======================================================================
-INFO:__main__:Training with 10% of training data
-INFO:__main__:======================================================================
-INFO:__main__:Training subset size: 80000
-INFO:__main__:Loading pre-trained CausalLM model (WARM START)
-INFO:accelerate.utils.modeling:We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
-Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:00<00:01,  2.18it/s]Loading checkpoint shards:  50%|█████     | 2/4 [00:00<00:00,  2.16it/s]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:01<00:00,  2.16it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:01<00:00,  3.10it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:01<00:00,  2.67it/s]
-INFO:__main__:Epoch 1/15 | Train Loss: 3.3685 | Val Loss: 2.8155 | Val AUC: 0.4989 | Val F1: 0.6682
-INFO:__main__:New best model (AUC: 0.4989)
-INFO:__main__:Epoch 2/15 | Train Loss: 2.8092 | Val Loss: 2.8006 | Val AUC: 0.5032 | Val F1: 0.6682
-INFO:__main__:New best model (AUC: 0.5032)
-INFO:__main__:Epoch 3/15 | Train Loss: 2.8052 | Val Loss: 2.7973 | Val AUC: 0.5009 | Val F1: 0.1831
-INFO:__main__:New best model (AUC: 0.5009)
-INFO:__main__:Epoch 4/15 | Train Loss: 2.8037 | Val Loss: 2.7990 | Val AUC: 0.5010 | Val F1: 0.0000
-INFO:__main__:Epoch 5/15 | Train Loss: 2.8027 | Val Loss: 2.8009 | Val AUC: 0.5001 | Val F1: 0.0000
-INFO:__main__:Early stopping at epoch 5
-INFO:__main__:Optimal threshold: 0.10 (Val F1: 0.6682)
-INFO:__main__:Fraction 10% - Test AUC: 0.4994, Test F1: 0.6679, Time: 6217.2s
-INFO:__main__:======================================================================
-INFO:__main__:Training with 30% of training data
-INFO:__main__:======================================================================
-INFO:__main__:Training subset size: 240000
-INFO:__main__:Loading pre-trained CausalLM model (WARM START)
-INFO:accelerate.utils.modeling:We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
-Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:00<00:02,  1.23it/s]Loading checkpoint shards:  50%|█████     | 2/4 [00:01<00:01,  1.25it/s]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:02<00:00,  1.26it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:02<00:00,  1.81it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:02<00:00,  1.55it/s]
-INFO:__main__:Epoch 1/15 | Train Loss: 3.1764 | Val Loss: 2.8107 | Val AUC: 0.5038 | Val F1: 0.0000
-INFO:__main__:New best model (AUC: 0.5038)
-INFO:__main__:Epoch 2/15 | Train Loss: 2.8050 | Val Loss: 2.7984 | Val AUC: 0.4996 | Val F1: 0.6682
-INFO:__main__:New best model (AUC: 0.4996)
-INFO:__main__:Epoch 3/15 | Train Loss: 2.8010 | Val Loss: 2.8001 | Val AUC: 0.5014 | Val F1: 0.0000
-INFO:__main__:Epoch 4/15 | Train Loss: 2.7991 | Val Loss: 2.7996 | Val AUC: 0.4985 | Val F1: 0.6682
-INFO:__main__:Early stopping at epoch 4
-INFO:__main__:Optimal threshold: 0.10 (Val F1: 0.6682)
-INFO:__main__:Fraction 30% - Test AUC: 0.4997, Test F1: 0.6679, Time: 11808.5s
-INFO:__main__:======================================================================
-INFO:__main__:Training with 50% of training data
-INFO:__main__:======================================================================
-INFO:__main__:Training subset size: 400000
-INFO:__main__:Loading pre-trained CausalLM model (WARM START)
-INFO:accelerate.utils.modeling:We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
-Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:00<00:02,  1.12it/s]Loading checkpoint shards:  50%|█████     | 2/4 [00:01<00:01,  1.17it/s]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:02<00:00,  1.21it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:02<00:00,  1.75it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:02<00:00,  1.49it/s]
-INFO:__main__:Epoch 1/15 | Train Loss: 3.1115 | Val Loss: 2.7991 | Val AUC: 0.4982 | Val F1: 0.6682
-INFO:__main__:New best model (AUC: 0.4982)
-INFO:__main__:Epoch 2/15 | Train Loss: 2.8008 | Val Loss: 2.7982 | Val AUC: 0.5002 | Val F1: 0.6682
-INFO:__main__:New best model (AUC: 0.5002)
-INFO:__main__:Epoch 3/15 | Train Loss: 2.7992 | Val Loss: 2.7975 | Val AUC: 0.5007 | Val F1: 0.0000
-INFO:__main__:New best model (AUC: 0.5007)
-INFO:__main__:Epoch 4/15 | Train Loss: 2.7985 | Val Loss: 2.7968 | Val AUC: 0.5000 | Val F1: 0.0002
-INFO:__main__:New best model (AUC: 0.5000)
-INFO:__main__:Epoch 5/15 | Train Loss: 2.7978 | Val Loss: 2.7972 | Val AUC: 0.5016 | Val F1: 0.6682
-INFO:__main__:Epoch 6/15 | Train Loss: 2.7975 | Val Loss: 2.7966 | Val AUC: 0.4996 | Val F1: 0.0000
-INFO:__main__:New best model (AUC: 0.4996)
-INFO:__main__:Epoch 7/15 | Train Loss: 2.7972 | Val Loss: 2.7962 | Val AUC: 0.5005 | Val F1: 0.4442
-INFO:__main__:New best model (AUC: 0.5005)
-INFO:__main__:Epoch 8/15 | Train Loss: 2.7970 | Val Loss: 2.7961 | Val AUC: 0.5008 | Val F1: 0.0044
-INFO:__main__:New best model (AUC: 0.5008)
-INFO:__main__:Epoch 9/15 | Train Loss: 2.7968 | Val Loss: 2.7961 | Val AUC: 0.5000 | Val F1: 0.0212
-INFO:__main__:Epoch 10/15 | Train Loss: 2.7965 | Val Loss: 2.7957 | Val AUC: 0.5004 | Val F1: 0.5334
-INFO:__main__:New best model (AUC: 0.5004)
-INFO:__main__:Epoch 11/15 | Train Loss: 2.7963 | Val Loss: 2.7958 | Val AUC: 0.4992 | Val F1: 0.0000
-INFO:__main__:Epoch 12/15 | Train Loss: 2.7960 | Val Loss: 2.7958 | Val AUC: 0.4995 | Val F1: 0.6682
-INFO:__main__:Early stopping at epoch 12
-INFO:__main__:Optimal threshold: 0.10 (Val F1: 0.6682)
-INFO:__main__:Fraction 50% - Test AUC: 0.4988, Test F1: 0.6679, Time: 54493.6s
-INFO:__main__:======================================================================
-INFO:__main__:Training with 75% of training data
-INFO:__main__:======================================================================
-INFO:__main__:Training subset size: 600000
-INFO:__main__:Loading pre-trained CausalLM model (WARM START)
-INFO:accelerate.utils.modeling:We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
-Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:00<00:02,  1.24it/s]Loading checkpoint shards:  50%|█████     | 2/4 [00:01<00:01,  1.24it/s]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:02<00:00,  1.26it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:02<00:00,  1.81it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:02<00:00,  1.56it/s]
-INFO:__main__:Epoch 1/15 | Train Loss: 3.0708 | Val Loss: 2.7999 | Val AUC: 0.4993 | Val F1: 0.0000
-INFO:__main__:New best model (AUC: 0.4993)
-INFO:__main__:Epoch 2/15 | Train Loss: 2.8034 | Val Loss: 2.8013 | Val AUC: 0.4961 | Val F1: 0.0000
-INFO:__main__:Epoch 3/15 | Train Loss: 2.7995 | Val Loss: 2.7983 | Val AUC: 0.4978 | Val F1: 0.1138
-INFO:__main__:New best model (AUC: 0.4978)
-INFO:__main__:Epoch 4/15 | Train Loss: 2.7983 | Val Loss: 2.7970 | Val AUC: 0.5005 | Val F1: 0.0000
-INFO:__main__:New best model (AUC: 0.5005)
-INFO:__main__:Epoch 5/15 | Train Loss: 2.7977 | Val Loss: 2.7964 | Val AUC: 0.4990 | Val F1: 0.1359
-INFO:__main__:New best model (AUC: 0.4990)
-INFO:__main__:Epoch 6/15 | Train Loss: 2.7975 | Val Loss: 2.7968 | Val AUC: 0.4988 | Val F1: 0.6682
-INFO:__main__:Epoch 7/15 | Train Loss: 2.7972 | Val Loss: 2.7972 | Val AUC: 0.4981 | Val F1: 0.0000
-INFO:__main__:Early stopping at epoch 7
-INFO:__main__:Optimal threshold: 0.10 (Val F1: 0.6682)
-INFO:__main__:Fraction 75% - Test AUC: 0.5038, Test F1: 0.6679, Time: 46776.5s
-INFO:__main__:======================================================================
-INFO:__main__:Training with 100% of training data
-INFO:__main__:======================================================================
-INFO:__main__:Training subset size: 800000
-INFO:__main__:Loading pre-trained CausalLM model (WARM START)
-INFO:accelerate.utils.modeling:We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
-Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:00<00:02,  1.23it/s]Loading checkpoint shards:  50%|█████     | 2/4 [00:01<00:01,  1.23it/s]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:02<00:00,  1.25it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:02<00:00,  1.80it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:02<00:00,  1.54it/s]
-INFO:__main__:Epoch 1/15 | Train Loss: 3.0494 | Val Loss: 2.7980 | Val AUC: 0.4991 | Val F1: 0.4826
-INFO:__main__:New best model (AUC: 0.4991)
-INFO:__main__:Epoch 2/15 | Train Loss: 2.8002 | Val Loss: 2.7978 | Val AUC: 0.4984 | Val F1: 0.6597
-INFO:__main__:New best model (AUC: 0.4984)
-INFO:__main__:Epoch 3/15 | Train Loss: 2.7986 | Val Loss: 2.8003 | Val AUC: 0.4998 | Val F1: 0.6682
-INFO:__main__:Epoch 4/15 | Train Loss: 2.7980 | Val Loss: 2.7976 | Val AUC: 0.4999 | Val F1: 0.6682
-INFO:__main__:New best model (AUC: 0.4999)
-INFO:__main__:Epoch 5/15 | Train Loss: 2.7977 | Val Loss: 2.7965 | Val AUC: 0.5002 | Val F1: 0.6090
-INFO:__main__:New best model (AUC: 0.5002)
-srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
-[2026-01-24T00:03:51.023] error: *** STEP 94442.0 ON gpu-1-50 CANCELLED AT 2026-01-24T00:03:51 DUE TO TIME LIMIT ***
-[2026-01-24T00:03:51.023] error: *** JOB 94442 ON gpu-1-50 CANCELLED AT 2026-01-24T00:03:51 DUE TO TIME LIMIT ***
-
-Job 94442 consumed 0.0 billing hours and 48.0 GPU hours from project nn12048k.
-
-Submitted 2026-01-22T00:03:23; waited 0.0 seconds in the queue after becoming eligible to run.
-
-Requested wallclock time: 2.0 days
-Elapsed wallclock time:   2.0 days
-
-Job timed out.
-
-Task and CPU statistics:
-ID               CPUs  Tasks  CPU util                Start  Elapsed  Exit status
-94442               1            0.0 %  2026-01-22T00:03:23   48.0 h  0
-94442.batch         1      1     0.0 %  2026-01-22T00:03:23   48.0 h  Signal 15
-94442.apptainer     1      1     0.0 %  2026-01-22T00:03:24   48.0 h  Signal 15
-
-Used CPU time:   0.2 CPU seconds
-Unused CPU time: 2.0 CPU days
-
-Memory statistics, in GiB:
-ID                Alloc   Usage
-94442              90.0        
-94442.batch        90.0     0.1
-94442.apptainer    90.0    35.8
-
-Job 94442 completed at Sat Jan 24 00:03:54 CET 2026

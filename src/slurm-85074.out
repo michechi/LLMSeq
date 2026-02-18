@@ -1,81 +1,0 @@
-Starting job 85074 on gpu-1-76 on Olivia at Wed Jan 14 20:10:48 CET 2026
-
-=== JOB CONFIGURATION ===
-Job ID: 85074
-Node: gpu-1-76
-Scratch Cache: /cluster/software/gpujobscratch/jobs/85074/hf_cache_85074
-Free space in SCRATCH: 472T
-The following modules were not unloaded:
-  (Use "module --force purge" to unload all):
-
-  1) init-NRIS
-=== STARTING CONTAINER ===
-Container: /cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif
-Environment: HUGGING_FACE_HUB_TOKEN=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,HF_HOME=/cluster/software/gpujobscratch/jobs/85074/hf_cache_85074,HF_DATASETS_CACHE=/cluster/software/gpujobscratch/jobs/85074/hf_cache_85074,XDG_CACHE_HOME=/cluster/software/gpujobscratch/jobs/85074/hf_cache_85074
-INFO:    gocryptfs not found, will not be able to use gocryptfs
-2026-01-14 20:10:59,224 [INFO] Argument batch_size: 8
-2026-01-14 20:10:59,224 [INFO] Argument cache_dir: /cluster/work/projects/nn12048k/michechi/cache/
-2026-01-14 20:10:59,224 [INFO] Argument csv_to_use: 9
-2026-01-14 20:10:59,224 [INFO] Argument embedding_dir: /cluster/work/projects/nn12048k/michechi/cache/embeddings/
-2026-01-14 20:10:59,224 [INFO] Argument max_length: 512
-2026-01-14 20:10:59,224 [INFO] Argument model_name: meta-llama/Llama-3.1-8B
-2026-01-14 20:10:59,224 [INFO] Argument output_dir: results_XGB
-2026-01-14 20:10:59,224 [INFO] Argument path_csv: /cluster/home/michechi/MIMICIV/data/simulation/tested/
-2026-01-14 20:10:59,224 [INFO] Argument run_basic: True
-2026-01-14 20:10:59,224 [INFO] Argument run_llm: False
-2026-01-14 20:10:59,225 [INFO] Argument seed: 9550
-2026-01-14 20:10:59,419 [INFO] Using device: cuda
-2026-01-14 20:10:59,419 [INFO] CUDA available: True
-2026-01-14 20:10:59,420 [INFO] Loading datasets...
-2026-01-14 20:10:59,815 [INFO] Train set: 400000, Val set: 50000, Test set: 50000
-2026-01-14 20:10:59,815 [INFO] Will run: ['basic']
-2026-01-14 20:10:59,815 [INFO] ======================================================================
-2026-01-14 20:10:59,815 [INFO] Encoding: BASIC, Fraction: 1%
-2026-01-14 20:10:59,815 [INFO] ======================================================================
-2026-01-14 20:10:59,883 [INFO] Subsampled 4000 samples (1.0%) from 400000
-2026-01-14 20:10:59,884 [INFO] Class distribution: [2326 1674] (41.85% positive)
-2026-01-14 20:10:59,884 [INFO] Encoding with basic method (1-26)...
-Encoding train (1%):   0%|          | 0/4000 [00:00<?, ?it/s]Encoding train (1%): 100%|██████████| 4000/4000 [00:00<00:00, 340702.56it/s]
-Encoding val:   0%|          | 0/50000 [00:00<?, ?it/s]Encoding val:  72%|███████▏  | 35825/50000 [00:00<00:00, 358227.28it/s]Encoding val: 100%|██████████| 50000/50000 [00:00<00:00, 359943.29it/s]
-Encoding test:   0%|          | 0/50000 [00:00<?, ?it/s]Encoding test:  72%|███████▏  | 35955/50000 [00:00<00:00, 359526.34it/s]Encoding test: 100%|██████████| 50000/50000 [00:00<00:00, 361287.03it/s]
-2026-01-14 20:11:00,178 [INFO] Scale pos weight: 1.3895
-2026-01-14 20:11:00,178 [INFO] Training XGBoost...
-2026-01-14 20:11:00,179 [ERROR] Error in basic with fraction 0.01: XGBClassifier.fit() got an unexpected keyword argument 'early_stopping_rounds'
-Traceback (most recent call last):
-  File "/cluster/home/michechi/MIMICIV/src/./XGBoost_fraction_experiment.py", line 580, in <module>
-    results_df = run_experiment(args)
-                 ^^^^^^^^^^^^^^^^^^^^
-  File "/cluster/home/michechi/MIMICIV/src/./XGBoost_fraction_experiment.py", line 518, in run_experiment
-    xgb_model.fit(
-  File "/usr/local/lib/python3.12/dist-packages/xgboost/core.py", line 726, in inner_f
-    return func(**kwargs)
-           ^^^^^^^^^^^^^^
-TypeError: XGBClassifier.fit() got an unexpected keyword argument 'early_stopping_rounds'
-srun: error: gpu-1-76: task 0: Exited with exit code 1
-srun: Terminating StepId=85074.0
-
-Job 85074 consumed 0.0 billing hours and 0.0 GPU hours from project nn12048k.
-
-Submitted 2026-01-14T20:10:47; waited 1.0 seconds in the queue after becoming eligible to run.
-
-Requested wallclock time: 20.0 hours
-Elapsed wallclock time:   13.0 seconds
-
-Job failed.
-
-Task and CPU statistics:
-ID               CPUs  Tasks  CPU util                Start  Elapsed  Exit status
-85074               1            0.0 %  2026-01-14T20:10:48   13.0 s  1
-85074.batch         1      1     1.6 %  2026-01-14T20:10:48   13.0 s  1
-85074.apptainer     1      1     0.0 %  2026-01-14T20:10:49   12.0 s  1
-
-Used CPU time:   0.2 CPU seconds
-Unused CPU time: 12.8 CPU seconds
-
-Memory statistics, in GiB:
-ID                Alloc   Usage
-85074             128.0        
-85074.batch       128.0     0.1
-85074.apptainer   128.0     3.8
-
-Job 85074 completed at Wed Jan 14 20:11:01 CET 2026
