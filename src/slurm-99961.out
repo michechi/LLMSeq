@@ -1,151 +1,0 @@
-Starting job 99961 on gpu-1-76 on Olivia at Mon Jan 26 23:14:22 CET 2026
-
-=== JOB CONFIGURATION ===
-Job ID: 99961
-Node: gpu-1-76
-Scratch Cache: /cluster/software/gpujobscratch/jobs/99961/hf_cache_99961
-Free space in SCRATCH: 471T
-The following modules were not unloaded:
-  (Use "module --force purge" to unload all):
-
-  1) init-NRIS
-=== STARTING CONTAINER ===
-Container: /cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif
-Environment: HUGGING_FACE_HUB_TOKEN=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,HF_HOME=/cluster/software/gpujobscratch/jobs/99961/hf_cache_99961,HF_DATASETS_CACHE=/cluster/software/gpujobscratch/jobs/99961/hf_cache_99961,XDG_CACHE_HOME=/cluster/software/gpujobscratch/jobs/99961/hf_cache_99961
-=== CHECKING XGBOOST VERSION ===
-INFO:    gocryptfs not found, will not be able to use gocryptfs
-XGBoost version: 2.1.4
-INFO:    gocryptfs not found, will not be able to use gocryptfs
-2026-01-26 23:14:35,045 [INFO] Argument batch_size: 8
-2026-01-26 23:14:35,046 [INFO] Argument cache_dir: /cluster/work/projects/nn12048k/michechi/cache/
-2026-01-26 23:14:35,046 [INFO] Argument csv_to_use: alph
-2026-01-26 23:14:35,046 [INFO] Argument embedding_dir: /cluster/work/projects/nn12048k/michechi/cache/embeddings/
-2026-01-26 23:14:35,046 [INFO] Argument max_length: 512
-2026-01-26 23:14:35,046 [INFO] Argument model_name: meta-llama/Llama-3.1-8B
-2026-01-26 23:14:35,046 [INFO] Argument output_dir: results_XGB
-2026-01-26 23:14:35,046 [INFO] Argument path_csv: /cluster/home/michechi/MIMICIV/data/simulation/tested/
-2026-01-26 23:14:35,047 [INFO] Argument run_basic: False
-2026-01-26 23:14:35,047 [INFO] Argument run_categorical: True
-2026-01-26 23:14:35,047 [INFO] Argument run_llm: False
-2026-01-26 23:14:35,047 [INFO] Argument seed: 666
-2026-01-26 23:14:35,650 [INFO] Using device: cuda
-2026-01-26 23:14:35,651 [INFO] CUDA available: True
-2026-01-26 23:14:35,652 [INFO] Loading datasets...
-2026-01-26 23:14:36,034 [INFO] Train set: 320000, Val set: 40000, Test set: 40000
-2026-01-26 23:14:36,034 [INFO] Will run: ['categorical']
-2026-01-26 23:14:36,034 [INFO] ======================================================================
-2026-01-26 23:14:36,034 [INFO] Encoding: CATEGORICAL, Fraction: 1%
-2026-01-26 23:14:36,034 [INFO] ======================================================================
-2026-01-26 23:14:36,089 [INFO] Subsampled 3200 samples (1.0%) from 320000
-2026-01-26 23:14:36,089 [INFO] Class distribution: [1600 1600] (50.00% positive)
-2026-01-26 23:14:36,089 [INFO] Encoding with one-hot categorical method...
-One-hot train (1%):   0%|          | 0/3200 [00:00<?, ?it/s]One-hot train (1%): 100%|██████████| 3200/3200 [00:00<00:00, 304155.47it/s]
-One-hot val:   0%|          | 0/40000 [00:00<?, ?it/s]One-hot val:  78%|███████▊  | 31133/40000 [00:00<00:00, 311316.94it/s]One-hot val: 100%|██████████| 40000/40000 [00:00<00:00, 312109.86it/s]
-One-hot test:   0%|          | 0/40000 [00:00<?, ?it/s]One-hot test:  78%|███████▊  | 31218/40000 [00:00<00:00, 312168.39it/s]One-hot test: 100%|██████████| 40000/40000 [00:00<00:00, 313048.06it/s]
-2026-01-26 23:14:36,358 [INFO] Scale pos weight: 1.0000
-2026-01-26 23:14:36,358 [INFO] Training XGBoost...
-2026-01-26 23:14:40,998 [INFO] Early stopping at round 10 (best: 0)
-2026-01-26 23:14:41,600 [INFO] AUC: 0.5108 | F1: 0.3722 | Accuracy: 0.5085 | Time: 5.55s
-2026-01-26 23:14:41,685 [INFO] ======================================================================
-2026-01-26 23:14:41,685 [INFO] Encoding: CATEGORICAL, Fraction: 10%
-2026-01-26 23:14:41,685 [INFO] ======================================================================
-2026-01-26 23:14:41,743 [INFO] Subsampled 32000 samples (10.0%) from 320000
-2026-01-26 23:14:41,743 [INFO] Class distribution: [15997 16003] (50.01% positive)
-2026-01-26 23:14:41,743 [INFO] Encoding with one-hot categorical method...
-One-hot train (10%):   0%|          | 0/32000 [00:00<?, ?it/s]One-hot train (10%):  94%|█████████▍| 30203/32000 [00:00<00:00, 302018.05it/s]One-hot train (10%): 100%|██████████| 32000/32000 [00:00<00:00, 301818.38it/s]
-One-hot val:   0%|          | 0/40000 [00:00<?, ?it/s]One-hot val:  78%|███████▊  | 31092/40000 [00:00<00:00, 310907.70it/s]One-hot val: 100%|██████████| 40000/40000 [00:00<00:00, 312240.56it/s]
-One-hot test:   0%|          | 0/40000 [00:00<?, ?it/s]One-hot test:  79%|███████▊  | 31407/40000 [00:00<00:00, 314064.31it/s]One-hot test: 100%|██████████| 40000/40000 [00:00<00:00, 314759.49it/s]
-2026-01-26 23:14:42,107 [INFO] Scale pos weight: 0.9996
-2026-01-26 23:14:42,108 [INFO] Training XGBoost...
-2026-01-26 23:14:50,815 [INFO] Early stopping at round 10 (best: 0)
-2026-01-26 23:14:51,394 [INFO] AUC: 0.5063 | F1: 0.6690 | Accuracy: 0.5058 | Time: 9.69s
-2026-01-26 23:14:51,478 [INFO] ======================================================================
-2026-01-26 23:14:51,479 [INFO] Encoding: CATEGORICAL, Fraction: 30%
-2026-01-26 23:14:51,479 [INFO] ======================================================================
-2026-01-26 23:14:51,535 [INFO] Subsampled 96000 samples (30.0%) from 320000
-2026-01-26 23:14:51,536 [INFO] Class distribution: [47992 48008] (50.01% positive)
-2026-01-26 23:14:51,536 [INFO] Encoding with one-hot categorical method...
-One-hot train (30%):   0%|          | 0/96000 [00:00<?, ?it/s]One-hot train (30%):  31%|███▏      | 30076/96000 [00:00<00:00, 300744.51it/s]One-hot train (30%):  63%|██████▎   | 60694/96000 [00:00<00:00, 303937.27it/s]One-hot train (30%):  95%|█████████▌| 91300/96000 [00:00<00:00, 304901.36it/s]One-hot train (30%): 100%|██████████| 96000/96000 [00:00<00:00, 304206.49it/s]
-One-hot val:   0%|          | 0/40000 [00:00<?, ?it/s]One-hot val:  78%|███████▊  | 31053/40000 [00:00<00:00, 310518.45it/s]One-hot val: 100%|██████████| 40000/40000 [00:00<00:00, 311530.32it/s]
-One-hot test:   0%|          | 0/40000 [00:00<?, ?it/s]One-hot test:  78%|███████▊  | 31062/40000 [00:00<00:00, 310610.67it/s]One-hot test: 100%|██████████| 40000/40000 [00:00<00:00, 311746.24it/s]
-2026-01-26 23:14:52,112 [INFO] Scale pos weight: 0.9997
-2026-01-26 23:14:52,112 [INFO] Training XGBoost...
-2026-01-26 23:15:11,744 [INFO] Early stopping at round 10 (best: 0)
-2026-01-26 23:15:12,338 [INFO] AUC: 0.5060 | F1: 0.6689 | Accuracy: 0.5055 | Time: 20.84s
-2026-01-26 23:15:12,440 [INFO] ======================================================================
-2026-01-26 23:15:12,440 [INFO] Encoding: CATEGORICAL, Fraction: 50%
-2026-01-26 23:15:12,440 [INFO] ======================================================================
-2026-01-26 23:15:12,497 [INFO] Subsampled 160000 samples (50.0%) from 320000
-2026-01-26 23:15:12,498 [INFO] Class distribution: [79986 80014] (50.01% positive)
-2026-01-26 23:15:12,499 [INFO] Encoding with one-hot categorical method...
-One-hot train (50%):   0%|          | 0/160000 [00:00<?, ?it/s]One-hot train (50%):  18%|█▊        | 28834/160000 [00:00<00:00, 288329.96it/s]One-hot train (50%):  36%|███▌      | 57977/160000 [00:00<00:00, 290150.80it/s]One-hot train (50%):  54%|█████▍    | 87011/160000 [00:00<00:00, 290235.11it/s]One-hot train (50%):  73%|███████▎  | 116170/160000 [00:00<00:00, 290764.36it/s]One-hot train (50%):  91%|█████████ | 145247/160000 [00:00<00:00, 290449.61it/s]One-hot train (50%): 100%|██████████| 160000/160000 [00:00<00:00, 290170.13it/s]
-One-hot val:   0%|          | 0/40000 [00:00<?, ?it/s]One-hot val:  78%|███████▊  | 31226/40000 [00:00<00:00, 312255.83it/s]One-hot val: 100%|██████████| 40000/40000 [00:00<00:00, 313311.72it/s]
-One-hot test:   0%|          | 0/40000 [00:00<?, ?it/s]One-hot test:  78%|███████▊  | 31246/40000 [00:00<00:00, 312453.59it/s]One-hot test: 100%|██████████| 40000/40000 [00:00<00:00, 313631.51it/s]
-2026-01-26 23:15:13,309 [INFO] Scale pos weight: 0.9997
-2026-01-26 23:15:13,309 [INFO] Training XGBoost...
-2026-01-26 23:15:42,691 [INFO] Early stopping at round 10 (best: 0)
-2026-01-26 23:15:43,274 [INFO] AUC: 0.5067 | F1: 0.6692 | Accuracy: 0.5062 | Time: 30.82s
-2026-01-26 23:15:43,370 [INFO] ======================================================================
-2026-01-26 23:15:43,370 [INFO] Encoding: CATEGORICAL, Fraction: 75%
-2026-01-26 23:15:43,370 [INFO] ======================================================================
-2026-01-26 23:15:43,427 [INFO] Subsampled 240000 samples (75.0%) from 320000
-2026-01-26 23:15:43,428 [INFO] Class distribution: [119980 120020] (50.01% positive)
-2026-01-26 23:15:43,429 [INFO] Encoding with one-hot categorical method...
-One-hot train (75%):   0%|          | 0/240000 [00:00<?, ?it/s]One-hot train (75%):  12%|█▏        | 29067/240000 [00:00<00:00, 290661.96it/s]One-hot train (75%):  24%|██▍       | 58445/240000 [00:00<00:00, 292488.04it/s]One-hot train (75%):  37%|███▋      | 87694/240000 [00:00<00:00, 292465.82it/s]One-hot train (75%):  49%|████▊     | 116967/240000 [00:00<00:00, 292565.81it/s]One-hot train (75%):  61%|██████    | 146229/240000 [00:00<00:00, 292581.43it/s]One-hot train (75%):  73%|███████▎  | 175488/240000 [00:00<00:00, 292304.61it/s]One-hot train (75%):  85%|████████▌ | 204719/240000 [00:00<00:00, 291497.70it/s]One-hot train (75%):  97%|█████████▋| 233870/240000 [00:00<00:00, 291028.32it/s]One-hot train (75%): 100%|██████████| 240000/240000 [00:00<00:00, 291598.74it/s]
-One-hot val:   0%|          | 0/40000 [00:00<?, ?it/s]One-hot val:  78%|███████▊  | 31400/40000 [00:00<00:00, 313993.56it/s]One-hot val: 100%|██████████| 40000/40000 [00:00<00:00, 313945.50it/s]
-One-hot test:   0%|          | 0/40000 [00:00<?, ?it/s]One-hot test:  78%|███████▊  | 31333/40000 [00:00<00:00, 313320.59it/s]One-hot test: 100%|██████████| 40000/40000 [00:00<00:00, 314449.77it/s]
-2026-01-26 23:15:44,510 [INFO] Scale pos weight: 0.9997
-2026-01-26 23:15:44,510 [INFO] Training XGBoost...
-2026-01-26 23:16:26,032 [INFO] Early stopping at round 10 (best: 0)
-2026-01-26 23:16:26,616 [INFO] AUC: 0.5061 | F1: 0.6690 | Accuracy: 0.5057 | Time: 43.23s
-2026-01-26 23:16:26,705 [INFO] ======================================================================
-2026-01-26 23:16:26,706 [INFO] Encoding: CATEGORICAL, Fraction: 100%
-2026-01-26 23:16:26,706 [INFO] ======================================================================
-2026-01-26 23:16:26,709 [INFO] Encoding with one-hot categorical method...
-One-hot train (100%):   0%|          | 0/320000 [00:00<?, ?it/s]One-hot train (100%):  10%|▉         | 31052/320000 [00:00<00:00, 310504.01it/s]One-hot train (100%):  20%|█▉        | 62653/320000 [00:00<00:00, 313736.33it/s]One-hot train (100%):  29%|██▉       | 94193/320000 [00:00<00:00, 314492.01it/s]One-hot train (100%):  39%|███▉      | 125881/320000 [00:00<00:00, 315431.89it/s]One-hot train (100%):  49%|████▉     | 157592/320000 [00:00<00:00, 316034.95it/s]One-hot train (100%):  59%|█████▉    | 189295/320000 [00:00<00:00, 316369.01it/s]One-hot train (100%):  69%|██████▉   | 220932/320000 [00:00<00:00, 316327.76it/s]One-hot train (100%):  79%|███████▉  | 252622/320000 [00:00<00:00, 316506.41it/s]One-hot train (100%):  89%|████████▉ | 284352/320000 [00:00<00:00, 316751.98it/s]One-hot train (100%):  99%|█████████▉| 316062/320000 [00:01<00:00, 316857.64it/s]One-hot train (100%): 100%|██████████| 320000/320000 [00:01<00:00, 316013.13it/s]
-One-hot val:   0%|          | 0/40000 [00:00<?, ?it/s]One-hot val:  79%|███████▊  | 31411/40000 [00:00<00:00, 314105.81it/s]One-hot val: 100%|██████████| 40000/40000 [00:00<00:00, 315224.92it/s]
-One-hot test:   0%|          | 0/40000 [00:00<?, ?it/s]One-hot test:  79%|███████▊  | 31413/40000 [00:00<00:00, 314120.56it/s]One-hot test: 100%|██████████| 40000/40000 [00:00<00:00, 315167.48it/s]
-2026-01-26 23:16:27,979 [INFO] Scale pos weight: 0.9997
-2026-01-26 23:16:27,979 [INFO] Training XGBoost...
-2026-01-26 23:17:22,213 [INFO] Early stopping at round 10 (best: 0)
-2026-01-26 23:17:22,817 [INFO] AUC: 0.5066 | F1: 0.6692 | Accuracy: 0.5061 | Time: 56.10s
-2026-01-26 23:17:22,900 [INFO] ======================================================================
-2026-01-26 23:17:22,901 [INFO] Saving results...
-2026-01-26 23:17:22,906 [INFO] Results saved to results_XGB/xgb_fraction_experiment_results.csv
-2026-01-26 23:17:22,906 [INFO] 
-Final Results Summary:
-2026-01-26 23:17:22,910 [INFO]   encoding_method  fraction  train_samples  test_samples       auc        f1  accuracy  precision    recall  training_time_sec  seed dataset_id                   timestamp
-0     categorical      0.01           3200         40000  0.510788  0.372218  0.508525   0.514160  0.291692           5.549101   666       alph  2026-01-26T23:14:41.600653
-1     categorical      0.10          32000         40000  0.506319  0.669044  0.505825   0.502679  1.000000           9.694639   666       alph  2026-01-26T23:14:51.394903
-2     categorical      0.30          96000         40000  0.505969  0.668887  0.505475   0.502502  1.000000          20.844327   666       alph  2026-01-26T23:15:12.338124
-3     categorical      0.50         160000         40000  0.506718  0.669212  0.506225   0.502882  0.999950          30.819420   666       alph  2026-01-26T23:15:43.274846
-4     categorical      0.75         240000         40000  0.506144  0.668955  0.505650   0.502591  0.999950          43.230790   666       alph  2026-01-26T23:16:26.616278
-5     categorical      1.00         320000         40000  0.506643  0.669190  0.506150   0.502844  1.000000          56.096389   666       alph  2026-01-26T23:17:22.817261
-
-Job 99961 consumed 0.0 billing hours and 0.1 GPU hours from project nn12048k.
-
-Submitted 2026-01-26T23:14:21; waited 1.0 seconds in the queue after becoming eligible to run.
-
-Requested wallclock time: 20.0 hours
-Elapsed wallclock time:   3.0 minutes
-
-Job exited normally.
-
-Task and CPU statistics:
-ID               CPUs  Tasks  CPU util                Start  Elapsed  Exit status
-99961               1            0.0 %  2026-01-26T23:14:22  181.0 s  0
-99961.batch         1      1     0.1 %  2026-01-26T23:14:22  181.0 s  0
-99961.apptainer     1      1     0.0 %  2026-01-26T23:14:22    4.0 s  0
-99961.apptainer     1      1     0.0 %  2026-01-26T23:14:26  177.0 s  0
-
-Used CPU time:   0.2 CPU seconds
-Unused CPU time: 3.0 CPU minutes
-
-Memory statistics, in GiB:
-ID                Alloc   Usage
-99961             128.0        
-99961.batch       128.0     0.0
-99961.apptainer   128.0     0.5
-99961.apptainer   128.0     3.3
-
-Job 99961 completed at Mon Jan 26 23:17:24 CET 2026

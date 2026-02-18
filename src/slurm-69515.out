@@ -1,85 +1,0 @@
-Starting job 69515 on gpu-1-69 on Olivia at Fri Dec 26 15:29:28 CET 2025
-
-=== JOB CONFIGURATION ===
-Job ID: 69515
-Node: gpu-1-69
-Scratch Cache: /cluster/software/gpujobscratch/jobs/69515/hf_cache_69515
-Free space in SCRATCH: 472T
-The following modules were not unloaded:
-  (Use "module --force purge" to unload all):
-
-  1) init-NRIS
-=== STARTING CONTAINER ===
-Container: /cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif
-Environment: HUGGING_FACE_HUB_TOKEN=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,HF_HOME=/cluster/software/gpujobscratch/jobs/69515/hf_cache_69515,HF_DATASETS_CACHE=/cluster/software/gpujobscratch/jobs/69515/hf_cache_69515,XDG_CACHE_HOME=/cluster/software/gpujobscratch/jobs/69515/hf_cache_69515
-INFO:    gocryptfs not found, will not be able to use gocryptfs
-/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
-rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
-INFO:__main__:Argument batch_size: 4
-INFO:__main__:Argument cache_dir: '/cluster/software/gpujobscratch/jobs/69515/hf_cache_69515'
-INFO:__main__:Argument cold_start: False
-INFO:__main__:Argument early: 'loss'
-INFO:__main__:Argument epochs: 10
-INFO:__main__:Argument gradient_accumulation_steps: 8
-INFO:__main__:Argument lr: 0.0002
-INFO:__main__:Argument max_length: 100
-INFO:__main__:Argument model_name: 'meta-llama/Llama-3.1-70B'
-INFO:__main__:Argument model_type: 'general'
-INFO:__main__:Argument number_to_use: 9
-INFO:__main__:Argument path_csv: '/cluster/home/michechi/MIMICIV/data/simulation/tested/'
-INFO:__main__:Argument patience: 3
-INFO:__main__:Argument peft: True
-INFO:__main__:Argument prompt_type: 'standard'
-INFO:__main__:Argument seed: 9550
-INFO:__main__:Argument test_rnd: False
-INFO:__main__:Argument tiny: False
-INFO:__main__:Argument tiny_type: None
-INFO:__main__:Argument use_quantization: True
-INFO:__main__:
-Loading pre-trained CausalLM model for WARM START!
-Fetching 30 files:   0%|          | 0/30 [00:00<?, ?it/s]Fetching 30 files:   3%|▎         | 1/30 [17:04<8:15:17, 1024.75s/it]Fetching 30 files: 100%|██████████| 30/30 [17:04<00:00, 34.16s/it]   
-INFO:accelerate.utils.modeling:We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
-Loading checkpoint shards:   0%|          | 0/30 [00:00<?, ?it/s]Loading checkpoint shards:   3%|▎         | 1/30 [00:00<00:22,  1.31it/s]Loading checkpoint shards:   7%|▋         | 2/30 [00:01<00:21,  1.30it/s]Loading checkpoint shards:  10%|█         | 3/30 [00:02<00:21,  1.28it/s]Loading checkpoint shards:  13%|█▎        | 4/30 [00:03<00:20,  1.27it/s]Loading checkpoint shards:  17%|█▋        | 5/30 [00:04<00:20,  1.22it/s]Loading checkpoint shards:  20%|██        | 6/30 [00:04<00:20,  1.18it/s]Loading checkpoint shards:  23%|██▎       | 7/30 [00:05<00:18,  1.23it/s]Loading checkpoint shards:  27%|██▋       | 8/30 [00:06<00:17,  1.23it/s]Loading checkpoint shards:  30%|███       | 9/30 [00:07<00:17,  1.18it/s]Loading checkpoint shards:  33%|███▎      | 10/30 [00:08<00:16,  1.22it/s]Loading checkpoint shards:  37%|███▋      | 11/30 [00:09<00:15,  1.19it/s]Loading checkpoint shards:  40%|████      | 12/30 [00:09<00:14,  1.23it/s]Loading checkpoint shards:  43%|████▎     | 13/30 [00:10<00:14,  1.16it/s]Loading checkpoint shards:  47%|████▋     | 14/30 [00:11<00:13,  1.19it/s]Loading checkpoint shards:  50%|█████     | 15/30 [00:12<00:12,  1.17it/s]Loading checkpoint shards:  53%|█████▎    | 16/30 [00:13<00:11,  1.22it/s]Loading checkpoint shards:  57%|█████▋    | 17/30 [00:14<00:10,  1.20it/s]Loading checkpoint shards:  60%|██████    | 18/30 [00:14<00:09,  1.21it/s]Loading checkpoint shards:  63%|██████▎   | 19/30 [00:15<00:09,  1.14it/s]Loading checkpoint shards:  67%|██████▋   | 20/30 [00:16<00:08,  1.13it/s]Loading checkpoint shards:  70%|███████   | 21/30 [00:17<00:08,  1.07it/s]Loading checkpoint shards:  73%|███████▎  | 22/30 [00:18<00:07,  1.10it/s]Loading checkpoint shards:  77%|███████▋  | 23/30 [00:19<00:06,  1.06it/s]Loading checkpoint shards:  80%|████████  | 24/30 [00:20<00:05,  1.09it/s]Loading checkpoint shards:  83%|████████▎ | 25/30 [00:21<00:04,  1.08it/s]Loading checkpoint shards:  87%|████████▋ | 26/30 [00:22<00:03,  1.13it/s]Loading checkpoint shards:  90%|█████████ | 27/30 [00:23<00:02,  1.11it/s]Loading checkpoint shards:  93%|█████████▎| 28/30 [00:24<00:01,  1.14it/s]Loading checkpoint shards:  97%|█████████▋| 29/30 [00:24<00:00,  1.11it/s]Loading checkpoint shards: 100%|██████████| 30/30 [00:25<00:00,  1.43it/s]Loading checkpoint shards: 100%|██████████| 30/30 [00:25<00:00,  1.19it/s]
-trainable params: 32,768,000 || all params: 69,535,801,344 || trainable%: 0.0471
-INFO:__main__:Using prompt type: standard
-INFO:__main__:Model type: general, Model name: meta-llama/Llama-3.1-70B
-Overlap train-val: 0 (0.0%)
-Overlap train-test: 0 (0.0%)
-Overlap val-test: 0 (0.0%)
-INFO:__main__:Example train text: Sequential events: M E N Z N I G Z T X V D E X E N W O C F
-Outcome (0 or 1):
-INFO:__main__:Average train text length: 26.00 words
-INFO:__main__:Average validation text length: 26.00 words
-INFO:__main__:Average test text length: 26.00 words
-INFO:__main__:Training on 400000 samples, validating on 50000, testing on 50000 samples
-Using device: cuda
-INFO:__main__:Early stopping criterion: loss
-[2025-12-27T11:29:32.009] error: *** STEP 69515.0 ON gpu-1-69 CANCELLED AT 2025-12-27T11:29:32 DUE TO TIME LIMIT ***
-[2025-12-27T11:29:32.010] error: *** JOB 69515 ON gpu-1-69 CANCELLED AT 2025-12-27T11:29:32 DUE TO TIME LIMIT ***
-srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
-
-Job 69515 consumed 0.0 billing hours and 20.0 GPU hours from project nn12048k.
-
-Submitted 2025-12-26T15:29:27; waited 1.0 seconds in the queue after becoming eligible to run.
-
-Requested wallclock time: 20.0 hours
-Elapsed wallclock time:   20.0 hours
-
-Job timed out.
-
-Task and CPU statistics:
-ID               CPUs  Tasks  CPU util                Start  Elapsed  Exit status
-69515               1            0.0 %  2025-12-26T15:29:28   20.0 h  0
-69515.batch         1      1     0.0 %  2025-12-26T15:29:28   20.0 h  Signal 15
-69515.apptainer     1      1     0.0 %  2025-12-26T15:29:28   20.0 h  Signal 15
-
-Used CPU time:   0.2 CPU seconds
-Unused CPU time: 20.0 CPU hours
-
-Memory statistics, in GiB:
-ID                Alloc   Usage
-69515             128.0        
-69515.batch       128.0     0.1
-69515.apptainer   128.0    33.4
-
-Job 69515 completed at Sat Dec 27 11:29:36 CET 2025

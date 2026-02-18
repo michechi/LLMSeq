@@ -1,142 +1,0 @@
-Starting job 1835570 on gpu-8 on fox at Mon Jul 28 11:32:47 CEST 2025
-
-2025-07-28 11:33:25,076: Argument all_landmarks: True
-2025-07-28 11:33:25,076: Argument batch_size: 2
-2025-07-28 11:33:25,076: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
-2025-07-28 11:33:25,076: Argument early: 'loss'
-2025-07-28 11:33:25,076: Argument epochs: 20
-2025-07-28 11:33:25,076: Argument gradient_accumulation_steps: 4
-2025-07-28 11:33:25,076: Argument input_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_df_evo.csv'
-2025-07-28 11:33:25,076: Argument lr: 2e-05
-2025-07-28 11:33:25,076: Argument max_length: 512
-2025-07-28 11:33:25,076: Argument max_visits: 3
-2025-07-28 11:33:25,076: Argument model_name: 'meta-llama/Llama-3.1-8B'
-2025-07-28 11:33:25,076: Argument model_type: 'general'
-2025-07-28 11:33:25,076: Argument patience: 1
-2025-07-28 11:33:25,076: Argument peft: True
-2025-07-28 11:33:25,076: Argument prompt_type: 'compact_no_time_rnd'
-2025-07-28 11:33:25,076: Argument seed: 9550
-2025-07-28 11:33:25,076: Argument test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_test.csv'
-2025-07-28 11:33:25,076: Argument train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_train.csv'
-2025-07-28 11:33:25,077: Argument use_quantization: False
-2025-07-28 11:33:25,077: Argument val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_vali.csv'
-2025-07-28 11:33:25,115: Using prompt type: compact_no_time_rnd
-/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:77: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
-  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
-/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:79: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
-  full_test_df = pd.read_csv(args.test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
-2025-07-28 11:34:02,949: Processing all landmarks from 1 to 3
-2025-07-28 11:34:02,950: Preparing data for Landmark 1
-2025-07-28 11:34:06,252: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
-Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:09<00:28,  9.34s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:18<00:18,  9.49s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:28<00:09,  9.44s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:28<00:00,  5.86s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:28<00:00,  7.17s/it]
-Some weights of LlamaForSequenceClassification were not initialized from the model checkpoint at meta-llama/Llama-3.1-8B and are newly initialized: ['score.weight']
-You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
-2025-07-28 11:34:38,558: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
-The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
-2025-07-28 11:35:20,221: Average train text length: 133.90 words
-2025-07-28 11:35:20,221: Average validation text length: 133.07 words
-2025-07-28 11:35:20,221: Average test text length: 134.65 words
-2025-07-28 11:35:20,221: Training on 14472 samples, validating on 1608, testing on 4020 samples
-2025-07-28 11:35:29,800: Fine-tuning at Landmark 1
-2025-07-28 11:35:31,304: Early stopping criterion: loss
-2025-07-28 12:09:56,307: Landmark 1 | Epoch 1/20 | Train Loss: 0.1285 | Val Loss: 0.4108 | Validation AUC: 0.7312 | F1-Score: 0.1200
-2025-07-28 12:10:08,973: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_landmark1_compact_no_time_rnd_3_512_all_landmarks_True_20250728_113531_.pt with AUC: 0.7312, F1: 0.1200, Val Loss: 0.4108
-2025-07-28 12:43:58,566: Landmark 1 | Epoch 2/20 | Train Loss: 0.0989 | Val Loss: 0.3597 | Validation AUC: 0.7930 | F1-Score: 0.2310
-2025-07-28 12:44:11,197: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_landmark1_compact_no_time_rnd_3_512_all_landmarks_True_20250728_113531_.pt with AUC: 0.7930, F1: 0.2310, Val Loss: 0.3597
-2025-07-28 13:17:58,039: Landmark 1 | Epoch 3/20 | Train Loss: 0.0892 | Val Loss: 0.3660 | Validation AUC: 0.8091 | F1-Score: 0.1065
-2025-07-28 13:17:58,039: No improvement in epoch 3. Current best AUC: 0.7930, F1: 0.2310, Val Loss: 0.3597. Epochs without improvement: 1/1
-2025-07-28 13:17:58,039: Early stopping triggered at epoch 3. Best AUC: 0.7930, F1: 0.2310, Val Loss: 0.3597
-2025-07-28 13:18:04,258: Tempo impiegato per Landmark 1: 6154.5 secondi
-2025-07-28 13:18:04,259: Tempo medio per epoca: 2051.5 secondi
-2025-07-28 13:18:04,266: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_landmark1_compact_no_time_rnd_3_512_all_landmarks_True_20250728_113531_.pt for final evaluation on test set
-2025-07-28 13:22:06,649: Final Test AUC (Landmark 1): 0.7743 | Test F1-Score: 0.1984
-2025-07-28 13:22:06,650: Preparing data for Landmark 2
-2025-07-28 13:22:08,110: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
-trainable params: 6,823,936 || all params: 7,511,756,800 || trainable%: 0.0908
-Using device: cuda
-Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:10<00:30, 10.04s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:20<00:20, 10.23s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:30<00:10, 10.29s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:31<00:00,  6.44s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:31<00:00,  7.82s/it]
-Some weights of LlamaForSequenceClassification were not initialized from the model checkpoint at meta-llama/Llama-3.1-8B and are newly initialized: ['score.weight']
-You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
-2025-07-28 13:22:42,791: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
-2025-07-28 13:23:25,940: Average train text length: 137.85 words
-2025-07-28 13:23:25,941: Average validation text length: 137.77 words
-2025-07-28 13:23:25,941: Average test text length: 136.01 words
-2025-07-28 13:23:25,941: Training on 14472 samples, validating on 1608, testing on 4020 samples
-2025-07-28 13:23:36,330: Fine-tuning at Landmark 2
-2025-07-28 13:23:36,351: Early stopping criterion: loss
-2025-07-28 13:57:54,023: Landmark 2 | Epoch 1/20 | Train Loss: 0.1908 | Val Loss: 0.4357 | Validation AUC: 0.7007 | F1-Score: 0.1486
-2025-07-28 13:58:06,498: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_landmark2_compact_no_time_rnd_3_512_all_landmarks_True_20250728_132336_.pt with AUC: 0.7007, F1: 0.1486, Val Loss: 0.4357
-2025-07-28 14:32:31,131: Landmark 2 | Epoch 2/20 | Train Loss: 0.1017 | Val Loss: 0.3375 | Validation AUC: 0.8182 | F1-Score: 0.2680
-2025-07-28 14:32:43,738: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_landmark2_compact_no_time_rnd_3_512_all_landmarks_True_20250728_132336_.pt with AUC: 0.8182, F1: 0.2680, Val Loss: 0.3375
-2025-07-28 15:07:04,143: Landmark 2 | Epoch 3/20 | Train Loss: 0.0851 | Val Loss: 0.2963 | Validation AUC: 0.8653 | F1-Score: 0.3582
-2025-07-28 15:07:16,584: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_landmark2_compact_no_time_rnd_3_512_all_landmarks_True_20250728_132336_.pt with AUC: 0.8653, F1: 0.3582, Val Loss: 0.2963
-2025-07-28 15:41:24,059: Landmark 2 | Epoch 4/20 | Train Loss: 0.0756 | Val Loss: 0.2775 | Validation AUC: 0.8802 | F1-Score: 0.4877
-2025-07-28 15:41:36,338: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_landmark2_compact_no_time_rnd_3_512_all_landmarks_True_20250728_132336_.pt with AUC: 0.8802, F1: 0.4877, Val Loss: 0.2775
-2025-07-28 16:15:47,788: Landmark 2 | Epoch 5/20 | Train Loss: 0.0707 | Val Loss: 0.2881 | Validation AUC: 0.8831 | F1-Score: 0.4658
-2025-07-28 16:15:47,789: No improvement in epoch 5. Current best AUC: 0.8802, F1: 0.4877, Val Loss: 0.2775. Epochs without improvement: 1/1
-2025-07-28 16:15:47,789: Early stopping triggered at epoch 5. Best AUC: 0.8802, F1: 0.4877, Val Loss: 0.2775
-2025-07-28 16:15:54,072: Tempo impiegato per Landmark 2: 10337.7 secondi
-2025-07-28 16:15:54,073: Tempo medio per epoca: 2067.5 secondi
-2025-07-28 16:15:54,081: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_landmark2_compact_no_time_rnd_3_512_all_landmarks_True_20250728_132336_.pt for final evaluation on test set
-2025-07-28 16:19:57,137: Final Test AUC (Landmark 2): 0.8552 | Test F1-Score: 0.4041
-2025-07-28 16:19:57,138: Preparing data for Landmark 3
-2025-07-28 16:19:58,586: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
-trainable params: 6,823,936 || all params: 7,511,756,800 || trainable%: 0.0908
-Using device: cuda
-Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:09<00:27,  9.33s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:18<00:18,  9.37s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:27<00:09,  9.31s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:28<00:00,  5.83s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:28<00:00,  7.11s/it]
-Some weights of LlamaForSequenceClassification were not initialized from the model checkpoint at meta-llama/Llama-3.1-8B and are newly initialized: ['score.weight']
-You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
-2025-07-28 16:20:30,875: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
-2025-07-28 16:21:14,748: Average train text length: 180.40 words
-2025-07-28 16:21:14,749: Average validation text length: 176.07 words
-2025-07-28 16:21:14,749: Average test text length: 180.19 words
-2025-07-28 16:21:14,749: Training on 14472 samples, validating on 1608, testing on 4020 samples
-2025-07-28 16:21:27,829: Fine-tuning at Landmark 3
-2025-07-28 16:21:27,852: Early stopping criterion: loss
-2025-07-28 16:56:15,466: Landmark 3 | Epoch 1/20 | Train Loss: 0.2472 | Val Loss: 0.4495 | Validation AUC: 0.7291 | F1-Score: 0.3150
-2025-07-28 16:56:28,275: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_landmark3_compact_no_time_rnd_3_512_all_landmarks_True_20250728_162127_.pt with AUC: 0.7291, F1: 0.3150, Val Loss: 0.4495
-2025-07-28 17:31:24,513: Landmark 3 | Epoch 2/20 | Train Loss: 0.1018 | Val Loss: 0.2651 | Validation AUC: 0.9090 | F1-Score: 0.5611
-2025-07-28 17:31:36,901: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_landmark3_compact_no_time_rnd_3_512_all_landmarks_True_20250728_162127_.pt with AUC: 0.9090, F1: 0.5611, Val Loss: 0.2651
-2025-07-28 18:06:10,336: Landmark 3 | Epoch 3/20 | Train Loss: 0.0595 | Val Loss: 0.1979 | Validation AUC: 0.9532 | F1-Score: 0.7124
-2025-07-28 18:06:22,852: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_landmark3_compact_no_time_rnd_3_512_all_landmarks_True_20250728_162127_.pt with AUC: 0.9532, F1: 0.7124, Val Loss: 0.1979
-2025-07-28 18:40:49,056: Landmark 3 | Epoch 4/20 | Train Loss: 0.0486 | Val Loss: 0.2089 | Validation AUC: 0.9359 | F1-Score: 0.6634
-2025-07-28 18:40:49,057: No improvement in epoch 4. Current best AUC: 0.9532, F1: 0.7124, Val Loss: 0.1979. Epochs without improvement: 1/1
-2025-07-28 18:40:49,057: Early stopping triggered at epoch 4. Best AUC: 0.9532, F1: 0.7124, Val Loss: 0.1979
-2025-07-28 18:40:55,309: Tempo impiegato per Landmark 3: 8367.5 secondi
-2025-07-28 18:40:55,310: Tempo medio per epoca: 2091.9 secondi
-2025-07-28 18:40:55,318: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_landmark3_compact_no_time_rnd_3_512_all_landmarks_True_20250728_162127_.pt for final evaluation on test set
-2025-07-28 18:44:57,877: Final Test AUC (Landmark 3): 0.9474 | Test F1-Score: 0.7257
-2025-07-28 18:44:57,903: Saving results to results_general_meta-llama_Llama-3.1-8B_visits3_peft_9550_compact_no_time_rnd_20250728_184457.csv
-trainable params: 6,823,936 || all params: 7,511,756,800 || trainable%: 0.0908
-Using device: cuda
-   Landmark Val AUC  ... Validation Loss Training Time (s)
-0         1  0.7930  ...          0.3597            6154.5
-1         2  0.8802  ...          0.2775           10337.7
-2         3  0.9532  ...          0.1979            8367.5
-
-[3 rows x 9 columns]
-
-Job 1835570 consumed 136.9 billing hours from project ec12.
-
-Submitted 2025-07-28T11:32:44; waited 3.0 seconds in the queue after becoming eligible to run.
-
-Requested wallclock time: 24.0 hours
-Elapsed wallclock time:   7.2 hours
-
-Job exited normally.
-
-Task and CPU statistics:
-ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
-1835570          16            0.0 %  2025-07-28T11:32:47    7.2 h  0
-1835570.batch    16      1     6.4 %  2025-07-28T11:32:47    7.2 h  0
-
-Used CPU time:   7.4 CPU hours
-Unused CPU time: 4.5 CPU days
-
-Memory statistics, in GiB:
-ID              Alloc   Usage
-1835570          32.0        
-1835570.batch    32.0    32.0
-
-GPU usage stats:
-Job 1835570 completed at Mon Jul 28 18:45:01 CEST 2025

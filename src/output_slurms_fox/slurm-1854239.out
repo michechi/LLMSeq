@@ -1,53 +1,0 @@
-Starting job 1854239 on gpu-9 on fox at Thu Aug 14 13:11:04 CEST 2025
-
-2025-08-14 13:11:39,200: Argument CI: False
-2025-08-14 13:11:39,200: Argument all_landmarks: True
-2025-08-14 13:11:39,200: Argument batch_size: 2
-2025-08-14 13:11:39,200: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
-2025-08-14 13:11:39,200: Argument early: 'loss'
-2025-08-14 13:11:39,200: Argument epochs: 20
-2025-08-14 13:11:39,200: Argument gradient_accumulation_steps: 4
-2025-08-14 13:11:39,200: Argument input_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_df_evo.csv'
-2025-08-14 13:11:39,200: Argument lr: 2e-05
-2025-08-14 13:11:39,200: Argument max_length: 2048
-2025-08-14 13:11:39,200: Argument max_visits: 4
-2025-08-14 13:11:39,200: Argument model_name: 'meta-llama/Llama-3.1-8B'
-2025-08-14 13:11:39,200: Argument model_type: 'general'
-2025-08-14 13:11:39,200: Argument patience: 1
-2025-08-14 13:11:39,200: Argument peft: True
-2025-08-14 13:11:39,200: Argument prompt_type: 'compact'
-2025-08-14 13:11:39,200: Argument seed: 4550
-2025-08-14 13:11:39,200: Argument test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_test_dod.csv'
-2025-08-14 13:11:39,200: Argument train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_train_dod.csv'
-2025-08-14 13:11:39,200: Argument use_quantization: False
-2025-08-14 13:11:39,200: Argument val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_vali_dod.csv'
-2025-08-14 13:11:39,200: Argument when_counting_death: 'last_visit'
-2025-08-14 13:11:39,251: Using prompt type: compact
-/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:79: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
-  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
-/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:81: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
-  full_test_df = pd.read_csv(args.test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
-2025-08-14 13:12:16,970: Processing all landmarks from 1 to 4
-2025-08-14 13:12:16,971: Preparing data for Landmark 1
-2025-08-14 13:12:21,690: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
-Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:10<00:31, 10.38s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:22<00:22, 11.13s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:33<00:11, 11.24s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:33<00:00,  7.02s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:33<00:00,  8.49s/it]
-Some weights of LlamaForSequenceClassification were not initialized from the model checkpoint at meta-llama/Llama-3.1-8B and are newly initialized: ['score.weight']
-You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
-2025-08-14 13:12:59,367: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
-The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
-2025-08-14 13:13:40,255: Example train text: You are a Doctor.
-What is the probability of death in the next 90 days for 43-year-old F patient?
-Visit number 1 - EMERGENCY 
-
-DIAGNOSIS HISTORY:
-New diagnoses in this visit: Diverticulitis of colon (without mention of hemorrhage); Acute kidney failure, unspecified; Abscess of intestine; Other postoperative infection; Cellulitis and abscess of trunk; Methicillin susceptible Staphylococcus aureus in conditions classified elsewhere and of unspecified site; Removal of other organ (partial) (total) causing abnormal patient reaction, or later complication, without mention of misadventure at time of operation; Hypovolemia; Nausea with vomiting.
-PRESCRIPTIONS HISTORY:
-New medications in this visit: NS; Potassium Chloride; OxycoDONE (Immediate Release) ; Magnesium Citrate; SW; Magnesium Sulfate; Prochlorperazine; Lorazepam; HYDROmorphone (Dilaudid); Iso-Osmotic Dextrose; Piperacillin-Tazobactam Na; Potassium Chl 20 mEq / 1000 mL D5 1/2 NS; Insulin; LR; Acetaminophen; Ondansetron; Ketorolac; OxycoDONE-Acetaminophen Elixir; Sodium Chloride 0.9%  Flush; Docusate Sodium; Hydrocodone-Acetaminophen; D5W; Clindamycin; Fluticasone Propionate NASAL; Ciprofloxacin; Pantoprazole; Metoclopramide; Calcium Carbonate; Vancomycin; Cephalexin; Heparin; Bupivacaine 0.5%; Promethazine HCl; D5 1/2NS; Hydrocortisone (Rectal) 2.5% Cream; Morphine Sulfate; Escitalopram Oxalate; Maalox/Diphenhydramine/Lidocaine; Nafcillin; HydrOXYzine; MetRONIDAZOLE (FLagyl); Ibuprofen.
-PROCEDURES HISTORY:
-New procedures in this visit: Open and other sigmoidectomy.
-2025-08-14 13:13:40,336: Average train text length: 148.15 words
-2025-08-14 13:13:40,336: Average validation text length: 152.37 words
-2025-08-14 13:13:40,336: Average test text length: 149.44 words
-2025-08-14 13:13:40,336: Training on 8040 samples, validating on 894, testing on 2234 samples
-2025-08-14 13:13:48,023: Fine-tuning at Landmark 1
-2025-08-14 13:13:49,683: Early stopping criterion: loss

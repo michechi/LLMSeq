@@ -1,151 +1,0 @@
-Starting job 99962 on gpu-1-76 on Olivia at Mon Jan 26 23:23:01 CET 2026
-
-=== JOB CONFIGURATION ===
-Job ID: 99962
-Node: gpu-1-76
-Scratch Cache: /cluster/software/gpujobscratch/jobs/99962/hf_cache_99962
-Free space in SCRATCH: 471T
-The following modules were not unloaded:
-  (Use "module --force purge" to unload all):
-
-  1) init-NRIS
-=== STARTING CONTAINER ===
-Container: /cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif
-Environment: HUGGING_FACE_HUB_TOKEN=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,HF_HOME=/cluster/software/gpujobscratch/jobs/99962/hf_cache_99962,HF_DATASETS_CACHE=/cluster/software/gpujobscratch/jobs/99962/hf_cache_99962,XDG_CACHE_HOME=/cluster/software/gpujobscratch/jobs/99962/hf_cache_99962
-=== CHECKING XGBOOST VERSION ===
-INFO:    gocryptfs not found, will not be able to use gocryptfs
-XGBoost version: 2.1.4
-INFO:    gocryptfs not found, will not be able to use gocryptfs
-2026-01-26 23:23:14,013 [INFO] Argument batch_size: 8
-2026-01-26 23:23:14,014 [INFO] Argument cache_dir: /cluster/work/projects/nn12048k/michechi/cache/
-2026-01-26 23:23:14,014 [INFO] Argument csv_to_use: alph
-2026-01-26 23:23:14,014 [INFO] Argument embedding_dir: /cluster/work/projects/nn12048k/michechi/cache/embeddings/
-2026-01-26 23:23:14,014 [INFO] Argument max_length: 512
-2026-01-26 23:23:14,014 [INFO] Argument model_name: meta-llama/Llama-3.1-8B
-2026-01-26 23:23:14,014 [INFO] Argument output_dir: results_XGB
-2026-01-26 23:23:14,014 [INFO] Argument path_csv: /cluster/home/michechi/MIMICIV/data/simulation/tested/
-2026-01-26 23:23:14,014 [INFO] Argument run_basic: False
-2026-01-26 23:23:14,014 [INFO] Argument run_categorical: True
-2026-01-26 23:23:14,014 [INFO] Argument run_llm: False
-2026-01-26 23:23:14,014 [INFO] Argument seed: 666
-2026-01-26 23:23:14,600 [INFO] Using device: cuda
-2026-01-26 23:23:14,600 [INFO] CUDA available: True
-2026-01-26 23:23:14,601 [INFO] Loading datasets...
-2026-01-26 23:23:14,818 [INFO] Train set: 320000, Val set: 40000, Test set: 40000
-2026-01-26 23:23:14,818 [INFO] Will run: ['categorical']
-2026-01-26 23:23:14,818 [INFO] ======================================================================
-2026-01-26 23:23:14,818 [INFO] Encoding: CATEGORICAL, Fraction: 1%
-2026-01-26 23:23:14,818 [INFO] ======================================================================
-2026-01-26 23:23:14,872 [INFO] Subsampled 3200 samples (1.0%) from 320000
-2026-01-26 23:23:14,872 [INFO] Class distribution: [1600 1600] (50.00% positive)
-2026-01-26 23:23:14,873 [INFO] Encoding with XGBoost native categorical method...
-Categorical train (1%):   0%|          | 0/3200 [00:00<?, ?it/s]Categorical train (1%): 100%|██████████| 3200/3200 [00:00<00:00, 358755.82it/s]
-Categorical val:   0%|          | 0/40000 [00:00<?, ?it/s]Categorical val:  93%|█████████▎| 37067/40000 [00:00<00:00, 370656.21it/s]Categorical val: 100%|██████████| 40000/40000 [00:00<00:00, 370965.60it/s]
-Categorical test:   0%|          | 0/40000 [00:00<?, ?it/s]Categorical test:  93%|█████████▎| 37164/40000 [00:00<00:00, 371619.09it/s]Categorical test: 100%|██████████| 40000/40000 [00:00<00:00, 371520.10it/s]
-2026-01-26 23:23:15,117 [INFO] Scale pos weight: 1.0000
-2026-01-26 23:23:15,117 [INFO] Training XGBoost...
-2026-01-26 23:23:15,706 [INFO] Early stopping at round 10 (best: 0)
-2026-01-26 23:23:15,743 [INFO] AUC: 0.5886 | F1: 0.6994 | Accuracy: 0.5898 | Time: 0.91s
-2026-01-26 23:23:15,827 [INFO] ======================================================================
-2026-01-26 23:23:15,827 [INFO] Encoding: CATEGORICAL, Fraction: 10%
-2026-01-26 23:23:15,827 [INFO] ======================================================================
-2026-01-26 23:23:15,884 [INFO] Subsampled 32000 samples (10.0%) from 320000
-2026-01-26 23:23:15,885 [INFO] Class distribution: [15997 16003] (50.01% positive)
-2026-01-26 23:23:15,885 [INFO] Encoding with XGBoost native categorical method...
-Categorical train (10%):   0%|          | 0/32000 [00:00<?, ?it/s]Categorical train (10%): 100%|██████████| 32000/32000 [00:00<00:00, 349558.10it/s]
-Categorical val:   0%|          | 0/40000 [00:00<?, ?it/s]Categorical val:  92%|█████████▏| 36903/40000 [00:00<00:00, 369024.19it/s]Categorical val: 100%|██████████| 40000/40000 [00:00<00:00, 369112.93it/s]
-Categorical test:   0%|          | 0/40000 [00:00<?, ?it/s]Categorical test:  93%|█████████▎| 37026/40000 [00:00<00:00, 370252.41it/s]Categorical test: 100%|██████████| 40000/40000 [00:00<00:00, 370228.84it/s]
-2026-01-26 23:23:16,213 [INFO] Scale pos weight: 0.9996
-2026-01-26 23:23:16,213 [INFO] Training XGBoost...
-2026-01-26 23:23:16,900 [INFO] Early stopping at round 10 (best: 0)
-2026-01-26 23:23:16,936 [INFO] AUC: 0.5975 | F1: 0.7114 | Accuracy: 0.5968 | Time: 1.09s
-2026-01-26 23:23:17,014 [INFO] ======================================================================
-2026-01-26 23:23:17,015 [INFO] Encoding: CATEGORICAL, Fraction: 30%
-2026-01-26 23:23:17,015 [INFO] ======================================================================
-2026-01-26 23:23:17,071 [INFO] Subsampled 96000 samples (30.0%) from 320000
-2026-01-26 23:23:17,072 [INFO] Class distribution: [47992 48008] (50.01% positive)
-2026-01-26 23:23:17,072 [INFO] Encoding with XGBoost native categorical method...
-Categorical train (30%):   0%|          | 0/96000 [00:00<?, ?it/s]Categorical train (30%):  37%|███▋      | 35110/96000 [00:00<00:00, 351086.10it/s]Categorical train (30%):  74%|███████▍  | 71077/96000 [00:00<00:00, 356129.08it/s]Categorical train (30%): 100%|██████████| 96000/96000 [00:00<00:00, 356446.33it/s]
-Categorical val:   0%|          | 0/40000 [00:00<?, ?it/s]Categorical val:  92%|█████████▏| 36864/40000 [00:00<00:00, 368634.20it/s]Categorical val: 100%|██████████| 40000/40000 [00:00<00:00, 369066.64it/s]
-Categorical test:   0%|          | 0/40000 [00:00<?, ?it/s]Categorical test:  93%|█████████▎| 37027/40000 [00:00<00:00, 370264.17it/s]Categorical test: 100%|██████████| 40000/40000 [00:00<00:00, 370485.55it/s]
-2026-01-26 23:23:17,583 [INFO] Scale pos weight: 0.9997
-2026-01-26 23:23:17,583 [INFO] Training XGBoost...
-2026-01-26 23:23:19,016 [INFO] Early stopping at round 10 (best: 0)
-2026-01-26 23:23:19,053 [INFO] AUC: 0.5978 | F1: 0.7117 | Accuracy: 0.5973 | Time: 2.02s
-2026-01-26 23:23:19,131 [INFO] ======================================================================
-2026-01-26 23:23:19,131 [INFO] Encoding: CATEGORICAL, Fraction: 50%
-2026-01-26 23:23:19,131 [INFO] ======================================================================
-2026-01-26 23:23:19,187 [INFO] Subsampled 160000 samples (50.0%) from 320000
-2026-01-26 23:23:19,188 [INFO] Class distribution: [79986 80014] (50.01% positive)
-2026-01-26 23:23:19,189 [INFO] Encoding with XGBoost native categorical method...
-Categorical train (50%):   0%|          | 0/160000 [00:00<?, ?it/s]Categorical train (50%):  22%|██▏       | 34788/160000 [00:00<00:00, 347867.06it/s]Categorical train (50%):  44%|████▍     | 70111/160000 [00:00<00:00, 351018.93it/s]Categorical train (50%):  66%|██████▌   | 105464/160000 [00:00<00:00, 352163.76it/s]Categorical train (50%):  88%|████████▊ | 140925/160000 [00:00<00:00, 353123.65it/s]Categorical train (50%): 100%|██████████| 160000/160000 [00:00<00:00, 352555.29it/s]
-Categorical val:   0%|          | 0/40000 [00:00<?, ?it/s]Categorical val:  92%|█████████▏| 36905/40000 [00:00<00:00, 369041.55it/s]Categorical val: 100%|██████████| 40000/40000 [00:00<00:00, 369224.21it/s]
-Categorical test:   0%|          | 0/40000 [00:00<?, ?it/s]Categorical test:  92%|█████████▏| 36774/40000 [00:00<00:00, 367735.09it/s]Categorical test: 100%|██████████| 40000/40000 [00:00<00:00, 368236.34it/s]
-2026-01-26 23:23:19,889 [INFO] Scale pos weight: 0.9997
-2026-01-26 23:23:19,889 [INFO] Training XGBoost...
-2026-01-26 23:23:22,113 [INFO] Early stopping at round 10 (best: 0)
-2026-01-26 23:23:22,150 [INFO] AUC: 0.5963 | F1: 0.7113 | Accuracy: 0.5959 | Time: 3.00s
-2026-01-26 23:23:22,234 [INFO] ======================================================================
-2026-01-26 23:23:22,235 [INFO] Encoding: CATEGORICAL, Fraction: 75%
-2026-01-26 23:23:22,235 [INFO] ======================================================================
-2026-01-26 23:23:22,290 [INFO] Subsampled 240000 samples (75.0%) from 320000
-2026-01-26 23:23:22,291 [INFO] Class distribution: [119980 120020] (50.01% positive)
-2026-01-26 23:23:22,292 [INFO] Encoding with XGBoost native categorical method...
-Categorical train (75%):   0%|          | 0/240000 [00:00<?, ?it/s]Categorical train (75%):  15%|█▍        | 34917/240000 [00:00<00:00, 349157.85it/s]Categorical train (75%):  29%|██▉       | 70280/240000 [00:00<00:00, 351781.78it/s]Categorical train (75%):  44%|████▍     | 105651/240000 [00:00<00:00, 352657.39it/s]Categorical train (75%):  59%|█████▉    | 141050/240000 [00:00<00:00, 353177.96it/s]Categorical train (75%):  74%|███████▎  | 176745/240000 [00:00<00:00, 354537.06it/s]Categorical train (75%):  89%|████████▊ | 212527/240000 [00:00<00:00, 355651.63it/s]Categorical train (75%): 100%|██████████| 240000/240000 [00:00<00:00, 354645.15it/s]
-Categorical val:   0%|          | 0/40000 [00:00<?, ?it/s]Categorical val:  92%|█████████▏| 36895/40000 [00:00<00:00, 368937.16it/s]Categorical val: 100%|██████████| 40000/40000 [00:00<00:00, 369225.03it/s]
-Categorical test:   0%|          | 0/40000 [00:00<?, ?it/s]Categorical test:  92%|█████████▏| 36906/40000 [00:00<00:00, 369053.31it/s]Categorical test: 100%|██████████| 40000/40000 [00:00<00:00, 369335.57it/s]
-2026-01-26 23:23:23,221 [INFO] Scale pos weight: 0.9997
-2026-01-26 23:23:23,221 [INFO] Training XGBoost...
-2026-01-26 23:23:26,378 [INFO] Early stopping at round 10 (best: 0)
-2026-01-26 23:23:26,415 [INFO] AUC: 0.5987 | F1: 0.7124 | Accuracy: 0.5981 | Time: 4.16s
-2026-01-26 23:23:26,499 [INFO] ======================================================================
-2026-01-26 23:23:26,500 [INFO] Encoding: CATEGORICAL, Fraction: 100%
-2026-01-26 23:23:26,500 [INFO] ======================================================================
-2026-01-26 23:23:26,503 [INFO] Encoding with XGBoost native categorical method...
-Categorical train (100%):   0%|          | 0/320000 [00:00<?, ?it/s]Categorical train (100%):  12%|█▏        | 37059/320000 [00:00<00:00, 370574.45it/s]Categorical train (100%):  23%|██▎       | 74806/320000 [00:00<00:00, 374625.54it/s]Categorical train (100%):  35%|███▌      | 112645/320000 [00:00<00:00, 376338.46it/s]Categorical train (100%):  47%|████▋     | 150446/320000 [00:00<00:00, 376993.17it/s]Categorical train (100%):  59%|█████▉    | 188264/320000 [00:00<00:00, 377417.05it/s]Categorical train (100%):  71%|███████   | 226033/320000 [00:00<00:00, 377506.30it/s]Categorical train (100%):  82%|████████▏ | 263807/320000 [00:00<00:00, 377579.88it/s]Categorical train (100%):  94%|█████████▍| 301580/320000 [00:00<00:00, 377623.77it/s]Categorical train (100%): 100%|██████████| 320000/320000 [00:00<00:00, 376983.05it/s]
-Categorical val:   0%|          | 0/40000 [00:00<?, ?it/s]Categorical val:  92%|█████████▏| 36958/40000 [00:00<00:00, 369568.90it/s]Categorical val: 100%|██████████| 40000/40000 [00:00<00:00, 369901.51it/s]
-Categorical test:   0%|          | 0/40000 [00:00<?, ?it/s]Categorical test:  92%|█████████▏| 36866/40000 [00:00<00:00, 368653.32it/s]Categorical test: 100%|██████████| 40000/40000 [00:00<00:00, 368733.26it/s]
-2026-01-26 23:23:27,611 [INFO] Scale pos weight: 0.9997
-2026-01-26 23:23:27,611 [INFO] Training XGBoost...
-2026-01-26 23:23:31,775 [INFO] Early stopping at round 10 (best: 0)
-2026-01-26 23:23:31,812 [INFO] AUC: 0.5985 | F1: 0.7121 | Accuracy: 0.5978 | Time: 5.30s
-2026-01-26 23:23:31,895 [INFO] ======================================================================
-2026-01-26 23:23:31,896 [INFO] Saving results...
-2026-01-26 23:23:31,901 [INFO] Results saved to results_XGB/xgb_fraction_experiment_results.csv
-2026-01-26 23:23:31,901 [INFO] 
-Final Results Summary:
-2026-01-26 23:23:31,905 [INFO]   encoding_method  fraction  train_samples  test_samples       auc        f1  accuracy  precision    recall  training_time_sec  seed dataset_id                   timestamp
-0     categorical      0.01           3200         40000  0.588648  0.699388  0.589800   0.551616  0.955305           0.909015   666       alph  2026-01-26T23:23:15.743674
-1     categorical      0.10          32000         40000  0.597489  0.711369  0.596775   0.553634  0.994795           1.093659   666       alph  2026-01-26T23:23:16.936602
-2     categorical      0.30          96000         40000  0.597828  0.711737  0.597275   0.553909  0.995345           2.022485   666       alph  2026-01-26T23:23:19.053036
-3     categorical      0.50         160000         40000  0.596332  0.711269  0.595950   0.553034  0.996346           3.003622   666       alph  2026-01-26T23:23:22.150468
-4     categorical      0.75         240000         40000  0.598696  0.712446  0.598100   0.554334  0.996747           4.164915   666       alph  2026-01-26T23:23:26.415452
-5     categorical      1.00         320000         40000  0.598518  0.712064  0.597775   0.554197  0.995696           5.296693   666       alph  2026-01-26T23:23:31.812053
-
-Job 99962 consumed 0.0 billing hours and 0.0 GPU hours from project nn12048k.
-
-Submitted 2026-01-26T23:23:00; waited 1.0 seconds in the queue after becoming eligible to run.
-
-Requested wallclock time: 20.0 hours
-Elapsed wallclock time:   31.0 seconds
-
-Job exited normally.
-
-Task and CPU statistics:
-ID               CPUs  Tasks  CPU util                Start  Elapsed  Exit status
-99962               1            0.0 %  2026-01-26T23:23:01   31.0 s  0
-99962.batch         1      1     0.6 %  2026-01-26T23:23:01   31.0 s  0
-99962.apptainer     1      1     0.0 %  2026-01-26T23:23:01    4.0 s  0
-99962.apptainer     1      1     0.0 %  2026-01-26T23:23:05   27.0 s  0
-
-Used CPU time:   0.2 CPU seconds
-Unused CPU time: 30.8 CPU seconds
-
-Memory statistics, in GiB:
-ID                Alloc   Usage
-99962             128.0        
-99962.batch       128.0     0.0
-99962.apptainer   128.0     0.5
-99962.apptainer   128.0     2.0
-
-Job 99962 completed at Mon Jan 26 23:23:33 CET 2026
