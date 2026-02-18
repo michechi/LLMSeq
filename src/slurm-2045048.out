@@ -1,0 +1,82 @@
+Starting job 2045048 on gpu-13 on Fox at Tue Oct 14 19:18:50 CEST 2025
+
+
+[notice] A new release of pip is available: 23.3.2 -> 25.2
+[notice] To update, run: pip install --upgrade pip
+2025-10-14 19:19:34,008: Argument X_test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/X_test_5.csv'
+2025-10-14 19:19:34,008: Argument X_train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/X_train_5.csv'
+2025-10-14 19:19:34,008: Argument X_val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/X_val_5.csv'
+2025-10-14 19:19:34,008: Argument batch_size: 64
+2025-10-14 19:19:34,008: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-10-14 19:19:34,008: Argument early: 'loss'
+2025-10-14 19:19:34,008: Argument epochs: 20
+2025-10-14 19:19:34,008: Argument gradient_accumulation_steps: 1
+2025-10-14 19:19:34,008: Argument lr: 2e-05
+2025-10-14 19:19:34,008: Argument max_length: 100
+2025-10-14 19:19:34,008: Argument model_name: 'meta-llama/Llama-3.2-1B'
+2025-10-14 19:19:34,008: Argument model_type: 'general'
+2025-10-14 19:19:34,008: Argument patience: 3
+2025-10-14 19:19:34,008: Argument peft: True
+2025-10-14 19:19:34,009: Argument prompt_type: 'standard'
+2025-10-14 19:19:34,009: Argument seed: 12345
+2025-10-14 19:19:34,009: Argument use_quantization: False
+2025-10-14 19:19:34,009: Argument y_test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/y_test_5.csv'
+2025-10-14 19:19:34,009: Argument y_train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/y_train_5.csv'
+2025-10-14 19:19:34,009: Argument y_val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/y_val_5.csv'
+2025-10-14 19:19:40,093: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-10-14 19:19:46,515: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-10-14 19:19:57,020: Using prompt type: standard
+2025-10-14 19:19:57,020: Model type: general, Model name: meta-llama/Llama-3.2-1B
+2025-10-14 19:20:00,256: Example train text: Sequential events: R X Y Z A R Q O O E X X C B W W Q B J R
+Outcome (0 or 1):
+2025-10-14 19:20:00,556: Average train text length: 26.00 words
+2025-10-14 19:20:00,556: Average validation text length: 26.00 words
+2025-10-14 19:20:00,556: Average test text length: 26.00 words
+2025-10-14 19:20:00,556: Training on 400000 samples, validating on 50000, testing on 50000 samples
+2025-10-14 19:20:02,036: Early stopping criterion: loss
+2025-10-14 20:08:28,987: Epoch 1/20 | Total Loss: 3.2492 | Causal Loss: 2.5655 | Classification Loss: 0.6837 | Val Loss: 2.7714 | Val AUC: 0.6196 | F1-Score: 0.5376
+2025-10-14 20:08:30,783: New best model saved with AUC: 0.6196
+2025-10-14 20:56:57,941: Epoch 2/20 | Total Loss: 2.7303 | Causal Loss: 2.1030 | Classification Loss: 0.6274 | Val Loss: 2.7131 | Val AUC: 0.6868 | F1-Score: 0.6195
+2025-10-14 20:56:59,763: New best model saved with AUC: 0.6868
+2025-10-14 21:45:28,215: Epoch 3/20 | Total Loss: 2.7169 | Causal Loss: 2.1029 | Classification Loss: 0.6140 | Val Loss: 2.7133 | Val AUC: 0.6862 | F1-Score: 0.6195
+2025-10-14 22:34:00,235: Epoch 4/20 | Total Loss: 2.7159 | Causal Loss: 2.1031 | Classification Loss: 0.6129 | Val Loss: 2.7138 | Val AUC: 0.6856 | F1-Score: 0.6195
+2025-10-14 23:22:30,626: Epoch 5/20 | Total Loss: 2.7153 | Causal Loss: 2.1031 | Classification Loss: 0.6122 | Val Loss: 2.7137 | Val AUC: 0.6840 | F1-Score: 0.6195
+2025-10-14 23:22:30,628: Early stopping at epoch 5
+2025-10-14 23:22:33,760: Tempo medio per epoca: 2910.6 secondi
+2025-10-14 23:22:33,764: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.2-1B_12345_standard_100_20251014_192002_.pt for final evaluation on test set
+2025-10-14 23:25:13,460: Final Test AUC: 0.6839 | Test F1-Score: 0.6205
+2025-10-14 23:25:13,463: Saving results to results_general_meta-llama_Llama-3.2-1B__peft_12345_100_standard_20251014_232513.csv
+trainable params: 1,703,936 || all params: 1,237,518,336 || trainable%: 0.1377
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+  Val AUC Val F1-Score  ... Validation Loss Training Time (s)
+0  0.6868       0.6195  ...          2.7131           14553.2
+
+[1 rows x 8 columns]
+
+Job 2045048 consumed 78.0 billing hours from project ec12.
+
+Submitted 2025-10-14T19:18:49; waited 1.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 20.0 hours
+Elapsed wallclock time:   4.1 hours
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+2045048          16            0.0 %  2025-10-14T19:18:50    4.1 h  0
+2045048.batch    16      1     6.2 %  2025-10-14T19:18:50    4.1 h  0
+
+Used CPU time:   4.1 CPU hours
+Unused CPU time: 2.6 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+2045048          32.0        
+2045048.batch    32.0     5.5
+
+Job 2045048 completed at Tue Oct 14 23:25:14 CEST 2025

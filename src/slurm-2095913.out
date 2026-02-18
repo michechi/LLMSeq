@@ -1,0 +1,89 @@
+Starting job 2095913 on gpu-13 on Fox at Thu Nov 6 16:12:18 CET 2025
+
+
+[notice] A new release of pip is available: 23.3.2 -> 25.3
+[notice] To update, run: pip install --upgrade pip
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_FOX_time_simulation_tiny.py:8: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml
+2025-11-06 16:13:06,658: Argument batch_size: 128
+2025-11-06 16:13:06,658: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-06 16:13:06,658: Argument check_gpu: False
+2025-11-06 16:13:06,658: Argument cold_start: False
+2025-11-06 16:13:06,658: Argument early: 'loss'
+2025-11-06 16:13:06,658: Argument epochs: 20
+2025-11-06 16:13:06,658: Argument gradient_accumulation_steps: 1
+2025-11-06 16:13:06,658: Argument lr: 0.0002
+2025-11-06 16:13:06,658: Argument max_length: 100
+2025-11-06 16:13:06,658: Argument model_name: 'meta-llama/Llama-3.2-1B'
+2025-11-06 16:13:06,658: Argument model_type: 'general'
+2025-11-06 16:13:06,658: Argument number_to_use: 9
+2025-11-06 16:13:06,658: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-11-06 16:13:06,658: Argument patience: 3
+2025-11-06 16:13:06,658: Argument peft: False
+2025-11-06 16:13:06,658: Argument prompt_type: 'standard'
+2025-11-06 16:13:06,658: Argument seed: 9550
+2025-11-06 16:13:06,658: Argument test_rnd: False
+2025-11-06 16:13:06,658: Argument tiny: True
+2025-11-06 16:13:06,658: Argument tiny_type: '0.2M'
+2025-11-06 16:13:06,658: Argument use_quantization: False
+2025-11-06 16:13:09,702: 
+Loading a TINY CausalLM model for testing purposes!
+2025-11-06 16:13:09,702: 
+Loading pre-trained CausalLM model for COLD START!
+2025-11-06 16:13:09,702: Tiny model config - Hidden size: 64, Num layers: 4, Num heads: 4, Intermediate size: 256, Vocab size: 100
+2025-11-06 16:13:11,123: 
+Using Flash Attention 2 for LLaMA tiny model
+2025-11-06 16:13:11,263: 
+New model parameters: 254,882
+2025-11-06 16:13:11,263: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-11-06 16:13:11,350: Using prompt type: standard
+2025-11-06 16:13:11,350: Model type: general, Model name: meta-llama/Llama-3.2-1B
+2025-11-06 16:13:14,623: Example train text: Sequential events: M E N Z N I G Z T X V D E X E N W O C F
+Outcome (0 or 1):
+2025-11-06 16:13:14,912: Average train text length: 26.00 words
+2025-11-06 16:13:14,912: Average validation text length: 26.00 words
+2025-11-06 16:13:14,912: Average test text length: 26.00 words
+2025-11-06 16:13:14,912: Training on 400000 samples, validating on 50000, testing on 50000 samples
+2025-11-06 16:13:16,552: Early stopping criterion: loss
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+2025-11-06 16:21:14,037: Epoch 1/20 | Total Loss: 9.1961 | Causal Loss: 8.5205 | Classification Loss: 0.6756 | Val Loss: 5.3982 | Val AUC: 0.5932 | F1-Score: 0.5285
+2025-11-06 16:21:14,108: New best model saved with AUC: 0.5932
+2025-11-06 16:56:36,411: Epoch 2/20 | Total Loss: 4.6324 | Causal Loss: 3.9618 | Classification Loss: 0.6706 | Val Loss: 4.3132 | Val AUC: 0.6036 | F1-Score: 0.4295
+2025-11-06 16:56:36,501: New best model saved with AUC: 0.6036
+2025-11-06 17:31:57,738: Epoch 3/20 | Total Loss: 4.2692 | Causal Loss: 3.6400 | Classification Loss: 0.6293 | Val Loss: 4.2525 | Val AUC: 0.6682 | F1-Score: 0.5742
+2025-11-06 17:31:57,817: New best model saved with AUC: 0.6682
+2025-11-06 18:07:18,299: Epoch 4/20 | Total Loss: 4.2482 | Causal Loss: 3.6300 | Classification Loss: 0.6182 | Val Loss: 4.2448 | Val AUC: 0.6696 | F1-Score: 0.5735
+2025-11-06 18:07:18,383: New best model saved with AUC: 0.6696
+slurmstepd: error: *** JOB 2095913 ON gpu-13 CANCELLED AT 2025-11-06T18:12:45 DUE TO TIME LIMIT ***
+
+Job 2095913 consumed 38.1 billing hours from project ec12.
+
+Submitted 2025-11-06T15:26:20; waited 46.0 minutes in the queue after becoming eligible to run.
+
+Requested wallclock time: 2.0 hours
+Elapsed wallclock time:   2.0 hours
+
+Job timed out.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+2095913          16            0.0 %  2025-11-06T16:12:18    2.0 h  0
+2095913.batch    16      1     2.3 %  2025-11-06T16:12:18    2.0 h  Signal 15
+2095913.watch    16      1     0.1 %  2025-11-06T18:05:08    0.0 h  Signal 9
+2095913.watch    16      1     0.1 %  2025-11-06T18:06:22    0.1 h  0
+
+Used CPU time:   45.3 CPU minutes
+Unused CPU time: 1.3 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+2095913          80.0        
+2095913.batch    80.0     1.9
+2095913.watch    80.0     0.0
+2095913.watch    80.0     0.0
+
+Job 2095913 completed at Thu Nov 6 18:12:47 CET 2025

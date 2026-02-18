@@ -1,0 +1,80 @@
+Starting job 2092127 on gpu-13 on Fox at Tue Nov 4 16:55:51 CET 2025
+
+
+[notice] A new release of pip is available: 23.3.2 -> 25.3
+[notice] To update, run: pip install --upgrade pip
+2025-11-04 16:56:31,732: Argument batch_size: 64
+2025-11-04 16:56:31,734: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-04 16:56:31,734: Argument cold_start: False
+2025-11-04 16:56:31,734: Argument early: 'loss'
+2025-11-04 16:56:31,734: Argument epochs: 20
+2025-11-04 16:56:31,734: Argument gradient_accumulation_steps: 1
+2025-11-04 16:56:31,734: Argument lr: 2e-05
+2025-11-04 16:56:31,734: Argument max_length: 150
+2025-11-04 16:56:31,734: Argument model_name: 'meta-llama/Llama-3.2-1B'
+2025-11-04 16:56:31,734: Argument model_type: 'general'
+2025-11-04 16:56:31,734: Argument number_to_use: 9
+2025-11-04 16:56:31,734: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-11-04 16:56:31,734: Argument patience: 3
+2025-11-04 16:56:31,734: Argument peft: False
+2025-11-04 16:56:31,734: Argument prompt_type: 'standard'
+2025-11-04 16:56:31,734: Argument seed: 9550
+2025-11-04 16:56:31,734: Argument test_rnd: False
+2025-11-04 16:56:31,734: Argument tiny: True
+2025-11-04 16:56:31,734: Argument tiny_type: '5M'
+2025-11-04 16:56:31,734: Argument use_quantization: False
+2025-11-04 16:56:34,395: 
+Loading a TINY CausalLM model for testing purposes!
+2025-11-04 16:56:34,398: 
+Loading pre-trained CausalLM model for COLD START!
+2025-11-04 16:56:36,429: 
+New model parameters: 6,446,722
+2025-11-04 16:56:36,435: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-11-04 16:56:37,391: Using prompt type: standard
+2025-11-04 16:56:37,391: Model type: general, Model name: meta-llama/Llama-3.2-1B
+2025-11-04 16:56:40,589: Example train text: Sequential events: M E N Z N I G Z T X V D E X E N W O C F
+Outcome (0 or 1):
+2025-11-04 16:56:40,889: Average train text length: 26.00 words
+2025-11-04 16:56:40,889: Average validation text length: 26.00 words
+2025-11-04 16:56:40,889: Average test text length: 26.00 words
+2025-11-04 16:56:40,889: Training on 400000 samples, validating on 50000, testing on 50000 samples
+2025-11-04 16:56:42,448: Early stopping criterion: loss
+2025-11-04 17:12:49,411: Epoch 1/20 | Total Loss: 11.0130 | Causal Loss: 10.3341 | Classification Loss: 0.6789 | Val Loss: 9.5636 | Val AUC: 0.5759 | F1-Score: 0.3001
+2025-11-04 17:12:49,535: New best model saved with AUC: 0.5759
+2025-11-04 17:28:55,001: Epoch 2/20 | Total Loss: 9.0898 | Causal Loss: 8.4186 | Classification Loss: 0.6713 | Val Loss: 9.0045 | Val AUC: 0.5857 | F1-Score: 0.2631
+2025-11-04 17:28:55,122: New best model saved with AUC: 0.5857
+2025-11-04 17:44:55,561: Epoch 3/20 | Total Loss: 8.9980 | Causal Loss: 8.3278 | Classification Loss: 0.6702 | Val Loss: 8.9901 | Val AUC: 0.5869 | F1-Score: 0.2851
+2025-11-04 17:44:55,678: New best model saved with AUC: 0.5869
+2025-11-04 18:00:54,913: Epoch 4/20 | Total Loss: 8.9873 | Causal Loss: 8.3174 | Classification Loss: 0.6699 | Val Loss: 8.9854 | Val AUC: 0.5874 | F1-Score: 0.2615
+2025-11-04 18:00:55,010: New best model saved with AUC: 0.5874
+2025-11-04 18:16:51,947: Epoch 5/20 | Total Loss: 8.9847 | Causal Loss: 8.3151 | Classification Loss: 0.6696 | Val Loss: 8.9850 | Val AUC: 0.5877 | F1-Score: 0.3430
+2025-11-04 18:16:52,066: New best model saved with AUC: 0.5877
+2025-11-04 18:32:46,496: Epoch 6/20 | Total Loss: 8.9836 | Causal Loss: 8.3142 | Classification Loss: 0.6694 | Val Loss: 8.9827 | Val AUC: 0.5878 | F1-Score: 0.2648
+2025-11-04 18:32:46,599: New best model saved with AUC: 0.5878
+2025-11-04 18:48:50,785: Epoch 7/20 | Total Loss: 8.9833 | Causal Loss: 8.3139 | Classification Loss: 0.6694 | Val Loss: 8.9837 | Val AUC: 0.5878 | F1-Score: 0.3252
+slurmstepd: error: *** JOB 2092127 ON gpu-13 CANCELLED AT 2025-11-04T18:55:52 DUE TO TIME LIMIT ***
+
+Job 2092127 consumed 38.0 billing hours from project ec12.
+
+Submitted 2025-11-04T16:55:22; waited 29.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 2.0 hours
+Elapsed wallclock time:   2.0 hours
+
+Job timed out.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+2092127          16            0.0 %  2025-11-04T16:55:51    2.0 h  0
+2092127.batch    16      1     6.2 %  2025-11-04T16:55:51    2.0 h  Signal 15
+
+Used CPU time:   2.0 CPU hours
+Unused CPU time: 1.3 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+2092127          80.0        
+2092127.batch    80.0     1.3
+
+Job 2092127 completed at Tue Nov 4 18:55:52 CET 2025

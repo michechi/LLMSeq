@@ -1,3 +1,10 @@
+# TODO: 
+# To check gpu usage is enough srun --jobid=<job_id> watch -n 1 nvidia-smi
+# * Pre-tokenize sequences to speed up dataloader? (LOW)
+# * ADD LOAD CHECKPOINT FUNCTIONALITY TO RESSTART FROM PREVIOUS TRAINING (HIGH)
+#   * need to save checkpoints during training
+# * ADD PARAMETER TO DISABLE POSITIONAL ENCODINGS (VERY HIGH)
+# * ... 
 import os
 import gc
 import ast
@@ -11,20 +18,43 @@ import torch
 import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
 from torch.cuda.amp import autocast, GradScaler
-from transformers import (
-    AutoTokenizer, AutoModelForSequenceClassification, get_linear_schedule_with_warmup, BitsAndBytesConfig, 
-    AutoModelForCausalLM, AutoConfig, LlamaConfig, Qwen2Config
-)
+from transformers import AutoTokenizer, AutoModelForSequenceClassification,\
+ get_linear_schedule_with_warmup, BitsAndBytesConfig, LlamaConfig, Qwen2Config,\
+ AutoModelForCausalLM, AutoConfig
+   
 from peft import LoraConfig, get_peft_model
-from sklearn.metrics import roc_auc_score, f1_score
+from sklearn.metrics import roc_auc_score, f1_score, accuracy_score, \
+    precision_score, recall_score
+from sklearn.model_selection import StratifiedShuffleSplit
 from huggingface_hub import login
 
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb:64"
 torch.set_float32_matmul_precision('high') 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s: %(message)s")
 logger = logging.getLogger(__name__)
+num_cpus = int(os.environ.get("SLURM_CPUS_PER_TASK", os.cpu_count() // 2))
 
-def standard_narrative_prompt(row, to_split='\x1f'):
-    events = row["Sequences"].split(to_split) # Testing on third-letter
+def sample_dataset(X, y, fraction: float, seed: int = 42):
+    """
+    Restituisce un sottoinsieme stratificato (X_sampled, y_sampled)
+    mantenendo la distribuzione delle etichette.
+    """
+    # Assicuriamoci che y sia un array 1D
+    y_array = np.array(y).ravel()
+
+    splitter = StratifiedShuffleSplit(
+        n_splits=1, train_size=fraction, random_state=seed
+    )
+
+    idx_subset, _ = next(splitter.split(X, y_array))
+
+    X_sampled = X.iloc[idx_subset].reset_index(drop=True)
+    y_sampled = y.iloc[idx_subset].reset_index(drop=True)
+
+    return X_sampled, y_sampled
+
+def standard_narrative_prompt(row, to_split='\x1f', column_name="Sequences"):
+    events = row[column_name].split(to_split) # Testing on third-letter
     prompt = f'Sequential events: {" ".join(events)}\n'
     prompt += 'Outcome (0 or 1):'
     return prompt
@@ -50,17 +80,21 @@ def parse_args(args=None):
     # Model-General Settings
     parser.add_argument("--model_type", type=str, choices=["general", "medical"], default="general",
                         help="Model type: general-purpose o medical-purpose (MedBERT-like)")
+    
+    parser.add_argument("--check_truncation", action="store_true", help="Check truncation statistics in datasets")
 
     parser.add_argument("--model_name", type=str, required=True,
                         help="Name of the model from Hugging Face")
 
     parser.add_argument("--tiny", action="store_true", help="Use a tiny model for testing purposes")
 
-    parser.add_argument("--tiny_type", type=str, help="Type of tiny model")
+    parser.add_argument("--tiny_type", type=str, help="Type of tiny model", default="1M")
 
     parser.add_argument("--peft", action="store_true", help="Usa PEFT (solo per LLM)")
 
     parser.add_argument("--test_rnd", action="store_true", help="Usa randomized test data to check sequences")
+
+    parser.add_argument("--freeze_rotary", action="store_true",help="Freeze rotary embeddings during training")
 
     parser.add_argument("--use_quantization", action="store_true",
                         help="Quantization 4 bit")
@@ -70,11 +104,16 @@ def parse_args(args=None):
 
     # Data
     ## Train
-    parser.add_argument("--number_to_use", type=int,
-                        help="number of CSV of training")
+    parser.add_argument("--csv_to_use", type=str,
+                        help="CSV of training")
 
     parser.add_argument("--path_csv", type=str, default="/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/",
                         help="Path to file CSV for simulation data")
+
+    parser.add_argument("--fraction", type=float, default=1.0, help="Fraction of training data to use")
+
+    parser.add_argument("--outcome", type=str, default="Outcome",
+                        help="Target outcome column name")
 
     # Prompts
     parser.add_argument("--prompt_type", type=str, choices=['standard'], default="standard",
@@ -108,6 +147,10 @@ def parse_args(args=None):
     parser.add_argument("--seed", type=int, default=9550,
                         help="Seed for riproducibility")
     
+    # Where to save
+    parser.add_argument("--output_dir", type=str, default="/fp/homes01/u01/ec-michelec/MIMICIV/src/output_slurms_fox/",
+                        help="Directory to save outputs")
+
     if args:
         args = parser.parse_args(args)
     else:
@@ -176,6 +219,7 @@ class CausalLMWithClassificationHead(nn.Module):
             classification_representations = []
             
             for b in range(batch_size):
+                
                 if attention_mask is not None:
                     # Usa attention mask
                     last_token_pos = attention_mask[b].sum().item() - 1
@@ -262,6 +306,7 @@ def load_model_causal(model_name, model_type, tokenizer, cache_dir, hf_token, us
     We try to allow for lower-dimensional models, with an extra parameter (tiny)
     """
     if not tiny:
+        logger.info("Not Tiny model: loading full model.")
         if model_type == "general":
             if use_quantization:
                 bnb_config = BitsAndBytesConfig(
@@ -275,7 +320,7 @@ def load_model_causal(model_name, model_type, tokenizer, cache_dir, hf_token, us
 
             # CARICA CAUSAL LM INVECE DI SEQUENCE CLASSIFICATION
             if not args.cold_start:
-                logger.info("\nLoading pre-trained CausalLM model for WARM START!")
+                logger.info("Loading pre-trained CausalLM model for WARM START!")
                 base_model = AutoModelForCausalLM.from_pretrained(
                     model_name,
                     torch_dtype=torch.bfloat16,
@@ -286,7 +331,7 @@ def load_model_causal(model_name, model_type, tokenizer, cache_dir, hf_token, us
                     quantization_config=bnb_config if use_quantization else None
                 )
             else:
-                logger.info("\nLoading pre-trained CausalLM model for COLD START!")
+                logger.info("Loading pre-trained CausalLM model for COLD START!")
                 config = AutoConfig.from_pretrained(model_name)
                 base_model = AutoModelForCausalLM.from_config(config)
 
@@ -316,12 +361,14 @@ def load_model_causal(model_name, model_type, tokenizer, cache_dir, hf_token, us
             )
     else:
         # Tiny model for testing purposes
-        logger.info("\nLoading a TINY CausalLM model for testing purposes!")
-        logger.info("\nLoading pre-trained CausalLM model for COLD START!")
+        logger.info("Loading a TINY CausalLM model for testing purposes!")
+        logger.info("Loading pre-trained CausalLM model for COLD START!")
 
         # Registry of dimension for tiny models
         dimensions = {
             #[hidden_size, num_layers, num_heads, intermediate_size, vocab_size]
+            '0.03M':[32, 2, 2, 128, 100], # 34,642
+            '0.1M':[48, 3, 3, 192, 100], # 107,738
             '0.2M':[64, 4, 4, 256, 100], # 254,882
             '1M':[128, 4, 4, 512, 100], # 1,005,378
             '5M':[256, 6, 6, 820, 100], # 5,001,858
@@ -330,7 +377,7 @@ def load_model_causal(model_name, model_type, tokenizer, cache_dir, hf_token, us
             '50M':[512, 8, 16, 1280, 8000] # TO TEST
         }
 
-        hidden_size, num_layers, num_heads, intermediate_size, vocab_size = dimensions.get(args.tiny_type, [256, 4, 8]) # Default 10M if not correctly specified
+        hidden_size, num_layers, num_heads, intermediate_size, vocab_size = dimensions.get(args.tiny_type, [128, 4, 4, 512, 100]) # Default 1M if not correctly specified
         logger.info(f"Tiny model config - Hidden size: {hidden_size}, Num layers: {num_layers}, Num heads: {num_heads}, Intermediate size: {intermediate_size}, Vocab size: {vocab_size}")
         
         # First understand which model architecture to use
@@ -346,10 +393,9 @@ def load_model_causal(model_name, model_type, tokenizer, cache_dir, hf_token, us
                 rope_theta=10000.0,
                 torch_dtype=torch.bfloat16,
                 tie_word_embeddings=True
-                
             )
             base_model = AutoModelForCausalLM.from_config(tiny_config)
-            logger.info("\nUsing Flash Attention 2 for LLaMA tiny model")
+            logger.info("Using Flash Attention 2 for LLaMA tiny model")
             base_model.config.attn_implementation = "flash_attention_2"
             
         elif "qwen" in model_name.lower():
@@ -366,22 +412,34 @@ def load_model_causal(model_name, model_type, tokenizer, cache_dir, hf_token, us
             )
             base_model = AutoModelForCausalLM.from_config(tiny_config)
         
-        # PROBLEMA 2: Applica ottimizzazioni anche al tiny model
-        base_model = base_model.to(torch.bfloat16)
-        base_model = base_model.cuda()
+        # # PROBLEMA 2: Applica ottimizzazioni anche al tiny model
+        # base_model = base_model.to(torch.bfloat16)
+        # base_model = base_model.cuda()
         
         base_model.config.pad_token_id = tokenizer.pad_token_id
-        base_model.gradient_checkpointing_enable()
+        # base_model.gradient_checkpointing_enable()
         
         # Wrapper con classificazione
         model = CausalLMWithClassificationHead(base_model, num_classes=2)
         
         # IMPORTANTE: Assicurati che classification head sia anche in bf16
-        model.classification_head = model.classification_head.to(torch.bfloat16)
+        # model.classification_head = model.classification_head.to(torch.bfloat16)
 
         total_params = sum(p.numel() for p in model.parameters())
         logger.info(f"\nNew model parameters: {total_params:,}")
     
+    # TODO: need to restructure this part (too messy)
+    if args.freeze_rotary:
+        logger.info("Zeroing out rotary embeddings...")
+        for name, buffer in model.backbone.named_buffers():
+            if 'rotary_emb' in name and 'inv_freq' in name:
+                buffer.zero_()
+                logger.info(f"Zeroed buffer: {name}")
+            if 'cos_cached' in name or 'sin_cached' in name:
+                print(f"Found cached: {name}")
+                buffer.zero_()
+                logger.info(f"Zeroed buffer: {name}")
+
     return model
 
 class TemporalCausalDataset:
@@ -398,10 +456,60 @@ class TemporalCausalDataset:
     def __len__(self):
         return len(self.texts)
     
+    def analyze_truncation(self):
+        """
+        Truncation analysis: how many samples get truncated?
+        """
+        truncated_count = 0
+        truncated_len = 0
+        token_lengths = []
+        logger.info(f"Analyzing truncation for {len(self)} samples...")
+        
+        for idx in range(len(self)):
+            text = self.texts[idx]
+            encoding = self.tokenizer(
+                text,
+                truncation=False,
+                add_special_tokens=True
+            )
+            token_length = len(encoding['input_ids'])
+            token_lengths.append(token_length)
+            
+            if token_length > self.max_length:
+                truncated_count += 1
+                truncated_len += token_length - self.max_length
+        
+        # Summary statistics (R-style!)
+        import numpy as np
+        token_lengths = np.array(token_lengths)
+        
+        logger.info("="*60)
+        logger.info("TRUNCATION ANALYSIS")
+        logger.info("="*60)
+        logger.info(f"Total samples: {len(self)}")
+        logger.info(f"Truncated samples: {truncated_count} ({100*truncated_count/len(self):.1f}%)")
+        logger.info(f"Average truncated length (for truncated samples): {truncated_len / truncated_count if truncated_count > 0 else 0:.1f} tokens")
+        logger.info(f"Max length threshold: {self.max_length}")
+        logger.info(f"\nToken length distribution:")
+        logger.info(f"  Min:    {token_lengths.min()}")
+        logger.info(f"  Q1:     {np.percentile(token_lengths, 25):.0f}")
+        logger.info(f"  Median: {np.median(token_lengths):.0f}")
+        logger.info(f"  Mean:   {np.mean(token_lengths):.1f}")
+        logger.info(f"  Q3:     {np.percentile(token_lengths, 75):.0f}")
+        logger.info(f"  Max:    {token_lengths.max()}")
+        logger.info("="*60)
+        
+        return {
+            'truncated_count': truncated_count,
+            'truncation_rate': truncated_count / len(self),
+            'token_lengths': token_lengths
+        }
+
     def __getitem__(self, idx):
         text = self.texts[idx]
         label = self.labels[idx]
         
+        len_orig_text=len(text)
         
         # Tokenizza la sequenza completa
         encoding = self.tokenizer(
@@ -467,7 +575,10 @@ def train_and_evaluate_causal(model, train_loader, val_loader, args):
             causal_loss = outputs['causal_loss'] / args.gradient_accumulation_steps
             classification_loss = outputs['classification_loss'] / args.gradient_accumulation_steps
             loss.backward()
-            
+
+            # # Gradient clipping useful for large models
+            # torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+
             total_train_loss += loss.item()
             total_causal_loss += causal_loss.item()
             total_classification_loss += classification_loss.item()
@@ -487,7 +598,7 @@ def train_and_evaluate_causal(model, train_loader, val_loader, args):
         total_val_loss = 0
         val_preds, val_labels = [], []
         
-        with torch.no_grad(), autocast(dtype=torch.bfloat16):
+        with torch.no_grad():
             for batch in val_loader:
                 inputs = {k: v.to(device) for k, v in batch.items()}
                 outputs = model(**inputs)
@@ -514,7 +625,11 @@ def train_and_evaluate_causal(model, train_loader, val_loader, args):
             f"Classification Loss: {avg_classification_loss:.4f} | "
             f"Val Loss: {avg_val_loss:.4f} | "
             f"Val AUC: {val_auc:.4f} | "
-            f"F1-Score: {val_f1:.4f}"
+            f"F1-Score: {val_f1:.4f} | "
+            f"Accuracy:  {accuracy_score(val_labels, val_preds_binary):.4f} | "
+            f"Precision: {precision_score(val_labels, val_preds_binary):.4f} | "
+            f"Recall:    {recall_score(val_labels, val_preds_binary):.4f}"
+
         )
         
         # Early stopping (stesso del tuo codice)
@@ -547,7 +662,7 @@ def train_and_evaluate_causal(model, train_loader, val_loader, args):
 def get_best_model_path(args):
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     safe_model_name = args.model_name.replace("/", "_")
-    filename = f"best_model_{safe_model_name}_{args.seed}_{args.prompt_type}_{args.max_length}_{args.cold_start}_{timestamp}_.pt"
+    filename = f"best_model_{safe_model_name}_{args.seed}_{args.prompt_type}_{args.max_length}_{args.cold_start}_{timestamp}_{args.tiny}_{args.csv_to_use}_{args.lr}_.pt"
     best_model_dir = os.path.join(args.cache_dir, 'best')
     os.makedirs(best_model_dir, exist_ok=True)
     return os.path.join(best_model_dir, filename)
@@ -574,7 +689,7 @@ set_seed(args.seed)
 hf_token = "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"
 
 tokenizer = load_tokenizer(args.model_name, args.model_type, hf_token, args.cache_dir)
-model = load_model_causal(args.model_name, args.model_type, tokenizer, args.cache_dir, hf_token, args.peft, args.use_quantization, args.tiny)
+model = load_model_causal(args.model_name, args.model_type, tokenizer, args.cache_dir, hf_token, args.peft, args.use_quantization, args.tiny).to(device="cpu")
 
 if tokenizer.pad_token is None:
     logger.warning("Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].")
@@ -591,29 +706,56 @@ else:
     raise ValueError("Invalid prompt type. Use 'naive' or 'compact'.")
 
 logger.info(f"Using prompt type: {args.prompt_type}")
-
 logger.info(f"Model type: {args.model_type}, Model name: {args.model_name}") 
 
 # Reading data - already splitted!
-X_train = pd.read_csv(f"{args.path_csv}X_train_{args.number_to_use}.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
-y_train = pd.read_csv(f"{args.path_csv}y_train_{args.number_to_use}.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+logger.info(f"Training with dataset fraction = {args.fraction}")
 
-X_val = pd.read_csv(f"{args.path_csv}X_val_{args.number_to_use}.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
-y_val = pd.read_csv(f"{args.path_csv}y_val_{args.number_to_use}.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+X_train = pd.read_csv(f"{args.path_csv}X_train_{args.csv_to_use}.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+y_train = pd.read_csv(f"{args.path_csv}y_train_{args.csv_to_use}.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
 
-X_test = pd.read_csv(f"{args.path_csv}X_test_{args.number_to_use}.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+X_val = pd.read_csv(f"{args.path_csv}X_val_{args.csv_to_use}.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+y_val = pd.read_csv(f"{args.path_csv}y_val_{args.csv_to_use}.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+
+n_train, n_val = len(X_train), len(X_val)
+
+# Apply stratified sampling to get a subset of the training/validation data
+if args.fraction < 1.0:
+    X_train, y_train = sample_dataset(X_train, y_train, fraction=args.fraction, seed=args.seed)
+    try:
+        X_val, y_val = sample_dataset(X_val, y_val, fraction=args.fraction, seed=args.seed)
+    except ValueError as ve:
+        logger.warning(f"Could not sample validation set with fraction {args.fraction}: {ve}. Using just 10 observation from validation set.")
+        X_val = X_val.iloc[:10].reset_index(drop=True)
+        y_val = y_val.iloc[:10].reset_index(drop=True)
+
+logger.info(f"Train Subset size: {len(X_train)} / {n_train}")
+logger.info(f"Val Subset size: {len(X_val)} / {n_val}")
+
+logger.info("Distributions Train y's:")
+logger.info(y_train.value_counts(normalize=True))
+logger.info("Distributions Val y's:")
+logger.info(y_val.value_counts(normalize=True))
+
+# Never sample test
+X_test = pd.read_csv(f"{args.path_csv}X_test_{args.csv_to_use}.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+
+if "med" in args.csv_to_use.lower():
+    column_name = "Med"
+else:
+    column_name = "Sequences"
 
 if args.test_rnd:
     logger.warning("Need to shuffle each sequence in the test set to check for data leakage!")
-    X_test['Sequences'] = X_test['Sequences'].apply(shuffle_sequence)
+    X_test[column_name] = X_test[column_name].apply(shuffle_sequence)
 
 
-y_test = pd.read_csv(f"{args.path_csv}y_test_{args.number_to_use}.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+y_test = pd.read_csv(f"{args.path_csv}y_test_{args.csv_to_use}.csv", na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
 
 # Check data leakage
-train_sequences = set(X_train['Sequences'].values)
-val_sequences = set(X_val['Sequences'].values)
-test_sequences = set(X_test['Sequences'].values)
+train_sequences = set(X_train[column_name].values)
+val_sequences = set(X_val[column_name].values)
+test_sequences = set(X_test[column_name].values)
 
 overlap_train_val = train_sequences.intersection(val_sequences)
 overlap_train_test = train_sequences.intersection(test_sequences)
@@ -631,15 +773,15 @@ results = []
 # Set the seed for reproducibility
 set_seed(args.seed)
 
-train_texts = X_train.apply(narrative_prompt, axis=1).tolist()
-val_texts = X_val.apply(narrative_prompt, axis=1).tolist()
-test_texts = X_test.apply(narrative_prompt, axis=1).tolist()
+train_texts = X_train.apply(lambda x: narrative_prompt(row=x, column_name=column_name), axis=1).tolist()
+val_texts = X_val.apply(lambda x: narrative_prompt(row=x, column_name=column_name), axis=1).tolist()
+test_texts = X_test.apply(lambda x: narrative_prompt(row=x, column_name=column_name), axis=1).tolist()
 
 logger.info(f"Example train text: {train_texts[0]}")
 
-train_labels = y_train["Outcome"].tolist()
-val_labels = y_val["Outcome"].tolist()
-test_labels = y_test["Outcome"].tolist()
+train_labels = y_train[args.outcome].tolist()
+val_labels = y_val[args.outcome].tolist()
+test_labels = y_test[args.outcome].tolist()
 
 # Media di lunghezza dei testi
 avg_train_length = np.mean([len(text.split()) for text in train_texts])
@@ -653,17 +795,29 @@ logger.info(f"Training on {len(train_texts)} samples, validating on {len(val_tex
 train_dataset = TemporalCausalDataset(train_texts, train_labels, tokenizer, max_length=args.max_length)
 val_dataset = TemporalCausalDataset(val_texts, val_labels, tokenizer, max_length=args.max_length)
 test_dataset = TemporalCausalDataset(test_texts, test_labels, tokenizer, max_length=args.max_length)
-train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, pin_memory=True, num_workers=4)
-val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, pin_memory=True, num_workers=4)
-test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False, pin_memory=True, num_workers=4)
+train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, pin_memory=True, num_workers=num_cpus)
+val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, pin_memory=True, num_workers=num_cpus)
+test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False, pin_memory=True, num_workers=num_cpus)
+logger.info("DataLoaders created.")
+
+if args.check_truncation:
+    logger.info("Analyzing TRAIN set...")
+    train_stats = train_dataset.analyze_truncation()
+
+    logger.info("Analyzing VALIDATION set...")
+    val_stats = val_dataset.analyze_truncation()
+
+    logger.info("Analyzing TEST set...")
+    test_stats = test_dataset.analyze_truncation()
 
 torch.cuda.empty_cache()
 gc.collect()
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb:64"
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model.backbone.gradient_checkpointing_enable()
-model.backbone.config.use_cache = False
-model = model.to(device, dtype=torch.bfloat16)
+
+# model = model.to(device, dtype=torch.bfloat16)
+# model.backbone.config.use_cache = False
+# model.backbone.gradient_checkpointing_enable()
+
 
 # Training and validation
 start_time = datetime.datetime.now()
@@ -692,12 +846,24 @@ with torch.no_grad():
         test_preds.extend(probs)
         test_labels.extend(batch['outcome_labels'].cpu().float().numpy()) # on cpu for sklearn metrics
 
-test_auc = roc_auc_score(test_labels, test_preds)
-test_f1 = f1_score(test_labels, np.array(test_preds) >= 0.5)
+# Convert lists to numpy arrays and create binary preds with threshold 0.5
+test_preds_array = np.array(test_preds)
+test_labels_array = np.array(test_labels).astype(int)
+test_preds_binary = (test_preds_array >= 0.5).astype(int)
+
+# Compute metrics using proper inputs
+test_auc = roc_auc_score(test_labels_array, test_preds_array)
+test_f1 = f1_score(test_labels_array, test_preds_binary, zero_division=0)
+test_accuracy = accuracy_score(test_labels_array, test_preds_binary)
+test_precision = precision_score(test_labels_array, test_preds_binary, zero_division=0)
+test_recall = recall_score(test_labels_array, test_preds_binary, zero_division=0)
 
 logger.info(
     f"Final Test AUC: {test_auc:.4f} | "
-    f"Test F1-Score: {test_f1:.4f}"
+    f"Test F1-Score: {test_f1:.4f} | "
+    f"Accuracy: {test_accuracy:.4f} | "
+    f"Precision: {test_precision:.4f} | "
+    f"Recall: {test_recall:.4f}"
 )
 
 results.append({
@@ -705,6 +871,9 @@ results.append({
     'Val F1-Score': f"{best_val_f1:.4f}",
     'Test AUC': f"{test_auc:.4f}",
     'Test F1-Score': f"{test_f1:.4f}",
+    "Accuracy:": f"{test_accuracy:.4f}",
+    "Precision:": f"{test_precision:.4f}",
+    "Recall:": f"{test_recall:.4f}",
     'Patients (Test)': len(X_test),
     'Model Path': best_model_path,
     'Validation Loss': f"{best_val_loss:.4f}",
@@ -715,8 +884,9 @@ results_df = pd.DataFrame(results)
 timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 model_tag = args.model_name.replace("/", "_")
 peft_tag = "_peft" if args.peft else ""
+# Saving csv
 output_filename = (
-    f"results_{args.model_type}_{model_tag}_{peft_tag}_{args.seed}_{args.max_length}_{args.prompt_type}_{timestamp}.csv"
+    f"results_{args.model_type}_{model_tag}_{peft_tag}_{args.seed}_{args.max_length}_{args.prompt_type}_{args.tiny_type}_{args.fraction}_{timestamp}.csv"
 )
 logger.info(f"Saving results to {output_filename}")
 file_dir = f"{args.cache_dir}/results/{args.model_type}/simulation" 

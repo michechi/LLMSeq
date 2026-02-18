@@ -1,0 +1,142 @@
+Starting job 2888965 on gpu-15 on Fox at Mon Jan 19 09:31:51 CET 2026
+
+=== Starting sequential fine-tuning job ===
+Mon Jan 19 09:31:51 AM CET 2026
+Cache directory: /localscratch/2888965/hf_cache
+--------------------------------------------------------
+Starting training with fraction = 0.01
+--------------------------------------------------------
+Mon Jan 19 09:31:59 AM CET 2026
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/cuda/__init__.py:51: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/utils/hub.py:128: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+2026-01-19 09:32:38,641: Argument batch_size: 32
+2026-01-19 09:32:38,641: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2026-01-19 09:32:38,641: Argument check_truncation: False
+2026-01-19 09:32:38,641: Argument cold_start: False
+2026-01-19 09:32:38,641: Argument csv_to_use: 'test_just_pair'
+2026-01-19 09:32:38,641: Argument early: 'loss'
+2026-01-19 09:32:38,641: Argument epochs: 20
+2026-01-19 09:32:38,641: Argument fraction: 0.01
+2026-01-19 09:32:38,641: Argument freeze_rotary: False
+2026-01-19 09:32:38,641: Argument gradient_accumulation_steps: 1
+2026-01-19 09:32:38,641: Argument lr: 2e-05
+2026-01-19 09:32:38,641: Argument max_length: 100
+2026-01-19 09:32:38,641: Argument model_name: 'meta-llama/Llama-3.2-1B'
+2026-01-19 09:32:38,641: Argument model_type: 'general'
+2026-01-19 09:32:38,641: Argument outcome: 'Outcome'
+2026-01-19 09:32:38,641: Argument output_dir: 'src/output_slurms_fox/fraction_0.01_tiny_1M'
+2026-01-19 09:32:38,641: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2026-01-19 09:32:38,641: Argument patience: 3
+2026-01-19 09:32:38,641: Argument peft: False
+2026-01-19 09:32:38,641: Argument prompt_type: 'standard'
+2026-01-19 09:32:38,641: Argument seed: 3550
+2026-01-19 09:32:38,641: Argument test_rnd: False
+2026-01-19 09:32:38,641: Argument tiny: False
+2026-01-19 09:32:38,641: Argument tiny_type: '1M'
+2026-01-19 09:32:38,641: Argument use_quantization: False
+Traceback (most recent call last):
+  File "/cluster/software/EL9/easybuild/software/Python/3.10.8-GCCcore-12.2.0/lib/python3.10/site-packages/urllib3/connection.py", line 174, in _new_conn
+    conn = connection.create_connection(
+  File "/cluster/software/EL9/easybuild/software/Python/3.10.8-GCCcore-12.2.0/lib/python3.10/site-packages/urllib3/util/connection.py", line 95, in create_connection
+    raise err
+  File "/cluster/software/EL9/easybuild/software/Python/3.10.8-GCCcore-12.2.0/lib/python3.10/site-packages/urllib3/util/connection.py", line 85, in create_connection
+    sock.connect(sa)
+OSError: [Errno 101] Network is unreachable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/cluster/software/EL9/easybuild/software/Python/3.10.8-GCCcore-12.2.0/lib/python3.10/site-packages/urllib3/connectionpool.py", line 703, in urlopen
+    httplib_response = self._make_request(
+  File "/cluster/software/EL9/easybuild/software/Python/3.10.8-GCCcore-12.2.0/lib/python3.10/site-packages/urllib3/connectionpool.py", line 386, in _make_request
+    self._validate_conn(conn)
+  File "/cluster/software/EL9/easybuild/software/Python/3.10.8-GCCcore-12.2.0/lib/python3.10/site-packages/urllib3/connectionpool.py", line 1042, in _validate_conn
+    conn.connect()
+  File "/cluster/software/EL9/easybuild/software/Python/3.10.8-GCCcore-12.2.0/lib/python3.10/site-packages/urllib3/connection.py", line 358, in connect
+    self.sock = conn = self._new_conn()
+  File "/cluster/software/EL9/easybuild/software/Python/3.10.8-GCCcore-12.2.0/lib/python3.10/site-packages/urllib3/connection.py", line 186, in _new_conn
+    raise NewConnectionError(
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPSConnection object at 0x14b005844280>: Failed to establish a new connection: [Errno 101] Network is unreachable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-python-candy/01-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/requests/adapters.py", line 667, in send
+    resp = conn.urlopen(
+  File "/cluster/software/EL9/easybuild/software/Python/3.10.8-GCCcore-12.2.0/lib/python3.10/site-packages/urllib3/connectionpool.py", line 787, in urlopen
+    retries = retries.increment(
+  File "/cluster/software/EL9/easybuild/software/Python/3.10.8-GCCcore-12.2.0/lib/python3.10/site-packages/urllib3/util/retry.py", line 592, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /meta-llama/Llama-3.2-1B/resolve/main/tokenizer_config.json (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x14b005844280>: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-huggingface-hub/0.27.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 1374, in _get_metadata_or_catch_error
+    metadata = get_hf_file_metadata(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-huggingface-hub/0.27.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-huggingface-hub/0.27.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 1294, in get_hf_file_metadata
+    r = _request_wrapper(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-huggingface-hub/0.27.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 278, in _request_wrapper
+    response = _request_wrapper(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-huggingface-hub/0.27.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 301, in _request_wrapper
+    response = get_session().request(method=method, url=url, **params)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-python-candy/01-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-python-candy/01-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-huggingface-hub/0.27.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/huggingface_hub/utils/_http.py", line 93, in send
+    return super().send(request, *args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-python-candy/01-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/requests/adapters.py", line 700, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: (MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /meta-llama/Llama-3.2-1B/resolve/main/tokenizer_config.json (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x14b005844280>: Failed to establish a new connection: [Errno 101] Network is unreachable'))"), '(Request ID: c2203226-14d5-42d4-b7bf-e671d9f6562f)')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_FOX_time_simulation_tiny.py", line 691, in <module>
+    tokenizer = load_tokenizer(args.model_name, args.model_type, hf_token, args.cache_dir)
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_FOX_time_simulation_tiny.py", line 294, in load_tokenizer
+    tokenizer = AutoTokenizer.from_pretrained(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/models/auto/tokenization_auto.py", line 858, in from_pretrained
+    tokenizer_config = get_tokenizer_config(pretrained_model_name_or_path, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/models/auto/tokenization_auto.py", line 690, in get_tokenizer_config
+    resolved_config_file = cached_file(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/utils/hub.py", line 403, in cached_file
+    resolved_file = hf_hub_download(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-huggingface-hub/0.27.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-huggingface-hub/0.27.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 860, in hf_hub_download
+    return _hf_hub_download_to_cache_dir(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-huggingface-hub/0.27.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 967, in _hf_hub_download_to_cache_dir
+    _raise_on_head_call_error(head_call_error, force_download, local_files_only)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-huggingface-hub/0.27.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 1472, in _raise_on_head_call_error
+    raise ValueError("Force download failed due to the above error.") from head_call_error
+ValueError: Force download failed due to the above error.
+
+Job 2888965 consumed 0.5 billing hours from project ec12.
+
+Submitted 2026-01-19T09:31:48; waited 3.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 24.0 hours
+Elapsed wallclock time:   1.5 minutes
+
+Job failed.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+2888965          16            0.0 %  2026-01-19T09:31:51   88.0 s  1
+2888965.batch    16      1     0.9 %  2026-01-19T09:31:51   88.0 s  1
+
+Used CPU time:   12.2 CPU seconds
+Unused CPU time: 23.3 CPU minutes
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+2888965          32.0        
+2888965.batch    32.0     0.4
+
+Job 2888965 completed at Mon Jan 19 09:33:19 CET 2026

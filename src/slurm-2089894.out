@@ -1,0 +1,285 @@
+Starting job 2089894 on gpu-13 on Fox at Mon Nov 3 23:22:31 CET 2025
+
+
+[notice] A new release of pip is available: 23.3.2 -> 25.3
+[notice] To update, run: pip install --upgrade pip
+2025-11-03 23:23:15,635: Argument batch_size: 250
+2025-11-03 23:23:15,636: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-03 23:23:15,636: Argument cold_start: False
+2025-11-03 23:23:15,636: Argument early: 'loss'
+2025-11-03 23:23:15,636: Argument epochs: 20
+2025-11-03 23:23:15,636: Argument gradient_accumulation_steps: 1
+2025-11-03 23:23:15,636: Argument lr: 2e-05
+2025-11-03 23:23:15,636: Argument max_length: 80
+2025-11-03 23:23:15,636: Argument model_name: 'meta-llama/Llama-3.2-1B'
+2025-11-03 23:23:15,637: Argument model_type: 'general'
+2025-11-03 23:23:15,637: Argument number_to_use: 9
+2025-11-03 23:23:15,637: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-11-03 23:23:15,637: Argument patience: 3
+2025-11-03 23:23:15,637: Argument peft: False
+2025-11-03 23:23:15,637: Argument prompt_type: 'standard'
+2025-11-03 23:23:15,637: Argument seed: 9550
+2025-11-03 23:23:15,637: Argument test_rnd: False
+2025-11-03 23:23:15,637: Argument tiny: True
+2025-11-03 23:23:15,637: Argument use_quantization: False
+2025-11-03 23:23:18,867: 
+Loading a TINY CausalLM model for testing purposes!
+2025-11-03 23:23:18,867: 
+Loading pre-trained CausalLM model for COLD START!
+2025-11-03 23:23:24,083: Model compiled with torch.compile
+2025-11-03 23:23:24,099: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+The new lm_head weights will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-11-03 23:23:25,245: Using prompt type: standard
+2025-11-03 23:23:25,246: Model type: general, Model name: meta-llama/Llama-3.2-1B
+2025-11-03 23:23:28,497: Example train text: Sequential events: M E N Z N I G Z T X V D E X E N W O C F
+Outcome (0 or 1):
+2025-11-03 23:23:28,793: Average train text length: 26.00 words
+2025-11-03 23:23:28,793: Average validation text length: 26.00 words
+2025-11-03 23:23:28,794: Average test text length: 26.00 words
+2025-11-03 23:23:28,794: Training on 400000 samples, validating on 50000, testing on 50000 samples
+2025-11-03 23:23:28,796: Early stopping criterion: loss
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+Traceback (most recent call last):
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_FOX_time_simulation_tiny.py", line 639, in <module>
+    best_auc, best_model_path, best_val_f1, best_val_loss, epochs_done = train_and_evaluate_causal(
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_FOX_time_simulation_tiny.py", line 443, in train_and_evaluate_causal
+    outputs = model(**inputs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 328, in _fn
+    return fn(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 490, in catch_errors
+    return callback(frame, cache_entry, hooks, frame_state)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 641, in _convert_frame
+    result = inner_convert(frame, cache_size, hooks, frame_state)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 133, in _fn
+    return fn(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 389, in _convert_frame_assert
+    return _compile(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 586, in _compile
+    raise InternalTorchDynamoError(str(e)).with_traceback(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 569, in _compile
+    guarded_code = compile_inner(code, one_graph, hooks, transform)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/utils.py", line 189, in time_wrapper
+    r = func(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 491, in compile_inner
+    out_code = transform_code_object(code, transform)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/bytecode_transformation.py", line 1028, in transform_code_object
+    transformations(instructions, code_options)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/convert_frame.py", line 458, in transform
+    tracer.run()
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2069, in run
+    super().run()
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 719, in run
+    and self.step()
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 683, in step
+    getattr(self, inst.opname)(inst)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 392, in wrapper
+    return inner_fn(self, inst)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1162, in CALL_FUNCTION_KW
+    self.call_function(fn, args, kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 557, in call_function
+    self.push(fn.call_function(self, args, kwargs))
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/variables/nn_module.py", line 331, in call_function
+    return tx.inline_user_function_return(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 593, in inline_user_function_return
+    result = InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2174, in inline_call
+    return cls.inline_call_(parent, func, args, kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2281, in inline_call_
+    tracer.run()
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 719, in run
+    and self.step()
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 683, in step
+    getattr(self, inst.opname)(inst)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 392, in wrapper
+    return inner_fn(self, inst)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1150, in CALL_FUNCTION_EX
+    self.call_function(fn, argsvars.items, kwargsvars.items)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 557, in call_function
+    self.push(fn.call_function(self, args, kwargs))
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 307, in call_function
+    return super().call_function(tx, args, kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 261, in call_function
+    return super().call_function(tx, args, kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 90, in call_function
+    return tx.inline_user_function_return(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 593, in inline_user_function_return
+    result = InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2174, in inline_call
+    return cls.inline_call_(parent, func, args, kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2281, in inline_call_
+    tracer.run()
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 719, in run
+    and self.step()
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 683, in step
+    getattr(self, inst.opname)(inst)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 392, in wrapper
+    return inner_fn(self, inst)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1150, in CALL_FUNCTION_EX
+    self.call_function(fn, argsvars.items, kwargsvars.items)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 557, in call_function
+    self.push(fn.call_function(self, args, kwargs))
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/variables/nn_module.py", line 331, in call_function
+    return tx.inline_user_function_return(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 593, in inline_user_function_return
+    result = InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2174, in inline_call
+    return cls.inline_call_(parent, func, args, kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2281, in inline_call_
+    tracer.run()
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 719, in run
+    and self.step()
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 683, in step
+    getattr(self, inst.opname)(inst)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 392, in wrapper
+    return inner_fn(self, inst)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1150, in CALL_FUNCTION_EX
+    self.call_function(fn, argsvars.items, kwargsvars.items)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 557, in call_function
+    self.push(fn.call_function(self, args, kwargs))
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 307, in call_function
+    return super().call_function(tx, args, kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 261, in call_function
+    return super().call_function(tx, args, kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 90, in call_function
+    return tx.inline_user_function_return(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 593, in inline_user_function_return
+    result = InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2174, in inline_call
+    return cls.inline_call_(parent, func, args, kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2281, in inline_call_
+    tracer.run()
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 719, in run
+    and self.step()
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 683, in step
+    getattr(self, inst.opname)(inst)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 392, in wrapper
+    return inner_fn(self, inst)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1110, in CALL_FUNCTION
+    self.call_function(fn, args, {})
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 557, in call_function
+    self.push(fn.call_function(self, args, kwargs))
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 307, in call_function
+    return super().call_function(tx, args, kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 261, in call_function
+    return super().call_function(tx, args, kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 90, in call_function
+    return tx.inline_user_function_return(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 593, in inline_user_function_return
+    result = InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2174, in inline_call
+    return cls.inline_call_(parent, func, args, kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2281, in inline_call_
+    tracer.run()
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 719, in run
+    and self.step()
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 683, in step
+    getattr(self, inst.opname)(inst)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 392, in wrapper
+    return inner_fn(self, inst)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1162, in CALL_FUNCTION_KW
+    self.call_function(fn, args, kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 557, in call_function
+    self.push(fn.call_function(self, args, kwargs))
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 261, in call_function
+    return super().call_function(tx, args, kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 90, in call_function
+    return tx.inline_user_function_return(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 593, in inline_user_function_return
+    result = InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2174, in inline_call
+    return cls.inline_call_(parent, func, args, kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2281, in inline_call_
+    tracer.run()
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 719, in run
+    and self.step()
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 683, in step
+    getattr(self, inst.opname)(inst)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 392, in wrapper
+    return inner_fn(self, inst)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1110, in CALL_FUNCTION
+    self.call_function(fn, args, {})
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 557, in call_function
+    self.push(fn.call_function(self, args, kwargs))
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 261, in call_function
+    return super().call_function(tx, args, kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/variables/functions.py", line 90, in call_function
+    return tx.inline_user_function_return(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 593, in inline_user_function_return
+    result = InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2174, in inline_call
+    return cls.inline_call_(parent, func, args, kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 2281, in inline_call_
+    tracer.run()
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 719, in run
+    and self.step()
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 683, in step
+    getattr(self, inst.opname)(inst)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/symbolic_convert.py", line 1186, in LOAD_ATTR
+    result = BuiltinVariable(getattr).call_function(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/variables/builtin.py", line 618, in call_function
+    result = handler(tx, *args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_dynamo/variables/builtin.py", line 1121, in call_getattr
+    member = getattr(obj.value, name)
+torch._dynamo.exc.InternalTorchDynamoError: module 'torch.compiler' has no attribute 'is_compiling'
+
+from user code:
+   File "/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_FOX_time_simulation_tiny.py", line 158, in forward
+    causal_outputs = self.backbone(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 1163, in forward
+    outputs = self.model(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 883, in forward
+    causal_mask = self._update_causal_mask(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 973, in _update_causal_mask
+    if AttentionMaskConverter._ignore_causal_mask_sdpa(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/modeling_attn_mask_utils.py", line 260, in _ignore_causal_mask_sdpa
+    is_tracing = torch.jit.is_tracing() or isinstance(inputs_embeds, torch.fx.Proxy) or is_torchdynamo_compiling()
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/utils/import_utils.py", line 771, in is_torchdynamo_compiling
+    return torch.compiler.is_compiling()
+
+Set TORCH_LOGS="+dynamo" and TORCHDYNAMO_VERBOSE=1 for more information
+
+
+You can suppress this exception and fall back to eager by setting:
+    import torch._dynamo
+    torch._dynamo.config.suppress_errors = True
+
+
+Job 2089894 consumed 0.3 billing hours from project ec12.
+
+Submitted 2025-11-03T23:22:18; waited 13.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 5.0 hours
+Elapsed wallclock time:   59.0 seconds
+
+Job failed.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+2089894          16            0.0 %  2025-11-03T23:22:31   59.0 s  1
+2089894.batch    16      1     2.7 %  2025-11-03T23:22:31   59.0 s  1
+
+Used CPU time:   25.3 CPU seconds
+Unused CPU time: 15.3 CPU minutes
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+2089894          80.0        
+2089894.batch    80.0     0.2
+
+Job 2089894 completed at Mon Nov 3 23:23:30 CET 2025

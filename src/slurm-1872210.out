@@ -1,0 +1,77 @@
+Starting job 1872210 on gpu-8 on Fox at Fri Aug 29 00:18:21 CEST 2025
+
+
+[notice] A new release of pip is available: 23.3.2 -> 25.2
+[notice] To update, run: pip install --upgrade pip
+2025-08-29 00:19:54,042: Argument CI: False
+2025-08-29 00:19:54,042: Argument all_landmarks: False
+2025-08-29 00:19:54,042: Argument batch_size: 4
+2025-08-29 00:19:54,042: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-08-29 00:19:54,042: Argument early: 'loss'
+2025-08-29 00:19:54,042: Argument epochs: 20
+2025-08-29 00:19:54,042: Argument gradient_accumulation_steps: 2
+2025-08-29 00:19:54,043: Argument input_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_df_evo.csv'
+2025-08-29 00:19:54,043: Argument lr: 2e-05
+2025-08-29 00:19:54,043: Argument max_length: 512
+2025-08-29 00:19:54,043: Argument max_visits: 4
+2025-08-29 00:19:54,043: Argument model_name: 'Charangan/MedBERT'
+2025-08-29 00:19:54,043: Argument model_type: 'medical'
+2025-08-29 00:19:54,043: Argument patience: 1
+2025-08-29 00:19:54,043: Argument peft: False
+2025-08-29 00:19:54,043: Argument prompt_type: 'reversed_naive_narrative_prompt'
+2025-08-29 00:19:54,043: Argument seed: 4550
+2025-08-29 00:19:54,043: Argument test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_test_dod_fxd.csv'
+2025-08-29 00:19:54,043: Argument train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_train_dod_fxd.csv'
+2025-08-29 00:19:54,043: Argument use_quantization: False
+2025-08-29 00:19:54,043: Argument val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_vali_dod_fxd.csv'
+2025-08-29 00:19:54,043: Argument when_counting_death: 'last_visit'
+2025-08-29 00:19:54,049: Using prompt type: reversed_naive_narrative_prompt
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct_time.py:122: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct_time.py:124: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_test_df = pd.read_csv(args.test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+2025-08-29 00:20:25,681: Processing only the last landmark visit: 4
+2025-08-29 00:20:25,682: Preparing data for Landmark 4
+Traceback (most recent call last):
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/modeling_utils.py", line 3563, in from_pretrained
+    device_map = {"": torch.device(device_map)}
+RuntimeError: Expected one of cpu, cuda, ipu, xpu, mkldnn, opengl, opencl, ideep, hip, ve, fpga, ort, xla, lazy, vulkan, mps, meta, hpu, mtia, privateuseone device type at start of device string: None
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct_time.py", line 286, in <module>
+    main()
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct_time.py", line 174, in main
+    model = load_model_causal(args.model_name, args.model_type, tokenizer, args.cache_dir, hf_token, args.peft, args.use_quantization).to(device="cpu")
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/models_training_time.py", line 205, in load_model_causal
+    base_model = AutoModelForCausalLM.from_pretrained(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/models/auto/auto_factory.py", line 564, in from_pretrained
+    return model_class.from_pretrained(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/modeling_utils.py", line 3565, in from_pretrained
+    raise ValueError(
+ValueError: When passing device_map as a string, the value needs to be a device name (e.g. cpu, cuda:0) or 'auto', 'balanced', 'balanced_low_0', 'sequential' but found None.
+
+Job 1872210 consumed 0.7 billing hours from project ec12.
+
+Submitted 2025-08-28T12:28:40; waited 11.8 hours in the queue after becoming eligible to run.
+
+Requested wallclock time: 5.0 hours
+Elapsed wallclock time:   2.2 minutes
+
+Job failed.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+1872210          16            0.0 %  2025-08-29T00:18:21  132.0 s  1
+1872210.batch    16      1     2.4 %  2025-08-29T00:18:21  132.0 s  1
+
+Used CPU time:   50.3 CPU seconds
+Unused CPU time: 34.4 CPU minutes
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1872210          32.0        
+1872210.batch    32.0     4.2
+
+Job 1872210 completed at Fri Aug 29 00:20:34 CEST 2025

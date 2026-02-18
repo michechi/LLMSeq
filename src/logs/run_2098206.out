@@ -1,0 +1,620 @@
+Starting job 2098206 on gpu-13 on Fox at Sat Nov 8 08:53:31 CET 2025
+
+=== Starting sequential fine-tuning job ===
+Sat Nov  8 08:53:31 AM CET 2025
+Cache directory: /localscratch/2098206/hf_cache
+--------------------------------------------------------
+Starting training with fraction = 0.1
+--------------------------------------------------------
+Sat Nov  8 08:53:40 AM CET 2025
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/cuda/__init__.py:51: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/utils/hub.py:128: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+2025-11-08 08:54:11,666: Argument batch_size: 64
+2025-11-08 08:54:11,666: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-08 08:54:11,666: Argument cold_start: False
+2025-11-08 08:54:11,666: Argument early: 'loss'
+2025-11-08 08:54:11,666: Argument epochs: 40
+2025-11-08 08:54:11,666: Argument fraction: 0.1
+2025-11-08 08:54:11,666: Argument gradient_accumulation_steps: 1
+2025-11-08 08:54:11,666: Argument lr: 0.0002
+2025-11-08 08:54:11,666: Argument max_length: 100
+2025-11-08 08:54:11,666: Argument model_name: 'meta-llama/Llama-3.2-1B'
+2025-11-08 08:54:11,666: Argument model_type: 'general'
+2025-11-08 08:54:11,666: Argument number_to_use: 9
+2025-11-08 08:54:11,666: Argument output_dir: 'src/output_slurms_fox/fraction_0.1_tiny_1M'
+2025-11-08 08:54:11,666: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-11-08 08:54:11,666: Argument patience: 3
+2025-11-08 08:54:11,666: Argument peft: False
+2025-11-08 08:54:11,666: Argument prompt_type: 'standard'
+2025-11-08 08:54:11,666: Argument seed: 9550
+2025-11-08 08:54:11,666: Argument test_rnd: False
+2025-11-08 08:54:11,666: Argument tiny: True
+2025-11-08 08:54:11,666: Argument tiny_type: '1M'
+2025-11-08 08:54:11,667: Argument use_quantization: False
+2025-11-08 08:54:14,837: Loading a TINY CausalLM model for testing purposes!
+2025-11-08 08:54:14,840: Loading pre-trained CausalLM model for COLD START!
+2025-11-08 08:54:14,840: Tiny model config - Hidden size: 128, Num layers: 4, Num heads: 4, Intermediate size: 512, Vocab size: 100
+2025-11-08 08:54:16,231: Using Flash Attention 2 for LLaMA tiny model
+2025-11-08 08:54:16,510: 
+New model parameters: 1,005,378
+2025-11-08 08:54:16,511: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-11-08 08:54:16,957: Using prompt type: standard
+2025-11-08 08:54:16,957: Model type: general, Model name: meta-llama/Llama-3.2-1B
+2025-11-08 08:54:16,957: Training with dataset fraction = 0.1
+2025-11-08 08:54:17,447: Subset size: 40000 / 40000
+2025-11-08 08:54:17,447: Distributions y's:
+2025-11-08 08:54:17,449: Outcome
+0          0.581575
+1          0.418425
+dtype: float64
+2025-11-08 08:54:18,420: Example train text: Sequential events: Q Y P F E U F Z P A W W A C Q V L S L B
+Outcome (0 or 1):
+2025-11-08 08:54:18,503: Average train text length: 26.00 words
+2025-11-08 08:54:18,503: Average validation text length: 26.00 words
+2025-11-08 08:54:18,503: Average test text length: 26.00 words
+2025-11-08 08:54:18,503: Training on 40000 samples, validating on 50000, testing on 50000 samples
+2025-11-08 08:54:18,503: DataLoaders created.
+2025-11-08 08:54:20,172: Early stopping criterion: loss
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+2025-11-08 08:55:39,900: Epoch 1/40 | Total Loss: 10.6281 | Causal Loss: 9.9492 | Classification Loss: 0.6789 | Val Loss: 7.2617 | Val AUC: 0.5832 | F1-Score: 0.0000
+2025-11-08 08:55:39,991: New best model saved with AUC: 0.5832
+2025-11-08 08:56:58,737: Epoch 2/40 | Total Loss: 5.6743 | Causal Loss: 4.9933 | Classification Loss: 0.6811 | Val Loss: 4.8031 | Val AUC: 0.5842 | F1-Score: 0.0000
+2025-11-08 08:56:58,816: New best model saved with AUC: 0.5842
+2025-11-08 08:58:17,461: Epoch 3/40 | Total Loss: 4.3933 | Causal Loss: 3.7115 | Classification Loss: 0.6818 | Val Loss: 4.1743 | Val AUC: 0.5856 | F1-Score: 0.0000
+2025-11-08 08:58:17,534: New best model saved with AUC: 0.5856
+2025-11-08 08:59:36,130: Epoch 4/40 | Total Loss: 4.0961 | Causal Loss: 3.4149 | Classification Loss: 0.6811 | Val Loss: 4.0685 | Val AUC: 0.5855 | F1-Score: 0.0000
+2025-11-08 08:59:36,207: New best model saved with AUC: 0.5855
+2025-11-08 09:00:54,833: Epoch 5/40 | Total Loss: 4.0672 | Causal Loss: 3.3863 | Classification Loss: 0.6810 | Val Loss: 4.0668 | Val AUC: 0.5856 | F1-Score: 0.0000
+2025-11-08 09:00:54,917: New best model saved with AUC: 0.5856
+2025-11-08 09:02:13,699: Epoch 6/40 | Total Loss: 4.0644 | Causal Loss: 3.3843 | Classification Loss: 0.6802 | Val Loss: 4.0620 | Val AUC: 0.5875 | F1-Score: 0.0000
+2025-11-08 09:02:13,804: New best model saved with AUC: 0.5875
+2025-11-08 09:03:32,353: Epoch 7/40 | Total Loss: 4.0639 | Causal Loss: 3.3840 | Classification Loss: 0.6798 | Val Loss: 4.0646 | Val AUC: 0.5890 | F1-Score: 0.0000
+2025-11-08 09:04:50,955: Epoch 8/40 | Total Loss: 4.0620 | Causal Loss: 3.3826 | Classification Loss: 0.6794 | Val Loss: 4.0602 | Val AUC: 0.5813 | F1-Score: 0.0000
+2025-11-08 09:04:51,043: New best model saved with AUC: 0.5813
+2025-11-08 09:06:09,494: Epoch 9/40 | Total Loss: 4.0537 | Causal Loss: 3.3758 | Classification Loss: 0.6779 | Val Loss: 4.0451 | Val AUC: 0.5800 | F1-Score: 0.0470
+2025-11-08 09:06:09,592: New best model saved with AUC: 0.5800
+2025-11-08 09:07:28,210: Epoch 10/40 | Total Loss: 4.0359 | Causal Loss: 3.3629 | Classification Loss: 0.6730 | Val Loss: 4.0256 | Val AUC: 0.5879 | F1-Score: 0.0270
+2025-11-08 09:07:28,279: New best model saved with AUC: 0.5879
+2025-11-08 09:08:46,840: Epoch 11/40 | Total Loss: 3.9906 | Causal Loss: 3.3436 | Classification Loss: 0.6470 | Val Loss: 3.9583 | Val AUC: 0.6589 | F1-Score: 0.5554
+2025-11-08 09:08:46,908: New best model saved with AUC: 0.6589
+2025-11-08 09:10:05,465: Epoch 12/40 | Total Loss: 3.9561 | Causal Loss: 3.3262 | Classification Loss: 0.6299 | Val Loss: 3.9490 | Val AUC: 0.6613 | F1-Score: 0.5726
+2025-11-08 09:10:05,535: New best model saved with AUC: 0.6613
+2025-11-08 09:11:24,217: Epoch 13/40 | Total Loss: 3.9422 | Causal Loss: 3.3163 | Classification Loss: 0.6260 | Val Loss: 3.9373 | Val AUC: 0.6623 | F1-Score: 0.5758
+2025-11-08 09:11:24,319: New best model saved with AUC: 0.6623
+2025-11-08 09:12:42,855: Epoch 14/40 | Total Loss: 3.9371 | Causal Loss: 3.3128 | Classification Loss: 0.6244 | Val Loss: 3.9359 | Val AUC: 0.6623 | F1-Score: 0.5748
+2025-11-08 09:12:42,937: New best model saved with AUC: 0.6623
+2025-11-08 09:14:01,542: Epoch 15/40 | Total Loss: 3.9340 | Causal Loss: 3.3107 | Classification Loss: 0.6233 | Val Loss: 3.9370 | Val AUC: 0.6613 | F1-Score: 0.5764
+2025-11-08 09:15:20,002: Epoch 16/40 | Total Loss: 3.9326 | Causal Loss: 3.3102 | Classification Loss: 0.6224 | Val Loss: 3.9337 | Val AUC: 0.6656 | F1-Score: 0.5732
+2025-11-08 09:15:20,084: New best model saved with AUC: 0.6656
+2025-11-08 09:16:38,816: Epoch 17/40 | Total Loss: 3.9310 | Causal Loss: 3.3099 | Classification Loss: 0.6211 | Val Loss: 3.9327 | Val AUC: 0.6668 | F1-Score: 0.5713
+2025-11-08 09:16:38,912: New best model saved with AUC: 0.6668
+2025-11-08 09:17:57,290: Epoch 18/40 | Total Loss: 3.9298 | Causal Loss: 3.3096 | Classification Loss: 0.6202 | Val Loss: 3.9319 | Val AUC: 0.6671 | F1-Score: 0.5719
+2025-11-08 09:17:57,388: New best model saved with AUC: 0.6671
+2025-11-08 09:19:16,051: Epoch 19/40 | Total Loss: 3.9286 | Causal Loss: 3.3094 | Classification Loss: 0.6191 | Val Loss: 3.9294 | Val AUC: 0.6681 | F1-Score: 0.5715
+2025-11-08 09:19:16,136: New best model saved with AUC: 0.6681
+2025-11-08 09:20:34,776: Epoch 20/40 | Total Loss: 3.9277 | Causal Loss: 3.3093 | Classification Loss: 0.6184 | Val Loss: 3.9306 | Val AUC: 0.6677 | F1-Score: 0.5674
+2025-11-08 09:21:53,147: Epoch 21/40 | Total Loss: 3.9272 | Causal Loss: 3.3094 | Classification Loss: 0.6179 | Val Loss: 3.9292 | Val AUC: 0.6692 | F1-Score: 0.5631
+2025-11-08 09:21:53,220: New best model saved with AUC: 0.6692
+2025-11-08 09:23:11,930: Epoch 22/40 | Total Loss: 3.9269 | Causal Loss: 3.3093 | Classification Loss: 0.6176 | Val Loss: 3.9288 | Val AUC: 0.6693 | F1-Score: 0.5702
+2025-11-08 09:23:12,017: New best model saved with AUC: 0.6693
+2025-11-08 09:24:30,731: Epoch 23/40 | Total Loss: 3.9264 | Causal Loss: 3.3093 | Classification Loss: 0.6170 | Val Loss: 3.9285 | Val AUC: 0.6683 | F1-Score: 0.5642
+2025-11-08 09:24:30,821: New best model saved with AUC: 0.6683
+2025-11-08 09:25:49,460: Epoch 24/40 | Total Loss: 3.9261 | Causal Loss: 3.3092 | Classification Loss: 0.6169 | Val Loss: 3.9297 | Val AUC: 0.6675 | F1-Score: 0.5555
+2025-11-08 09:27:07,954: Epoch 25/40 | Total Loss: 3.9258 | Causal Loss: 3.3093 | Classification Loss: 0.6165 | Val Loss: 3.9281 | Val AUC: 0.6676 | F1-Score: 0.5669
+2025-11-08 09:27:08,035: New best model saved with AUC: 0.6676
+2025-11-08 09:28:26,385: Epoch 26/40 | Total Loss: 3.9254 | Causal Loss: 3.3093 | Classification Loss: 0.6161 | Val Loss: 3.9288 | Val AUC: 0.6685 | F1-Score: 0.5685
+2025-11-08 09:29:44,856: Epoch 27/40 | Total Loss: 3.9254 | Causal Loss: 3.3092 | Classification Loss: 0.6161 | Val Loss: 3.9286 | Val AUC: 0.6686 | F1-Score: 0.5670
+2025-11-08 09:31:03,385: Epoch 28/40 | Total Loss: 3.9248 | Causal Loss: 3.3092 | Classification Loss: 0.6156 | Val Loss: 3.9288 | Val AUC: 0.6684 | F1-Score: 0.5596
+2025-11-08 09:31:03,385: Early stopping at epoch 28
+2025-11-08 09:31:03,420: Tempo medio per epoca: 78.7 secondi
+2025-11-08 09:31:03,421: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.2-1B_9550_standard_100_False_20251108_085420_.pt for final evaluation on test set
+2025-11-08 09:31:30,340: Final Test AUC: 0.6686 | Test F1-Score: 0.5713
+2025-11-08 09:31:30,341: Saving results to results_general_meta-llama_Llama-3.2-1B__9550_100_standard_1M_0.1_20251108_093130.csv
+  Val AUC Val F1-Score  ... Validation Loss Training Time (s)
+0  0.6676       0.5669  ...          3.9281            2204.8
+
+[1 rows x 8 columns]
+Completed fraction 0.1
+========================================================
+Sat Nov  8 09:31:31 AM CET 2025
+--------------------------------------------------------
+Starting training with fraction = 0.25
+--------------------------------------------------------
+Sat Nov  8 09:31:31 AM CET 2025
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/cuda/__init__.py:51: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/utils/hub.py:128: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+2025-11-08 09:32:04,720: Argument batch_size: 64
+2025-11-08 09:32:04,720: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-08 09:32:04,720: Argument cold_start: False
+2025-11-08 09:32:04,720: Argument early: 'loss'
+2025-11-08 09:32:04,720: Argument epochs: 40
+2025-11-08 09:32:04,720: Argument fraction: 0.25
+2025-11-08 09:32:04,720: Argument gradient_accumulation_steps: 1
+2025-11-08 09:32:04,720: Argument lr: 0.0002
+2025-11-08 09:32:04,720: Argument max_length: 100
+2025-11-08 09:32:04,720: Argument model_name: 'meta-llama/Llama-3.2-1B'
+2025-11-08 09:32:04,720: Argument model_type: 'general'
+2025-11-08 09:32:04,720: Argument number_to_use: 9
+2025-11-08 09:32:04,720: Argument output_dir: 'src/output_slurms_fox/fraction_0.25_tiny_1M'
+2025-11-08 09:32:04,720: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-11-08 09:32:04,720: Argument patience: 3
+2025-11-08 09:32:04,720: Argument peft: False
+2025-11-08 09:32:04,720: Argument prompt_type: 'standard'
+2025-11-08 09:32:04,720: Argument seed: 9550
+2025-11-08 09:32:04,720: Argument test_rnd: False
+2025-11-08 09:32:04,720: Argument tiny: True
+2025-11-08 09:32:04,720: Argument tiny_type: '1M'
+2025-11-08 09:32:04,720: Argument use_quantization: False
+2025-11-08 09:32:07,783: Loading a TINY CausalLM model for testing purposes!
+2025-11-08 09:32:07,783: Loading pre-trained CausalLM model for COLD START!
+2025-11-08 09:32:07,783: Tiny model config - Hidden size: 128, Num layers: 4, Num heads: 4, Intermediate size: 512, Vocab size: 100
+2025-11-08 09:32:09,217: Using Flash Attention 2 for LLaMA tiny model
+2025-11-08 09:32:09,476: 
+New model parameters: 1,005,378
+2025-11-08 09:32:09,476: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-11-08 09:32:09,570: Using prompt type: standard
+2025-11-08 09:32:09,570: Model type: general, Model name: meta-llama/Llama-3.2-1B
+2025-11-08 09:32:09,570: Training with dataset fraction = 0.25
+2025-11-08 09:32:10,029: Subset size: 100000 / 100000
+2025-11-08 09:32:10,029: Distributions y's:
+2025-11-08 09:32:10,032: Outcome
+0          0.58157
+1          0.41843
+dtype: float64
+2025-11-08 09:32:11,332: Example train text: Sequential events: C O K A P Q A O E R Z C Q V P C K O M I
+Outcome (0 or 1):
+2025-11-08 09:32:11,452: Average train text length: 26.00 words
+2025-11-08 09:32:11,452: Average validation text length: 26.00 words
+2025-11-08 09:32:11,452: Average test text length: 26.00 words
+2025-11-08 09:32:11,452: Training on 100000 samples, validating on 50000, testing on 50000 samples
+2025-11-08 09:32:11,452: DataLoaders created.
+2025-11-08 09:32:13,078: Early stopping criterion: loss
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+2025-11-08 09:34:48,369: Epoch 1/40 | Total Loss: 9.7982 | Causal Loss: 9.1197 | Classification Loss: 0.6785 | Val Loss: 6.9272 | Val AUC: 0.5817 | F1-Score: 0.0000
+2025-11-08 09:34:48,459: New best model saved with AUC: 0.5817
+2025-11-08 09:37:23,500: Epoch 2/40 | Total Loss: 5.6302 | Causal Loss: 4.9528 | Classification Loss: 0.6773 | Val Loss: 4.8648 | Val AUC: 0.5932 | F1-Score: 0.0512
+2025-11-08 09:37:23,584: New best model saved with AUC: 0.5932
+2025-11-08 09:39:58,793: Epoch 3/40 | Total Loss: 4.4601 | Causal Loss: 3.7869 | Classification Loss: 0.6732 | Val Loss: 4.2486 | Val AUC: 0.5992 | F1-Score: 0.1981
+2025-11-08 09:39:58,873: New best model saved with AUC: 0.5992
+2025-11-08 09:42:34,131: Epoch 4/40 | Total Loss: 4.2122 | Causal Loss: 3.5462 | Classification Loss: 0.6660 | Val Loss: 4.1779 | Val AUC: 0.6141 | F1-Score: 0.1978
+2025-11-08 09:42:34,198: New best model saved with AUC: 0.6141
+2025-11-08 09:45:09,179: Epoch 5/40 | Total Loss: 4.1416 | Causal Loss: 3.4826 | Classification Loss: 0.6590 | Val Loss: 4.1066 | Val AUC: 0.6346 | F1-Score: 0.4861
+2025-11-08 09:45:09,266: New best model saved with AUC: 0.6346
+2025-11-08 09:47:44,143: Epoch 6/40 | Total Loss: 4.0838 | Causal Loss: 3.4356 | Classification Loss: 0.6482 | Val Loss: 4.0670 | Val AUC: 0.6448 | F1-Score: 0.4881
+2025-11-08 09:47:44,226: New best model saved with AUC: 0.6448
+2025-11-08 09:50:19,243: Epoch 7/40 | Total Loss: 4.0555 | Causal Loss: 3.4131 | Classification Loss: 0.6423 | Val Loss: 4.0468 | Val AUC: 0.6524 | F1-Score: 0.5533
+2025-11-08 09:50:19,314: New best model saved with AUC: 0.6524
+2025-11-08 09:52:54,380: Epoch 8/40 | Total Loss: 4.0420 | Causal Loss: 3.4032 | Classification Loss: 0.6387 | Val Loss: 4.0467 | Val AUC: 0.6538 | F1-Score: 0.5628
+2025-11-08 09:52:54,459: New best model saved with AUC: 0.6538
+2025-11-08 09:55:29,495: Epoch 9/40 | Total Loss: 4.0350 | Causal Loss: 3.3981 | Classification Loss: 0.6369 | Val Loss: 4.0359 | Val AUC: 0.6563 | F1-Score: 0.5597
+2025-11-08 09:55:29,559: New best model saved with AUC: 0.6563
+2025-11-08 09:58:04,355: Epoch 10/40 | Total Loss: 4.0300 | Causal Loss: 3.3943 | Classification Loss: 0.6358 | Val Loss: 4.0289 | Val AUC: 0.6559 | F1-Score: 0.5323
+2025-11-08 09:58:04,430: New best model saved with AUC: 0.6559
+2025-11-08 10:00:39,043: Epoch 11/40 | Total Loss: 4.0265 | Causal Loss: 3.3916 | Classification Loss: 0.6349 | Val Loss: 4.0262 | Val AUC: 0.6585 | F1-Score: 0.5305
+2025-11-08 10:00:39,112: New best model saved with AUC: 0.6585
+2025-11-08 10:03:13,926: Epoch 12/40 | Total Loss: 4.0241 | Causal Loss: 3.3904 | Classification Loss: 0.6338 | Val Loss: 4.0243 | Val AUC: 0.6576 | F1-Score: 0.5425
+2025-11-08 10:03:14,008: New best model saved with AUC: 0.6576
+2025-11-08 10:05:48,674: Epoch 13/40 | Total Loss: 4.0221 | Causal Loss: 3.3894 | Classification Loss: 0.6326 | Val Loss: 4.0218 | Val AUC: 0.6591 | F1-Score: 0.5349
+2025-11-08 10:05:48,742: New best model saved with AUC: 0.6591
+2025-11-08 10:08:23,775: Epoch 14/40 | Total Loss: 4.0197 | Causal Loss: 3.3881 | Classification Loss: 0.6316 | Val Loss: 4.0203 | Val AUC: 0.6606 | F1-Score: 0.5542
+2025-11-08 10:08:23,868: New best model saved with AUC: 0.6606
+2025-11-08 10:10:58,888: Epoch 15/40 | Total Loss: 4.0183 | Causal Loss: 3.3873 | Classification Loss: 0.6310 | Val Loss: 4.0196 | Val AUC: 0.6611 | F1-Score: 0.5406
+2025-11-08 10:10:58,972: New best model saved with AUC: 0.6611
+2025-11-08 10:13:33,518: Epoch 16/40 | Total Loss: 4.0171 | Causal Loss: 3.3865 | Classification Loss: 0.6306 | Val Loss: 4.0184 | Val AUC: 0.6588 | F1-Score: 0.5424
+2025-11-08 10:13:33,589: New best model saved with AUC: 0.6588
+2025-11-08 10:16:08,458: Epoch 17/40 | Total Loss: 4.0157 | Causal Loss: 3.3857 | Classification Loss: 0.6300 | Val Loss: 4.0163 | Val AUC: 0.6598 | F1-Score: 0.5366
+2025-11-08 10:16:08,548: New best model saved with AUC: 0.6598
+2025-11-08 10:18:42,375: Epoch 18/40 | Total Loss: 4.0146 | Causal Loss: 3.3853 | Classification Loss: 0.6293 | Val Loss: 4.0164 | Val AUC: 0.6601 | F1-Score: 0.5493
+2025-11-08 10:21:17,383: Epoch 19/40 | Total Loss: 4.0141 | Causal Loss: 3.3851 | Classification Loss: 0.6290 | Val Loss: 4.0152 | Val AUC: 0.6611 | F1-Score: 0.5539
+2025-11-08 10:21:17,473: New best model saved with AUC: 0.6611
+2025-11-08 10:23:52,281: Epoch 20/40 | Total Loss: 4.0130 | Causal Loss: 3.3849 | Classification Loss: 0.6281 | Val Loss: 4.0149 | Val AUC: 0.6603 | F1-Score: 0.5284
+2025-11-08 10:23:52,363: New best model saved with AUC: 0.6603
+2025-11-08 10:26:27,221: Epoch 21/40 | Total Loss: 4.0126 | Causal Loss: 3.3849 | Classification Loss: 0.6276 | Val Loss: 4.0147 | Val AUC: 0.6613 | F1-Score: 0.5387
+2025-11-08 10:26:27,315: New best model saved with AUC: 0.6613
+2025-11-08 10:29:02,164: Epoch 22/40 | Total Loss: 4.0121 | Causal Loss: 3.3848 | Classification Loss: 0.6272 | Val Loss: 4.0160 | Val AUC: 0.6616 | F1-Score: 0.5134
+2025-11-08 10:31:36,869: Epoch 23/40 | Total Loss: 4.0111 | Causal Loss: 3.3848 | Classification Loss: 0.6262 | Val Loss: 4.0160 | Val AUC: 0.6596 | F1-Score: 0.5557
+2025-11-08 10:34:11,728: Epoch 24/40 | Total Loss: 4.0110 | Causal Loss: 3.3849 | Classification Loss: 0.6261 | Val Loss: 4.0143 | Val AUC: 0.6622 | F1-Score: 0.5398
+2025-11-08 10:34:11,796: New best model saved with AUC: 0.6622
+2025-11-08 10:36:46,872: Epoch 25/40 | Total Loss: 4.0105 | Causal Loss: 3.3848 | Classification Loss: 0.6257 | Val Loss: 4.0119 | Val AUC: 0.6625 | F1-Score: 0.5508
+2025-11-08 10:36:46,951: New best model saved with AUC: 0.6625
+2025-11-08 10:39:22,075: Epoch 26/40 | Total Loss: 4.0096 | Causal Loss: 3.3847 | Classification Loss: 0.6249 | Val Loss: 4.0130 | Val AUC: 0.6629 | F1-Score: 0.5491
+2025-11-08 10:41:57,220: Epoch 27/40 | Total Loss: 4.0093 | Causal Loss: 3.3847 | Classification Loss: 0.6247 | Val Loss: 4.0135 | Val AUC: 0.6633 | F1-Score: 0.5509
+2025-11-08 10:44:32,033: Epoch 28/40 | Total Loss: 4.0088 | Causal Loss: 3.3846 | Classification Loss: 0.6242 | Val Loss: 4.0128 | Val AUC: 0.6626 | F1-Score: 0.5423
+2025-11-08 10:44:32,034: Early stopping at epoch 28
+2025-11-08 10:44:32,069: Tempo medio per epoca: 155.0 secondi
+2025-11-08 10:44:32,070: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.2-1B_9550_standard_100_False_20251108_093213_.pt for final evaluation on test set
+2025-11-08 10:44:59,136: Final Test AUC: 0.6638 | Test F1-Score: 0.5544
+2025-11-08 10:44:59,137: Saving results to results_general_meta-llama_Llama-3.2-1B__9550_100_standard_1M_0.25_20251108_104459.csv
+  Val AUC Val F1-Score  ... Validation Loss Training Time (s)
+0  0.6625       0.5508  ...          4.0119            4340.5
+
+[1 rows x 8 columns]
+Completed fraction 0.25
+========================================================
+Sat Nov  8 10:45:00 AM CET 2025
+--------------------------------------------------------
+Starting training with fraction = 0.5
+--------------------------------------------------------
+Sat Nov  8 10:45:00 AM CET 2025
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/cuda/__init__.py:51: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/utils/hub.py:128: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+2025-11-08 10:45:34,474: Argument batch_size: 64
+2025-11-08 10:45:34,474: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-08 10:45:34,474: Argument cold_start: False
+2025-11-08 10:45:34,474: Argument early: 'loss'
+2025-11-08 10:45:34,474: Argument epochs: 40
+2025-11-08 10:45:34,474: Argument fraction: 0.5
+2025-11-08 10:45:34,474: Argument gradient_accumulation_steps: 1
+2025-11-08 10:45:34,474: Argument lr: 0.0002
+2025-11-08 10:45:34,474: Argument max_length: 100
+2025-11-08 10:45:34,474: Argument model_name: 'meta-llama/Llama-3.2-1B'
+2025-11-08 10:45:34,474: Argument model_type: 'general'
+2025-11-08 10:45:34,474: Argument number_to_use: 9
+2025-11-08 10:45:34,474: Argument output_dir: 'src/output_slurms_fox/fraction_0.5_tiny_1M'
+2025-11-08 10:45:34,474: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-11-08 10:45:34,474: Argument patience: 3
+2025-11-08 10:45:34,474: Argument peft: False
+2025-11-08 10:45:34,474: Argument prompt_type: 'standard'
+2025-11-08 10:45:34,474: Argument seed: 9550
+2025-11-08 10:45:34,474: Argument test_rnd: False
+2025-11-08 10:45:34,474: Argument tiny: True
+2025-11-08 10:45:34,474: Argument tiny_type: '1M'
+2025-11-08 10:45:34,474: Argument use_quantization: False
+2025-11-08 10:45:37,089: Loading a TINY CausalLM model for testing purposes!
+2025-11-08 10:45:37,089: Loading pre-trained CausalLM model for COLD START!
+2025-11-08 10:45:37,089: Tiny model config - Hidden size: 128, Num layers: 4, Num heads: 4, Intermediate size: 512, Vocab size: 100
+2025-11-08 10:45:38,494: Using Flash Attention 2 for LLaMA tiny model
+2025-11-08 10:45:38,771: 
+New model parameters: 1,005,378
+2025-11-08 10:45:38,771: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-11-08 10:45:38,862: Using prompt type: standard
+2025-11-08 10:45:38,862: Model type: general, Model name: meta-llama/Llama-3.2-1B
+2025-11-08 10:45:38,862: Training with dataset fraction = 0.5
+2025-11-08 10:45:39,364: Train Subset size: 200000 / 400000
+2025-11-08 10:45:39,365: Val Subset size: 25000 / 50000
+2025-11-08 10:45:39,365: Distributions Train y's:
+2025-11-08 10:45:39,368: Outcome
+0          0.581575
+1          0.418425
+dtype: float64
+2025-11-08 10:45:39,369: Distributions Val y's:
+2025-11-08 10:45:39,370: Outcome
+0          0.5786
+1          0.4214
+dtype: float64
+2025-11-08 10:45:41,038: Example train text: Sequential events: B W G O O Q F X F F M C F G D Y O G J P
+Outcome (0 or 1):
+2025-11-08 10:45:41,195: Average train text length: 26.00 words
+2025-11-08 10:45:41,196: Average validation text length: 26.00 words
+2025-11-08 10:45:41,196: Average test text length: 26.00 words
+2025-11-08 10:45:41,196: Training on 200000 samples, validating on 25000, testing on 50000 samples
+2025-11-08 10:45:41,196: DataLoaders created.
+2025-11-08 10:45:42,786: Early stopping criterion: loss
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+2025-11-08 10:50:12,553: Epoch 1/40 | Total Loss: 9.6847 | Causal Loss: 9.0079 | Classification Loss: 0.6768 | Val Loss: 7.1046 | Val AUC: 0.5864 | F1-Score: 0.4127
+2025-11-08 10:50:12,648: New best model saved with AUC: 0.5864
+2025-11-08 10:54:40,183: Epoch 2/40 | Total Loss: 5.9001 | Causal Loss: 5.2275 | Classification Loss: 0.6726 | Val Loss: 5.2035 | Val AUC: 0.5932 | F1-Score: 0.2701
+2025-11-08 10:54:40,275: New best model saved with AUC: 0.5932
+2025-11-08 10:59:07,406: Epoch 3/40 | Total Loss: 4.8703 | Causal Loss: 4.2000 | Classification Loss: 0.6703 | Val Loss: 4.7263 | Val AUC: 0.5961 | F1-Score: 0.0922
+2025-11-08 10:59:07,483: New best model saved with AUC: 0.5961
+2025-11-08 11:03:36,606: Epoch 4/40 | Total Loss: 4.6762 | Causal Loss: 4.0088 | Classification Loss: 0.6674 | Val Loss: 4.6344 | Val AUC: 0.6070 | F1-Score: 0.3706
+2025-11-08 11:03:36,703: New best model saved with AUC: 0.6070
+2025-11-08 11:08:04,972: Epoch 5/40 | Total Loss: 4.5633 | Causal Loss: 3.9057 | Classification Loss: 0.6576 | Val Loss: 4.5036 | Val AUC: 0.6349 | F1-Score: 0.2979
+2025-11-08 11:08:05,058: New best model saved with AUC: 0.6349
+2025-11-08 11:12:33,850: Epoch 6/40 | Total Loss: 4.4689 | Causal Loss: 3.8206 | Classification Loss: 0.6484 | Val Loss: 4.4443 | Val AUC: 0.6471 | F1-Score: 0.4865
+2025-11-08 11:12:33,940: New best model saved with AUC: 0.6471
+2025-11-08 11:17:03,063: Epoch 7/40 | Total Loss: 4.4345 | Causal Loss: 3.7917 | Classification Loss: 0.6429 | Val Loss: 4.4261 | Val AUC: 0.6464 | F1-Score: 0.5023
+2025-11-08 11:17:03,156: New best model saved with AUC: 0.6464
+2025-11-08 11:21:31,806: Epoch 8/40 | Total Loss: 4.4175 | Causal Loss: 3.7777 | Classification Loss: 0.6398 | Val Loss: 4.4105 | Val AUC: 0.6543 | F1-Score: 0.5391
+2025-11-08 11:21:31,898: New best model saved with AUC: 0.6543
+2025-11-08 11:25:59,214: Epoch 9/40 | Total Loss: 4.4083 | Causal Loss: 3.7711 | Classification Loss: 0.6372 | Val Loss: 4.4052 | Val AUC: 0.6553 | F1-Score: 0.5223
+2025-11-08 11:25:59,304: New best model saved with AUC: 0.6553
+2025-11-08 11:30:28,861: Epoch 10/40 | Total Loss: 4.4028 | Causal Loss: 3.7674 | Classification Loss: 0.6354 | Val Loss: 4.4000 | Val AUC: 0.6566 | F1-Score: 0.5478
+2025-11-08 11:30:28,954: New best model saved with AUC: 0.6566
+2025-11-08 11:34:57,539: Epoch 11/40 | Total Loss: 4.3979 | Causal Loss: 3.7638 | Classification Loss: 0.6342 | Val Loss: 4.3963 | Val AUC: 0.6587 | F1-Score: 0.5586
+2025-11-08 11:34:57,620: New best model saved with AUC: 0.6587
+2025-11-08 11:39:26,684: Epoch 12/40 | Total Loss: 4.3944 | Causal Loss: 3.7617 | Classification Loss: 0.6327 | Val Loss: 4.3921 | Val AUC: 0.6573 | F1-Score: 0.5295
+2025-11-08 11:39:26,773: New best model saved with AUC: 0.6573
+2025-11-08 11:43:55,559: Epoch 13/40 | Total Loss: 4.3925 | Causal Loss: 3.7602 | Classification Loss: 0.6323 | Val Loss: 4.3902 | Val AUC: 0.6579 | F1-Score: 0.5507
+2025-11-08 11:43:55,648: New best model saved with AUC: 0.6579
+2025-11-08 11:48:24,408: Epoch 14/40 | Total Loss: 4.3903 | Causal Loss: 3.7591 | Classification Loss: 0.6311 | Val Loss: 4.3891 | Val AUC: 0.6579 | F1-Score: 0.5381
+2025-11-08 11:48:24,493: New best model saved with AUC: 0.6579
+2025-11-08 11:52:53,535: Epoch 15/40 | Total Loss: 4.3896 | Causal Loss: 3.7588 | Classification Loss: 0.6308 | Val Loss: 4.3905 | Val AUC: 0.6574 | F1-Score: 0.5300
+2025-11-08 11:57:22,970: Epoch 16/40 | Total Loss: 4.3887 | Causal Loss: 3.7587 | Classification Loss: 0.6301 | Val Loss: 4.3884 | Val AUC: 0.6587 | F1-Score: 0.5469
+2025-11-08 11:57:23,075: New best model saved with AUC: 0.6587
+2025-11-08 12:01:52,414: Epoch 17/40 | Total Loss: 4.3880 | Causal Loss: 3.7586 | Classification Loss: 0.6294 | Val Loss: 4.3863 | Val AUC: 0.6599 | F1-Score: 0.5473
+2025-11-08 12:01:52,494: New best model saved with AUC: 0.6599
+2025-11-08 12:06:22,075: Epoch 18/40 | Total Loss: 4.3875 | Causal Loss: 3.7586 | Classification Loss: 0.6289 | Val Loss: 4.3885 | Val AUC: 0.6606 | F1-Score: 0.5246
+2025-11-08 12:10:51,088: Epoch 19/40 | Total Loss: 4.3868 | Causal Loss: 3.7586 | Classification Loss: 0.6283 | Val Loss: 4.3858 | Val AUC: 0.6595 | F1-Score: 0.5486
+2025-11-08 12:10:51,190: New best model saved with AUC: 0.6595
+2025-11-08 12:15:21,552: Epoch 20/40 | Total Loss: 4.3864 | Causal Loss: 3.7585 | Classification Loss: 0.6279 | Val Loss: 4.3871 | Val AUC: 0.6588 | F1-Score: 0.5285
+2025-11-08 12:19:50,888: Epoch 21/40 | Total Loss: 4.3857 | Causal Loss: 3.7584 | Classification Loss: 0.6273 | Val Loss: 4.3855 | Val AUC: 0.6602 | F1-Score: 0.5441
+2025-11-08 12:19:50,959: New best model saved with AUC: 0.6602
+2025-11-08 12:24:19,317: Epoch 22/40 | Total Loss: 4.3849 | Causal Loss: 3.7584 | Classification Loss: 0.6265 | Val Loss: 4.3870 | Val AUC: 0.6617 | F1-Score: 0.5250
+2025-11-08 12:28:48,199: Epoch 23/40 | Total Loss: 4.3843 | Causal Loss: 3.7583 | Classification Loss: 0.6261 | Val Loss: 4.3875 | Val AUC: 0.6597 | F1-Score: 0.5343
+2025-11-08 12:33:16,600: Epoch 24/40 | Total Loss: 4.3837 | Causal Loss: 3.7582 | Classification Loss: 0.6255 | Val Loss: 4.3867 | Val AUC: 0.6594 | F1-Score: 0.5275
+2025-11-08 12:33:16,601: Early stopping at epoch 24
+2025-11-08 12:33:16,657: Tempo medio per epoca: 269.0 secondi
+2025-11-08 12:33:16,657: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.2-1B_9550_standard_100_False_20251108_104542_.pt for final evaluation on test set
+2025-11-08 12:33:43,708: Final Test AUC: 0.6635 | Test F1-Score: 0.5433
+2025-11-08 12:33:43,709: Saving results to results_general_meta-llama_Llama-3.2-1B__9550_100_standard_1M_0.5_20251108_123343.csv
+  Val AUC Val F1-Score  ... Validation Loss Training Time (s)
+0  0.6602       0.5441  ...          4.3855            6455.3
+
+[1 rows x 8 columns]
+Completed fraction 0.5
+========================================================
+Sat Nov  8 12:33:45 PM CET 2025
+--------------------------------------------------------
+Starting training with fraction = 0.75
+--------------------------------------------------------
+Sat Nov  8 12:33:45 PM CET 2025
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/cuda/__init__.py:51: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/utils/hub.py:128: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+2025-11-08 12:34:17,206: Argument batch_size: 64
+2025-11-08 12:34:17,207: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-08 12:34:17,207: Argument cold_start: False
+2025-11-08 12:34:17,207: Argument early: 'loss'
+2025-11-08 12:34:17,207: Argument epochs: 40
+2025-11-08 12:34:17,207: Argument fraction: 0.75
+2025-11-08 12:34:17,207: Argument gradient_accumulation_steps: 1
+2025-11-08 12:34:17,207: Argument lr: 0.0002
+2025-11-08 12:34:17,207: Argument max_length: 100
+2025-11-08 12:34:17,207: Argument model_name: 'meta-llama/Llama-3.2-1B'
+2025-11-08 12:34:17,207: Argument model_type: 'general'
+2025-11-08 12:34:17,207: Argument number_to_use: 9
+2025-11-08 12:34:17,207: Argument output_dir: 'src/output_slurms_fox/fraction_0.75_tiny_1M'
+2025-11-08 12:34:17,207: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-11-08 12:34:17,207: Argument patience: 3
+2025-11-08 12:34:17,207: Argument peft: False
+2025-11-08 12:34:17,207: Argument prompt_type: 'standard'
+2025-11-08 12:34:17,207: Argument seed: 9550
+2025-11-08 12:34:17,207: Argument test_rnd: False
+2025-11-08 12:34:17,207: Argument tiny: True
+2025-11-08 12:34:17,207: Argument tiny_type: '1M'
+2025-11-08 12:34:17,207: Argument use_quantization: False
+2025-11-08 12:34:20,217: Loading a TINY CausalLM model for testing purposes!
+2025-11-08 12:34:20,217: Loading pre-trained CausalLM model for COLD START!
+2025-11-08 12:34:20,217: Tiny model config - Hidden size: 128, Num layers: 4, Num heads: 4, Intermediate size: 512, Vocab size: 100
+2025-11-08 12:34:21,786: Using Flash Attention 2 for LLaMA tiny model
+2025-11-08 12:34:22,064: 
+New model parameters: 1,005,378
+2025-11-08 12:34:22,065: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-11-08 12:34:22,157: Using prompt type: standard
+2025-11-08 12:34:22,158: Model type: general, Model name: meta-llama/Llama-3.2-1B
+2025-11-08 12:34:22,158: Training with dataset fraction = 0.75
+2025-11-08 12:34:22,687: Train Subset size: 300000 / 400000
+2025-11-08 12:34:22,687: Val Subset size: 37500 / 50000
+2025-11-08 12:34:22,687: Distributions Train y's:
+2025-11-08 12:34:22,691: Outcome
+0          0.581577
+1          0.418423
+dtype: float64
+2025-11-08 12:34:22,692: Distributions Val y's:
+2025-11-08 12:34:22,693: Outcome
+0          0.578587
+1          0.421413
+dtype: float64
+2025-11-08 12:34:24,992: Example train text: Sequential events: U K X L U O Y O R H C H Q H R A M G H M
+Outcome (0 or 1):
+2025-11-08 12:34:25,216: Average train text length: 26.00 words
+2025-11-08 12:34:25,216: Average validation text length: 26.00 words
+2025-11-08 12:34:25,216: Average test text length: 26.00 words
+2025-11-08 12:34:25,216: Training on 300000 samples, validating on 37500, testing on 50000 samples
+2025-11-08 12:34:25,216: DataLoaders created.
+2025-11-08 12:34:26,933: Early stopping criterion: loss
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+2025-11-08 12:41:08,953: Epoch 1/40 | Total Loss: 9.7076 | Causal Loss: 9.0316 | Classification Loss: 0.6760 | Val Loss: 7.3510 | Val AUC: 0.5882 | F1-Score: 0.0859
+2025-11-08 12:41:09,021: New best model saved with AUC: 0.5882
+2025-11-08 12:47:51,086: Epoch 2/40 | Total Loss: 6.0988 | Causal Loss: 5.4267 | Classification Loss: 0.6721 | Val Loss: 5.1649 | Val AUC: 0.5958 | F1-Score: 0.4906
+2025-11-08 12:47:51,175: New best model saved with AUC: 0.5958
+2025-11-08 12:54:33,113: Epoch 3/40 | Total Loss: 4.9090 | Causal Loss: 4.2398 | Classification Loss: 0.6691 | Val Loss: 4.7668 | Val AUC: 0.6050 | F1-Score: 0.1960
+2025-11-08 12:54:33,190: New best model saved with AUC: 0.6050
+2025-11-08 13:01:15,131: Epoch 4/40 | Total Loss: 4.6513 | Causal Loss: 4.0213 | Classification Loss: 0.6300 | Val Loss: 4.6089 | Val AUC: 0.6657 | F1-Score: 0.5794
+2025-11-08 13:01:15,224: New best model saved with AUC: 0.6657
+2025-11-08 13:07:57,389: Epoch 5/40 | Total Loss: 4.6027 | Causal Loss: 3.9788 | Classification Loss: 0.6239 | Val Loss: 4.5923 | Val AUC: 0.6694 | F1-Score: 0.5745
+2025-11-08 13:07:57,475: New best model saved with AUC: 0.6694
+2025-11-08 13:14:39,605: Epoch 6/40 | Total Loss: 4.5853 | Causal Loss: 3.9664 | Classification Loss: 0.6189 | Val Loss: 4.5772 | Val AUC: 0.6709 | F1-Score: 0.5729
+2025-11-08 13:14:39,687: New best model saved with AUC: 0.6709
+2025-11-08 13:21:21,942: Epoch 7/40 | Total Loss: 4.5744 | Causal Loss: 3.9580 | Classification Loss: 0.6164 | Val Loss: 4.5670 | Val AUC: 0.6697 | F1-Score: 0.5757
+2025-11-08 13:21:22,016: New best model saved with AUC: 0.6697
+2025-11-08 13:28:04,658: Epoch 8/40 | Total Loss: 4.5673 | Causal Loss: 3.9516 | Classification Loss: 0.6158 | Val Loss: 4.5639 | Val AUC: 0.6691 | F1-Score: 0.5759
+2025-11-08 13:28:04,727: New best model saved with AUC: 0.6691
+2025-11-08 13:34:46,796: Epoch 9/40 | Total Loss: 4.5645 | Causal Loss: 3.9493 | Classification Loss: 0.6152 | Val Loss: 4.5626 | Val AUC: 0.6687 | F1-Score: 0.5766
+2025-11-08 13:34:46,895: New best model saved with AUC: 0.6687
+2025-11-08 13:41:28,523: Epoch 10/40 | Total Loss: 4.5628 | Causal Loss: 3.9476 | Classification Loss: 0.6152 | Val Loss: 4.5638 | Val AUC: 0.6693 | F1-Score: 0.5747
+2025-11-08 13:48:10,518: Epoch 11/40 | Total Loss: 4.5617 | Causal Loss: 3.9468 | Classification Loss: 0.6149 | Val Loss: 4.5601 | Val AUC: 0.6700 | F1-Score: 0.5750
+2025-11-08 13:48:10,593: New best model saved with AUC: 0.6700
+2025-11-08 13:54:52,897: Epoch 12/40 | Total Loss: 4.5610 | Causal Loss: 3.9462 | Classification Loss: 0.6148 | Val Loss: 4.5628 | Val AUC: 0.6705 | F1-Score: 0.5791
+2025-11-08 14:01:35,399: Epoch 13/40 | Total Loss: 4.5608 | Causal Loss: 3.9461 | Classification Loss: 0.6147 | Val Loss: 4.5594 | Val AUC: 0.6702 | F1-Score: 0.5764
+2025-11-08 14:01:35,483: New best model saved with AUC: 0.6702
+2025-11-08 14:08:17,985: Epoch 14/40 | Total Loss: 4.5605 | Causal Loss: 3.9460 | Classification Loss: 0.6146 | Val Loss: 4.5593 | Val AUC: 0.6699 | F1-Score: 0.5780
+2025-11-08 14:08:18,071: New best model saved with AUC: 0.6699
+2025-11-08 14:15:00,152: Epoch 15/40 | Total Loss: 4.5604 | Causal Loss: 3.9459 | Classification Loss: 0.6145 | Val Loss: 4.5589 | Val AUC: 0.6700 | F1-Score: 0.5780
+2025-11-08 14:15:00,228: New best model saved with AUC: 0.6700
+2025-11-08 14:21:42,122: Epoch 16/40 | Total Loss: 4.5602 | Causal Loss: 3.9458 | Classification Loss: 0.6144 | Val Loss: 4.5595 | Val AUC: 0.6694 | F1-Score: 0.5785
+2025-11-08 14:28:24,151: Epoch 17/40 | Total Loss: 4.5601 | Causal Loss: 3.9457 | Classification Loss: 0.6144 | Val Loss: 4.5596 | Val AUC: 0.6700 | F1-Score: 0.5777
+2025-11-08 14:35:05,939: Epoch 18/40 | Total Loss: 4.5599 | Causal Loss: 3.9456 | Classification Loss: 0.6144 | Val Loss: 4.5593 | Val AUC: 0.6701 | F1-Score: 0.5786
+2025-11-08 14:35:05,939: Early stopping at epoch 18
+2025-11-08 14:35:05,974: Tempo medio per epoca: 402.3 secondi
+2025-11-08 14:35:05,975: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.2-1B_9550_standard_100_False_20251108_123426_.pt for final evaluation on test set
+2025-11-08 14:35:33,016: Final Test AUC: 0.6684 | Test F1-Score: 0.5768
+2025-11-08 14:35:33,017: Saving results to results_general_meta-llama_Llama-3.2-1B__9550_100_standard_1M_0.75_20251108_143533.csv
+  Val AUC Val F1-Score  ... Validation Loss Training Time (s)
+0  0.6700       0.5780  ...          4.5589            7240.6
+
+[1 rows x 8 columns]
+Completed fraction 0.75
+========================================================
+Sat Nov  8 02:35:34 PM CET 2025
+--------------------------------------------------------
+Starting training with fraction = 1.0
+--------------------------------------------------------
+Sat Nov  8 02:35:34 PM CET 2025
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/cuda/__init__.py:51: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/utils/hub.py:128: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+2025-11-08 14:36:05,672: Argument batch_size: 64
+2025-11-08 14:36:05,672: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-08 14:36:05,672: Argument cold_start: False
+2025-11-08 14:36:05,672: Argument early: 'loss'
+2025-11-08 14:36:05,672: Argument epochs: 40
+2025-11-08 14:36:05,672: Argument fraction: 1.0
+2025-11-08 14:36:05,672: Argument gradient_accumulation_steps: 1
+2025-11-08 14:36:05,672: Argument lr: 0.0002
+2025-11-08 14:36:05,672: Argument max_length: 100
+2025-11-08 14:36:05,672: Argument model_name: 'meta-llama/Llama-3.2-1B'
+2025-11-08 14:36:05,672: Argument model_type: 'general'
+2025-11-08 14:36:05,672: Argument number_to_use: 9
+2025-11-08 14:36:05,672: Argument output_dir: 'src/output_slurms_fox/fraction_1.0_tiny_1M'
+2025-11-08 14:36:05,672: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-11-08 14:36:05,672: Argument patience: 3
+2025-11-08 14:36:05,672: Argument peft: False
+2025-11-08 14:36:05,673: Argument prompt_type: 'standard'
+2025-11-08 14:36:05,673: Argument seed: 9550
+2025-11-08 14:36:05,673: Argument test_rnd: False
+2025-11-08 14:36:05,673: Argument tiny: True
+2025-11-08 14:36:05,673: Argument tiny_type: '1M'
+2025-11-08 14:36:05,673: Argument use_quantization: False
+2025-11-08 14:36:09,417: Loading a TINY CausalLM model for testing purposes!
+2025-11-08 14:36:09,417: Loading pre-trained CausalLM model for COLD START!
+2025-11-08 14:36:09,417: Tiny model config - Hidden size: 128, Num layers: 4, Num heads: 4, Intermediate size: 512, Vocab size: 100
+2025-11-08 14:36:11,031: Using Flash Attention 2 for LLaMA tiny model
+2025-11-08 14:36:11,314: 
+New model parameters: 1,005,378
+2025-11-08 14:36:11,314: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-11-08 14:36:11,409: Using prompt type: standard
+2025-11-08 14:36:11,410: Model type: general, Model name: meta-llama/Llama-3.2-1B
+2025-11-08 14:36:11,410: Training with dataset fraction = 1.0
+2025-11-08 14:36:11,787: Train Subset size: 400000 / 400000
+2025-11-08 14:36:11,787: Val Subset size: 50000 / 50000
+2025-11-08 14:36:11,787: Distributions Train y's:
+2025-11-08 14:36:11,792: Outcome
+0          0.581575
+1          0.418425
+dtype: float64
+2025-11-08 14:36:11,793: Distributions Val y's:
+2025-11-08 14:36:11,795: Outcome
+0          0.57858
+1          0.42142
+dtype: float64
+2025-11-08 14:36:14,584: Example train text: Sequential events: M E N Z N I G Z T X V D E X E N W O C F
+Outcome (0 or 1):
+2025-11-08 14:36:14,879: Average train text length: 26.00 words
+2025-11-08 14:36:14,879: Average validation text length: 26.00 words
+2025-11-08 14:36:14,879: Average test text length: 26.00 words
+2025-11-08 14:36:14,879: Training on 400000 samples, validating on 50000, testing on 50000 samples
+2025-11-08 14:36:14,879: DataLoaders created.
+2025-11-08 14:36:16,630: Early stopping criterion: loss
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+2025-11-08 14:45:12,530: Epoch 1/40 | Total Loss: 9.8857 | Causal Loss: 9.2114 | Classification Loss: 0.6743 | Val Loss: 7.8273 | Val AUC: 0.5910 | F1-Score: 0.3231
+2025-11-08 14:45:12,604: New best model saved with AUC: 0.5910
+2025-11-08 14:54:09,322: Epoch 2/40 | Total Loss: 6.4761 | Causal Loss: 5.8047 | Classification Loss: 0.6714 | Val Loss: 5.6327 | Val AUC: 0.5957 | F1-Score: 0.4096
+2025-11-08 14:54:09,408: New best model saved with AUC: 0.5957
+2025-11-08 15:03:05,984: Epoch 3/40 | Total Loss: 5.2634 | Causal Loss: 4.5945 | Classification Loss: 0.6689 | Val Loss: 5.0788 | Val AUC: 0.6015 | F1-Score: 0.3846
+2025-11-08 15:03:06,070: New best model saved with AUC: 0.6015
+2025-11-08 15:12:02,173: Epoch 4/40 | Total Loss: 5.0050 | Causal Loss: 4.3400 | Classification Loss: 0.6649 | Val Loss: 4.9389 | Val AUC: 0.6162 | F1-Score: 0.3672
+2025-11-08 15:12:02,254: New best model saved with AUC: 0.6162
+2025-11-08 15:20:59,177: Epoch 5/40 | Total Loss: 4.8291 | Causal Loss: 4.1768 | Classification Loss: 0.6523 | Val Loss: 4.7192 | Val AUC: 0.6501 | F1-Score: 0.5592
+2025-11-08 15:20:59,253: New best model saved with AUC: 0.6501
+2025-11-08 15:29:55,465: Epoch 6/40 | Total Loss: 4.6716 | Causal Loss: 4.0325 | Classification Loss: 0.6391 | Val Loss: 4.6443 | Val AUC: 0.6540 | F1-Score: 0.5565
+2025-11-08 15:29:55,564: New best model saved with AUC: 0.6540
+2025-11-08 15:38:52,669: Epoch 7/40 | Total Loss: 4.6212 | Causal Loss: 3.9860 | Classification Loss: 0.6352 | Val Loss: 4.6052 | Val AUC: 0.6612 | F1-Score: 0.5477
+2025-11-08 15:38:52,755: New best model saved with AUC: 0.6612
+2025-11-08 15:47:50,245: Epoch 8/40 | Total Loss: 4.5967 | Causal Loss: 3.9639 | Classification Loss: 0.6327 | Val Loss: 4.5855 | Val AUC: 0.6628 | F1-Score: 0.5291
+2025-11-08 15:47:50,329: New best model saved with AUC: 0.6628
+2025-11-08 15:56:46,873: Epoch 9/40 | Total Loss: 4.5812 | Causal Loss: 3.9502 | Classification Loss: 0.6310 | Val Loss: 4.5788 | Val AUC: 0.6626 | F1-Score: 0.5142
+2025-11-08 15:56:46,966: New best model saved with AUC: 0.6626
+2025-11-08 16:05:43,280: Epoch 10/40 | Total Loss: 4.5742 | Causal Loss: 3.9444 | Classification Loss: 0.6298 | Val Loss: 4.5735 | Val AUC: 0.6652 | F1-Score: 0.5077
+2025-11-08 16:05:43,350: New best model saved with AUC: 0.6652
+2025-11-08 16:14:39,929: Epoch 11/40 | Total Loss: 4.5696 | Causal Loss: 3.9413 | Classification Loss: 0.6284 | Val Loss: 4.5669 | Val AUC: 0.6671 | F1-Score: 0.5389
+2025-11-08 16:14:40,011: New best model saved with AUC: 0.6671
+2025-11-08 16:23:37,147: Epoch 12/40 | Total Loss: 4.5672 | Causal Loss: 3.9397 | Classification Loss: 0.6275 | Val Loss: 4.5654 | Val AUC: 0.6666 | F1-Score: 0.5535
+2025-11-08 16:23:37,223: New best model saved with AUC: 0.6666
+2025-11-08 16:32:33,573: Epoch 13/40 | Total Loss: 4.5655 | Causal Loss: 3.9390 | Classification Loss: 0.6265 | Val Loss: 4.5633 | Val AUC: 0.6658 | F1-Score: 0.5568
+2025-11-08 16:32:33,642: New best model saved with AUC: 0.6658
+2025-11-08 16:41:30,388: Epoch 14/40 | Total Loss: 4.5641 | Causal Loss: 3.9386 | Classification Loss: 0.6256 | Val Loss: 4.5655 | Val AUC: 0.6661 | F1-Score: 0.5328
+2025-11-08 16:50:28,098: Epoch 15/40 | Total Loss: 4.5631 | Causal Loss: 3.9382 | Classification Loss: 0.6249 | Val Loss: 4.5628 | Val AUC: 0.6674 | F1-Score: 0.5658
+2025-11-08 16:50:28,183: New best model saved with AUC: 0.6674
+2025-11-08 16:59:24,922: Epoch 16/40 | Total Loss: 4.5622 | Causal Loss: 3.9380 | Classification Loss: 0.6242 | Val Loss: 4.5603 | Val AUC: 0.6667 | F1-Score: 0.5489
+2025-11-08 16:59:25,020: New best model saved with AUC: 0.6667
+2025-11-08 17:08:21,450: Epoch 17/40 | Total Loss: 4.5616 | Causal Loss: 3.9379 | Classification Loss: 0.6237 | Val Loss: 4.5622 | Val AUC: 0.6663 | F1-Score: 0.5407
+2025-11-08 17:17:18,884: Epoch 18/40 | Total Loss: 4.5609 | Causal Loss: 3.9379 | Classification Loss: 0.6230 | Val Loss: 4.5600 | Val AUC: 0.6676 | F1-Score: 0.5475
+2025-11-08 17:17:18,970: New best model saved with AUC: 0.6676
+2025-11-08 17:26:16,610: Epoch 19/40 | Total Loss: 4.5602 | Causal Loss: 3.9378 | Classification Loss: 0.6224 | Val Loss: 4.5608 | Val AUC: 0.6655 | F1-Score: 0.5560
+2025-11-08 17:35:13,204: Epoch 20/40 | Total Loss: 4.5596 | Causal Loss: 3.9378 | Classification Loss: 0.6218 | Val Loss: 4.5599 | Val AUC: 0.6655 | F1-Score: 0.5556
+2025-11-08 17:35:13,277: New best model saved with AUC: 0.6655
+2025-11-08 17:44:10,220: Epoch 21/40 | Total Loss: 4.5592 | Causal Loss: 3.9378 | Classification Loss: 0.6214 | Val Loss: 4.5598 | Val AUC: 0.6663 | F1-Score: 0.5630
+2025-11-08 17:44:10,311: New best model saved with AUC: 0.6663
+2025-11-08 17:53:05,219: Epoch 22/40 | Total Loss: 4.5587 | Causal Loss: 3.9378 | Classification Loss: 0.6209 | Val Loss: 4.5585 | Val AUC: 0.6673 | F1-Score: 0.5555
+2025-11-08 17:53:05,288: New best model saved with AUC: 0.6673
+2025-11-08 18:02:02,274: Epoch 23/40 | Total Loss: 4.5582 | Causal Loss: 3.9377 | Classification Loss: 0.6205 | Val Loss: 4.5596 | Val AUC: 0.6669 | F1-Score: 0.5637
+2025-11-08 18:10:59,587: Epoch 24/40 | Total Loss: 4.5578 | Causal Loss: 3.9377 | Classification Loss: 0.6201 | Val Loss: 4.5599 | Val AUC: 0.6677 | F1-Score: 0.5500
+2025-11-08 18:19:56,981: Epoch 25/40 | Total Loss: 4.5573 | Causal Loss: 3.9377 | Classification Loss: 0.6196 | Val Loss: 4.5586 | Val AUC: 0.6669 | F1-Score: 0.5608
+2025-11-08 18:19:56,981: Early stopping at epoch 25
+2025-11-08 18:19:57,067: Tempo medio per epoca: 536.9 secondi
+2025-11-08 18:19:57,068: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.2-1B_9550_standard_100_False_20251108_143616_.pt for final evaluation on test set
+2025-11-08 18:20:24,195: Final Test AUC: 0.6703 | Test F1-Score: 0.5548
+2025-11-08 18:20:24,197: Saving results to results_general_meta-llama_Llama-3.2-1B__9550_100_standard_1M_1.0_20251108_182024.csv
+  Val AUC Val F1-Score  ... Validation Loss Training Time (s)
+0  0.6673       0.5555  ...          4.5585           13422.1
+
+[1 rows x 8 columns]
+Completed fraction 1.0
+========================================================
+Sat Nov  8 06:20:25 PM CET 2025
+All training runs completed!
+Sat Nov  8 06:20:25 PM CET 2025
+
+Job 2098206 consumed 179.5 billing hours from project ec12.
+
+Submitted 2025-11-08T08:53:12; waited 19.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 20.0 hours
+Elapsed wallclock time:   9.4 hours
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+2098206          16            0.0 %  2025-11-08T08:53:31    9.4 h  0
+2098206.batch    16      1     7.7 %  2025-11-08T08:53:31    9.4 h  0
+
+Used CPU time:   11.6 CPU hours
+Unused CPU time: 5.8 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+2098206          80.0        
+2098206.batch    80.0     2.2
+
+Job 2098206 completed at Sat Nov 8 18:20:25 CET 2025

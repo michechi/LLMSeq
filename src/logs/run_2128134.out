@@ -1,0 +1,119 @@
+Starting job 2128134 on gpu-12 on Fox at Wed Nov 19 15:16:06 CET 2025
+
+=== Starting sequential fine-tuning job ===
+Wed Nov 19 03:16:06 PM CET 2025
+Cache directory: /localscratch/2128134/hf_cache
+--------------------------------------------------------
+Starting training with fraction = 1.0
+--------------------------------------------------------
+Wed Nov 19 03:16:14 PM CET 2025
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/cuda/__init__.py:51: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/utils/hub.py:128: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+2025-11-19 15:16:49,706: Argument batch_size: 32
+2025-11-19 15:16:49,706: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-19 15:16:49,706: Argument check_truncation: False
+2025-11-19 15:16:49,706: Argument cold_start: False
+2025-11-19 15:16:49,706: Argument csv_to_use: '9_med'
+2025-11-19 15:16:49,706: Argument early: 'loss'
+2025-11-19 15:16:49,706: Argument epochs: 40
+2025-11-19 15:16:49,706: Argument fraction: 1.0
+2025-11-19 15:16:49,706: Argument freeze_rotary: False
+2025-11-19 15:16:49,706: Argument gradient_accumulation_steps: 1
+2025-11-19 15:16:49,707: Argument lr: 0.0002
+2025-11-19 15:16:49,707: Argument max_length: 100
+2025-11-19 15:16:49,707: Argument model_name: 'meta-llama/Llama-3.2-1B'
+2025-11-19 15:16:49,707: Argument model_type: 'general'
+2025-11-19 15:16:49,707: Argument output_dir: 'src/output_slurms_fox/fraction_1.0_tiny_1M'
+2025-11-19 15:16:49,707: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-11-19 15:16:49,707: Argument patience: 3
+2025-11-19 15:16:49,707: Argument peft: False
+2025-11-19 15:16:49,707: Argument prompt_type: 'standard'
+2025-11-19 15:16:49,707: Argument seed: 9550
+2025-11-19 15:16:49,707: Argument test_rnd: False
+2025-11-19 15:16:49,707: Argument tiny: True
+2025-11-19 15:16:49,707: Argument tiny_type: '1M'
+2025-11-19 15:16:49,707: Argument use_quantization: False
+2025-11-19 15:16:52,961: Loading a TINY CausalLM model for testing purposes!
+2025-11-19 15:16:52,961: Loading pre-trained CausalLM model for COLD START!
+2025-11-19 15:16:52,961: Tiny model config - Hidden size: 128, Num layers: 4, Num heads: 4, Intermediate size: 512, Vocab size: 100
+2025-11-19 15:16:54,243: Using Flash Attention 2 for LLaMA tiny model
+2025-11-19 15:16:54,244: 
+New model parameters: 1,005,378
+2025-11-19 15:16:54,244: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-11-19 15:16:54,604: Using prompt type: standard
+2025-11-19 15:16:54,604: Model type: general, Model name: meta-llama/Llama-3.2-1B
+2025-11-19 15:16:54,604: Training with dataset fraction = 1.0
+2025-11-19 15:16:56,607: Train Subset size: 400000 / 400000
+2025-11-19 15:16:56,607: Val Subset size: 50000 / 50000
+2025-11-19 15:16:56,607: Distributions Train y's:
+2025-11-19 15:16:56,615: Outcome
+0          0.581575
+1          0.418425
+dtype: float64
+2025-11-19 15:16:56,615: Distributions Val y's:
+2025-11-19 15:16:56,617: Outcome
+0          0.57858
+1          0.42142
+dtype: float64
+2025-11-19 15:17:01,044: Example train text: Sequential events: Migraine Eczema (atopic dermatitis) Nasal congestion Zoster (mild shingles) Nasal congestion Insomnia Gastroenteritis Zoster (mild shingles) Tonsillitis Xerostomia Vertigo (benign positional) Depression Eczema (atopic dermatitis) Xerostomia Eczema (atopic dermatitis) Nasal congestion Wernicke encephalopathy Otitis media Conjunctivitis Flu (influenza)
+Outcome (0 or 1):
+2025-11-19 15:17:02,136: Average train text length: 45.24 words
+2025-11-19 15:17:02,137: Average validation text length: 45.22 words
+2025-11-19 15:17:02,137: Average test text length: 45.24 words
+2025-11-19 15:17:02,137: Training on 400000 samples, validating on 50000, testing on 50000 samples
+2025-11-19 15:17:02,137: DataLoaders created.
+2025-11-19 15:17:03,551: Early stopping criterion: loss
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+2025-11-19 15:38:26,897: Epoch 1/40 | Total Loss: 4.3561 | Causal Loss: 3.6808 | Classification Loss: 0.6753 | Val Loss: 1.2709 | Val AUC: 0.6043 | F1-Score: 0.4515
+2025-11-19 15:38:27,379: New best model saved with AUC: 0.6043
+2025-11-19 15:59:48,005: Epoch 2/40 | Total Loss: 1.2586 | Causal Loss: 0.5939 | Classification Loss: 0.6647 | Val Loss: 1.2549 | Val AUC: 0.6101 | F1-Score: 0.4753
+2025-11-19 15:59:48,105: New best model saved with AUC: 0.6101
+2025-11-19 16:21:07,072: Epoch 3/40 | Total Loss: 1.2509 | Causal Loss: 0.5916 | Classification Loss: 0.6593 | Val Loss: 1.2453 | Val AUC: 0.6288 | F1-Score: 0.5054
+2025-11-19 16:21:07,198: New best model saved with AUC: 0.6288
+2025-11-19 16:42:32,227: Epoch 4/40 | Total Loss: 1.2410 | Causal Loss: 0.5912 | Classification Loss: 0.6498 | Val Loss: 1.2374 | Val AUC: 0.6425 | F1-Score: 0.4721
+2025-11-19 16:42:32,331: New best model saved with AUC: 0.6425
+2025-11-19 17:03:57,655: Epoch 5/40 | Total Loss: 1.2356 | Causal Loss: 0.5908 | Classification Loss: 0.6448 | Val Loss: 1.2385 | Val AUC: 0.6433 | F1-Score: 0.5314
+2025-11-19 17:25:22,800: Epoch 6/40 | Total Loss: 1.2319 | Causal Loss: 0.5907 | Classification Loss: 0.6413 | Val Loss: 1.2293 | Val AUC: 0.6499 | F1-Score: 0.5125
+2025-11-19 17:25:22,904: New best model saved with AUC: 0.6499
+2025-11-19 17:46:47,355: Epoch 7/40 | Total Loss: 1.2298 | Causal Loss: 0.5906 | Classification Loss: 0.6392 | Val Loss: 1.2306 | Val AUC: 0.6509 | F1-Score: 0.5011
+2025-11-19 18:08:08,151: Epoch 8/40 | Total Loss: 1.2279 | Causal Loss: 0.5905 | Classification Loss: 0.6373 | Val Loss: 1.2292 | Val AUC: 0.6511 | F1-Score: 0.5058
+2025-11-19 18:08:08,250: New best model saved with AUC: 0.6511
+2025-11-19 18:29:37,545: Epoch 9/40 | Total Loss: 1.2262 | Causal Loss: 0.5905 | Classification Loss: 0.6358 | Val Loss: 1.2279 | Val AUC: 0.6526 | F1-Score: 0.4946
+2025-11-19 18:29:37,644: New best model saved with AUC: 0.6526
+2025-11-19 18:51:02,477: Epoch 10/40 | Total Loss: 1.2248 | Causal Loss: 0.5904 | Classification Loss: 0.6343 | Val Loss: 1.2279 | Val AUC: 0.6526 | F1-Score: 0.4996
+2025-11-19 19:12:27,753: Epoch 11/40 | Total Loss: 1.2231 | Causal Loss: 0.5904 | Classification Loss: 0.6327 | Val Loss: 1.2255 | Val AUC: 0.6556 | F1-Score: 0.5121
+2025-11-19 19:12:27,866: New best model saved with AUC: 0.6556
+2025-11-19 19:33:52,204: Epoch 12/40 | Total Loss: 1.2219 | Causal Loss: 0.5904 | Classification Loss: 0.6315 | Val Loss: 1.2254 | Val AUC: 0.6563 | F1-Score: 0.4951
+2025-11-19 19:33:52,311: New best model saved with AUC: 0.6563
+2025-11-19 19:55:18,047: Epoch 13/40 | Total Loss: 1.2209 | Causal Loss: 0.5904 | Classification Loss: 0.6305 | Val Loss: 1.2269 | Val AUC: 0.6533 | F1-Score: 0.5152
+slurmstepd: error: *** JOB 2128134 ON gpu-12 CANCELLED AT 2025-11-19T20:16:07 DUE TO TIME LIMIT ***
+
+Job 2128134 consumed 95.0 billing hours from project ec12.
+
+Submitted 2025-11-19T15:15:17; waited 48.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 5.0 hours
+Elapsed wallclock time:   5.0 hours
+
+Job timed out.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+2128134          16            0.0 %  2025-11-19T15:16:05    5.0 h  0
+2128134.batch    16      1     6.5 %  2025-11-19T15:16:05    5.0 h  Signal 15
+
+Used CPU time:   5.2 CPU hours
+Unused CPU time: 3.1 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+2128134          80.0        
+2128134.batch    80.0     3.1
+
+Job 2128134 completed at Wed Nov 19 20:16:10 CET 2025

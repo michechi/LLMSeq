@@ -1,0 +1,185 @@
+Starting job 2844602 on gpu-13 on Fox at Tue Dec 23 14:49:35 CET 2025
+
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/cuda/__init__.py:51: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+2025-12-23 14:50:07,701: Argument batch_size: 32
+2025-12-23 14:50:07,701: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-12-23 14:50:07,701: Argument check_truncation: False
+2025-12-23 14:50:07,701: Argument cold_start: False
+2025-12-23 14:50:07,701: Argument csv_to_use: 'odd_4'
+2025-12-23 14:50:07,701: Argument early: 'loss'
+2025-12-23 14:50:07,701: Argument epochs: 40
+2025-12-23 14:50:07,701: Argument fraction: 1.0
+2025-12-23 14:50:07,701: Argument freeze_rotary: True
+2025-12-23 14:50:07,702: Argument gradient_accumulation_steps: 1
+2025-12-23 14:50:07,702: Argument lr: 2e-05
+2025-12-23 14:50:07,702: Argument max_length: 200
+2025-12-23 14:50:07,702: Argument model_name: 'meta-llama/Llama-3.2-1B'
+2025-12-23 14:50:07,702: Argument model_type: 'general'
+2025-12-23 14:50:07,702: Argument outcome: 'Outcome'
+2025-12-23 14:50:07,702: Argument output_dir: '/fp/homes01/u01/ec-michelec/MIMICIV/src/output_slurms_fox/'
+2025-12-23 14:50:07,702: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-12-23 14:50:07,702: Argument patience: 3
+2025-12-23 14:50:07,702: Argument peft: True
+2025-12-23 14:50:07,702: Argument prompt_type: 'standard'
+2025-12-23 14:50:07,702: Argument seed: 9550
+2025-12-23 14:50:07,702: Argument test_rnd: False
+2025-12-23 14:50:07,702: Argument tiny: False
+2025-12-23 14:50:07,702: Argument tiny_type: '1M'
+2025-12-23 14:50:07,702: Argument use_quantization: False
+2025-12-23 14:50:10,367: Not Tiny model: loading full model.
+2025-12-23 14:50:10,368: Loading pre-trained CausalLM model for WARM START!
+2025-12-23 14:50:14,313: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-12-23 14:50:20,082: Zeroing out rotary embeddings...
+2025-12-23 14:50:20,084: Zeroed buffer: base_model.model.model.layers.0.self_attn.rotary_emb.inv_freq
+2025-12-23 14:50:20,084: Zeroed buffer: base_model.model.model.layers.1.self_attn.rotary_emb.inv_freq
+2025-12-23 14:50:20,084: Zeroed buffer: base_model.model.model.layers.2.self_attn.rotary_emb.inv_freq
+2025-12-23 14:50:20,084: Zeroed buffer: base_model.model.model.layers.3.self_attn.rotary_emb.inv_freq
+2025-12-23 14:50:20,084: Zeroed buffer: base_model.model.model.layers.4.self_attn.rotary_emb.inv_freq
+2025-12-23 14:50:20,084: Zeroed buffer: base_model.model.model.layers.5.self_attn.rotary_emb.inv_freq
+2025-12-23 14:50:20,084: Zeroed buffer: base_model.model.model.layers.6.self_attn.rotary_emb.inv_freq
+2025-12-23 14:50:20,085: Zeroed buffer: base_model.model.model.layers.7.self_attn.rotary_emb.inv_freq
+2025-12-23 14:50:20,085: Zeroed buffer: base_model.model.model.layers.8.self_attn.rotary_emb.inv_freq
+2025-12-23 14:50:20,085: Zeroed buffer: base_model.model.model.layers.9.self_attn.rotary_emb.inv_freq
+2025-12-23 14:50:20,085: Zeroed buffer: base_model.model.model.layers.10.self_attn.rotary_emb.inv_freq
+2025-12-23 14:50:20,085: Zeroed buffer: base_model.model.model.layers.11.self_attn.rotary_emb.inv_freq
+2025-12-23 14:50:20,085: Zeroed buffer: base_model.model.model.layers.12.self_attn.rotary_emb.inv_freq
+2025-12-23 14:50:20,085: Zeroed buffer: base_model.model.model.layers.13.self_attn.rotary_emb.inv_freq
+2025-12-23 14:50:20,085: Zeroed buffer: base_model.model.model.layers.14.self_attn.rotary_emb.inv_freq
+2025-12-23 14:50:20,086: Zeroed buffer: base_model.model.model.layers.15.self_attn.rotary_emb.inv_freq
+2025-12-23 14:50:20,086: Zeroed buffer: base_model.model.model.rotary_emb.inv_freq
+2025-12-23 14:50:20,637: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-12-23 14:50:31,465: Using prompt type: standard
+2025-12-23 14:50:31,466: Model type: general, Model name: meta-llama/Llama-3.2-1B
+2025-12-23 14:50:31,466: Training with dataset fraction = 1.0
+2025-12-23 14:50:31,609: Train Subset size: 75856 / 75856
+2025-12-23 14:50:31,609: Val Subset size: 9482 / 9482
+2025-12-23 14:50:31,609: Distributions Train y's:
+2025-12-23 14:50:31,612: Outcome
+0          0.502452
+1          0.497548
+dtype: float64
+2025-12-23 14:50:31,612: Distributions Val y's:
+2025-12-23 14:50:31,613: Outcome
+1          0.512023
+0          0.487977
+dtype: float64
+2025-12-23 14:50:32,167: Example train text: Sequential events: N Q R S A D H K I C C J D N Z M Y Y V J
+Outcome (0 or 1):
+2025-12-23 14:50:32,222: Average train text length: 26.00 words
+2025-12-23 14:50:32,222: Average validation text length: 26.00 words
+2025-12-23 14:50:32,222: Average test text length: 26.00 words
+2025-12-23 14:50:32,222: Training on 75856 samples, validating on 9482, testing on 9482 samples
+2025-12-23 14:50:32,223: DataLoaders created.
+2025-12-23 14:50:33,554: Early stopping criterion: loss
+trainable params: 1,703,936 || all params: 1,237,518,336 || trainable%: 0.1377
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+2025-12-23 15:08:24,100: Epoch 1/40 | Total Loss: 4.1298 | Causal Loss: 3.4286 | Classification Loss: 0.7013 | Val Loss: 3.1692 | Val AUC: 0.5025 | F1-Score: 0.2429 | Accuracy:  0.4912 | Precision: 0.5102 | Recall:    0.1594
+2025-12-23 15:08:25,762: New best model saved with AUC: 0.5025
+/fp/projects01/ec30/software/easybuild/software/nlpl-scikit-bundle/1.3.2-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/sklearn/metrics/_classification.py:1471: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 due to no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, msg_start, len(result))
+2025-12-23 15:26:17,193: Epoch 2/40 | Total Loss: 3.1511 | Causal Loss: 2.4514 | Classification Loss: 0.6996 | Val Loss: 3.0671 | Val AUC: 0.4958 | F1-Score: 0.0000 | Accuracy:  0.4880 | Precision: 0.0000 | Recall:    0.0000
+2025-12-23 15:26:18,920: New best model saved with AUC: 0.4958
+2025-12-23 15:44:11,181: Epoch 3/40 | Total Loss: 2.7983 | Causal Loss: 2.0974 | Classification Loss: 0.7008 | Val Loss: 2.7637 | Val AUC: 0.5137 | F1-Score: 0.6767 | Accuracy:  0.5117 | Precision: 0.5119 | Recall:    0.9979
+2025-12-23 15:44:12,930: New best model saved with AUC: 0.5137
+/fp/projects01/ec30/software/easybuild/software/nlpl-scikit-bundle/1.3.2-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/sklearn/metrics/_classification.py:1471: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 due to no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, msg_start, len(result))
+2025-12-23 16:02:05,287: Epoch 4/40 | Total Loss: 2.7735 | Causal Loss: 2.0748 | Classification Loss: 0.6987 | Val Loss: 2.7656 | Val AUC: 0.5112 | F1-Score: 0.0000 | Accuracy:  0.4880 | Precision: 0.0000 | Recall:    0.0000
+2025-12-23 16:19:57,516: Epoch 5/40 | Total Loss: 2.7665 | Causal Loss: 2.0681 | Classification Loss: 0.6984 | Val Loss: 2.7568 | Val AUC: 0.5042 | F1-Score: 0.6773 | Accuracy:  0.5120 | Precision: 0.5120 | Recall:    1.0000
+2025-12-23 16:19:59,272: New best model saved with AUC: 0.5042
+2025-12-23 16:37:51,473: Epoch 6/40 | Total Loss: 2.7550 | Causal Loss: 2.0568 | Classification Loss: 0.6982 | Val Loss: 2.7450 | Val AUC: 0.4978 | F1-Score: 0.0012 | Accuracy:  0.4878 | Precision: 0.3750 | Recall:    0.0006
+2025-12-23 16:37:53,188: New best model saved with AUC: 0.4978
+2025-12-23 16:55:43,922: Epoch 7/40 | Total Loss: 2.7525 | Causal Loss: 2.0546 | Classification Loss: 0.6979 | Val Loss: 2.7413 | Val AUC: 0.5090 | F1-Score: 0.1986 | Accuracy:  0.4937 | Precision: 0.5238 | Recall:    0.1226
+2025-12-23 16:55:45,702: New best model saved with AUC: 0.5090
+/fp/projects01/ec30/software/easybuild/software/nlpl-scikit-bundle/1.3.2-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/sklearn/metrics/_classification.py:1471: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 due to no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, msg_start, len(result))
+2025-12-23 17:13:38,534: Epoch 8/40 | Total Loss: 2.7436 | Causal Loss: 2.0457 | Classification Loss: 0.6979 | Val Loss: 2.7371 | Val AUC: 0.5062 | F1-Score: 0.0000 | Accuracy:  0.4880 | Precision: 0.0000 | Recall:    0.0000
+2025-12-23 17:13:40,289: New best model saved with AUC: 0.5062
+2025-12-23 17:31:32,893: Epoch 9/40 | Total Loss: 2.7375 | Causal Loss: 2.0394 | Classification Loss: 0.6981 | Val Loss: 2.7237 | Val AUC: 0.5116 | F1-Score: 0.6768 | Accuracy:  0.5120 | Precision: 0.5120 | Recall:    0.9979
+2025-12-23 17:31:34,660: New best model saved with AUC: 0.5116
+2025-12-23 17:49:27,766: Epoch 10/40 | Total Loss: 2.7215 | Causal Loss: 2.0241 | Classification Loss: 0.6974 | Val Loss: 2.7010 | Val AUC: 0.5128 | F1-Score: 0.5095 | Accuracy:  0.5077 | Precision: 0.5201 | Recall:    0.4993
+2025-12-23 17:49:29,472: New best model saved with AUC: 0.5128
+2025-12-23 18:07:21,836: Epoch 11/40 | Total Loss: 2.6987 | Causal Loss: 2.0016 | Classification Loss: 0.6971 | Val Loss: 2.6838 | Val AUC: 0.5031 | F1-Score: 0.6772 | Accuracy:  0.5119 | Precision: 0.5120 | Recall:    0.9998
+2025-12-23 18:07:23,555: New best model saved with AUC: 0.5031
+2025-12-23 18:25:16,327: Epoch 12/40 | Total Loss: 2.6891 | Causal Loss: 1.9917 | Classification Loss: 0.6973 | Val Loss: 2.6801 | Val AUC: 0.5105 | F1-Score: 0.0004 | Accuracy:  0.4881 | Precision: 1.0000 | Recall:    0.0002
+2025-12-23 18:25:18,061: New best model saved with AUC: 0.5105
+2025-12-23 18:43:09,082: Epoch 13/40 | Total Loss: 2.6850 | Causal Loss: 1.9883 | Classification Loss: 0.6967 | Val Loss: 2.6781 | Val AUC: 0.5110 | F1-Score: 0.0667 | Accuracy:  0.4892 | Precision: 0.5180 | Recall:    0.0356
+2025-12-23 18:43:10,794: New best model saved with AUC: 0.5110
+2025-12-23 19:01:03,645: Epoch 14/40 | Total Loss: 2.6813 | Causal Loss: 1.9845 | Classification Loss: 0.6968 | Val Loss: 2.6761 | Val AUC: 0.5108 | F1-Score: 0.0159 | Accuracy:  0.4892 | Precision: 0.5909 | Recall:    0.0080
+2025-12-23 19:01:05,346: New best model saved with AUC: 0.5108
+2025-12-23 19:18:57,277: Epoch 15/40 | Total Loss: 2.6805 | Causal Loss: 1.9839 | Classification Loss: 0.6966 | Val Loss: 2.6750 | Val AUC: 0.5125 | F1-Score: 0.0008 | Accuracy:  0.4880 | Precision: 0.5000 | Recall:    0.0004
+2025-12-23 19:18:58,997: New best model saved with AUC: 0.5125
+/fp/projects01/ec30/software/easybuild/software/nlpl-scikit-bundle/1.3.2-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/sklearn/metrics/_classification.py:1471: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 due to no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, msg_start, len(result))
+2025-12-23 19:36:52,321: Epoch 16/40 | Total Loss: 2.6786 | Causal Loss: 1.9818 | Classification Loss: 0.6968 | Val Loss: 2.6771 | Val AUC: 0.5086 | F1-Score: 0.0000 | Accuracy:  0.4880 | Precision: 0.0000 | Recall:    0.0000
+2025-12-23 19:54:43,635: Epoch 17/40 | Total Loss: 2.6769 | Causal Loss: 1.9807 | Classification Loss: 0.6963 | Val Loss: 2.6742 | Val AUC: 0.5107 | F1-Score: 0.0025 | Accuracy:  0.4884 | Precision: 0.7500 | Recall:    0.0012
+2025-12-23 19:54:45,354: New best model saved with AUC: 0.5107
+2025-12-23 20:12:38,264: Epoch 18/40 | Total Loss: 2.6762 | Causal Loss: 1.9801 | Classification Loss: 0.6961 | Val Loss: 2.6734 | Val AUC: 0.5119 | F1-Score: 0.0016 | Accuracy:  0.4880 | Precision: 0.5000 | Recall:    0.0008
+2025-12-23 20:12:40,103: New best model saved with AUC: 0.5119
+2025-12-23 20:30:33,148: Epoch 19/40 | Total Loss: 2.6763 | Causal Loss: 1.9797 | Classification Loss: 0.6967 | Val Loss: 2.6720 | Val AUC: 0.5079 | F1-Score: 0.1244 | Accuracy:  0.4909 | Precision: 0.5213 | Recall:    0.0706
+2025-12-23 20:30:34,857: New best model saved with AUC: 0.5079
+/fp/projects01/ec30/software/easybuild/software/nlpl-scikit-bundle/1.3.2-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/sklearn/metrics/_classification.py:1471: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 due to no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, msg_start, len(result))
+2025-12-23 20:48:27,813: Epoch 20/40 | Total Loss: 2.6757 | Causal Loss: 1.9792 | Classification Loss: 0.6965 | Val Loss: 2.6745 | Val AUC: 0.5091 | F1-Score: 0.0000 | Accuracy:  0.4880 | Precision: 0.0000 | Recall:    0.0000
+2025-12-23 21:06:20,821: Epoch 21/40 | Total Loss: 2.6749 | Causal Loss: 1.9786 | Classification Loss: 0.6963 | Val Loss: 2.6713 | Val AUC: 0.5106 | F1-Score: 0.6683 | Accuracy:  0.5109 | Precision: 0.5119 | Recall:    0.9623
+2025-12-23 21:06:22,528: New best model saved with AUC: 0.5106
+2025-12-23 21:24:15,919: Epoch 22/40 | Total Loss: 2.6747 | Causal Loss: 1.9784 | Classification Loss: 0.6963 | Val Loss: 2.6727 | Val AUC: 0.5120 | F1-Score: 0.0049 | Accuracy:  0.4886 | Precision: 0.6667 | Recall:    0.0025
+2025-12-23 21:42:08,860: Epoch 23/40 | Total Loss: 2.6742 | Causal Loss: 1.9782 | Classification Loss: 0.6961 | Val Loss: 2.6720 | Val AUC: 0.5100 | F1-Score: 0.5196 | Accuracy:  0.5100 | Precision: 0.5217 | Recall:    0.5176
+2025-12-23 22:00:02,308: Epoch 24/40 | Total Loss: 2.6746 | Causal Loss: 1.9783 | Classification Loss: 0.6963 | Val Loss: 2.6712 | Val AUC: 0.5126 | F1-Score: 0.1173 | Accuracy:  0.4876 | Precision: 0.4969 | Recall:    0.0665
+2025-12-23 22:00:04,048: New best model saved with AUC: 0.5126
+2025-12-23 22:17:57,469: Epoch 25/40 | Total Loss: 2.6732 | Causal Loss: 1.9776 | Classification Loss: 0.6956 | Val Loss: 2.6720 | Val AUC: 0.5090 | F1-Score: 0.0126 | Accuracy:  0.4891 | Precision: 0.6078 | Recall:    0.0064
+/fp/projects01/ec30/software/easybuild/software/nlpl-scikit-bundle/1.3.2-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/sklearn/metrics/_classification.py:1471: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 due to no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, msg_start, len(result))
+2025-12-23 22:35:50,946: Epoch 26/40 | Total Loss: 2.6733 | Causal Loss: 1.9776 | Classification Loss: 0.6958 | Val Loss: 2.6761 | Val AUC: 0.5117 | F1-Score: 0.0000 | Accuracy:  0.4880 | Precision: 0.0000 | Recall:    0.0000
+2025-12-23 22:53:42,555: Epoch 27/40 | Total Loss: 2.6731 | Causal Loss: 1.9772 | Classification Loss: 0.6959 | Val Loss: 2.6709 | Val AUC: 0.5132 | F1-Score: 0.6772 | Accuracy:  0.5119 | Precision: 0.5120 | Recall:    0.9998
+2025-12-23 22:53:44,267: New best model saved with AUC: 0.5132
+2025-12-23 23:11:36,151: Epoch 28/40 | Total Loss: 2.6735 | Causal Loss: 1.9772 | Classification Loss: 0.6963 | Val Loss: 2.6711 | Val AUC: 0.5118 | F1-Score: 0.0485 | Accuracy:  0.4911 | Precision: 0.5694 | Recall:    0.0253
+2025-12-23 23:29:28,068: Epoch 29/40 | Total Loss: 2.6725 | Causal Loss: 1.9767 | Classification Loss: 0.6957 | Val Loss: 2.6722 | Val AUC: 0.5111 | F1-Score: 0.0273 | Accuracy:  0.4898 | Precision: 0.5714 | Recall:    0.0140
+2025-12-23 23:47:20,750: Epoch 30/40 | Total Loss: 2.6720 | Causal Loss: 1.9768 | Classification Loss: 0.6953 | Val Loss: 2.6696 | Val AUC: 0.5119 | F1-Score: 0.6654 | Accuracy:  0.5133 | Precision: 0.5134 | Recall:    0.9452
+2025-12-23 23:47:22,468: New best model saved with AUC: 0.5119
+2025-12-24 00:05:14,516: Epoch 31/40 | Total Loss: 2.6722 | Causal Loss: 1.9766 | Classification Loss: 0.6956 | Val Loss: 2.6704 | Val AUC: 0.5146 | F1-Score: 0.2636 | Accuracy:  0.4920 | Precision: 0.5113 | Recall:    0.1775
+2025-12-24 00:23:05,863: Epoch 32/40 | Total Loss: 2.6714 | Causal Loss: 1.9764 | Classification Loss: 0.6950 | Val Loss: 2.6704 | Val AUC: 0.5150 | F1-Score: 0.1701 | Accuracy:  0.4926 | Precision: 0.5234 | Recall:    0.1015
+2025-12-24 00:40:59,366: Epoch 33/40 | Total Loss: 2.6715 | Causal Loss: 1.9763 | Classification Loss: 0.6952 | Val Loss: 2.6694 | Val AUC: 0.5146 | F1-Score: 0.6141 | Accuracy:  0.5197 | Precision: 0.5217 | Recall:    0.7462
+2025-12-24 00:41:01,086: New best model saved with AUC: 0.5146
+2025-12-24 00:58:52,651: Epoch 34/40 | Total Loss: 2.6714 | Causal Loss: 1.9761 | Classification Loss: 0.6952 | Val Loss: 2.6691 | Val AUC: 0.5122 | F1-Score: 0.6455 | Accuracy:  0.5120 | Precision: 0.5139 | Recall:    0.8678
+2025-12-24 00:58:54,355: New best model saved with AUC: 0.5122
+2025-12-24 01:16:47,765: Epoch 35/40 | Total Loss: 2.6712 | Causal Loss: 1.9760 | Classification Loss: 0.6952 | Val Loss: 2.6695 | Val AUC: 0.5120 | F1-Score: 0.4659 | Accuracy:  0.5079 | Precision: 0.5243 | Recall:    0.4192
+2025-12-24 01:34:39,704: Epoch 36/40 | Total Loss: 2.6714 | Causal Loss: 1.9759 | Classification Loss: 0.6955 | Val Loss: 2.6699 | Val AUC: 0.5129 | F1-Score: 0.3251 | Accuracy:  0.4978 | Precision: 0.5211 | Recall:    0.2363
+2025-12-24 01:52:32,475: Epoch 37/40 | Total Loss: 2.6708 | Causal Loss: 1.9757 | Classification Loss: 0.6950 | Val Loss: 2.6700 | Val AUC: 0.5136 | F1-Score: 0.2927 | Accuracy:  0.4955 | Precision: 0.5186 | Recall:    0.2039
+2025-12-24 01:52:32,475: Early stopping at epoch 37
+2025-12-24 01:52:33,517: Tempo medio per epoca: 1073.5 secondi
+2025-12-24 01:52:33,521: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.2-1B_9550_standard_200_False_20251223_145033_False_odd_4_2e-05_.pt for final evaluation on test set
+2025-12-24 01:53:31,060: Final Test AUC: 0.5042 | Test F1-Score: 0.6400 | Accuracy: 0.5065 | Precision: 0.5052 | Recall: 0.8730
+2025-12-24 01:53:31,062: Saving results to results_general_meta-llama_Llama-3.2-1B__peft_9550_200_standard_1M_1.0_20251224_015331.csv
+  Val AUC Val F1-Score  ... Validation Loss Training Time (s)
+0  0.5122       0.6455  ...          2.6691           39721.2
+
+[1 rows x 11 columns]
+
+Job 2844602 consumed 210.3 billing hours from project ec12.
+
+Submitted 2025-12-23T14:49:34; waited 0.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 15.0 hours
+Elapsed wallclock time:   11.1 hours
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+2844602          16            0.0 %  2025-12-23T14:49:34   11.1 h  0
+2844602.batch    16      1     6.4 %  2025-12-23T14:49:34   11.1 h  0
+
+Used CPU time:   11.4 CPU hours
+Unused CPU time: 6.9 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+2844602          80.0        
+2844602.batch    80.0     4.5
+
+Job 2844602 completed at Wed Dec 24 01:53:32 CET 2025

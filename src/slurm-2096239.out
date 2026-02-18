@@ -1,0 +1,79 @@
+Starting job 2096239 on gpu-13 on Fox at Thu Nov 6 19:27:48 CET 2025
+
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/cuda/__init__.py:51: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+2025-11-06 19:28:28,356: Argument batch_size: 128
+2025-11-06 19:28:28,359: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-06 19:28:28,359: Argument cold_start: False
+2025-11-06 19:28:28,359: Argument early: 'loss'
+2025-11-06 19:28:28,359: Argument epochs: 20
+2025-11-06 19:28:28,359: Argument gradient_accumulation_steps: 1
+2025-11-06 19:28:28,359: Argument lr: 0.0002
+2025-11-06 19:28:28,359: Argument max_length: 100
+2025-11-06 19:28:28,359: Argument model_name: 'meta-llama/Llama-3.2-1B'
+2025-11-06 19:28:28,359: Argument model_type: 'general'
+2025-11-06 19:28:28,359: Argument number_to_use: 9
+2025-11-06 19:28:28,359: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-11-06 19:28:28,359: Argument patience: 3
+2025-11-06 19:28:28,359: Argument peft: False
+2025-11-06 19:28:28,359: Argument prompt_type: 'standard'
+2025-11-06 19:28:28,360: Argument seed: 9550
+2025-11-06 19:28:28,360: Argument test_rnd: False
+2025-11-06 19:28:28,360: Argument tiny: True
+2025-11-06 19:28:28,360: Argument tiny_type: '0.2M'
+2025-11-06 19:28:28,360: Argument use_quantization: False
+2025-11-06 19:28:31,796: Loading a TINY CausalLM model for testing purposes!
+2025-11-06 19:28:31,796: Loading pre-trained CausalLM model for COLD START!
+2025-11-06 19:28:31,796: Tiny model config - Hidden size: 64, Num layers: 4, Num heads: 4, Intermediate size: 256, Vocab size: 100
+2025-11-06 19:28:33,376: Using Flash Attention 2 for LLaMA tiny model
+2025-11-06 19:28:33,701: 
+New model parameters: 254,882
+2025-11-06 19:28:33,701: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-11-06 19:28:33,793: Using prompt type: standard
+2025-11-06 19:28:33,793: Model type: general, Model name: meta-llama/Llama-3.2-1B
+2025-11-06 19:28:37,159: Example train text: Sequential events: M E N Z N I G Z T X V D E X E N W O C F
+Outcome (0 or 1):
+2025-11-06 19:28:37,458: Average train text length: 26.00 words
+2025-11-06 19:28:37,458: Average validation text length: 26.00 words
+2025-11-06 19:28:37,458: Average test text length: 26.00 words
+2025-11-06 19:28:37,458: Training on 400000 samples, validating on 50000, testing on 50000 samples
+2025-11-06 19:28:37,458: DataLoaders created.
+2025-11-06 19:28:39,003: Early stopping criterion: loss
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+2025-11-06 19:36:36,299: Epoch 1/20 | Total Loss: 9.7573 | Causal Loss: 9.0821 | Classification Loss: 0.6752 | Val Loss: 7.1252 | Val AUC: 0.5924 | F1-Score: 0.0174
+2025-11-06 19:36:36,366: New best model saved with AUC: 0.5924
+2025-11-06 20:11:55,290: Epoch 2/20 | Total Loss: 6.3386 | Causal Loss: 5.6684 | Classification Loss: 0.6702 | Val Loss: 6.1952 | Val AUC: 0.5951 | F1-Score: 0.3849
+2025-11-06 20:11:55,367: New best model saved with AUC: 0.5951
+2025-11-06 20:47:14,264: Epoch 3/20 | Total Loss: 6.1881 | Causal Loss: 5.5198 | Classification Loss: 0.6683 | Val Loss: 6.1778 | Val AUC: 0.5957 | F1-Score: 0.0929
+2025-11-06 20:47:14,333: New best model saved with AUC: 0.5957
+2025-11-06 21:22:34,596: Epoch 4/20 | Total Loss: 6.1713 | Causal Loss: 5.5041 | Classification Loss: 0.6672 | Val Loss: 6.1681 | Val AUC: 0.5961 | F1-Score: 0.3758
+2025-11-06 21:22:34,675: New best model saved with AUC: 0.5961
+slurmstepd: error: *** JOB 2096239 ON gpu-13 CANCELLED AT 2025-11-06T21:28:16 DUE TO TIME LIMIT ***
+
+Job 2096239 consumed 38.2 billing hours from project ec12.
+
+Submitted 2025-11-06T19:27:47; waited 0.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 2.0 hours
+Elapsed wallclock time:   2.0 hours
+
+Job timed out.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+2096239          16            0.0 %  2025-11-06T19:27:47    2.0 h  0
+2096239.batch    16      1     2.4 %  2025-11-06T19:27:47    2.0 h  Signal 15
+
+Used CPU time:   45.7 CPU minutes
+Unused CPU time: 1.3 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+2096239          80.0        
+2096239.batch    80.0     2.2
+
+Job 2096239 completed at Thu Nov 6 21:28:19 CET 2025

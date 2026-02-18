@@ -1,0 +1,113 @@
+Starting job 2190406 on gpu-7 on Fox at Sat Dec 13 10:40:23 CET 2025
+
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/cuda/__init__.py:51: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+2025-12-13 10:40:52,881: Argument batch_size: 32
+2025-12-13 10:40:52,883: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-12-13 10:40:52,883: Argument check_truncation: False
+2025-12-13 10:40:52,883: Argument cold_start: False
+2025-12-13 10:40:52,883: Argument csv_to_use: '0'
+2025-12-13 10:40:52,883: Argument early: 'loss'
+2025-12-13 10:40:52,883: Argument epochs: 20
+2025-12-13 10:40:52,883: Argument fraction: 1.0
+2025-12-13 10:40:52,883: Argument freeze_rotary: False
+2025-12-13 10:40:52,883: Argument gradient_accumulation_steps: 1
+2025-12-13 10:40:52,883: Argument lr: 2e-05
+2025-12-13 10:40:52,883: Argument max_length: 100
+2025-12-13 10:40:52,883: Argument model_name: 'meta-llama/Llama-3.1-8B'
+2025-12-13 10:40:52,883: Argument model_type: 'general'
+2025-12-13 10:40:52,883: Argument output_dir: '/fp/homes01/u01/ec-michelec/MIMICIV/src/output_slurms_fox/'
+2025-12-13 10:40:52,883: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-12-13 10:40:52,883: Argument patience: 3
+2025-12-13 10:40:52,883: Argument peft: True
+2025-12-13 10:40:52,883: Argument prompt_type: 'standard'
+2025-12-13 10:40:52,883: Argument seed: 9550
+2025-12-13 10:40:52,883: Argument test_rnd: False
+2025-12-13 10:40:52,883: Argument tiny: False
+2025-12-13 10:40:52,883: Argument tiny_type: '1M'
+2025-12-13 10:40:52,883: Argument use_quantization: False
+2025-12-13 10:40:55,341: Not Tiny model: loading full model.
+2025-12-13 10:40:55,341: Loading pre-trained CausalLM model for WARM START!
+2025-12-13 10:40:56,880: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:09<00:29,  9.76s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:19<00:19,  9.86s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:29<00:09,  9.82s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:31<00:00,  6.87s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:31<00:00,  7.95s/it]
+2025-12-13 10:41:32,412: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-12-13 10:42:09,840: Using prompt type: standard
+2025-12-13 10:42:09,840: Model type: general, Model name: meta-llama/Llama-3.1-8B
+2025-12-13 10:42:09,840: Training with dataset fraction = 1.0
+2025-12-13 10:42:09,969: Train Subset size: 160000 / 160000
+2025-12-13 10:42:09,969: Val Subset size: 20000 / 20000
+2025-12-13 10:42:09,969: Distributions Train y's:
+2025-12-13 10:42:09,972: Outcome
+0          0.688794
+1          0.311206
+dtype: float64
+2025-12-13 10:42:09,973: Distributions Val y's:
+2025-12-13 10:42:09,974: Outcome
+0          0.6932
+1          0.3068
+dtype: float64
+2025-12-13 10:42:11,145: Example train text: Sequential events: F R J C Q T H J X Q H K Q J I S O B V H
+Outcome (0 or 1):
+2025-12-13 10:42:11,263: Average train text length: 26.00 words
+2025-12-13 10:42:11,263: Average validation text length: 26.00 words
+2025-12-13 10:42:11,263: Average test text length: 26.00 words
+2025-12-13 10:42:11,264: Training on 160000 samples, validating on 20000, testing on 20000 samples
+2025-12-13 10:42:11,266: DataLoaders created.
+2025-12-13 10:42:12,528: Early stopping criterion: loss
+trainable params: 6,815,744 || all params: 7,511,740,416 || trainable%: 0.0907
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+2025-12-13 11:50:59,295: Epoch 1/20 | Total Loss: 4.2446 | Causal Loss: 3.6080 | Classification Loss: 0.6367 | Val Loss: 2.7270 | Val AUC: 0.5007 | F1-Score: 0.0000
+2025-12-13 11:51:11,453: New best model saved with AUC: 0.5007
+2025-12-13 12:59:58,340: Epoch 2/20 | Total Loss: 2.7351 | Causal Loss: 2.1068 | Classification Loss: 0.6282 | Val Loss: 2.7225 | Val AUC: 0.5028 | F1-Score: 0.0000
+2025-12-13 13:00:10,397: New best model saved with AUC: 0.5028
+2025-12-13 14:08:55,077: Epoch 3/20 | Total Loss: 2.7327 | Causal Loss: 2.1054 | Classification Loss: 0.6274 | Val Loss: 2.7218 | Val AUC: 0.4990 | F1-Score: 0.0000
+2025-12-13 14:09:07,366: New best model saved with AUC: 0.4990
+2025-12-13 15:17:58,112: Epoch 4/20 | Total Loss: 2.7317 | Causal Loss: 2.1047 | Classification Loss: 0.6270 | Val Loss: 2.7213 | Val AUC: 0.4960 | F1-Score: 0.0000
+2025-12-13 15:18:10,352: New best model saved with AUC: 0.4960
+2025-12-13 16:26:53,917: Epoch 5/20 | Total Loss: 2.7317 | Causal Loss: 2.1054 | Classification Loss: 0.6263 | Val Loss: 2.7207 | Val AUC: 0.5016 | F1-Score: 0.0000
+2025-12-13 16:27:06,292: New best model saved with AUC: 0.5016
+2025-12-13 17:35:57,780: Epoch 6/20 | Total Loss: 2.7289 | Causal Loss: 2.1041 | Classification Loss: 0.6248 | Val Loss: 2.7206 | Val AUC: 0.5062 | F1-Score: 0.0000
+2025-12-13 17:36:09,885: New best model saved with AUC: 0.5062
+2025-12-13 18:44:58,032: Epoch 7/20 | Total Loss: 2.7266 | Causal Loss: 2.1040 | Classification Loss: 0.6226 | Val Loss: 2.7217 | Val AUC: 0.5050 | F1-Score: 0.0000
+2025-12-13 19:53:48,549: Epoch 8/20 | Total Loss: 2.7251 | Causal Loss: 2.1038 | Classification Loss: 0.6212 | Val Loss: 2.7196 | Val AUC: 0.5085 | F1-Score: 0.0000
+2025-12-13 19:54:00,659: New best model saved with AUC: 0.5085
+2025-12-13 21:02:50,814: Epoch 9/20 | Total Loss: 2.7242 | Causal Loss: 2.1037 | Classification Loss: 0.6205 | Val Loss: 2.7205 | Val AUC: 0.5131 | F1-Score: 0.0000
+2025-12-13 22:11:40,645: Epoch 10/20 | Total Loss: 2.7234 | Causal Loss: 2.1035 | Classification Loss: 0.6198 | Val Loss: 2.7203 | Val AUC: 0.5130 | F1-Score: 0.0000
+2025-12-13 23:20:30,298: Epoch 11/20 | Total Loss: 2.7229 | Causal Loss: 2.1034 | Classification Loss: 0.6195 | Val Loss: 2.7205 | Val AUC: 0.5161 | F1-Score: 0.0000
+2025-12-13 23:20:30,299: Early stopping at epoch 11
+2025-12-13 23:20:40,216: Tempo medio per epoca: 4137.2 secondi
+2025-12-13 23:20:40,225: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_9550_standard_100_False_20251213_104212_False_0_.pt for final evaluation on test set
+2025-12-13 23:24:31,529: Final Test AUC: 0.5145 | Test F1-Score: 0.0000
+2025-12-13 23:24:31,530: Saving results to results_general_meta-llama_Llama-3.1-8B__peft_9550_100_standard_1M_1.0_20251213_232431.csv
+  Val AUC Val F1-Score  ... Validation Loss Training Time (s)
+0  0.5085       0.0000  ...          2.7196           45508.8
+
+[1 rows x 8 columns]
+
+Job 2190406 consumed 242.0 billing hours from project ec12.
+
+Submitted 2025-12-13T10:40:22; waited 0.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 24.0 hours
+Elapsed wallclock time:   12.7 hours
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+2190406          16            0.0 %  2025-12-13T10:40:22   12.7 h  0
+2190406.batch    16      1     6.3 %  2025-12-13T10:40:22   12.7 h  0
+
+Used CPU time:   12.9 CPU hours
+Unused CPU time: 8.0 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+2190406          80.0        
+2190406.batch    80.0    34.6
+
+Job 2190406 completed at Sat Dec 13 23:24:33 CET 2025

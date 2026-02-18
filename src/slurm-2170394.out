@@ -1,0 +1,47 @@
+Starting job 2170394 on gpu-12 on Fox at Wed Dec 3 15:30:31 CET 2025
+
+/var/spool/slurmd/job2170394/slurm_script: line 15: /fp/homes01/u01/ec-michelec/.bashrc: No such file or directory
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/cuda/__init__.py:51: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+2025-12-03 15:31:28,345: Argument batch_size: 32
+2025-12-03 15:31:28,347: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache/'
+2025-12-03 15:31:28,347: Argument csv_to_use: '9_med'
+2025-12-03 15:31:28,347: Argument embedding_dir: '/cluster/work/projects/ec12/michechi/embeddings/'
+2025-12-03 15:31:28,347: Argument first_time: True
+2025-12-03 15:31:28,347: Argument max_length: 200
+2025-12-03 15:31:28,347: Argument model_name: 'meta-llama/Llama-3.2-1B'
+2025-12-03 15:31:28,347: Argument output_dir: '/fp/homes01/u01/ec-michelec/MIMICIV/src/output_slurms_fox/'
+2025-12-03 15:31:28,347: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-12-03 15:31:28,347: Argument seed: 9550
+2025-12-03 15:31:28,347: Argument tokenizer: 'LLM'
+2025-12-03 15:31:28,389: Loading data...
+2025-12-03 15:31:33,436: 
+Processing train set...
+2025-12-03 15:31:33,440: Loading meta-llama/Llama-3.2-1B on cuda...
+2025-12-03 15:31:33,440: Batch size: 32, Max length: 200
+2025-12-03 15:31:44,705: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+slurmstepd: error: *** JOB 2170394 ON gpu-12 CANCELLED AT 2025-12-03T15:35:03 ***
+
+Job 2170394 consumed 1.4 billing hours from project ec12.
+
+Submitted 2025-12-03T11:39:22; waited 3.9 hours in the queue after becoming eligible to run.
+
+Requested wallclock time: 20.0 hours
+Elapsed wallclock time:   4.5 minutes
+
+Job was cancelled.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+2170394          16            0.0 %  2025-12-03T15:30:31  271.0 s  0
+2170394.batch    16      1    15.0 %  2025-12-03T15:30:31  273.0 s  Signal 15
+
+Used CPU time:   10.9 CPU minutes
+Unused CPU time: 1.0 CPU hours
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+2170394         128.0        
+2170394.batch   128.0     3.1
+
+Job 2170394 completed at Wed Dec 3 15:35:05 CET 2025

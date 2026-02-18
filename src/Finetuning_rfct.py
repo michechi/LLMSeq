@@ -19,7 +19,7 @@ from prompts import (
     full_narrative, full_narrative_no_time, full_narrative_no_time_rnd,
     compact_no_time_prompt, compact_no_time_prompt_rnd, compact_narrative_humanstyle_prompt, 
     semi_full_narrative, reversed_naive_narrative_prompt, reversed_time_naive_narrative_prompt, 
-    last_info_prompt, full_narrative_num2words
+    last_info_prompt, full_narrative_num2words, temporal_causal_prompt
 )
 
 from seed_parsing import set_seed, parse_args
@@ -78,9 +78,11 @@ def main():
     elif args.prompt_type == "reversed_time_naive_narrative_prompt":
         narrative_prompt = reversed_time_naive_narrative_prompt
     elif args.prompt_type == "full_narrative_num2words":
-        args.prompt_type = full_narrative_num2words
+        narrative_prompt = full_narrative_num2words
     elif args.prompt_type == "last_info_prompt":
         narrative_prompt = last_info_prompt
+    elif args.prompt_type == "temporal_causal_prompt":
+        narrative_prompt = temporal_causal_prompt
     else:
         raise ValueError("Invalid prompt type. Use 'naive' or 'compact'.")
     logger.info(f"Using prompt type: {args.prompt_type}")

@@ -1,0 +1,152 @@
+Starting job 2110021 on gpu-1 on Fox at Wed Nov 12 11:22:52 CET 2025
+
+=== Starting sequential fine-tuning job ===
+Wed Nov 12 11:22:52 AM CET 2025
+Cache directory: /localscratch/2110021/hf_cache
+--------------------------------------------------------
+Starting training with fraction = 0.00001
+--------------------------------------------------------
+Wed Nov 12 11:23:00 AM CET 2025
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/cuda/__init__.py:51: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/utils/hub.py:128: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+2025-11-12 11:23:17,564: Argument batch_size: 64
+2025-11-12 11:23:17,564: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-12 11:23:17,564: Argument check_truncation: False
+2025-11-12 11:23:17,564: Argument cold_start: False
+2025-11-12 11:23:17,564: Argument csv_to_use: '10'
+2025-11-12 11:23:17,564: Argument early: 'loss'
+2025-11-12 11:23:17,565: Argument epochs: 40
+2025-11-12 11:23:17,565: Argument fraction: 1e-05
+2025-11-12 11:23:17,565: Argument gradient_accumulation_steps: 1
+2025-11-12 11:23:17,565: Argument lr: 2e-05
+2025-11-12 11:23:17,565: Argument max_length: 100
+2025-11-12 11:23:17,565: Argument model_name: 'Qwen/Qwen2.5-0.5B'
+2025-11-12 11:23:17,565: Argument model_type: 'general'
+2025-11-12 11:23:17,565: Argument output_dir: 'src/output_slurms_fox/fraction_0.00001_tiny_1M'
+2025-11-12 11:23:17,565: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-11-12 11:23:17,565: Argument patience: 3
+2025-11-12 11:23:17,565: Argument peft: True
+2025-11-12 11:23:17,565: Argument prompt_type: 'standard'
+2025-11-12 11:23:17,565: Argument seed: 9550
+2025-11-12 11:23:17,565: Argument test_rnd: False
+2025-11-12 11:23:17,565: Argument tiny: False
+2025-11-12 11:23:17,565: Argument tiny_type: '1M'
+2025-11-12 11:23:17,565: Argument use_quantization: False
+2025-11-12 11:23:19,677: Not Tiny model: loading full model.
+2025-11-12 11:23:19,677: Loading pre-trained CausalLM model for WARM START!
+2025-11-12 11:23:21,351: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-11-12 11:23:24,642: Using prompt type: standard
+2025-11-12 11:23:24,642: Model type: general, Model name: Qwen/Qwen2.5-0.5B
+2025-11-12 11:23:24,642: Training with dataset fraction = 1e-05
+2025-11-12 11:23:25,338: Could not sample validation set with fraction 1e-05: With n_samples=50000, test_size=None and train_size=1e-05, the resulting train set will be empty. Adjust any of the aforementioned parameters.. Using just 10 observation from validation set.
+2025-11-12 11:23:25,339: Train Subset size: 4 / 400000
+2025-11-12 11:23:25,339: Val Subset size: 10 / 50000
+2025-11-12 11:23:25,339: Distributions Train y's:
+2025-11-12 11:23:25,341: Outcome
+0          0.75
+1          0.25
+dtype: float64
+2025-11-12 11:23:25,342: Distributions Val y's:
+2025-11-12 11:23:25,342: Outcome
+1          0.7
+0          0.3
+dtype: float64
+2025-11-12 11:23:25,737: Example train text: Sequential events: V Y L S C J W B T J X N B H B Y D O J K I Y B Y H J Y T J E S B X R F C G S F K
+Outcome (0 or 1):
+2025-11-12 11:23:25,781: Average train text length: 46.00 words
+2025-11-12 11:23:25,781: Average validation text length: 46.00 words
+2025-11-12 11:23:25,781: Average test text length: 46.00 words
+2025-11-12 11:23:25,781: Training on 4 samples, validating on 10, testing on 50000 samples
+2025-11-12 11:23:25,785: DataLoaders created.
+2025-11-12 11:23:26,803: Early stopping criterion: loss
+trainable params: 1,081,344 || all params: 495,114,112 || trainable%: 0.2184
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:23:28,828: Epoch 1/40 | Total Loss: 4.5037 | Causal Loss: 3.9607 | Classification Loss: 0.5430 | Val Loss: 4.8903 | Val AUC: 0.8571 | F1-Score: 0.0000
+2025-11-12 11:23:29,502: New best model saved with AUC: 0.8571
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:23:31,120: Epoch 2/40 | Total Loss: 4.5935 | Causal Loss: 3.9607 | Classification Loss: 0.6328 | Val Loss: 4.8903 | Val AUC: 0.8571 | F1-Score: 0.0000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:23:32,709: Epoch 3/40 | Total Loss: 4.5310 | Causal Loss: 3.9607 | Classification Loss: 0.5703 | Val Loss: 4.8942 | Val AUC: 0.8571 | F1-Score: 0.0000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:23:34,321: Epoch 4/40 | Total Loss: 4.5545 | Causal Loss: 3.9607 | Classification Loss: 0.5938 | Val Loss: 4.8981 | Val AUC: 0.8571 | F1-Score: 0.0000
+2025-11-12 11:23:34,321: Early stopping at epoch 4
+2025-11-12 11:23:34,977: Tempo medio per epoca: 2.3 secondi
+2025-11-12 11:23:34,982: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_Qwen_Qwen2.5-0.5B_9550_standard_100_False_20251112_112326_False_.pt for final evaluation on test set
+2025-11-12 11:24:55,731: Final Test AUC: 0.4978 | Test F1-Score: 0.0000
+2025-11-12 11:24:55,733: Saving results to results_general_Qwen_Qwen2.5-0.5B__peft_9550_100_standard_1M_1e-05_20251112_112455.csv
+  Val AUC Val F1-Score  ... Validation Loss Training Time (s)
+0  0.8571       0.0000  ...          4.8903               9.1
+
+[1 rows x 8 columns]
+Completed fraction 0.00001
+========================================================
+Wed Nov 12 11:24:56 AM CET 2025
+--------------------------------------------------------
+Starting training with fraction = 0.0001
+--------------------------------------------------------
+Wed Nov 12 11:24:56 AM CET 2025
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/cuda/__init__.py:51: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/utils/hub.py:128: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+2025-11-12 11:25:03,627: Argument batch_size: 64
+2025-11-12 11:25:03,627: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-12 11:25:03,627: Argument check_truncation: False
+2025-11-12 11:25:03,627: Argument cold_start: False
+2025-11-12 11:25:03,627: Argument csv_to_use: '10'
+2025-11-12 11:25:03,627: Argument early: 'loss'
+2025-11-12 11:25:03,627: Argument epochs: 40
+2025-11-12 11:25:03,627: Argument fraction: 0.0001
+2025-11-12 11:25:03,627: Argument gradient_accumulation_steps: 1
+2025-11-12 11:25:03,627: Argument lr: 2e-05
+2025-11-12 11:25:03,627: Argument max_length: 100
+2025-11-12 11:25:03,627: Argument model_name: 'Qwen/Qwen2.5-0.5B'
+2025-11-12 11:25:03,627: Argument model_type: 'general'
+2025-11-12 11:25:03,628: Argument output_dir: 'src/output_slurms_fox/fraction_0.0001_tiny_1M'
+2025-11-12 11:25:03,628: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-11-12 11:25:03,628: Argument patience: 3
+2025-11-12 11:25:03,628: Argument peft: True
+2025-11-12 11:25:03,628: Argument prompt_type: 'standard'
+2025-11-12 11:25:03,628: Argument seed: 9550
+2025-11-12 11:25:03,628: Argument test_rnd: False
+2025-11-12 11:25:03,628: Argument tiny: False
+2025-11-12 11:25:03,628: Argument tiny_type: '1M'
+2025-11-12 11:25:03,628: Argument use_quantization: False
+2025-11-12 11:25:06,075: Not Tiny model: loading full model.
+2025-11-12 11:25:06,075: Loading pre-trained CausalLM model for WARM START!
+2025-11-12 11:25:06,709: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+slurmstepd: error: *** JOB 2110021 ON gpu-1 CANCELLED AT 2025-11-12T11:25:08 ***
+
+Job 2110021 consumed 0.7 billing hours from project ec12.
+
+Submitted 2025-11-12T11:22:41; waited 11.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 20.0 hours
+Elapsed wallclock time:   2.3 minutes
+
+Job was cancelled.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+2110021          16            0.0 %  2025-11-12T11:22:52  136.0 s  0
+2110021.batch    16      1     6.8 %  2025-11-12T11:22:52  137.0 s  Signal 15
+
+Used CPU time:   2.5 CPU minutes
+Unused CPU time: 33.8 CPU minutes
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+2110021          80.0        
+2110021.batch    80.0     3.0
+
+Job 2110021 completed at Wed Nov 12 11:25:11 CET 2025

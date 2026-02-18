@@ -1,0 +1,110 @@
+Starting job 1854456 on gpu-9 on fox at Thu Aug 14 14:10:15 CEST 2025
+
+2025-08-14 14:10:53,410: Argument CI: False
+2025-08-14 14:10:53,410: Argument all_landmarks: True
+2025-08-14 14:10:53,410: Argument batch_size: 2
+2025-08-14 14:10:53,410: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-08-14 14:10:53,410: Argument early: 'loss'
+2025-08-14 14:10:53,411: Argument epochs: 20
+2025-08-14 14:10:53,411: Argument gradient_accumulation_steps: 4
+2025-08-14 14:10:53,411: Argument input_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_df_evo.csv'
+2025-08-14 14:10:53,411: Argument lr: 2e-05
+2025-08-14 14:10:53,411: Argument max_length: 2048
+2025-08-14 14:10:53,411: Argument max_visits: 4
+2025-08-14 14:10:53,411: Argument model_name: 'meta-llama/Llama-3.1-8B'
+2025-08-14 14:10:53,411: Argument model_type: 'general'
+2025-08-14 14:10:53,411: Argument patience: 1
+2025-08-14 14:10:53,411: Argument peft: True
+2025-08-14 14:10:53,411: Argument prompt_type: 'no'
+2025-08-14 14:10:53,411: Argument seed: 4550
+2025-08-14 14:10:53,411: Argument test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_test_dod_fxd.csv'
+2025-08-14 14:10:53,411: Argument train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_train_dod_fxd.csv'
+2025-08-14 14:10:53,411: Argument use_quantization: False
+2025-08-14 14:10:53,411: Argument val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_vali_dod_fxd.csv'
+2025-08-14 14:10:53,411: Argument when_counting_death: 'last_visit'
+2025-08-14 14:10:53,438: Using prompt type: no
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:79: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:81: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_test_df = pd.read_csv(args.test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+2025-08-14 14:11:24,942: Processing all landmarks from 1 to 4
+2025-08-14 14:11:24,942: Preparing data for Landmark 1
+2025-08-14 14:11:30,450: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:09<00:27,  9.25s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:18<00:19,  9.51s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:28<00:09,  9.53s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:28<00:00,  5.93s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:28<00:00,  7.23s/it]
+Some weights of LlamaForSequenceClassification were not initialized from the model checkpoint at meta-llama/Llama-3.1-8B and are newly initialized: ['score.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-14 14:12:03,057: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-08-14 14:12:42,014: Example train text: Based on this information, what is the probability of mortality within 90 days?
+Hypovolemia; Cellulitis and abscess of trunk; Acute kidney failure, unspecified; Nausea with vomiting; Diverticulitis of colon (without mention of hemorrhage); Abscess of intestine; Removal of other organ (partial) (total) causing abnormal patient reaction, or later complication, without mention of misadventure at time of operation; Other postoperative infection; Methicillin susceptible Staphylococcus aureus in conditions classified elsewhere and of unspecified site
+Prochlorperazine; Potassium Chloride; Acetaminophen; Promethazine HCl; HydrOXYzine; MetRONIDAZOLE (FLagyl); Docusate Sodium; Vancomycin; Calcium Carbonate; Potassium Chl 20 mEq / 1000 mL D5 1/2 NS; Magnesium Citrate; Ibuprofen; Fluticasone Propionate NASAL; NS; Ciprofloxacin; Heparin; Metoclopramide; D5W; Lorazepam; Clindamycin; SW; Bupivacaine 0.5%; OxycoDONE-Acetaminophen Elixir; Hydrocortisone (Rectal) 2.5% Cream; Escitalopram Oxalate; Sodium Chloride 0.9%  Flush; Hydrocodone-Acetaminophen; Iso-Osmotic Dextrose; D5 1/2NS; Ketorolac; Pantoprazole; Maalox/Diphenhydramine/Lidocaine; HYDROmorphone (Dilaudid); Nafcillin; Piperacillin-Tazobactam Na; Magnesium Sulfate; OxycoDONE (Immediate Release) ; Insulin; Cephalexin; Morphine Sulfate; Ondansetron; LR
+Open and other sigmoidectomy
+2025-08-14 14:12:42,081: Average train text length: 115.64 words
+2025-08-14 14:12:42,081: Average validation text length: 119.89 words
+2025-08-14 14:12:42,081: Average test text length: 116.94 words
+2025-08-14 14:12:42,081: Training on 8040 samples, validating on 894, testing on 2234 samples
+2025-08-14 14:12:48,862: Fine-tuning at Landmark 1
+2025-08-14 14:12:50,349: Early stopping criterion: loss
+2025-08-14 15:33:24,085: Landmark 1 | Epoch 1/20 | Train Loss: 0.1476 | Val Loss: 0.4540 | Validation AUC: 0.6703 | F1-Score: 0.1451
+2025-08-14 15:33:36,472: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_4550_landmark1_no_4_2048_last_visit_all_landmarks_True_20250814_141250_.pt with AUC: 0.6703, F1: 0.1451, Val Loss: 0.4540
+2025-08-14 16:54:08,527: Landmark 1 | Epoch 2/20 | Train Loss: 0.1168 | Val Loss: 0.4195 | Validation AUC: 0.7517 | F1-Score: 0.0787
+2025-08-14 16:54:20,730: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_4550_landmark1_no_4_2048_last_visit_all_landmarks_True_20250814_141250_.pt with AUC: 0.7517, F1: 0.0787, Val Loss: 0.4195
+2025-08-14 18:14:51,939: Landmark 1 | Epoch 3/20 | Train Loss: 0.1053 | Val Loss: 0.3936 | Validation AUC: 0.7961 | F1-Score: 0.2805
+2025-08-14 18:15:04,087: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_4550_landmark1_no_4_2048_last_visit_all_landmarks_True_20250814_141250_.pt with AUC: 0.7961, F1: 0.2805, Val Loss: 0.3936
+2025-08-14 19:35:34,676: Landmark 1 | Epoch 4/20 | Train Loss: 0.1004 | Val Loss: 0.4198 | Validation AUC: 0.8111 | F1-Score: 0.5014
+2025-08-14 19:35:34,676: No improvement in epoch 4. Current best AUC: 0.7961, F1: 0.2805, Val Loss: 0.3936. Epochs without improvement: 1/1
+2025-08-14 19:35:34,676: Early stopping triggered at epoch 4. Best AUC: 0.7961, F1: 0.2805, Val Loss: 0.3936
+2025-08-14 19:35:46,071: Tempo impiegato per Landmark 1: 19377.2 secondi
+2025-08-14 19:35:46,072: Tempo medio per epoca: 4844.3 secondi
+2025-08-14 19:35:46,079: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_4550_landmark1_no_4_2048_last_visit_all_landmarks_True_20250814_141250_.pt for final evaluation on test set
+2025-08-14 19:44:53,075: Final Test AUC (Landmark 1): 0.7436 | Test F1-Score: 0.2559
+2025-08-14 19:44:53,077: Preparing data for Landmark 2
+2025-08-14 19:44:56,873: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+trainable params: 6,823,936 || all params: 7,511,756,800 || trainable%: 0.0908
+Using device: cuda
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:03<00:09,  3.21s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:06<00:06,  3.23s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:09<00:03,  3.22s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:10<00:00,  2.11s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:10<00:00,  2.52s/it]
+Some weights of LlamaForSequenceClassification were not initialized from the model checkpoint at meta-llama/Llama-3.1-8B and are newly initialized: ['score.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-14 19:45:08,884: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+2025-08-14 19:45:45,563: Example train text: Based on this information, what is the probability of mortality within 90 days?
+Hypovolemia; Cellulitis and abscess of trunk; Acute kidney failure, unspecified; Other specified aftercare following surgery; Nausea with vomiting; Esophageal reflux; Diverticulitis of colon (without mention of hemorrhage); Abscess of intestine; Diverticulosis of colon (without mention of hemorrhage); Removal of other organ (partial) (total) causing abnormal patient reaction, or later complication, without mention of misadventure at time of operation; Other postoperative infection; Methicillin susceptible Staphylococcus aureus in conditions classified elsewhere and of unspecified site
+Prochlorperazine; Potassium Chloride; Acetaminophen; Promethazine HCl; HydrOXYzine; MetRONIDAZOLE (FLagyl); Docusate Sodium; Vancomycin; Calcium Carbonate; Potassium Chl 20 mEq / 1000 mL D5 1/2 NS; Magnesium Citrate; Ibuprofen; Ranitidine; Fluticasone Propionate NASAL; NS; Ciprofloxacin; Heparin; Promethazine; Metoclopramide; D5W; Lorazepam; Clindamycin; SW; Bupivacaine 0.5%; OxycoDONE-Acetaminophen Elixir; Hydrocortisone (Rectal) 2.5% Cream; Escitalopram Oxalate; Sodium Chloride 0.9%  Flush; Hydrocodone-Acetaminophen; Iso-Osmotic Dextrose; D5 1/2NS; Ketorolac; Pantoprazole; Maalox/Diphenhydramine/Lidocaine; HYDROmorphone (Dilaudid); Nafcillin; Piperacillin-Tazobactam Na; Ondansetron ODT; Magnesium Sulfate; OxycoDONE (Immediate Release) ; Insulin; Cephalexin; Morphine Sulfate; Ondansetron; LR
+; Open and other sigmoidectomy
+2025-08-14 19:45:45,671: Average train text length: 191.74 words
+2025-08-14 19:45:45,671: Average validation text length: 195.55 words
+2025-08-14 19:45:45,671: Average test text length: 192.67 words
+2025-08-14 19:45:45,671: Training on 8040 samples, validating on 894, testing on 2234 samples
+2025-08-14 19:45:55,590: Fine-tuning at Landmark 2
+2025-08-14 19:45:55,613: Early stopping criterion: loss
+2025-08-14 21:06:36,332: Landmark 2 | Epoch 1/20 | Train Loss: 0.1511 | Val Loss: 0.4558 | Validation AUC: 0.6796 | F1-Score: 0.2000
+2025-08-14 21:06:47,045: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_4550_landmark2_no_4_2048_last_visit_all_landmarks_True_20250814_194555_.pt with AUC: 0.6796, F1: 0.2000, Val Loss: 0.4558
+2025-08-14 22:27:28,564: Landmark 2 | Epoch 2/20 | Train Loss: 0.1137 | Val Loss: 0.3949 | Validation AUC: 0.7863 | F1-Score: 0.1863
+2025-08-14 22:27:39,458: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_4550_landmark2_no_4_2048_last_visit_all_landmarks_True_20250814_194555_.pt with AUC: 0.7863, F1: 0.1863, Val Loss: 0.3949
+2025-08-14 23:48:20,750: Landmark 2 | Epoch 3/20 | Train Loss: 0.1004 | Val Loss: 0.3772 | Validation AUC: 0.8179 | F1-Score: 0.3064
+2025-08-14 23:48:31,491: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.1-8B_4550_landmark2_no_4_2048_last_visit_all_landmarks_True_20250814_194555_.pt with AUC: 0.8179, F1: 0.3064, Val Loss: 0.3772
+slurmstepd: error: *** JOB 1854456 ON gpu-9 CANCELLED AT 2025-08-15T00:10:42 DUE TO TIME LIMIT ***
+
+Job 1854456 consumed 190.1 billing hours from project ec12.
+
+Submitted 2025-08-14T14:09:45; waited 30.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 10.0 hours
+Elapsed wallclock time:   10.0 hours
+
+Job timed out.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+1854456          16            0.0 %  2025-08-14T14:10:15   10.0 h  0
+1854456.batch    16      1     6.3 %  2025-08-14T14:10:15   10.0 h  Signal 15
+
+Used CPU time:   10.1 CPU hours
+Unused CPU time: 6.3 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1854456          32.0        
+1854456.batch    32.0    31.6
+
+GPU usage stats:
+Job 1854456 completed at Fri Aug 15 00:10:44 CEST 2025

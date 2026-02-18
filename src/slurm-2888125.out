@@ -1,0 +1,184 @@
+Starting job 2888125 on gpu-7 on Fox at Sat Jan 17 17:13:31 CET 2026
+
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/cuda/__init__.py:51: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+2026-01-17 17:14:05 - RNN_Baseline - INFO - Logging initialized. Log file: results/dataset_9/logs/training_20260117_171405.log
+2026-01-17 17:14:05 - RNN_Baseline - INFO - ======================================================================
+2026-01-17 17:14:05 - RNN_Baseline - INFO - RNN BASELINE TRAINING SCRIPT
+2026-01-17 17:14:05 - RNN_Baseline - INFO - ======================================================================
+2026-01-17 17:14:05 - RNN_Baseline - INFO - Arguments:
+2026-01-17 17:14:05 - RNN_Baseline - INFO -   path_csv: /fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/
+2026-01-17 17:14:05 - RNN_Baseline - INFO -   number_to_use: 9
+2026-01-17 17:14:05 - RNN_Baseline - INFO -   sequence_column: Sequences
+2026-01-17 17:14:05 - RNN_Baseline - INFO -   label_column: Outcome
+2026-01-17 17:14:05 - RNN_Baseline - INFO -   test_rnd: False
+2026-01-17 17:14:05 - RNN_Baseline - INFO -   sequence_separator: 
+2026-01-17 17:14:05 - RNN_Baseline - INFO -   models: all
+2026-01-17 17:14:05 - RNN_Baseline - INFO -   no_search: False
+2026-01-17 17:14:05 - RNN_Baseline - INFO -   use_optimal: True
+2026-01-17 17:14:05 - RNN_Baseline - INFO -   search_trials: 20
+2026-01-17 17:14:05 - RNN_Baseline - INFO -   batch_size: 64
+2026-01-17 17:14:05 - RNN_Baseline - INFO -   final_epochs: 30
+2026-01-17 17:14:05 - RNN_Baseline - INFO -   seed: 1234
+2026-01-17 17:14:05 - RNN_Baseline - INFO -   save_models: False
+2026-01-17 17:14:05 - RNN_Baseline - INFO -   output_dir: results
+2026-01-17 17:14:06 - RNN_Baseline - INFO - Random seed set to: 1234
+2026-01-17 17:14:06 - RNN_Baseline - INFO - Using device: cuda
+2026-01-17 17:14:06 - RNN_Baseline - INFO -   GPU: NVIDIA A100 80GB PCIe
+2026-01-17 17:14:06 - RNN_Baseline - INFO -   Memory: 85.29 GB
+2026-01-17 17:14:06 - RNN_Baseline - INFO - Loading data from: /fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/
+2026-01-17 17:14:06 - RNN_Baseline - INFO - Using dataset number: 9
+2026-01-17 17:14:06 - RNN_Baseline - INFO - Sequence separator: '\x1f'
+2026-01-17 17:14:06 - RNN_Baseline - INFO - Preprocessing sequences (splitting by separator)...
+2026-01-17 17:14:08 - RNN_Baseline - INFO - Data loaded successfully:
+2026-01-17 17:14:08 - RNN_Baseline - INFO -   Train: 400000 sequences
+2026-01-17 17:14:08 - RNN_Baseline - INFO -   Val:   50000 sequences
+2026-01-17 17:14:08 - RNN_Baseline - INFO -   Test:  50000 sequences
+2026-01-17 17:14:08 - RNN_Baseline - INFO -   Class distribution (train): 232630 (label=0) / 167370 (label=1)
+2026-01-17 17:14:08 - RNN_Baseline - INFO -   Sequence length: min=20, max=20, mean=20.0
+2026-01-17 17:14:08 - RNN_Baseline - INFO - Creating PyTorch datasets...
+2026-01-17 17:14:08 - RNN_Baseline - INFO - Creating dataloaders (batch_size=64)...
+2026-01-17 17:14:08 - RNN_Baseline - INFO -   Train batches: 6250
+2026-01-17 17:14:08 - RNN_Baseline - INFO -   Val batches:   782
+2026-01-17 17:14:08 - RNN_Baseline - INFO -   Test batches:  782
+2026-01-17 17:14:08 - RNN_Baseline - INFO - Models to train: LSTM, BiLSTM, GRU
+2026-01-17 17:14:08 - RNN_Baseline - INFO - 
+######################################################################
+2026-01-17 17:14:08 - RNN_Baseline - INFO - # TRAINING LSTM
+2026-01-17 17:14:08 - RNN_Baseline - INFO - ######################################################################
+2026-01-17 17:14:08 - RNN_Baseline - INFO - Using optimal configuration (no search)
+2026-01-17 17:14:08 - RNN_Baseline - INFO - 
+============================================================
+2026-01-17 17:14:08 - RNN_Baseline - INFO - FINAL TRAINING with best configuration
+2026-01-17 17:14:08 - RNN_Baseline - INFO - ============================================================
+2026-01-17 17:14:08 - RNN_Baseline - INFO - Model parameters: 207,522
+2026-01-17 17:14:08 - RNN_Baseline - INFO - Starting training for LSTM
+2026-01-17 17:15:42 - RNN_Baseline - INFO -   Epoch [5/30] Train Loss: 0.6266, Val F1: 0.5400, Val AUC: 0.6637
+2026-01-17 17:17:10 - RNN_Baseline - INFO -   Epoch [10/30] Train Loss: 0.6187, Val F1: 0.5559, Val AUC: 0.6653
+2026-01-17 17:18:38 - RNN_Baseline - INFO -   Epoch [15/30] Train Loss: 0.6131, Val F1: 0.5578, Val AUC: 0.6624
+2026-01-17 17:18:55 - RNN_Baseline - INFO -   Early stopping at epoch 16
+2026-01-17 17:18:55 - RNN_Baseline - INFO - Training completed. Best epoch: 11, Best Val F1: 0.5651
+2026-01-17 17:18:55 - RNN_Baseline - INFO - Final Validation F1: 0.5651
+2026-01-17 17:18:55 - RNN_Baseline - INFO - 
+============================================================
+2026-01-17 17:18:55 - RNN_Baseline - INFO - TEST SET EVALUATION
+2026-01-17 17:18:55 - RNN_Baseline - INFO - ============================================================
+2026-01-17 17:18:56 - RNN_Baseline - INFO - 
+Test Results for LSTM:
+2026-01-17 17:18:56 - RNN_Baseline - INFO -   Accuracy:  0.6865
+2026-01-17 17:18:56 - RNN_Baseline - INFO -   Precision: 0.6846
+2026-01-17 17:18:56 - RNN_Baseline - INFO -   Recall:    0.4706
+2026-01-17 17:18:56 - RNN_Baseline - INFO -   F1 Score:  0.5578
+2026-01-17 17:18:56 - RNN_Baseline - INFO -   AUC:       0.6672
+2026-01-17 17:18:56 - RNN_Baseline - INFO -   Confusion Matrix:
+2026-01-17 17:18:56 - RNN_Baseline - INFO -     [[24443, 4554], [11119, 9884]]
+2026-01-17 17:18:57 - RNN_Baseline - INFO - Results saved:
+2026-01-17 17:18:57 - RNN_Baseline - INFO -   Predictions: results/dataset_9/LSTM_predictions_dataset9.csv
+2026-01-17 17:18:57 - RNN_Baseline - INFO -   Summary:     results/dataset_9/LSTM_summary_dataset9.json
+2026-01-17 17:18:57 - RNN_Baseline - INFO - 
+######################################################################
+2026-01-17 17:18:57 - RNN_Baseline - INFO - # TRAINING BiLSTM
+2026-01-17 17:18:57 - RNN_Baseline - INFO - ######################################################################
+2026-01-17 17:18:57 - RNN_Baseline - INFO - Using optimal configuration (no search)
+2026-01-17 17:18:57 - RNN_Baseline - INFO - 
+============================================================
+2026-01-17 17:18:57 - RNN_Baseline - INFO - FINAL TRAINING with best configuration
+2026-01-17 17:18:57 - RNN_Baseline - INFO - ============================================================
+2026-01-17 17:18:57 - RNN_Baseline - INFO - Model parameters: 957,762
+2026-01-17 17:18:57 - RNN_Baseline - INFO - Starting training for BiLSTM
+2026-01-17 17:20:52 - RNN_Baseline - INFO -   Epoch [5/30] Train Loss: 0.6271, Val F1: 0.5634, Val AUC: 0.6662
+2026-01-17 17:22:23 - RNN_Baseline - INFO -   Early stopping at epoch 9
+2026-01-17 17:22:23 - RNN_Baseline - INFO - Training completed. Best epoch: 4, Best Val F1: 0.5672
+2026-01-17 17:22:23 - RNN_Baseline - INFO - Final Validation F1: 0.5672
+2026-01-17 17:22:23 - RNN_Baseline - INFO - 
+============================================================
+2026-01-17 17:22:23 - RNN_Baseline - INFO - TEST SET EVALUATION
+2026-01-17 17:22:23 - RNN_Baseline - INFO - ============================================================
+2026-01-17 17:22:25 - RNN_Baseline - INFO - 
+Test Results for BiLSTM:
+2026-01-17 17:22:25 - RNN_Baseline - INFO -   Accuracy:  0.6803
+2026-01-17 17:22:25 - RNN_Baseline - INFO -   Precision: 0.6601
+2026-01-17 17:22:25 - RNN_Baseline - INFO -   Recall:    0.4923
+2026-01-17 17:22:25 - RNN_Baseline - INFO -   F1 Score:  0.5640
+2026-01-17 17:22:25 - RNN_Baseline - INFO -   AUC:       0.6662
+2026-01-17 17:22:25 - RNN_Baseline - INFO -   Confusion Matrix:
+2026-01-17 17:22:25 - RNN_Baseline - INFO -     [[23674, 5323], [10664, 10339]]
+2026-01-17 17:22:26 - RNN_Baseline - INFO - Results saved:
+2026-01-17 17:22:26 - RNN_Baseline - INFO -   Predictions: results/dataset_9/BiLSTM_predictions_dataset9.csv
+2026-01-17 17:22:26 - RNN_Baseline - INFO -   Summary:     results/dataset_9/BiLSTM_summary_dataset9.json
+2026-01-17 17:22:26 - RNN_Baseline - INFO - 
+######################################################################
+2026-01-17 17:22:26 - RNN_Baseline - INFO - # TRAINING GRU
+2026-01-17 17:22:26 - RNN_Baseline - INFO - ######################################################################
+2026-01-17 17:22:26 - RNN_Baseline - INFO - Using optimal configuration (no search)
+2026-01-17 17:22:26 - RNN_Baseline - INFO - 
+============================================================
+2026-01-17 17:22:26 - RNN_Baseline - INFO - FINAL TRAINING with best configuration
+2026-01-17 17:22:26 - RNN_Baseline - INFO - ============================================================
+2026-01-17 17:22:26 - RNN_Baseline - INFO - Model parameters: 51,714
+2026-01-17 17:22:26 - RNN_Baseline - INFO - Starting training for GRU
+2026-01-17 17:23:48 - RNN_Baseline - INFO -   Epoch [5/30] Train Loss: 0.6337, Val F1: 0.5602, Val AUC: 0.6616
+2026-01-17 17:25:10 - RNN_Baseline - INFO -   Epoch [10/30] Train Loss: 0.6274, Val F1: 0.5596, Val AUC: 0.6636
+2026-01-17 17:25:26 - RNN_Baseline - INFO -   Early stopping at epoch 11
+2026-01-17 17:25:26 - RNN_Baseline - INFO - Training completed. Best epoch: 6, Best Val F1: 0.5640
+2026-01-17 17:25:26 - RNN_Baseline - INFO - Final Validation F1: 0.5640
+2026-01-17 17:25:26 - RNN_Baseline - INFO - 
+============================================================
+2026-01-17 17:25:26 - RNN_Baseline - INFO - TEST SET EVALUATION
+2026-01-17 17:25:26 - RNN_Baseline - INFO - ============================================================
+2026-01-17 17:25:28 - RNN_Baseline - INFO - 
+Test Results for GRU:
+2026-01-17 17:25:28 - RNN_Baseline - INFO -   Accuracy:  0.6770
+2026-01-17 17:25:28 - RNN_Baseline - INFO -   Precision: 0.6598
+2026-01-17 17:25:28 - RNN_Baseline - INFO -   Recall:    0.4769
+2026-01-17 17:25:28 - RNN_Baseline - INFO -   F1 Score:  0.5536
+2026-01-17 17:25:28 - RNN_Baseline - INFO -   AUC:       0.6646
+2026-01-17 17:25:28 - RNN_Baseline - INFO -   Confusion Matrix:
+2026-01-17 17:25:28 - RNN_Baseline - INFO -     [[23831, 5166], [10986, 10017]]
+2026-01-17 17:25:28 - RNN_Baseline - INFO - Results saved:
+2026-01-17 17:25:28 - RNN_Baseline - INFO -   Predictions: results/dataset_9/GRU_predictions_dataset9.csv
+2026-01-17 17:25:28 - RNN_Baseline - INFO -   Summary:     results/dataset_9/GRU_summary_dataset9.json
+2026-01-17 17:25:28 - RNN_Baseline - INFO - 
+######################################################################
+2026-01-17 17:25:28 - RNN_Baseline - INFO - # FINAL COMPARISON OF ALL MODELS
+2026-01-17 17:25:28 - RNN_Baseline - INFO - ######################################################################
+
+2026-01-17 17:25:28 - RNN_Baseline - INFO - Model      Accuracy   Precision  Recall     F1         AUC       
+2026-01-17 17:25:28 - RNN_Baseline - INFO - ----------------------------------------------------------------------
+2026-01-17 17:25:28 - RNN_Baseline - INFO - LSTM       0.6865     0.6846     0.4706     0.5578     0.6672    
+2026-01-17 17:25:28 - RNN_Baseline - INFO - BiLSTM     0.6803     0.6601     0.4923     0.5640     0.6662    
+2026-01-17 17:25:28 - RNN_Baseline - INFO - GRU        0.6770     0.6598     0.4769     0.5536     0.6646    
+2026-01-17 17:25:28 - RNN_Baseline - INFO - 
+Comparison saved to: results/dataset_9/comparison_dataset9.json
+2026-01-17 17:25:28 - RNN_Baseline - INFO - 
+============================================================
+2026-01-17 17:25:28 - RNN_Baseline - INFO - BEST MODEL: BiLSTM
+2026-01-17 17:25:28 - RNN_Baseline - INFO -   F1 Score: 0.5640
+2026-01-17 17:25:28 - RNN_Baseline - INFO -   AUC:      0.6662
+2026-01-17 17:25:28 - RNN_Baseline - INFO - ============================================================
+2026-01-17 17:25:28 - RNN_Baseline - INFO - 
+Training completed successfully!
+
+Job 2888125 consumed 3.8 billing hours from project ec12.
+
+Submitted 2026-01-17T17:13:30; waited 1.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 10.0 hours
+Elapsed wallclock time:   11.9 minutes
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+2888125          16            0.0 %  2026-01-17T17:13:31  717.0 s  0
+2888125.batch    16      1    33.0 %  2026-01-17T17:13:31  717.0 s  0
+
+Used CPU time:   1.1 CPU hours
+Unused CPU time: 2.1 CPU hours
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+2888125          32.0        
+2888125.batch    32.0     0.8
+
+Job 2888125 completed at Sat Jan 17 17:25:29 CET 2026

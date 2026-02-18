@@ -1,0 +1,95 @@
+Starting job 2094465 on gpu-13 on Fox at Wed Nov 5 18:28:46 CET 2025
+
+
+[notice] A new release of pip is available: 23.3.2 -> 25.3
+[notice] To update, run: pip install --upgrade pip
+2025-11-05 18:29:42,816: Argument batch_size: 128
+2025-11-05 18:29:42,816: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-05 18:29:42,816: Argument cold_start: False
+2025-11-05 18:29:42,816: Argument early: 'loss'
+2025-11-05 18:29:42,816: Argument epochs: 20
+2025-11-05 18:29:42,816: Argument gradient_accumulation_steps: 1
+2025-11-05 18:29:42,816: Argument lr: 0.0002
+2025-11-05 18:29:42,816: Argument max_length: 100
+2025-11-05 18:29:42,816: Argument model_name: 'meta-llama/Llama-3.2-1B'
+2025-11-05 18:29:42,816: Argument model_type: 'general'
+2025-11-05 18:29:42,817: Argument number_to_use: 9
+2025-11-05 18:29:42,817: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-11-05 18:29:42,817: Argument patience: 3
+2025-11-05 18:29:42,817: Argument peft: False
+2025-11-05 18:29:42,817: Argument prompt_type: 'standard'
+2025-11-05 18:29:42,817: Argument seed: 9550
+2025-11-05 18:29:42,817: Argument test_rnd: False
+2025-11-05 18:29:42,817: Argument tiny: True
+2025-11-05 18:29:42,817: Argument tiny_type: '5M'
+2025-11-05 18:29:42,817: Argument use_quantization: False
+2025-11-05 18:29:46,462: 
+Loading a TINY CausalLM model for testing purposes!
+2025-11-05 18:29:46,462: 
+Loading pre-trained CausalLM model for COLD START!
+2025-11-05 18:29:46,462: Tiny model config - Hidden size: 256, Num layers: 6, Num heads: 6, Intermediate size: 820, Vocab size: 100
+2025-11-05 18:29:48,018: 
+Using Flash Attention 2 for LLaMA tiny model
+2025-11-05 18:29:48,303: 
+New model parameters: 5,001,858
+2025-11-05 18:29:48,303: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-11-05 18:29:48,590: Using prompt type: standard
+2025-11-05 18:29:48,590: Model type: general, Model name: meta-llama/Llama-3.2-1B
+2025-11-05 18:29:51,761: Example train text: Sequential events: M E N Z N I G Z T X V D E X E N W O C F
+Outcome (0 or 1):
+2025-11-05 18:29:52,055: Average train text length: 26.00 words
+2025-11-05 18:29:52,055: Average validation text length: 26.00 words
+2025-11-05 18:29:52,055: Average test text length: 26.00 words
+2025-11-05 18:29:52,055: Training on 400000 samples, validating on 50000, testing on 50000 samples
+2025-11-05 18:29:53,546: Early stopping criterion: loss
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+2025-11-05 18:39:50,759: Epoch 1/20 | Total Loss: 5.9865 | Causal Loss: 5.3117 | Classification Loss: 0.6748 | Val Loss: 3.5040 | Val AUC: 0.5945 | F1-Score: 0.4735
+2025-11-05 18:39:50,876: New best model saved with AUC: 0.5945
+2025-11-05 18:49:46,014: Epoch 2/20 | Total Loss: 3.3251 | Causal Loss: 2.6774 | Classification Loss: 0.6477 | Val Loss: 3.2675 | Val AUC: 0.6618 | F1-Score: 0.5498
+2025-11-05 18:49:46,133: New best model saved with AUC: 0.6618
+2025-11-05 18:59:43,071: Epoch 3/20 | Total Loss: 3.2618 | Causal Loss: 2.6371 | Classification Loss: 0.6247 | Val Loss: 3.2606 | Val AUC: 0.6667 | F1-Score: 0.5767
+2025-11-05 18:59:43,187: New best model saved with AUC: 0.6667
+2025-11-05 19:09:40,047: Epoch 4/20 | Total Loss: 3.2585 | Causal Loss: 2.6365 | Classification Loss: 0.6219 | Val Loss: 3.2578 | Val AUC: 0.6665 | F1-Score: 0.5744
+2025-11-05 19:09:40,166: New best model saved with AUC: 0.6665
+2025-11-05 19:19:37,517: Epoch 5/20 | Total Loss: 3.2564 | Causal Loss: 2.6362 | Classification Loss: 0.6202 | Val Loss: 3.2562 | Val AUC: 0.6665 | F1-Score: 0.5721
+2025-11-05 19:19:37,636: New best model saved with AUC: 0.6665
+2025-11-05 19:29:35,065: Epoch 6/20 | Total Loss: 3.2548 | Causal Loss: 2.6360 | Classification Loss: 0.6187 | Val Loss: 3.2546 | Val AUC: 0.6670 | F1-Score: 0.5584
+2025-11-05 19:29:35,184: New best model saved with AUC: 0.6670
+2025-11-05 19:39:30,566: Epoch 7/20 | Total Loss: 3.2532 | Causal Loss: 2.6359 | Classification Loss: 0.6173 | Val Loss: 3.2538 | Val AUC: 0.6681 | F1-Score: 0.5704
+2025-11-05 19:39:30,681: New best model saved with AUC: 0.6681
+2025-11-05 19:49:28,518: Epoch 8/20 | Total Loss: 3.2522 | Causal Loss: 2.6358 | Classification Loss: 0.6164 | Val Loss: 3.2526 | Val AUC: 0.6677 | F1-Score: 0.5672
+2025-11-05 19:49:28,639: New best model saved with AUC: 0.6677
+2025-11-05 19:59:26,653: Epoch 9/20 | Total Loss: 3.2514 | Causal Loss: 2.6357 | Classification Loss: 0.6157 | Val Loss: 3.2526 | Val AUC: 0.6678 | F1-Score: 0.5686
+2025-11-05 20:09:23,999: Epoch 10/20 | Total Loss: 3.2510 | Causal Loss: 2.6357 | Classification Loss: 0.6153 | Val Loss: 3.2514 | Val AUC: 0.6673 | F1-Score: 0.5707
+2025-11-05 20:09:24,136: New best model saved with AUC: 0.6673
+2025-11-05 20:19:22,798: Epoch 11/20 | Total Loss: 3.2507 | Causal Loss: 2.6357 | Classification Loss: 0.6150 | Val Loss: 3.2512 | Val AUC: 0.6678 | F1-Score: 0.5740
+2025-11-05 20:19:22,902: New best model saved with AUC: 0.6678
+slurmstepd: error: *** JOB 2094465 ON gpu-13 CANCELLED AT 2025-11-05T20:29:13 DUE TO TIME LIMIT ***
+
+Job 2094465 consumed 38.1 billing hours from project ec12.
+
+Submitted 2025-11-05T18:28:24; waited 22.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 2.0 hours
+Elapsed wallclock time:   2.0 hours
+
+Job timed out.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+2094465          16            0.0 %  2025-11-05T18:28:46    2.0 h  0
+2094465.batch    16      1     7.3 %  2025-11-05T18:28:46    2.0 h  Signal 15
+
+Used CPU time:   2.3 CPU hours
+Unused CPU time: 1.2 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+2094465          80.0        
+2094465.batch    80.0     2.0
+
+Job 2094465 completed at Wed Nov 5 20:29:16 CET 2025

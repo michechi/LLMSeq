@@ -1,0 +1,72 @@
+Starting job 2090912 on gpu-2 on Fox at Tue Nov 4 11:22:07 CET 2025
+
+
+[notice] A new release of pip is available: 23.3.2 -> 25.3
+[notice] To update, run: pip install --upgrade pip
+2025-11-04 11:23:55,407: Argument batch_size: 64
+2025-11-04 11:23:55,407: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-04 11:23:55,407: Argument cold_start: False
+2025-11-04 11:23:55,407: Argument early: 'loss'
+2025-11-04 11:23:55,407: Argument epochs: 20
+2025-11-04 11:23:55,407: Argument gradient_accumulation_steps: 1
+2025-11-04 11:23:55,407: Argument lr: 2e-05
+2025-11-04 11:23:55,407: Argument max_length: 150
+2025-11-04 11:23:55,407: Argument model_name: 'meta-llama/Llama-3.2-1B'
+2025-11-04 11:23:55,407: Argument model_type: 'general'
+2025-11-04 11:23:55,407: Argument number_to_use: 9
+2025-11-04 11:23:55,407: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-11-04 11:23:55,407: Argument patience: 3
+2025-11-04 11:23:55,407: Argument peft: False
+2025-11-04 11:23:55,407: Argument prompt_type: 'standard'
+2025-11-04 11:23:55,407: Argument seed: 9550
+2025-11-04 11:23:55,407: Argument test_rnd: False
+2025-11-04 11:23:55,407: Argument tiny: True
+2025-11-04 11:23:55,407: Argument tiny_type: '5M'
+2025-11-04 11:23:55,407: Argument use_quantization: False
+2025-11-04 11:23:58,558: 
+Loading a TINY CausalLM model for testing purposes!
+2025-11-04 11:23:58,558: 
+Loading pre-trained CausalLM model for COLD START!
+2025-11-04 11:24:03,102: 
+New model parameters: 16,738,722
+2025-11-04 11:24:03,111: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+The new lm_head weights will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-11-04 11:24:03,458: Using prompt type: standard
+2025-11-04 11:24:03,458: Model type: general, Model name: meta-llama/Llama-3.2-1B
+2025-11-04 11:24:07,047: Example train text: Sequential events: M E N Z N I G Z T X V D E X E N W O C F
+Outcome (0 or 1):
+2025-11-04 11:24:07,345: Average train text length: 26.00 words
+2025-11-04 11:24:07,345: Average validation text length: 26.00 words
+2025-11-04 11:24:07,345: Average test text length: 26.00 words
+2025-11-04 11:24:07,345: Training on 400000 samples, validating on 50000, testing on 50000 samples
+2025-11-04 11:24:11,575: Early stopping criterion: loss
+2025-11-04 11:37:16,304: Epoch 1/20 | Total Loss: 12.2794 | Causal Loss: 11.5861 | Classification Loss: 0.6933 | Val Loss: 11.9681 | Val AUC: 0.5268 | F1-Score: 0.0020
+2025-11-04 11:37:16,882: New best model saved with AUC: 0.5268
+2025-11-04 11:50:18,326: Epoch 2/20 | Total Loss: 11.6326 | Causal Loss: 10.9530 | Classification Loss: 0.6796 | Val Loss: 11.5554 | Val AUC: 0.5436 | F1-Score: 0.0026
+2025-11-04 11:50:18,449: New best model saved with AUC: 0.5436
+slurmstepd: error: *** JOB 2090912 ON gpu-2 CANCELLED AT 2025-11-04T11:52:20 DUE TO TIME LIMIT ***
+
+Job 2090912 consumed 9.6 billing hours from project ec12.
+
+Submitted 2025-11-04T10:33:54; waited 48.2 minutes in the queue after becoming eligible to run.
+
+Requested wallclock time: 30.0 minutes
+Elapsed wallclock time:   30.2 minutes
+
+Job timed out.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start   Elapsed  Exit status
+2090912          16            0.0 %  2025-11-04T11:22:06  1814.0 s  0
+2090912.batch    16      1     5.8 %  2025-11-04T11:22:06  1814.0 s  Signal 15
+
+Used CPU time:   28.3 CPU minutes
+Unused CPU time: 7.6 CPU hours
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+2090912          80.0        
+2090912.batch    80.0     1.5
+
+Job 2090912 completed at Tue Nov 4 11:52:20 CET 2025

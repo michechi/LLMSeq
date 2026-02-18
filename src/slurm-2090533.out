@@ -1,0 +1,89 @@
+Starting job 2090533 on gpu-1 on Fox at Mon Nov 3 23:50:36 CET 2025
+
+
+[notice] A new release of pip is available: 23.3.2 -> 25.3
+[notice] To update, run: pip install --upgrade pip
+2025-11-03 23:52:06,429: Argument batch_size: 200
+2025-11-03 23:52:06,429: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-03 23:52:06,429: Argument cold_start: False
+2025-11-03 23:52:06,429: Argument early: 'loss'
+2025-11-03 23:52:06,429: Argument epochs: 20
+2025-11-03 23:52:06,429: Argument gradient_accumulation_steps: 1
+2025-11-03 23:52:06,429: Argument lr: 2e-05
+2025-11-03 23:52:06,429: Argument max_length: 100
+2025-11-03 23:52:06,429: Argument model_name: 'Qwen/Qwen2.5-0.5B'
+2025-11-03 23:52:06,429: Argument model_type: 'general'
+2025-11-03 23:52:06,429: Argument number_to_use: 9
+2025-11-03 23:52:06,429: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-11-03 23:52:06,429: Argument patience: 3
+2025-11-03 23:52:06,429: Argument peft: False
+2025-11-03 23:52:06,429: Argument prompt_type: 'standard'
+2025-11-03 23:52:06,429: Argument seed: 9550
+2025-11-03 23:52:06,429: Argument test_rnd: False
+2025-11-03 23:52:06,429: Argument tiny: True
+2025-11-03 23:52:06,429: Argument use_quantization: False
+2025-11-03 23:53:38,677: 
+Loading a TINY CausalLM model for testing purposes!
+2025-11-03 23:53:38,677: 
+Loading pre-trained CausalLM model for COLD START!
+2025-11-03 23:53:43,204: Using prompt type: standard
+2025-11-03 23:53:43,204: Model type: general, Model name: Qwen/Qwen2.5-0.5B
+2025-11-03 23:53:46,444: Example train text: Sequential events: M E N Z N I G Z T X V D E X E N W O C F
+Outcome (0 or 1):
+2025-11-03 23:53:46,734: Average train text length: 26.00 words
+2025-11-03 23:53:46,734: Average validation text length: 26.00 words
+2025-11-03 23:53:46,734: Average test text length: 26.00 words
+2025-11-03 23:53:46,734: Training on 400000 samples, validating on 50000, testing on 50000 samples
+2025-11-03 23:53:49,933: Early stopping criterion: loss
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+Traceback (most recent call last):
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_FOX_time_simulation_tiny.py", line 631, in <module>
+    best_auc, best_model_path, best_val_f1, best_val_loss, epochs_done = train_and_evaluate_causal(
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_FOX_time_simulation_tiny.py", line 435, in train_and_evaluate_causal
+    outputs = model(**inputs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_FOX_time_simulation_tiny.py", line 159, in forward
+    causal_outputs = self.backbone(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/models/qwen2/modeling_qwen2.py", line 1184, in forward
+    loss = self.loss_function(logits, labels, self.vocab_size, **loss_kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/loss/loss_utils.py", line 46, in ForCausalLMLoss
+    loss = fixed_cross_entropy(shift_logits, shift_labels, num_items_in_batch, ignore_index, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/loss/loss_utils.py", line 26, in fixed_cross_entropy
+    loss = nn.functional.cross_entropy(source, target, ignore_index=ignore_index, reduction=reduction)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/functional.py", line 3053, in cross_entropy
+    return torch._C._nn.cross_entropy_loss(input, target, weight, _Reduction.get_enum(reduction), ignore_index, label_smoothing)
+torch.cuda.OutOfMemoryError: CUDA out of memory. Tried to allocate 11.19 GiB. GPU 0 has a total capacty of 39.67 GiB of which 9.47 GiB is free. Including non-PyTorch memory, this process has 30.20 GiB memory in use. Of the allocated memory 29.66 GiB is allocated by PyTorch, and 52.53 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+
+Job 2090533 consumed 1.0 billing hours from project ec12.
+
+Submitted 2025-11-03T23:50:16; waited 20.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 5.0 hours
+Elapsed wallclock time:   3.3 minutes
+
+Job failed.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+2090533          16            0.0 %  2025-11-03T23:50:36  198.0 s  1
+2090533.batch    16      1     0.7 %  2025-11-03T23:50:36  198.0 s  1
+
+Used CPU time:   21.9 CPU seconds
+Unused CPU time: 52.4 CPU minutes
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+2090533          80.0        
+2090533.batch    80.0     0.4
+
+Job 2090533 completed at Mon Nov 3 23:53:55 CET 2025

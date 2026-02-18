@@ -85,7 +85,8 @@ def ordinal_encoding(X_input):
     Matrix (n_samples, 20) where each values it's 0-25
     """
     n_samples = len(X_input)
-    n_cols = len(X_input.Sequences[0].split('\x1f'))
+    # n_cols = len(X_input.Sequences[0].split('\x1f'))
+    n_cols = max([len(seq.split('\x1f')) for seq in X_input.Sequences])
     X = np.zeros((n_samples, n_cols), dtype=int)
     
     for i, seq in enumerate(tqdm(X_input.Sequences)):
@@ -135,7 +136,7 @@ def get_embeddings(texts,
         token=hf_token
     )
     if tiny:
-        hidden_size, num_layers, num_heads, intermediate_size, vocab_size = [128, 4, 4, 512, 100]
+        hidden_size, num_layers, num_heads, intermediate_size, vocab_size = [128*2, 4*2, 4*2, 512*2, 100]
         tiny_config = LlamaConfig(
                 hidden_size=hidden_size,
                 num_hidden_layers=num_layers,
@@ -293,7 +294,7 @@ if __name__ == "__main__":
         estimator=xgb_base,
         param_distributions=param_distributions,
         n_iter=50,
-        cv=StratifiedKFold(n_splits=5, shuffle=True, random_state=args.seed),,
+        cv=StratifiedKFold(n_splits=5, shuffle=True, random_state=args.seed),
         scoring=scoring,
         refit='f1',
         n_jobs=1,

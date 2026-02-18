@@ -1,0 +1,113 @@
+Starting job 1879425 on gpu-9 on Fox at Sat Sep 6 23:53:35 CEST 2025
+
+
+[notice] A new release of pip is available: 23.3.2 -> 25.2
+[notice] To update, run: pip install --upgrade pip
+2025-09-06 23:54:33,154: Argument CI: False
+2025-09-06 23:54:33,154: Argument all_landmarks: False
+2025-09-06 23:54:33,154: Argument batch_size: 8
+2025-09-06 23:54:33,154: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-09-06 23:54:33,154: Argument early: 'loss'
+2025-09-06 23:54:33,154: Argument epochs: 20
+2025-09-06 23:54:33,154: Argument gradient_accumulation_steps: 1
+2025-09-06 23:54:33,154: Argument input_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_df_evo.csv'
+2025-09-06 23:54:33,154: Argument lr: 2e-05
+2025-09-06 23:54:33,154: Argument max_length: 2048
+2025-09-06 23:54:33,154: Argument max_visits: 4
+2025-09-06 23:54:33,154: Argument model_name: 'meta-llama/Llama-3.1-8B'
+2025-09-06 23:54:33,154: Argument model_type: 'general'
+2025-09-06 23:54:33,154: Argument patience: 3
+2025-09-06 23:54:33,154: Argument peft: True
+2025-09-06 23:54:33,154: Argument prompt_type: 'no'
+2025-09-06 23:54:33,154: Argument seed: 4550
+2025-09-06 23:54:33,154: Argument test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_test_dod_fxd.csv'
+2025-09-06 23:54:33,154: Argument train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_train_dod_fxd.csv'
+2025-09-06 23:54:33,154: Argument use_quantization: False
+2025-09-06 23:54:33,154: Argument val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_vali_dod_fxd.csv'
+2025-09-06 23:54:33,154: Argument when_counting_death: 'last_visit'
+2025-09-06 23:54:33,202: Using prompt type: no
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:93: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:95: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_test_df = pd.read_csv(args.test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+2025-09-06 23:55:04,824: Processing only the last landmark visit: 4
+2025-09-06 23:55:04,824: Preparing data for Landmark 4
+2025-09-06 23:55:10,622: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:10<00:31, 10.51s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:22<00:22, 11.12s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:33<00:11, 11.27s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:34<00:00,  7.04s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:34<00:00,  8.51s/it]
+Some weights of LlamaForSequenceClassification were not initialized from the model checkpoint at meta-llama/Llama-3.1-8B and are newly initialized: ['score.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-09-06 23:55:48,351: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-09-06 23:56:28,590: Example train text: Based on this information, what is the probability of mortality within 90 days?Fish Oil (Omega 3); Abscess of intestine; Diverticulitis of colon (without mention of hemorrhage); Desitin; Magnesium Sulfate; Vitamin D; Fluticasone Propionate NASAL; ; Lorazepam; Prochlorperazine; Potassium Chloride; Escitalopram Oxalate; Methicillin susceptible Staphylococcus aureus in conditions classified elsewhere and of unspecified site; Senna; Hydrocortisone (Rectal) 2.5% Cream; LR; Other and unspecified ovarian cyst; Open and other sigmoidectomy; Esophageal reflux; Neutra-Phos; Iso-Osmotic Dextrose; Multivitamins; Nafcillin; Vancomycin; Ondansetron ODT; Acute kidney failure, unspecified; Intestinal bypass or anastomosis status; Ranitidine; Magnesium Citrate; Anxiety state, unspecified; Cephalexin; Promethazine HCl; Influenza Virus Vaccine; SW; Hydrocodone-Acetaminophen; Ketorolac; Orthostatic hypotension; Diverticulosis of colon (without mention of hemorrhage); NS; Pantoprazole; Potassium Chl 20 mEq / 1000 mL D5 1/2 NS; Docusate Sodium; Chest pain, unspecified; Maalox/Diphenhydramine/Lidocaine; Ciprofloxacin; Ulceration of intestine; Other postoperative infection; Other specified aftercare following surgery; MetRONIDAZOLE (FLagyl); 0.9% Sodium Chloride; Other specified disorders of intestine; HydrOXYzine; HYDROmorphone (Dilaudid); OxycoDONE-Acetaminophen Elixir; Bupivacaine 0.5%; Heparin; Morphine Sulfate; 0.45% Sodium Chloride; Acetaminophen; Promethazine; Omeprazole; Ondansetron; Insulin; Clindamycin; Naproxen; Nausea with vomiting; Hypovolemia; Golytely; Removal of other organ (partial) (total) causing abnormal patient reaction, or later complication, without mention of misadventure at time of operation; Metoclopramide; D5W; OxycoDONE (Immediate Release) ; Sodium Chloride 0.9%  Flush; Piperacillin-Tazobactam Na; D5 1/2NS; Closed [endoscopic] biopsy of large intestine; Cellulitis and abscess of trunk; Calcium Carbonate; Ibuprofen
+2025-09-06 23:56:28,778: Average train text length: 334.95 words
+2025-09-06 23:56:28,778: Average validation text length: 338.61 words
+2025-09-06 23:56:28,778: Average test text length: 334.10 words
+2025-09-06 23:56:28,778: Training on 8040 samples, validating on 894, testing on 2234 samples
+2025-09-06 23:56:42,810: Fine-tuning at Landmark 4
+2025-09-06 23:56:44,354: Early stopping criterion: loss
+trainable params: 6,823,936 || all params: 7,511,756,800 || trainable%: 0.0908
+Using device: cuda
+Traceback (most recent call last):
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py", line 256, in <module>
+    main()
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py", line 197, in main
+    best_auc, best_model_path, best_val_f1, best_val_loss, epochs_done = train_and_evaluate(
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/models_training.py", line 95, in train_and_evaluate
+    outputs = model(**inputs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-llmtools/06-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/peft/peft_model.py", line 1521, in forward
+    return self.base_model(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-llmtools/06-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/peft/tuners/tuners_utils.py", line 197, in forward
+    return self.model.forward(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 1251, in forward
+    transformer_outputs = self.model(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 913, in forward
+    layer_outputs = decoder_layer(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 640, in forward
+    hidden_states, self_attn_weights, present_key_value = self.self_attn(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 566, in forward
+    attn_output = torch.nn.functional.scaled_dot_product_attention(
+torch.cuda.OutOfMemoryError: CUDA out of memory. Tried to allocate 2.00 GiB. GPU 0 has a total capacty of 79.25 GiB of which 1.43 GiB is free. Including non-PyTorch memory, this process has 77.81 GiB memory in use. Of the allocated memory 76.92 GiB is allocated by PyTorch, and 409.30 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+
+Job 1879425 consumed 1.0 billing hours from project ec12.
+
+Submitted 2025-09-06T17:13:19; waited 6.7 hours in the queue after becoming eligible to run.
+
+Requested wallclock time: 20.0 hours
+Elapsed wallclock time:   3.2 minutes
+
+Job failed.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+1879425          16            0.0 %  2025-09-06T23:53:34  195.0 s  1
+1879425.batch    16      1    13.6 %  2025-09-06T23:53:34  195.0 s  1
+
+Used CPU time:   7.1 CPU minutes
+Unused CPU time: 44.9 CPU minutes
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1879425          32.0        
+1879425.batch    32.0    32.0
+
+Job 1879425 completed at Sat Sep 6 23:56:49 CEST 2025

@@ -1,0 +1,52 @@
+Starting job 1870161 on gpu-8 on fox at Tue Aug 26 08:33:53 CEST 2025
+
+
+[notice] A new release of pip is available: 23.3.2 -> 25.2
+[notice] To update, run: pip install --upgrade pip
+2025-08-26 08:35:01,325: Argument CI: False
+2025-08-26 08:35:01,325: Argument all_landmarks: False
+2025-08-26 08:35:01,325: Argument batch_size: 2
+2025-08-26 08:35:01,325: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-08-26 08:35:01,325: Argument early: 'loss'
+2025-08-26 08:35:01,325: Argument epochs: 20
+2025-08-26 08:35:01,325: Argument gradient_accumulation_steps: 4
+2025-08-26 08:35:01,325: Argument input_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_df_evo.csv'
+2025-08-26 08:35:01,325: Argument lr: 2e-05
+2025-08-26 08:35:01,325: Argument max_length: 2048
+2025-08-26 08:35:01,325: Argument max_visits: 4
+2025-08-26 08:35:01,325: Argument model_name: 'meta-llama/Llama-3.1-8B'
+2025-08-26 08:35:01,325: Argument model_type: 'general'
+2025-08-26 08:35:01,326: Argument patience: 3
+2025-08-26 08:35:01,326: Argument peft: True
+2025-08-26 08:35:01,326: Argument prompt_type: 'last_info_prompt'
+2025-08-26 08:35:01,326: Argument seed: 5550
+2025-08-26 08:35:01,326: Argument test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_test_dod_fxd.csv'
+2025-08-26 08:35:01,326: Argument train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_train_dod_fxd.csv'
+2025-08-26 08:35:01,326: Argument use_quantization: False
+2025-08-26 08:35:01,326: Argument val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_vali_dod_fxd.csv'
+2025-08-26 08:35:01,326: Argument when_counting_death: 'last_visit'
+2025-08-26 08:35:01,402: Using prompt type: last_info_prompt
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:91: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:93: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_test_df = pd.read_csv(args.test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+2025-08-26 08:35:33,323: Processing only the last landmark visit: 4
+2025-08-26 08:35:33,323: Preparing data for Landmark 4
+2025-08-26 08:35:42,813: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+Loading checkpoint shards:   0%|                                                                              | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|█████████████████▌                                                    | 1/4 [00:10<00:31, 10.49s/it]Loading checkpoint shards:  50%|███████████████████████████████████                                   | 2/4 [00:22<00:22, 11.23s/it]Loading checkpoint shards:  75%|████████████████████████████████████████████████████▌                 | 3/4 [00:33<00:11, 11.40s/it]Loading checkpoint shards: 100%|██████████████████████████████████████████████████████████████████████| 4/4 [00:34<00:00,  7.13s/it]Loading checkpoint shards: 100%|██████████████████████████████████████████████████████████████████████| 4/4 [00:34<00:00,  8.61s/it]
+Some weights of LlamaForSequenceClassification were not initialized from the model checkpoint at meta-llama/Llama-3.1-8B and are newly initialized: ['score.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-26 08:36:24,040: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-08-26 08:37:06,021: Example train text: Based on this information, what is the probability of mortality within 90 days?
+Patient is a 47-year-old F. This is the patient history till visit 4.
+Today:
+	Diagnosis: Other specified disorders of intestine; Ulceration of intestine; Other and unspecified ovarian cyst; Diverticulosis of colon (without mention of hemorrhage); Intestinal bypass or anastomosis status; Anxiety state, unspecified; Esophageal reflux
+	Medications: Ondansetron ODT; Calcium Carbonate; Senna; Vitamin D; Omeprazole; HYDROmorphone (Dilaudid); Desitin; 0.45% Sodium Chloride; Acetaminophen; 0.9% Sodium Chloride; Docusate Sodium; Lorazepam; Multivitamins; Influenza Virus Vaccine; Golytely; Neutra-Phos; Escitalopram Oxalate; Sodium Chloride 0.9%  Flush; Fish Oil (Omega 3); Fluticasone Propionate NASAL; Heparin; Ondansetron; Naproxen; Ranitidine; Ketorolac
+	Procedures: Closed [endoscopic] biopsy of large intestine
+2025-08-26 08:37:06,107: Average train text length: 157.40 words
+2025-08-26 08:37:06,107: Average validation text length: 157.13 words
+2025-08-26 08:37:06,107: Average test text length: 157.87 words
+2025-08-26 08:37:06,107: Training on 8040 samples, validating on 894, testing on 2234 samples
+2025-08-26 08:37:14,537: Fine-tuning at Landmark 4
+2025-08-26 08:37:17,700: Early stopping criterion: loss

@@ -1,0 +1,96 @@
+Starting job 2175252 on gpu-7 on Fox at Sun Dec 7 15:36:35 CET 2025
+
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/cuda/__init__.py:51: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+2025-12-07 15:37:16,130: Argument batch_size: 32
+2025-12-07 15:37:16,131: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-12-07 15:37:16,131: Argument check_truncation: False
+2025-12-07 15:37:16,131: Argument cold_start: False
+2025-12-07 15:37:16,131: Argument csv_to_use: '9'
+2025-12-07 15:37:16,131: Argument early: 'loss'
+2025-12-07 15:37:16,131: Argument epochs: 20
+2025-12-07 15:37:16,131: Argument fraction: 1.0
+2025-12-07 15:37:16,131: Argument freeze_rotary: False
+2025-12-07 15:37:16,131: Argument gradient_accumulation_steps: 1
+2025-12-07 15:37:16,131: Argument lr: 2e-05
+2025-12-07 15:37:16,131: Argument max_length: 100
+2025-12-07 15:37:16,131: Argument model_name: 'meta-llama/Llama-3.1-8B'
+2025-12-07 15:37:16,131: Argument model_type: 'general'
+2025-12-07 15:37:16,131: Argument output_dir: '/fp/homes01/u01/ec-michelec/MIMICIV/src/output_slurms_fox/'
+2025-12-07 15:37:16,131: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-12-07 15:37:16,131: Argument patience: 3
+2025-12-07 15:37:16,131: Argument peft: True
+2025-12-07 15:37:16,131: Argument prompt_type: 'standard'
+2025-12-07 15:37:16,131: Argument seed: 9550
+2025-12-07 15:37:16,132: Argument test_rnd: False
+2025-12-07 15:37:16,132: Argument tiny: False
+2025-12-07 15:37:16,132: Argument tiny_type: '1M'
+2025-12-07 15:37:16,132: Argument use_quantization: False
+2025-12-07 15:37:18,599: Not Tiny model: loading full model.
+2025-12-07 15:37:18,599: Loading pre-trained CausalLM model for WARM START!
+2025-12-07 15:37:20,118: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:10<00:32, 10.87s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:23<00:23, 11.62s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:34<00:11, 11.67s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:37<00:00,  8.07s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:37<00:00,  9.32s/it]
+2025-12-07 15:38:01,255: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-12-07 15:38:38,657: Using prompt type: standard
+2025-12-07 15:38:38,657: Model type: general, Model name: meta-llama/Llama-3.1-8B
+2025-12-07 15:38:38,657: Training with dataset fraction = 1.0
+2025-12-07 15:38:39,065: Train Subset size: 400000 / 400000
+2025-12-07 15:38:39,066: Val Subset size: 50000 / 50000
+2025-12-07 15:38:39,066: Distributions Train y's:
+2025-12-07 15:38:39,071: Outcome
+0          0.581575
+1          0.418425
+dtype: float64
+2025-12-07 15:38:39,072: Distributions Val y's:
+2025-12-07 15:38:39,073: Outcome
+0          0.57858
+1          0.42142
+dtype: float64
+2025-12-07 15:38:41,973: Example train text: Sequential events: M E N Z N I G Z T X V D E X E N W O C F
+Outcome (0 or 1):
+2025-12-07 15:38:42,265: Average train text length: 26.00 words
+2025-12-07 15:38:42,266: Average validation text length: 26.00 words
+2025-12-07 15:38:42,266: Average test text length: 26.00 words
+2025-12-07 15:38:42,266: Training on 400000 samples, validating on 50000, testing on 50000 samples
+2025-12-07 15:38:42,268: DataLoaders created.
+2025-12-07 15:38:43,835: Early stopping criterion: loss
+trainable params: 6,815,744 || all params: 7,511,740,416 || trainable%: 0.0907
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+2025-12-07 18:31:59,455: Epoch 1/20 | Total Loss: 3.7392 | Causal Loss: 3.0624 | Classification Loss: 0.6768 | Val Loss: 2.7472 | Val AUC: 0.6609 | F1-Score: 0.5677
+2025-12-07 18:32:11,355: New best model saved with AUC: 0.6609
+2025-12-07 21:25:21,996: Epoch 2/20 | Total Loss: 2.7371 | Causal Loss: 2.1056 | Classification Loss: 0.6315 | Val Loss: 2.7258 | Val AUC: 0.6679 | F1-Score: 0.5764
+2025-12-07 21:25:33,562: New best model saved with AUC: 0.6679
+2025-12-08 00:18:43,988: Epoch 3/20 | Total Loss: 2.7225 | Causal Loss: 2.1043 | Classification Loss: 0.6182 | Val Loss: 2.7188 | Val AUC: 0.6668 | F1-Score: 0.5744
+2025-12-08 00:18:55,734: New best model saved with AUC: 0.6668
+2025-12-08 03:12:02,960: Epoch 4/20 | Total Loss: 2.7201 | Causal Loss: 2.1039 | Classification Loss: 0.6162 | Val Loss: 2.7187 | Val AUC: 0.6654 | F1-Score: 0.5738
+2025-12-08 03:12:15,380: New best model saved with AUC: 0.6654
+2025-12-08 06:05:27,243: Epoch 5/20 | Total Loss: 2.7192 | Causal Loss: 2.1038 | Classification Loss: 0.6155 | Val Loss: 2.7192 | Val AUC: 0.6669 | F1-Score: 0.5756
+slurmstepd: error: *** JOB 2175252 ON gpu-7 CANCELLED AT 2025-12-08T06:36:50 DUE TO TIME LIMIT ***
+
+Job 2175252 consumed 285.1 billing hours from project ec12.
+
+Submitted 2025-12-07T15:36:05; waited 30.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 15.0 hours
+Elapsed wallclock time:   15.0 hours
+
+Job timed out.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+2175252          16            0.0 %  2025-12-07T15:36:35   15.0 h  0
+2175252.batch    16      1     6.3 %  2025-12-07T15:36:35   15.0 h  Signal 15
+
+Used CPU time:   15.2 CPU hours
+Unused CPU time: 9.4 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+2175252          80.0        
+2175252.batch    80.0    34.6
+
+Job 2175252 completed at Mon Dec 8 06:36:53 CET 2025

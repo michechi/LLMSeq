@@ -1,0 +1,168 @@
+Starting job 2844574 on gpu-13 on Fox at Tue Dec 23 13:07:58 CET 2025
+
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/cuda/__init__.py:51: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+2025-12-23 13:08:30,121: Argument batch_size: 32
+2025-12-23 13:08:30,122: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-12-23 13:08:30,122: Argument check_truncation: False
+2025-12-23 13:08:30,122: Argument cold_start: True
+2025-12-23 13:08:30,122: Argument csv_to_use: 'odd_3_shf'
+2025-12-23 13:08:30,122: Argument early: 'loss'
+2025-12-23 13:08:30,122: Argument epochs: 40
+2025-12-23 13:08:30,122: Argument fraction: 1.0
+2025-12-23 13:08:30,122: Argument freeze_rotary: False
+2025-12-23 13:08:30,122: Argument gradient_accumulation_steps: 1
+2025-12-23 13:08:30,122: Argument lr: 2e-05
+2025-12-23 13:08:30,122: Argument max_length: 200
+2025-12-23 13:08:30,122: Argument model_name: 'meta-llama/Llama-3.2-1B'
+2025-12-23 13:08:30,122: Argument model_type: 'general'
+2025-12-23 13:08:30,122: Argument outcome: 'Outcome'
+2025-12-23 13:08:30,122: Argument output_dir: '/fp/homes01/u01/ec-michelec/MIMICIV/src/output_slurms_fox/'
+2025-12-23 13:08:30,123: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-12-23 13:08:30,123: Argument patience: 3
+2025-12-23 13:08:30,123: Argument peft: False
+2025-12-23 13:08:30,123: Argument prompt_type: 'standard'
+2025-12-23 13:08:30,123: Argument seed: 9550
+2025-12-23 13:08:30,123: Argument test_rnd: False
+2025-12-23 13:08:30,123: Argument tiny: True
+2025-12-23 13:08:30,123: Argument tiny_type: '1M'
+2025-12-23 13:08:30,123: Argument use_quantization: False
+2025-12-23 13:08:33,909: Loading a TINY CausalLM model for testing purposes!
+2025-12-23 13:08:33,910: Loading pre-trained CausalLM model for COLD START!
+2025-12-23 13:08:33,910: Tiny model config - Hidden size: 128, Num layers: 4, Num heads: 4, Intermediate size: 512, Vocab size: 100
+2025-12-23 13:08:34,958: Using Flash Attention 2 for LLaMA tiny model
+2025-12-23 13:08:34,960: 
+New model parameters: 1,005,378
+2025-12-23 13:08:34,960: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-12-23 13:08:35,267: Using prompt type: standard
+2025-12-23 13:08:35,267: Model type: general, Model name: meta-llama/Llama-3.2-1B
+2025-12-23 13:08:35,267: Training with dataset fraction = 1.0
+2025-12-23 13:08:35,497: Train Subset size: 160000 / 160000
+2025-12-23 13:08:35,497: Val Subset size: 20000 / 20000
+2025-12-23 13:08:35,497: Distributions Train y's:
+2025-12-23 13:08:35,500: Outcome
+0          0.500144
+1          0.499856
+dtype: float64
+2025-12-23 13:08:35,501: Distributions Val y's:
+2025-12-23 13:08:35,502: Outcome
+0          0.50135
+1          0.49865
+dtype: float64
+2025-12-23 13:08:36,851: Example train text: Sequential events: 7:W 13:X 8:Y 4:X 10:M 15:J 19:K 17:M 1:S 18:G 20:O 2:D 16:X 9:J 12:E 14:R 5:J 6:B 21:B 3:R 11:M
+Outcome (0 or 1):
+2025-12-23 13:08:37,069: Average train text length: 26.50 words
+2025-12-23 13:08:37,069: Average validation text length: 26.50 words
+2025-12-23 13:08:37,069: Average test text length: 26.50 words
+2025-12-23 13:08:37,069: Training on 160000 samples, validating on 20000, testing on 20000 samples
+2025-12-23 13:08:37,070: DataLoaders created.
+2025-12-23 13:08:38,138: Early stopping criterion: loss
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+2025-12-23 13:16:14,755: Epoch 1/40 | Total Loss: 10.7467 | Causal Loss: 10.0509 | Classification Loss: 0.6958 | Val Loss: 7.4923 | Val AUC: 0.5078 | F1-Score: 0.6655 | Accuracy:  0.4986 | Precision: 0.4986 | Recall:    1.0000
+2025-12-23 13:16:14,859: New best model saved with AUC: 0.5078
+/fp/projects01/ec30/software/easybuild/software/nlpl-scikit-bundle/1.3.2-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/sklearn/metrics/_classification.py:1471: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 due to no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, msg_start, len(result))
+2025-12-23 13:23:50,823: Epoch 2/40 | Total Loss: 4.4557 | Causal Loss: 3.7612 | Classification Loss: 0.6945 | Val Loss: 2.6918 | Val AUC: 0.5151 | F1-Score: 0.0000 | Accuracy:  0.5013 | Precision: 0.0000 | Recall:    0.0000
+2025-12-23 13:23:50,931: New best model saved with AUC: 0.5151
+/fp/projects01/ec30/software/easybuild/software/nlpl-scikit-bundle/1.3.2-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/sklearn/metrics/_classification.py:1471: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 due to no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, msg_start, len(result))
+2025-12-23 13:31:31,311: Epoch 3/40 | Total Loss: 2.3433 | Causal Loss: 1.6491 | Classification Loss: 0.6942 | Val Loss: 2.2171 | Val AUC: 0.5162 | F1-Score: 0.0000 | Accuracy:  0.5013 | Precision: 0.0000 | Recall:    0.0000
+2025-12-23 13:31:31,415: New best model saved with AUC: 0.5162
+2025-12-23 13:39:09,039: Epoch 4/40 | Total Loss: 2.1955 | Causal Loss: 1.5019 | Classification Loss: 0.6936 | Val Loss: 2.1825 | Val AUC: 0.5178 | F1-Score: 0.3584 | Accuracy:  0.5060 | Precision: 0.5086 | Recall:    0.2767
+2025-12-23 13:39:09,129: New best model saved with AUC: 0.5178
+2025-12-23 13:46:47,985: Epoch 5/40 | Total Loss: 2.1800 | Causal Loss: 1.4867 | Classification Loss: 0.6933 | Val Loss: 2.1766 | Val AUC: 0.5176 | F1-Score: 0.4023 | Accuracy:  0.5079 | Precision: 0.5101 | Recall:    0.3321
+2025-12-23 13:46:48,092: New best model saved with AUC: 0.5176
+2025-12-23 13:54:23,255: Epoch 6/40 | Total Loss: 2.1753 | Causal Loss: 1.4822 | Classification Loss: 0.6930 | Val Loss: 2.1664 | Val AUC: 0.5176 | F1-Score: 0.6404 | Accuracy:  0.5090 | Precision: 0.5044 | Recall:    0.8767
+2025-12-23 13:54:23,350: New best model saved with AUC: 0.5176
+2025-12-23 14:01:59,527: Epoch 7/40 | Total Loss: 2.1598 | Causal Loss: 1.4668 | Classification Loss: 0.6930 | Val Loss: 2.1555 | Val AUC: 0.5176 | F1-Score: 0.5488 | Accuracy:  0.5143 | Precision: 0.5112 | Recall:    0.5924
+2025-12-23 14:01:59,631: New best model saved with AUC: 0.5176
+2025-12-23 14:09:37,005: Epoch 8/40 | Total Loss: 2.1430 | Causal Loss: 1.4500 | Classification Loss: 0.6930 | Val Loss: 2.1289 | Val AUC: 0.5185 | F1-Score: 0.5525 | Accuracy:  0.5143 | Precision: 0.5110 | Recall:    0.6012
+2025-12-23 14:09:37,102: New best model saved with AUC: 0.5185
+2025-12-23 14:17:12,773: Epoch 9/40 | Total Loss: 2.1143 | Causal Loss: 1.4216 | Classification Loss: 0.6926 | Val Loss: 2.0992 | Val AUC: 0.5334 | F1-Score: 0.5641 | Accuracy:  0.5155 | Precision: 0.5116 | Recall:    0.6287
+2025-12-23 14:17:12,879: New best model saved with AUC: 0.5334
+2025-12-23 14:24:51,553: Epoch 10/40 | Total Loss: 1.9730 | Causal Loss: 1.4007 | Classification Loss: 0.5722 | Val Loss: 1.9087 | Val AUC: 0.8218 | F1-Score: 0.7465 | Accuracy:  0.7422 | Precision: 0.7323 | Recall:    0.7614
+2025-12-23 14:24:51,663: New best model saved with AUC: 0.8218
+2025-12-23 14:32:31,152: Epoch 11/40 | Total Loss: 1.8817 | Causal Loss: 1.3876 | Classification Loss: 0.4941 | Val Loss: 1.8472 | Val AUC: 0.8591 | F1-Score: 0.7704 | Accuracy:  0.7752 | Precision: 0.7849 | Recall:    0.7563
+2025-12-23 14:32:31,266: New best model saved with AUC: 0.8591
+2025-12-23 14:40:08,919: Epoch 12/40 | Total Loss: 1.8328 | Causal Loss: 1.3805 | Classification Loss: 0.4523 | Val Loss: 1.8186 | Val AUC: 0.8752 | F1-Score: 0.7809 | Accuracy:  0.7885 | Precision: 0.8075 | Recall:    0.7560
+2025-12-23 14:40:09,030: New best model saved with AUC: 0.8752
+2025-12-23 14:47:44,753: Epoch 13/40 | Total Loss: 1.8080 | Causal Loss: 1.3777 | Classification Loss: 0.4303 | Val Loss: 1.7887 | Val AUC: 0.8911 | F1-Score: 0.8088 | Accuracy:  0.8055 | Precision: 0.7935 | Recall:    0.8246
+2025-12-23 14:47:44,861: New best model saved with AUC: 0.8911
+2025-12-23 14:55:24,686: Epoch 14/40 | Total Loss: 1.7764 | Causal Loss: 1.3764 | Classification Loss: 0.4000 | Val Loss: 1.7537 | Val AUC: 0.9090 | F1-Score: 0.8231 | Accuracy:  0.8249 | Precision: 0.8294 | Recall:    0.8169
+2025-12-23 14:55:24,799: New best model saved with AUC: 0.9090
+2025-12-23 15:03:12,326: Epoch 15/40 | Total Loss: 1.7315 | Causal Loss: 1.3755 | Classification Loss: 0.3560 | Val Loss: 1.7071 | Val AUC: 0.9300 | F1-Score: 0.8514 | Accuracy:  0.8528 | Precision: 0.8577 | Recall:    0.8451
+2025-12-23 15:03:12,430: New best model saved with AUC: 0.9300
+2025-12-23 15:11:00,088: Epoch 16/40 | Total Loss: 1.6683 | Causal Loss: 1.3751 | Classification Loss: 0.2932 | Val Loss: 1.6124 | Val AUC: 0.9661 | F1-Score: 0.9025 | Accuracy:  0.9043 | Precision: 0.9180 | Recall:    0.8874
+2025-12-23 15:11:00,204: New best model saved with AUC: 0.9661
+2025-12-23 15:18:50,077: Epoch 17/40 | Total Loss: 1.5377 | Causal Loss: 1.3752 | Classification Loss: 0.1625 | Val Loss: 1.4843 | Val AUC: 0.9920 | F1-Score: 0.9615 | Accuracy:  0.9620 | Precision: 0.9731 | Recall:    0.9502
+2025-12-23 15:18:50,184: New best model saved with AUC: 0.9920
+2025-12-23 15:26:37,925: Epoch 18/40 | Total Loss: 1.4549 | Causal Loss: 1.3748 | Classification Loss: 0.0802 | Val Loss: 1.4438 | Val AUC: 0.9960 | F1-Score: 0.9793 | Accuracy:  0.9794 | Precision: 0.9818 | Recall:    0.9768
+2025-12-23 15:26:38,031: New best model saved with AUC: 0.9960
+2025-12-23 15:34:28,372: Epoch 19/40 | Total Loss: 1.4296 | Causal Loss: 1.3741 | Classification Loss: 0.0555 | Val Loss: 1.4304 | Val AUC: 0.9975 | F1-Score: 0.9824 | Accuracy:  0.9825 | Precision: 0.9843 | Recall:    0.9805
+2025-12-23 15:34:28,478: New best model saved with AUC: 0.9975
+2025-12-23 15:42:20,907: Epoch 20/40 | Total Loss: 1.4164 | Causal Loss: 1.3736 | Classification Loss: 0.0428 | Val Loss: 1.4192 | Val AUC: 0.9983 | F1-Score: 0.9859 | Accuracy:  0.9860 | Precision: 0.9869 | Recall:    0.9850
+2025-12-23 15:42:21,018: New best model saved with AUC: 0.9983
+2025-12-23 15:50:09,594: Epoch 21/40 | Total Loss: 1.4089 | Causal Loss: 1.3732 | Classification Loss: 0.0357 | Val Loss: 1.4165 | Val AUC: 0.9983 | F1-Score: 0.9878 | Accuracy:  0.9879 | Precision: 0.9901 | Recall:    0.9856
+2025-12-23 15:50:09,705: New best model saved with AUC: 0.9983
+2025-12-23 15:57:56,764: Epoch 22/40 | Total Loss: 1.4022 | Causal Loss: 1.3728 | Classification Loss: 0.0293 | Val Loss: 1.4090 | Val AUC: 0.9988 | F1-Score: 0.9897 | Accuracy:  0.9898 | Precision: 0.9922 | Recall:    0.9873
+2025-12-23 15:57:56,874: New best model saved with AUC: 0.9988
+2025-12-23 16:05:46,659: Epoch 23/40 | Total Loss: 1.3968 | Causal Loss: 1.3725 | Classification Loss: 0.0243 | Val Loss: 1.4096 | Val AUC: 0.9990 | F1-Score: 0.9885 | Accuracy:  0.9886 | Precision: 0.9904 | Recall:    0.9866
+2025-12-23 16:13:38,454: Epoch 24/40 | Total Loss: 1.3929 | Causal Loss: 1.3723 | Classification Loss: 0.0206 | Val Loss: 1.3978 | Val AUC: 0.9994 | F1-Score: 0.9919 | Accuracy:  0.9919 | Precision: 0.9928 | Recall:    0.9910
+2025-12-23 16:13:38,552: New best model saved with AUC: 0.9994
+2025-12-23 16:21:26,852: Epoch 25/40 | Total Loss: 1.3892 | Causal Loss: 1.3719 | Classification Loss: 0.0173 | Val Loss: 1.3983 | Val AUC: 0.9994 | F1-Score: 0.9926 | Accuracy:  0.9926 | Precision: 0.9926 | Recall:    0.9926
+2025-12-23 16:29:17,519: Epoch 26/40 | Total Loss: 1.3862 | Causal Loss: 1.3718 | Classification Loss: 0.0144 | Val Loss: 1.3953 | Val AUC: 0.9995 | F1-Score: 0.9928 | Accuracy:  0.9929 | Precision: 0.9920 | Recall:    0.9937
+2025-12-23 16:29:17,638: New best model saved with AUC: 0.9995
+2025-12-23 16:37:08,479: Epoch 27/40 | Total Loss: 1.3836 | Causal Loss: 1.3715 | Classification Loss: 0.0121 | Val Loss: 1.3903 | Val AUC: 0.9996 | F1-Score: 0.9945 | Accuracy:  0.9945 | Precision: 0.9949 | Recall:    0.9941
+2025-12-23 16:37:08,582: New best model saved with AUC: 0.9996
+2025-12-23 16:45:00,170: Epoch 28/40 | Total Loss: 1.3817 | Causal Loss: 1.3713 | Classification Loss: 0.0103 | Val Loss: 1.3909 | Val AUC: 0.9996 | F1-Score: 0.9943 | Accuracy:  0.9943 | Precision: 0.9960 | Recall:    0.9926
+2025-12-23 16:52:50,370: Epoch 29/40 | Total Loss: 1.3801 | Causal Loss: 1.3711 | Classification Loss: 0.0089 | Val Loss: 1.3919 | Val AUC: 0.9995 | F1-Score: 0.9942 | Accuracy:  0.9942 | Precision: 0.9940 | Recall:    0.9945
+2025-12-23 17:00:40,361: Epoch 30/40 | Total Loss: 1.3783 | Causal Loss: 1.3710 | Classification Loss: 0.0073 | Val Loss: 1.3877 | Val AUC: 0.9997 | F1-Score: 0.9958 | Accuracy:  0.9958 | Precision: 0.9958 | Recall:    0.9958
+2025-12-23 17:00:40,456: New best model saved with AUC: 0.9997
+2025-12-23 17:08:28,228: Epoch 31/40 | Total Loss: 1.3769 | Causal Loss: 1.3708 | Classification Loss: 0.0060 | Val Loss: 1.3866 | Val AUC: 0.9997 | F1-Score: 0.9958 | Accuracy:  0.9959 | Precision: 0.9967 | Recall:    0.9950
+2025-12-23 17:08:28,340: New best model saved with AUC: 0.9997
+2025-12-23 17:16:19,098: Epoch 32/40 | Total Loss: 1.3755 | Causal Loss: 1.3707 | Classification Loss: 0.0048 | Val Loss: 1.3871 | Val AUC: 0.9997 | F1-Score: 0.9955 | Accuracy:  0.9955 | Precision: 0.9953 | Recall:    0.9957
+2025-12-23 17:24:07,426: Epoch 33/40 | Total Loss: 1.3746 | Causal Loss: 1.3706 | Classification Loss: 0.0040 | Val Loss: 1.3880 | Val AUC: 0.9997 | F1-Score: 0.9953 | Accuracy:  0.9953 | Precision: 0.9948 | Recall:    0.9958
+2025-12-23 17:31:48,907: Epoch 34/40 | Total Loss: 1.3738 | Causal Loss: 1.3705 | Classification Loss: 0.0033 | Val Loss: 1.3865 | Val AUC: 0.9997 | F1-Score: 0.9960 | Accuracy:  0.9960 | Precision: 0.9974 | Recall:    0.9946
+2025-12-23 17:31:49,015: New best model saved with AUC: 0.9997
+2025-12-23 17:39:24,350: Epoch 35/40 | Total Loss: 1.3729 | Causal Loss: 1.3703 | Classification Loss: 0.0026 | Val Loss: 1.3846 | Val AUC: 0.9997 | F1-Score: 0.9964 | Accuracy:  0.9964 | Precision: 0.9968 | Recall:    0.9961
+2025-12-23 17:39:24,475: New best model saved with AUC: 0.9997
+2025-12-23 17:47:05,017: Epoch 36/40 | Total Loss: 1.3722 | Causal Loss: 1.3702 | Classification Loss: 0.0019 | Val Loss: 1.3866 | Val AUC: 0.9997 | F1-Score: 0.9963 | Accuracy:  0.9963 | Precision: 0.9973 | Recall:    0.9954
+2025-12-23 17:54:41,004: Epoch 37/40 | Total Loss: 1.3717 | Causal Loss: 1.3701 | Classification Loss: 0.0016 | Val Loss: 1.3851 | Val AUC: 0.9997 | F1-Score: 0.9964 | Accuracy:  0.9964 | Precision: 0.9971 | Recall:    0.9958
+2025-12-23 18:02:20,759: Epoch 38/40 | Total Loss: 1.3709 | Causal Loss: 1.3700 | Classification Loss: 0.0009 | Val Loss: 1.3848 | Val AUC: 0.9997 | F1-Score: 0.9969 | Accuracy:  0.9969 | Precision: 0.9974 | Recall:    0.9964
+2025-12-23 18:02:20,759: Early stopping at epoch 38
+2025-12-23 18:02:20,828: Tempo medio per epoca: 463.8 secondi
+2025-12-23 18:02:20,829: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.2-1B_9550_standard_200_True_20251223_130838_True_odd_3_shf_2e-05_.pt for final evaluation on test set
+2025-12-23 18:02:39,506: Final Test AUC: 0.9999 | Test F1-Score: 0.9963 | Accuracy: 0.9962 | Precision: 0.9963 | Recall: 0.9962
+2025-12-23 18:02:39,508: Saving results to results_general_meta-llama_Llama-3.2-1B__9550_200_standard_1M_1.0_20251223_180239.csv
+  Val AUC Val F1-Score  ... Validation Loss Training Time (s)
+0  0.9997       0.9964  ...          1.3846           17623.6
+
+[1 rows x 11 columns]
+
+Job 2844574 consumed 93.3 billing hours from project ec12.
+
+Submitted 2025-12-23T13:07:57; waited 0.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 15.0 hours
+Elapsed wallclock time:   4.9 hours
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+2844574          16            0.0 %  2025-12-23T13:07:57    4.9 h  0
+2844574.batch    16      1     6.4 %  2025-12-23T13:07:57    4.9 h  0
+
+Used CPU time:   5.0 CPU hours
+Unused CPU time: 3.1 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+2844574          80.0        
+2844574.batch    80.0     1.7
+
+Job 2844574 completed at Tue Dec 23 18:02:40 CET 2025

@@ -1,0 +1,74 @@
+Starting job 2063789 on gpu-15 on Fox at Wed Oct 22 16:51:01 CEST 2025
+
+
+[notice] A new release of pip is available: 23.3.2 -> 25.2
+[notice] To update, run: pip install --upgrade pip
+2025-10-22 16:52:00,190: Argument X_test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/X_test_6.csv'
+2025-10-22 16:52:00,190: Argument X_train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/X_train_6.csv'
+2025-10-22 16:52:00,190: Argument X_val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/X_val_6.csv'
+2025-10-22 16:52:00,190: Argument batch_size: 64
+2025-10-22 16:52:00,190: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-10-22 16:52:00,190: Argument early: 'loss'
+2025-10-22 16:52:00,190: Argument epochs: 20
+2025-10-22 16:52:00,190: Argument gradient_accumulation_steps: 1
+2025-10-22 16:52:00,190: Argument lr: 2e-05
+2025-10-22 16:52:00,190: Argument max_length: 100
+2025-10-22 16:52:00,190: Argument model_name: 'meta-llama/Llama-3.2-1B'
+2025-10-22 16:52:00,190: Argument model_type: 'general'
+2025-10-22 16:52:00,190: Argument patience: 3
+2025-10-22 16:52:00,190: Argument peft: False
+2025-10-22 16:52:00,190: Argument prompt_type: 'standard'
+2025-10-22 16:52:00,190: Argument seed: 9550
+2025-10-22 16:52:00,190: Argument test_rnd: False
+2025-10-22 16:52:00,190: Argument use_quantization: False
+2025-10-22 16:52:00,190: Argument y_test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/y_test_6.csv'
+2025-10-22 16:52:00,190: Argument y_train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/y_train_6.csv'
+2025-10-22 16:52:00,190: Argument y_val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/y_val_6.csv'
+2025-10-22 16:52:07,796: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-10-22 16:52:13,449: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-10-22 16:52:23,163: Using prompt type: standard
+2025-10-22 16:52:23,163: Model type: general, Model name: meta-llama/Llama-3.2-1B
+2025-10-22 16:52:26,373: Example train text: Sequential events: P R P X O V U G C A A Z I L F I Q C D R
+Outcome (0 or 1):
+2025-10-22 16:52:26,672: Average train text length: 26.00 words
+2025-10-22 16:52:26,672: Average validation text length: 26.00 words
+2025-10-22 16:52:26,672: Average test text length: 26.00 words
+2025-10-22 16:52:26,672: Training on 400000 samples, validating on 50000, testing on 50000 samples
+2025-10-22 16:52:28,481: Early stopping criterion: loss
+2025-10-22 17:49:18,703: Epoch 1/20 | Total Loss: 2.6209 | Causal Loss: 2.2966 | Classification Loss: 0.3243 | Val Loss: 2.1323 | Val AUC: 0.9971 | F1-Score: 0.9924
+2025-10-22 17:49:20,392: New best model saved with AUC: 0.9971
+2025-10-22 18:46:08,082: Epoch 2/20 | Total Loss: 2.1283 | Causal Loss: 2.1032 | Classification Loss: 0.0251 | Val Loss: 2.1263 | Val AUC: 0.9990 | F1-Score: 0.9923
+2025-10-22 18:46:09,754: New best model saved with AUC: 0.9990
+2025-10-22 19:42:56,894: Epoch 3/20 | Total Loss: 2.1265 | Causal Loss: 2.1031 | Classification Loss: 0.0234 | Val Loss: 2.1261 | Val AUC: 0.9990 | F1-Score: 0.9924
+2025-10-22 19:42:58,558: New best model saved with AUC: 0.9990
+2025-10-22 20:39:46,647: Epoch 4/20 | Total Loss: 2.1247 | Causal Loss: 2.1030 | Classification Loss: 0.0217 | Val Loss: 2.1239 | Val AUC: 0.9993 | F1-Score: 0.9924
+2025-10-22 20:39:48,326: New best model saved with AUC: 0.9993
+2025-10-22 21:36:35,164: Epoch 5/20 | Total Loss: 2.1236 | Causal Loss: 2.1029 | Classification Loss: 0.0207 | Val Loss: 2.1234 | Val AUC: 0.9993 | F1-Score: 0.9924
+2025-10-22 21:36:37,621: New best model saved with AUC: 0.9993
+2025-10-22 22:33:27,025: Epoch 6/20 | Total Loss: 2.1233 | Causal Loss: 2.1029 | Classification Loss: 0.0204 | Val Loss: 2.1234 | Val AUC: 0.9993 | F1-Score: 0.9924
+slurmstepd: error: *** JOB 2063789 ON gpu-15 CANCELLED AT 2025-10-22T22:51:28 DUE TO TIME LIMIT ***
+
+Job 2063789 consumed 114.1 billing hours from project ec12.
+
+Submitted 2025-10-22T15:08:22; waited 1.7 hours in the queue after becoming eligible to run.
+
+Requested wallclock time: 6.0 hours
+Elapsed wallclock time:   6.0 hours
+
+Job timed out.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+2063789          16            0.0 %  2025-10-22T16:51:00    6.0 h  0
+2063789.batch    16      1     6.2 %  2025-10-22T16:51:00    6.0 h  Signal 15
+
+Used CPU time:   6.0 CPU hours
+Unused CPU time: 3.8 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+2063789          32.0        
+2063789.batch    32.0     3.8
+
+Job 2063789 completed at Wed Oct 22 22:51:31 CEST 2025

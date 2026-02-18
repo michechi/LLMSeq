@@ -1,0 +1,95 @@
+Starting job 2089156 on gpu-13 on Fox at Mon Nov 3 22:13:58 CET 2025
+
+
+[notice] A new release of pip is available: 23.3.2 -> 25.3
+[notice] To update, run: pip install --upgrade pip
+2025-11-03 22:14:50,630: Argument batch_size: 128
+2025-11-03 22:14:50,631: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-03 22:14:50,631: Argument cold_start: False
+2025-11-03 22:14:50,631: Argument early: 'loss'
+2025-11-03 22:14:50,631: Argument epochs: 20
+2025-11-03 22:14:50,631: Argument gradient_accumulation_steps: 1
+2025-11-03 22:14:50,631: Argument lr: 2e-05
+2025-11-03 22:14:50,631: Argument max_length: 100
+2025-11-03 22:14:50,631: Argument model_name: 'meta-llama/Llama-3.2-1B'
+2025-11-03 22:14:50,631: Argument model_type: 'general'
+2025-11-03 22:14:50,631: Argument number_to_use: 9
+2025-11-03 22:14:50,631: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-11-03 22:14:50,631: Argument patience: 3
+2025-11-03 22:14:50,631: Argument peft: False
+2025-11-03 22:14:50,631: Argument prompt_type: 'standard'
+2025-11-03 22:14:50,631: Argument seed: 9550
+2025-11-03 22:14:50,631: Argument test_rnd: False
+2025-11-03 22:14:50,631: Argument tiny: True
+2025-11-03 22:14:50,631: Argument use_quantization: False
+2025-11-03 22:14:54,419: 
+Loading a TINY CausalLM model for testing purposes!
+2025-11-03 22:14:54,419: 
+Loading pre-trained CausalLM model for COLD START!
+2025-11-03 22:14:56,451: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+The new lm_head weights will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-11-03 22:14:57,340: Using prompt type: standard
+2025-11-03 22:14:57,340: Model type: general, Model name: meta-llama/Llama-3.2-1B
+2025-11-03 22:15:00,613: Example train text: Sequential events: M E N Z N I G Z T X V D E X E N W O C F
+Outcome (0 or 1):
+2025-11-03 22:15:00,907: Average train text length: 26.00 words
+2025-11-03 22:15:00,908: Average validation text length: 26.00 words
+2025-11-03 22:15:00,908: Average test text length: 26.00 words
+2025-11-03 22:15:00,908: Training on 400000 samples, validating on 50000, testing on 50000 samples
+2025-11-03 22:15:02,586: Early stopping criterion: loss
+2025-11-03 22:27:02,949: Epoch 1/20 | Total Loss: 6.0645 | Causal Loss: 5.3913 | Classification Loss: 0.6732 | Val Loss: 2.8783 | Val AUC: 0.5970 | F1-Score: 0.4662
+2025-11-03 22:27:04,344: New best model saved with AUC: 0.5970
+2025-11-03 22:39:05,219: Epoch 2/20 | Total Loss: 2.7964 | Causal Loss: 2.1290 | Classification Loss: 0.6675 | Val Loss: 2.7750 | Val AUC: 0.6013 | F1-Score: 0.4073
+2025-11-03 22:39:06,755: New best model saved with AUC: 0.6013
+2025-11-03 22:51:07,146: Epoch 3/20 | Total Loss: 2.7714 | Causal Loss: 2.1055 | Classification Loss: 0.6659 | Val Loss: 2.7685 | Val AUC: 0.6046 | F1-Score: 0.3028
+2025-11-03 22:51:07,481: New best model saved with AUC: 0.6046
+2025-11-03 23:03:05,688: Epoch 4/20 | Total Loss: 2.7660 | Causal Loss: 2.1031 | Classification Loss: 0.6629 | Val Loss: 2.7653 | Val AUC: 0.6113 | F1-Score: 0.4465
+2025-11-03 23:03:06,029: New best model saved with AUC: 0.6113
+2025-11-03 23:15:04,210: Epoch 5/20 | Total Loss: 2.7636 | Causal Loss: 2.1025 | Classification Loss: 0.6611 | Val Loss: 2.7659 | Val AUC: 0.6142 | F1-Score: 0.4930
+2025-11-03 23:27:02,773: Epoch 6/20 | Total Loss: 2.7622 | Causal Loss: 2.1023 | Classification Loss: 0.6599 | Val Loss: 2.7638 | Val AUC: 0.6142 | F1-Score: 0.4073
+2025-11-03 23:27:03,134: New best model saved with AUC: 0.6142
+2025-11-03 23:39:03,919: Epoch 7/20 | Total Loss: 2.7597 | Causal Loss: 2.1022 | Classification Loss: 0.6575 | Val Loss: 2.7636 | Val AUC: 0.6188 | F1-Score: 0.4947
+2025-11-03 23:39:04,261: New best model saved with AUC: 0.6188
+2025-11-03 23:51:04,953: Epoch 8/20 | Total Loss: 2.7565 | Causal Loss: 2.1022 | Classification Loss: 0.6543 | Val Loss: 2.7605 | Val AUC: 0.6219 | F1-Score: 0.4131
+2025-11-03 23:51:05,294: New best model saved with AUC: 0.6219
+2025-11-04 00:03:03,418: Epoch 9/20 | Total Loss: 2.7530 | Causal Loss: 2.1021 | Classification Loss: 0.6509 | Val Loss: 2.7610 | Val AUC: 0.6211 | F1-Score: 0.4216
+2025-11-04 00:15:01,813: Epoch 10/20 | Total Loss: 2.7479 | Causal Loss: 2.1021 | Classification Loss: 0.6458 | Val Loss: 2.7663 | Val AUC: 0.6163 | F1-Score: 0.4517
+2025-11-04 00:27:00,900: Epoch 11/20 | Total Loss: 2.7387 | Causal Loss: 2.1020 | Classification Loss: 0.6367 | Val Loss: 2.7713 | Val AUC: 0.6119 | F1-Score: 0.4574
+2025-11-04 00:27:00,900: Early stopping at epoch 11
+2025-11-04 00:27:01,067: Tempo medio per epoca: 720.0 secondi
+2025-11-04 00:27:01,067: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.2-1B_9550_standard_100_False_20251103_221502_.pt for final evaluation on test set
+2025-11-04 00:27:37,093: Final Test AUC: 0.6207 | Test F1-Score: 0.4098
+2025-11-04 00:27:37,094: Saving results to results_general_meta-llama_Llama-3.2-1B__9550_100_standard_20251104_002737.csv
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+  Val AUC Val F1-Score  ... Validation Loss Training Time (s)
+0  0.6219       0.4131  ...          2.7605            7920.2
+
+[1 rows x 8 columns]
+
+Job 2089156 consumed 42.3 billing hours from project ec12.
+
+Submitted 2025-11-03T22:13:42; waited 16.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 5.0 hours
+Elapsed wallclock time:   2.2 hours
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+2089156          16            0.0 %  2025-11-03T22:13:58    2.2 h  0
+2089156.batch    16      1     6.2 %  2025-11-03T22:13:58    2.2 h  0
+
+Used CPU time:   2.2 CPU hours
+Unused CPU time: 1.4 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+2089156          80.0        
+2089156.batch    80.0     1.3
+
+Job 2089156 completed at Tue Nov 4 00:27:39 CET 2025

@@ -1,0 +1,103 @@
+Starting job 2086126 on gpu-12 on Fox at Sat Nov 1 14:51:22 CET 2025
+
+
+[notice] A new release of pip is available: 23.3.2 -> 25.3
+[notice] To update, run: pip install --upgrade pip
+2025-11-01 14:52:12,294: Argument X_test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/X_test_9.csv'
+2025-11-01 14:52:12,294: Argument X_train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/X_train_9.csv'
+2025-11-01 14:52:12,294: Argument X_val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/X_val_9.csv'
+2025-11-01 14:52:12,294: Argument batch_size: 64
+2025-11-01 14:52:12,294: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-01 14:52:12,294: Argument cold_start: True
+2025-11-01 14:52:12,294: Argument early: 'loss'
+2025-11-01 14:52:12,294: Argument epochs: 40
+2025-11-01 14:52:12,294: Argument gradient_accumulation_steps: 1
+2025-11-01 14:52:12,294: Argument lr: 2e-05
+2025-11-01 14:52:12,295: Argument max_length: 100
+2025-11-01 14:52:12,295: Argument model_name: 'Qwen/Qwen2.5-0.5B'
+2025-11-01 14:52:12,295: Argument model_type: 'general'
+2025-11-01 14:52:12,295: Argument patience: 3
+2025-11-01 14:52:12,295: Argument peft: False
+2025-11-01 14:52:12,295: Argument prompt_type: 'standard'
+2025-11-01 14:52:12,295: Argument seed: 9550
+2025-11-01 14:52:12,295: Argument test_rnd: False
+2025-11-01 14:52:12,295: Argument use_quantization: False
+2025-11-01 14:52:12,295: Argument y_test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/y_test_9.csv'
+2025-11-01 14:52:12,295: Argument y_train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/y_train_9.csv'
+2025-11-01 14:52:12,295: Argument y_val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/y_val_9.csv'
+2025-11-01 14:52:15,190: 
+Loading pre-trained CausalLM model for COLD START!
+2025-11-01 14:52:22,857: Using prompt type: standard
+2025-11-01 14:52:22,857: Model type: general, Model name: Qwen/Qwen2.5-0.5B
+2025-11-01 14:52:26,072: Example train text: Sequential events: M E N Z N I G Z T X V D E X E N W O C F
+Outcome (0 or 1):
+2025-11-01 14:52:26,369: Average train text length: 26.00 words
+2025-11-01 14:52:26,369: Average validation text length: 26.00 words
+2025-11-01 14:52:26,369: Average test text length: 26.00 words
+2025-11-01 14:52:26,369: Training on 400000 samples, validating on 50000, testing on 50000 samples
+2025-11-01 14:52:27,973: Early stopping criterion: loss
+2025-11-01 16:21:15,104: Epoch 1/40 | Total Loss: 4.2198 | Causal Loss: 3.5454 | Classification Loss: 0.6744 | Val Loss: 2.8466 | Val AUC: 0.6000 | F1-Score: 0.4186
+2025-11-01 16:21:16,396: New best model saved with AUC: 0.6000
+2025-11-01 17:49:57,506: Epoch 2/40 | Total Loss: 2.8397 | Causal Loss: 2.1772 | Classification Loss: 0.6625 | Val Loss: 2.8126 | Val AUC: 0.6539 | F1-Score: 0.5200
+2025-11-01 17:49:58,728: New best model saved with AUC: 0.6539
+2025-11-01 19:18:39,808: Epoch 3/40 | Total Loss: 2.8021 | Causal Loss: 2.1746 | Classification Loss: 0.6275 | Val Loss: 2.7965 | Val AUC: 0.6658 | F1-Score: 0.5749
+2025-11-01 19:18:41,102: New best model saved with AUC: 0.6658
+2025-11-01 20:47:28,000: Epoch 4/40 | Total Loss: 2.7950 | Causal Loss: 2.1732 | Classification Loss: 0.6218 | Val Loss: 2.7911 | Val AUC: 0.6686 | F1-Score: 0.5727
+2025-11-01 20:47:29,207: New best model saved with AUC: 0.6686
+2025-11-01 22:16:09,839: Epoch 5/40 | Total Loss: 2.7916 | Causal Loss: 2.1735 | Classification Loss: 0.6180 | Val Loss: 2.7907 | Val AUC: 0.6690 | F1-Score: 0.5733
+2025-11-01 22:16:11,148: New best model saved with AUC: 0.6690
+2025-11-01 23:44:48,920: Epoch 6/40 | Total Loss: 2.7900 | Causal Loss: 2.1728 | Classification Loss: 0.6171 | Val Loss: 2.7889 | Val AUC: 0.6677 | F1-Score: 0.5752
+2025-11-01 23:44:50,127: New best model saved with AUC: 0.6677
+2025-11-02 01:13:27,917: Epoch 7/40 | Total Loss: 2.7890 | Causal Loss: 2.1728 | Classification Loss: 0.6162 | Val Loss: 2.7880 | Val AUC: 0.6664 | F1-Score: 0.5728
+2025-11-02 01:13:29,070: New best model saved with AUC: 0.6664
+2025-11-02 02:42:06,842: Epoch 8/40 | Total Loss: 2.7883 | Causal Loss: 2.1727 | Classification Loss: 0.6156 | Val Loss: 2.7880 | Val AUC: 0.6684 | F1-Score: 0.5752
+2025-11-02 04:10:44,019: Epoch 9/40 | Total Loss: 2.7875 | Causal Loss: 2.1727 | Classification Loss: 0.6148 | Val Loss: 2.7874 | Val AUC: 0.6669 | F1-Score: 0.5752
+2025-11-02 04:10:45,262: New best model saved with AUC: 0.6669
+2025-11-02 05:39:24,193: Epoch 10/40 | Total Loss: 2.7874 | Causal Loss: 2.1726 | Classification Loss: 0.6148 | Val Loss: 2.7872 | Val AUC: 0.6645 | F1-Score: 0.5759
+2025-11-02 05:39:25,360: New best model saved with AUC: 0.6645
+2025-11-02 07:08:03,513: Epoch 11/40 | Total Loss: 2.7871 | Causal Loss: 2.1726 | Classification Loss: 0.6145 | Val Loss: 2.7871 | Val AUC: 0.6674 | F1-Score: 0.5757
+2025-11-02 07:08:04,673: New best model saved with AUC: 0.6674
+2025-11-02 08:36:42,212: Epoch 12/40 | Total Loss: 2.7868 | Causal Loss: 2.1726 | Classification Loss: 0.6143 | Val Loss: 2.7870 | Val AUC: 0.6664 | F1-Score: 0.5758
+2025-11-02 08:36:43,421: New best model saved with AUC: 0.6664
+2025-11-02 10:05:23,626: Epoch 13/40 | Total Loss: 2.7866 | Causal Loss: 2.1725 | Classification Loss: 0.6141 | Val Loss: 2.7868 | Val AUC: 0.6689 | F1-Score: 0.5754
+2025-11-02 10:05:24,787: New best model saved with AUC: 0.6689
+2025-11-02 11:34:03,424: Epoch 14/40 | Total Loss: 2.7863 | Causal Loss: 2.1725 | Classification Loss: 0.6138 | Val Loss: 2.7868 | Val AUC: 0.6678 | F1-Score: 0.5761
+2025-11-02 13:02:40,843: Epoch 15/40 | Total Loss: 2.7860 | Causal Loss: 2.1725 | Classification Loss: 0.6136 | Val Loss: 2.7878 | Val AUC: 0.6674 | F1-Score: 0.5738
+2025-11-02 14:31:18,365: Epoch 16/40 | Total Loss: 2.7853 | Causal Loss: 2.1724 | Classification Loss: 0.6129 | Val Loss: 2.7872 | Val AUC: 0.6683 | F1-Score: 0.5754
+2025-11-02 14:31:18,365: Early stopping at epoch 16
+2025-11-02 14:31:22,358: Tempo medio per epoca: 5321.0 secondi
+2025-11-02 14:31:22,360: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_Qwen_Qwen2.5-0.5B_9550_standard_100_True_20251101_145227_.pt for final evaluation on test set
+2025-11-02 14:34:50,818: Final Test AUC: 0.6686 | Test F1-Score: 0.5782
+2025-11-02 14:34:50,819: Saving results to results_general_Qwen_Qwen2.5-0.5B__9550_100_standard_20251102_143450.csv
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+  Val AUC Val F1-Score  ... Validation Loss Training Time (s)
+0  0.6689       0.5754  ...          2.7868           85136.0
+
+[1 rows x 8 columns]
+
+Job 2086126 consumed 450.8 billing hours from project ec12.
+
+Submitted 2025-11-01T14:17:18; waited 34.1 minutes in the queue after becoming eligible to run.
+
+Requested wallclock time: 24.0 hours
+Elapsed wallclock time:   23.7 hours
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+2086126          16            0.0 %  2025-11-01T14:51:22   23.7 h  0
+2086126.batch    16      1     6.2 %  2025-11-01T14:51:22   23.7 h  0
+
+Used CPU time:   23.6 CPU hours
+Unused CPU time: 14.8 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+2086126          32.0        
+2086126.batch    32.0     1.8
+
+Job 2086126 completed at Sun Nov 2 14:34:52 CET 2025

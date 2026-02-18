@@ -1,0 +1,68 @@
+Starting job 2092147 on gpu-2 on Fox at Tue Nov 4 17:15:02 CET 2025
+
+
+[notice] A new release of pip is available: 23.3.2 -> 25.3
+[notice] To update, run: pip install --upgrade pip
+2025-11-04 17:15:56,378: Argument batch_size: 64
+2025-11-04 17:15:56,379: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-04 17:15:56,379: Argument cold_start: False
+2025-11-04 17:15:56,379: Argument early: 'loss'
+2025-11-04 17:15:56,379: Argument epochs: 20
+2025-11-04 17:15:56,379: Argument gradient_accumulation_steps: 1
+2025-11-04 17:15:56,379: Argument lr: 2e-05
+2025-11-04 17:15:56,379: Argument max_length: 150
+2025-11-04 17:15:56,379: Argument model_name: 'meta-llama/Llama-3.2-1B'
+2025-11-04 17:15:56,379: Argument model_type: 'general'
+2025-11-04 17:15:56,379: Argument number_to_use: 9
+2025-11-04 17:15:56,379: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-11-04 17:15:56,379: Argument patience: 3
+2025-11-04 17:15:56,379: Argument peft: False
+2025-11-04 17:15:56,379: Argument prompt_type: 'standard'
+2025-11-04 17:15:56,379: Argument seed: 9550
+2025-11-04 17:15:56,379: Argument test_rnd: False
+2025-11-04 17:15:56,379: Argument tiny: True
+2025-11-04 17:15:56,379: Argument tiny_type: '5M'
+2025-11-04 17:15:56,379: Argument use_quantization: False
+2025-11-04 17:15:59,086: 
+Loading a TINY CausalLM model for testing purposes!
+2025-11-04 17:15:59,087: 
+Loading pre-trained CausalLM model for COLD START!
+2025-11-04 17:15:59,087: Tiny model config - Hidden size: 256, Num layers: 6, Num heads: 8, Intermediate size: 1024, Vocab size: 1000
+2025-11-04 17:16:01,090: 
+New model parameters: 6,190,722
+2025-11-04 17:16:01,094: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-11-04 17:16:01,964: Using prompt type: standard
+2025-11-04 17:16:01,965: Model type: general, Model name: meta-llama/Llama-3.2-1B
+2025-11-04 17:16:05,122: Example train text: Sequential events: M E N Z N I G Z T X V D E X E N W O C F
+Outcome (0 or 1):
+2025-11-04 17:16:05,420: Average train text length: 26.00 words
+2025-11-04 17:16:05,420: Average validation text length: 26.00 words
+2025-11-04 17:16:05,420: Average test text length: 26.00 words
+2025-11-04 17:16:05,420: Training on 400000 samples, validating on 50000, testing on 50000 samples
+2025-11-04 17:16:07,317: Early stopping criterion: loss
+slurmstepd: error: *** JOB 2092147 ON gpu-2 CANCELLED AT 2025-11-04T17:28:00 ***
+
+Job 2092147 consumed 4.1 billing hours from project ec12.
+
+Submitted 2025-11-04T17:14:54; waited 8.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 2.0 hours
+Elapsed wallclock time:   13.0 minutes
+
+Job was cancelled.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+2092147          16            0.0 %  2025-11-04T17:15:02  778.0 s  0
+2092147.batch    16      1     5.8 %  2025-11-04T17:15:02  779.0 s  Signal 15
+
+Used CPU time:   12.1 CPU minutes
+Unused CPU time: 3.3 CPU hours
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+2092147          80.0        
+2092147.batch    80.0     1.4
+
+Job 2092147 completed at Tue Nov 4 17:28:03 CET 2025

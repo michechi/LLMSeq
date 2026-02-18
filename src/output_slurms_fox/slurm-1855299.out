@@ -1,0 +1,168 @@
+Starting job 1855299 on gpu-15 on fox at Fri Aug 15 15:59:47 CEST 2025
+
+2025-08-15 16:00:16,355: Argument CI: False
+2025-08-15 16:00:16,355: Argument all_landmarks: True
+2025-08-15 16:00:16,355: Argument batch_size: 8
+2025-08-15 16:00:16,355: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-08-15 16:00:16,355: Argument early: 'loss'
+2025-08-15 16:00:16,355: Argument epochs: 20
+2025-08-15 16:00:16,355: Argument gradient_accumulation_steps: 1
+2025-08-15 16:00:16,355: Argument input_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_df_evo.csv'
+2025-08-15 16:00:16,355: Argument lr: 2e-05
+2025-08-15 16:00:16,355: Argument max_length: 512
+2025-08-15 16:00:16,355: Argument max_visits: 4
+2025-08-15 16:00:16,355: Argument model_name: 'emilyalsentzer/Bio_ClinicalBERT'
+2025-08-15 16:00:16,355: Argument model_type: 'medical'
+2025-08-15 16:00:16,355: Argument patience: 1
+2025-08-15 16:00:16,355: Argument peft: False
+2025-08-15 16:00:16,355: Argument prompt_type: 'no'
+2025-08-15 16:00:16,355: Argument seed: 4550
+2025-08-15 16:00:16,355: Argument test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_test_dod_fxd.csv'
+2025-08-15 16:00:16,355: Argument train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_train_dod_fxd.csv'
+2025-08-15 16:00:16,355: Argument use_quantization: False
+2025-08-15 16:00:16,356: Argument val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_vali_dod_fxd.csv'
+2025-08-15 16:00:16,356: Argument when_counting_death: 'last_visit'
+2025-08-15 16:00:16,365: Using prompt type: no
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:79: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:81: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_test_df = pd.read_csv(args.test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+2025-08-15 16:00:47,740: Processing all landmarks from 1 to 4
+2025-08-15 16:00:47,740: Preparing data for Landmark 1
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_utils.py:831: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  return self.fget.__get__(instance, owner)()
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at emilyalsentzer/Bio_ClinicalBERT and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-15 16:00:51,736: Example train text: Based on this information, what is the probability of mortality within 90 days?
+Acute kidney failure, unspecified; Other postoperative infection; Cellulitis and abscess of trunk; Methicillin susceptible Staphylococcus aureus in conditions classified elsewhere and of unspecified site; Hypovolemia; Nausea with vomiting; Abscess of intestine; Removal of other organ (partial) (total) causing abnormal patient reaction, or later complication, without mention of misadventure at time of operation; Diverticulitis of colon (without mention of hemorrhage)
+Ciprofloxacin; LR; HYDROmorphone (Dilaudid); Magnesium Sulfate; Promethazine HCl; Ondansetron; SW; Lorazepam; Cephalexin; OxycoDONE-Acetaminophen Elixir; Ketorolac; Heparin; Escitalopram Oxalate; Iso-Osmotic Dextrose; Ibuprofen; Piperacillin-Tazobactam Na; OxycoDONE (Immediate Release) ; HydrOXYzine; Maalox/Diphenhydramine/Lidocaine; Magnesium Citrate; Clindamycin; Pantoprazole; Insulin; Acetaminophen; Bupivacaine 0.5%; D5 1/2NS; D5W; Calcium Carbonate; Hydrocortisone (Rectal) 2.5% Cream; Docusate Sodium; Potassium Chloride; NS; Prochlorperazine; Potassium Chl 20 mEq / 1000 mL D5 1/2 NS; Sodium Chloride 0.9%  Flush; Metoclopramide; Nafcillin; MetRONIDAZOLE (FLagyl); Vancomycin; Morphine Sulfate; Hydrocodone-Acetaminophen; Fluticasone Propionate NASAL
+Open and other sigmoidectomy
+2025-08-15 16:00:51,802: Average train text length: 115.65 words
+2025-08-15 16:00:51,802: Average validation text length: 119.89 words
+2025-08-15 16:00:51,802: Average test text length: 116.94 words
+2025-08-15 16:00:51,802: Training on 8040 samples, validating on 894, testing on 2234 samples
+2025-08-15 16:00:58,490: Fine-tuning at Landmark 1
+2025-08-15 16:00:59,051: Early stopping criterion: loss
+2025-08-15 16:02:14,137: Landmark 1 | Epoch 1/20 | Train Loss: 0.4807 | Val Loss: 0.4156 | Validation AUC: 0.7721 | F1-Score: 0.3971
+2025-08-15 16:02:14,490: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_emilyalsentzer_Bio_ClinicalBERT_4550_landmark1_no_4_512_last_visit_all_landmarks_True_20250815_160059_.pt with AUC: 0.7721, F1: 0.3971, Val Loss: 0.4156
+2025-08-15 16:03:29,029: Landmark 1 | Epoch 2/20 | Train Loss: 0.4237 | Val Loss: 0.3936 | Validation AUC: 0.7958 | F1-Score: 0.3858
+2025-08-15 16:03:29,490: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_emilyalsentzer_Bio_ClinicalBERT_4550_landmark1_no_4_512_last_visit_all_landmarks_True_20250815_160059_.pt with AUC: 0.7958, F1: 0.3858, Val Loss: 0.3936
+2025-08-15 16:04:43,757: Landmark 1 | Epoch 3/20 | Train Loss: 0.3985 | Val Loss: 0.3843 | Validation AUC: 0.8051 | F1-Score: 0.2500
+2025-08-15 16:04:44,131: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_emilyalsentzer_Bio_ClinicalBERT_4550_landmark1_no_4_512_last_visit_all_landmarks_True_20250815_160059_.pt with AUC: 0.8051, F1: 0.2500, Val Loss: 0.3843
+2025-08-15 16:05:58,755: Landmark 1 | Epoch 4/20 | Train Loss: 0.3710 | Val Loss: 0.4102 | Validation AUC: 0.7909 | F1-Score: 0.2289
+2025-08-15 16:05:58,755: No improvement in epoch 4. Current best AUC: 0.8051, F1: 0.2500, Val Loss: 0.3843. Epochs without improvement: 1/1
+2025-08-15 16:05:58,755: Early stopping triggered at epoch 4. Best AUC: 0.8051, F1: 0.2500, Val Loss: 0.3843
+2025-08-15 16:05:59,037: Tempo impiegato per Landmark 1: 300.5 secondi
+2025-08-15 16:05:59,038: Tempo medio per epoca: 75.1 secondi
+2025-08-15 16:05:59,040: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_emilyalsentzer_Bio_ClinicalBERT_4550_landmark1_no_4_512_last_visit_all_landmarks_True_20250815_160059_.pt for final evaluation on test set
+2025-08-15 16:06:05,435: Final Test AUC (Landmark 1): 0.7703 | Test F1-Score: 0.1984
+2025-08-15 16:06:05,435: Preparing data for Landmark 2
+Using device: cuda
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at emilyalsentzer/Bio_ClinicalBERT and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-15 16:06:08,305: Example train text: Based on this information, what is the probability of mortality within 90 days?
+Acute kidney failure, unspecified; Other postoperative infection; Cellulitis and abscess of trunk; Methicillin susceptible Staphylococcus aureus in conditions classified elsewhere and of unspecified site; Other specified aftercare following surgery; Hypovolemia; Nausea with vomiting; Diverticulosis of colon (without mention of hemorrhage); Abscess of intestine; Removal of other organ (partial) (total) causing abnormal patient reaction, or later complication, without mention of misadventure at time of operation; Esophageal reflux; Diverticulitis of colon (without mention of hemorrhage)
+Ciprofloxacin; LR; Ondansetron ODT; HYDROmorphone (Dilaudid); Magnesium Sulfate; Promethazine HCl; Ondansetron; SW; Lorazepam; Cephalexin; OxycoDONE-Acetaminophen Elixir; Ketorolac; Heparin; Escitalopram Oxalate; Iso-Osmotic Dextrose; Ibuprofen; Piperacillin-Tazobactam Na; OxycoDONE (Immediate Release) ; HydrOXYzine; Maalox/Diphenhydramine/Lidocaine; Magnesium Citrate; Clindamycin; Pantoprazole; Insulin; Promethazine; Acetaminophen; Bupivacaine 0.5%; D5 1/2NS; D5W; Ranitidine; Calcium Carbonate; Hydrocortisone (Rectal) 2.5% Cream; Docusate Sodium; Potassium Chloride; NS; Prochlorperazine; Potassium Chl 20 mEq / 1000 mL D5 1/2 NS; Sodium Chloride 0.9%  Flush; Metoclopramide; Nafcillin; MetRONIDAZOLE (FLagyl); Vancomycin; Morphine Sulfate; Hydrocodone-Acetaminophen; Fluticasone Propionate NASAL
+; Open and other sigmoidectomy
+2025-08-15 16:06:08,414: Average train text length: 191.74 words
+2025-08-15 16:06:08,414: Average validation text length: 195.55 words
+2025-08-15 16:06:08,414: Average test text length: 192.67 words
+2025-08-15 16:06:08,414: Training on 8040 samples, validating on 894, testing on 2234 samples
+2025-08-15 16:06:19,732: Fine-tuning at Landmark 2
+2025-08-15 16:06:19,737: Early stopping criterion: loss
+2025-08-15 16:07:35,174: Landmark 2 | Epoch 1/20 | Train Loss: 0.4661 | Val Loss: 0.3973 | Validation AUC: 0.7982 | F1-Score: 0.3271
+2025-08-15 16:07:35,513: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_emilyalsentzer_Bio_ClinicalBERT_4550_landmark2_no_4_512_last_visit_all_landmarks_True_20250815_160619_.pt with AUC: 0.7982, F1: 0.3271, Val Loss: 0.3973
+2025-08-15 16:08:50,711: Landmark 2 | Epoch 2/20 | Train Loss: 0.3963 | Val Loss: 0.3766 | Validation AUC: 0.8284 | F1-Score: 0.3918
+2025-08-15 16:08:51,035: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_emilyalsentzer_Bio_ClinicalBERT_4550_landmark2_no_4_512_last_visit_all_landmarks_True_20250815_160619_.pt with AUC: 0.8284, F1: 0.3918, Val Loss: 0.3766
+2025-08-15 16:10:06,574: Landmark 2 | Epoch 3/20 | Train Loss: 0.3665 | Val Loss: 0.3664 | Validation AUC: 0.8316 | F1-Score: 0.3761
+2025-08-15 16:10:06,903: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_emilyalsentzer_Bio_ClinicalBERT_4550_landmark2_no_4_512_last_visit_all_landmarks_True_20250815_160619_.pt with AUC: 0.8316, F1: 0.3761, Val Loss: 0.3664
+2025-08-15 16:11:22,446: Landmark 2 | Epoch 4/20 | Train Loss: 0.3443 | Val Loss: 0.3774 | Validation AUC: 0.8191 | F1-Score: 0.4106
+2025-08-15 16:11:22,446: No improvement in epoch 4. Current best AUC: 0.8316, F1: 0.3761, Val Loss: 0.3664. Epochs without improvement: 1/1
+2025-08-15 16:11:22,446: Early stopping triggered at epoch 4. Best AUC: 0.8316, F1: 0.3761, Val Loss: 0.3664
+2025-08-15 16:11:22,695: Tempo impiegato per Landmark 2: 303.0 secondi
+2025-08-15 16:11:22,695: Tempo medio per epoca: 75.7 secondi
+2025-08-15 16:11:22,697: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_emilyalsentzer_Bio_ClinicalBERT_4550_landmark2_no_4_512_last_visit_all_landmarks_True_20250815_160619_.pt for final evaluation on test set
+2025-08-15 16:11:29,033: Final Test AUC (Landmark 2): 0.8077 | Test F1-Score: 0.3333
+2025-08-15 16:11:29,033: Preparing data for Landmark 3
+Using device: cuda
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at emilyalsentzer/Bio_ClinicalBERT and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-15 16:11:32,362: Example train text: Based on this information, what is the probability of mortality within 90 days?
+Chest pain, unspecified; Acute kidney failure, unspecified; Other postoperative infection; Cellulitis and abscess of trunk; Methicillin susceptible Staphylococcus aureus in conditions classified elsewhere and of unspecified site; Other specified aftercare following surgery; Hypovolemia; Orthostatic hypotension; Nausea with vomiting; Diverticulosis of colon (without mention of hemorrhage); Abscess of intestine; Removal of other organ (partial) (total) causing abnormal patient reaction, or later complication, without mention of misadventure at time of operation; Esophageal reflux; Diverticulitis of colon (without mention of hemorrhage)
+; Ciprofloxacin; LR; Ondansetron ODT; HYDROmorphone (Dilaudid); Magnesium Sulfate; Promethazine HCl; Ondansetron; SW; Lorazepam; Cephalexin; OxycoDONE-Acetaminophen Elixir; Ketorolac; Heparin; Escitalopram Oxalate; Iso-Osmotic Dextrose; Ibuprofen; Piperacillin-Tazobactam Na; OxycoDONE (Immediate Release) ; HydrOXYzine; Maalox/Diphenhydramine/Lidocaine; Magnesium Citrate; Clindamycin; Pantoprazole; Insulin; Promethazine; Acetaminophen; Bupivacaine 0.5%; D5 1/2NS; D5W; Ranitidine; Calcium Carbonate; Hydrocortisone (Rectal) 2.5% Cream; Docusate Sodium; Potassium Chloride; NS; Prochlorperazine; Potassium Chl 20 mEq / 1000 mL D5 1/2 NS; Sodium Chloride 0.9%  Flush; Metoclopramide; Nafcillin; MetRONIDAZOLE (FLagyl); Vancomycin; Morphine Sulfate; Hydrocodone-Acetaminophen; Fluticasone Propionate NASAL
+; Open and other sigmoidectomy
+2025-08-15 16:11:32,506: Average train text length: 262.19 words
+2025-08-15 16:11:32,507: Average validation text length: 265.50 words
+2025-08-15 16:11:32,507: Average test text length: 261.43 words
+2025-08-15 16:11:32,507: Training on 8040 samples, validating on 894, testing on 2234 samples
+2025-08-15 16:11:47,441: Fine-tuning at Landmark 3
+2025-08-15 16:11:47,447: Early stopping criterion: loss
+2025-08-15 16:13:03,172: Landmark 3 | Epoch 1/20 | Train Loss: 0.4525 | Val Loss: 0.3749 | Validation AUC: 0.8251 | F1-Score: 0.4693
+2025-08-15 16:13:03,527: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_emilyalsentzer_Bio_ClinicalBERT_4550_landmark3_no_4_512_last_visit_all_landmarks_True_20250815_161147_.pt with AUC: 0.8251, F1: 0.4693, Val Loss: 0.3749
+2025-08-15 16:14:19,294: Landmark 3 | Epoch 2/20 | Train Loss: 0.3703 | Val Loss: 0.3414 | Validation AUC: 0.8736 | F1-Score: 0.5278
+2025-08-15 16:14:19,651: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_emilyalsentzer_Bio_ClinicalBERT_4550_landmark3_no_4_512_last_visit_all_landmarks_True_20250815_161147_.pt with AUC: 0.8736, F1: 0.5278, Val Loss: 0.3414
+2025-08-15 16:15:35,332: Landmark 3 | Epoch 3/20 | Train Loss: 0.3403 | Val Loss: 0.3377 | Validation AUC: 0.8643 | F1-Score: 0.5203
+2025-08-15 16:15:35,675: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_emilyalsentzer_Bio_ClinicalBERT_4550_landmark3_no_4_512_last_visit_all_landmarks_True_20250815_161147_.pt with AUC: 0.8643, F1: 0.5203, Val Loss: 0.3377
+2025-08-15 16:16:51,141: Landmark 3 | Epoch 4/20 | Train Loss: 0.3194 | Val Loss: 0.3586 | Validation AUC: 0.8510 | F1-Score: 0.5017
+2025-08-15 16:16:51,141: No improvement in epoch 4. Current best AUC: 0.8643, F1: 0.5203, Val Loss: 0.3377. Epochs without improvement: 1/1
+2025-08-15 16:16:51,141: Early stopping triggered at epoch 4. Best AUC: 0.8643, F1: 0.5203, Val Loss: 0.3377
+2025-08-15 16:16:51,396: Tempo impiegato per Landmark 3: 304.0 secondi
+2025-08-15 16:16:51,396: Tempo medio per epoca: 76.0 secondi
+2025-08-15 16:16:51,398: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_emilyalsentzer_Bio_ClinicalBERT_4550_landmark3_no_4_512_last_visit_all_landmarks_True_20250815_161147_.pt for final evaluation on test set
+2025-08-15 16:16:57,724: Final Test AUC (Landmark 3): 0.8380 | Test F1-Score: 0.4724
+2025-08-15 16:16:57,724: Preparing data for Landmark 4
+Using device: cuda
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at emilyalsentzer/Bio_ClinicalBERT and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-15 16:17:01,507: Example train text: Based on this information, what is the probability of mortality within 90 days?
+Cellulitis and abscess of trunk; Esophageal reflux; Diverticulitis of colon (without mention of hemorrhage); Other specified disorders of intestine; Other postoperative infection; Ulceration of intestine; Methicillin susceptible Staphylococcus aureus in conditions classified elsewhere and of unspecified site; Other specified aftercare following surgery; Hypovolemia; Diverticulosis of colon (without mention of hemorrhage); Abscess of intestine; Orthostatic hypotension; Anxiety state, unspecified; Acute kidney failure, unspecified; Other and unspecified ovarian cyst; Nausea with vomiting; Chest pain, unspecified; Intestinal bypass or anastomosis status; Removal of other organ (partial) (total) causing abnormal patient reaction, or later complication, without mention of misadventure at time of operation
+; Ciprofloxacin; Omeprazole; LR; Vitamin D; Naproxen; Ondansetron ODT; HYDROmorphone (Dilaudid); Magnesium Sulfate; Promethazine HCl; Ondansetron; SW; 0.9% Sodium Chloride; Lorazepam; Influenza Virus Vaccine; Cephalexin; OxycoDONE-Acetaminophen Elixir; Ketorolac; Heparin; Escitalopram Oxalate; 0.45% Sodium Chloride; Iso-Osmotic Dextrose; Ibuprofen; Piperacillin-Tazobactam Na; OxycoDONE (Immediate Release) ; Desitin; HydrOXYzine; Maalox/Diphenhydramine/Lidocaine; Magnesium Citrate; Clindamycin; Pantoprazole; Golytely; Insulin; Promethazine; Acetaminophen; Bupivacaine 0.5%; D5 1/2NS; Multivitamins; D5W; Ranitidine; Calcium Carbonate; Hydrocortisone (Rectal) 2.5% Cream; Docusate Sodium; Potassium Chloride; NS; Prochlorperazine; Potassium Chl 20 mEq / 1000 mL D5 1/2 NS; Sodium Chloride 0.9%  Flush; Metoclopramide; Nafcillin; MetRONIDAZOLE (FLagyl); Senna; Fish Oil (Omega 3); Vancomycin; Neutra-Phos; Morphine Sulfate; Hydrocodone-Acetaminophen; Fluticasone Propionate NASAL
+; Open and other sigmoidectomy; Closed [endoscopic] biopsy of large intestine
+2025-08-15 16:17:01,694: Average train text length: 336.18 words
+2025-08-15 16:17:01,694: Average validation text length: 339.85 words
+2025-08-15 16:17:01,694: Average test text length: 335.33 words
+2025-08-15 16:17:01,694: Training on 8040 samples, validating on 894, testing on 2234 samples
+2025-08-15 16:17:20,658: Fine-tuning at Landmark 4
+2025-08-15 16:17:20,664: Early stopping criterion: loss
+2025-08-15 16:18:35,950: Landmark 4 | Epoch 1/20 | Train Loss: 0.3808 | Val Loss: 0.2556 | Validation AUC: 0.9331 | F1-Score: 0.7103
+2025-08-15 16:18:36,340: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_emilyalsentzer_Bio_ClinicalBERT_4550_landmark4_no_4_512_last_visit_all_landmarks_True_20250815_161720_.pt with AUC: 0.9331, F1: 0.7103, Val Loss: 0.2556
+2025-08-15 16:19:51,811: Landmark 4 | Epoch 2/20 | Train Loss: 0.2730 | Val Loss: 0.2568 | Validation AUC: 0.9362 | F1-Score: 0.6752
+2025-08-15 16:19:51,812: No improvement in epoch 2. Current best AUC: 0.9331, F1: 0.7103, Val Loss: 0.2556. Epochs without improvement: 1/1
+2025-08-15 16:19:51,812: Early stopping triggered at epoch 2. Best AUC: 0.9331, F1: 0.7103, Val Loss: 0.2556
+2025-08-15 16:19:52,122: Tempo impiegato per Landmark 4: 151.5 secondi
+2025-08-15 16:19:52,123: Tempo medio per epoca: 75.7 secondi
+2025-08-15 16:19:52,125: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_emilyalsentzer_Bio_ClinicalBERT_4550_landmark4_no_4_512_last_visit_all_landmarks_True_20250815_161720_.pt for final evaluation on test set
+2025-08-15 16:19:58,324: Final Test AUC (Landmark 4): 0.9133 | Test F1-Score: 0.6708
+2025-08-15 16:19:58,325: Saving results to results_medical_True_emilyalsentzer_Bio_ClinicalBERT_last_visit_visits4_4550_512_no_20250815_161958.csv
+Using device: cuda
+   Landmark Val AUC  ... Validation Loss Training Time (s)
+0         1  0.8051  ...          0.3843             300.5
+1         2  0.8316  ...          0.3664             303.0
+2         3  0.8643  ...          0.3377             304.0
+3         4  0.9331  ...          0.2556             151.5
+
+[4 rows x 9 columns]
+
+Job 1855299 consumed 6.4 billing hours from project ec12.
+
+Submitted 2025-08-15T15:59:34; waited 12.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 4.0 hours
+Elapsed wallclock time:   20.3 minutes
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start   Elapsed  Exit status
+1855299          16            0.0 %  2025-08-15T15:59:46  1217.0 s  0
+1855299.batch    16      1     6.1 %  2025-08-15T15:59:46  1217.0 s  0
+
+Used CPU time:   19.8 CPU minutes
+Unused CPU time: 5.1 CPU hours
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1855299          32.0        
+1855299.batch    32.0     8.4
+
+Job 1855299 completed at Fri Aug 15 16:20:03 CEST 2025

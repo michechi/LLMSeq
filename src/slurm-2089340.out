@@ -1,0 +1,78 @@
+Starting job 2089340 on gpu-1 on Fox at Mon Nov 3 22:38:29 CET 2025
+
+
+[notice] A new release of pip is available: 23.3.2 -> 25.3
+[notice] To update, run: pip install --upgrade pip
+2025-11-03 22:40:24,415: Argument batch_size: 200
+2025-11-03 22:40:24,415: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-03 22:40:24,415: Argument cold_start: False
+2025-11-03 22:40:24,415: Argument early: 'loss'
+2025-11-03 22:40:24,415: Argument epochs: 20
+2025-11-03 22:40:24,415: Argument gradient_accumulation_steps: 1
+2025-11-03 22:40:24,415: Argument lr: 2e-05
+2025-11-03 22:40:24,415: Argument max_length: 100
+2025-11-03 22:40:24,415: Argument model_name: 'meta-llama/Llama-3.2-1B'
+2025-11-03 22:40:24,415: Argument model_type: 'general'
+2025-11-03 22:40:24,415: Argument number_to_use: 9
+2025-11-03 22:40:24,415: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-11-03 22:40:24,415: Argument patience: 3
+2025-11-03 22:40:24,415: Argument peft: False
+2025-11-03 22:40:24,415: Argument prompt_type: 'standard'
+2025-11-03 22:40:24,415: Argument seed: 9550
+2025-11-03 22:40:24,415: Argument test_rnd: False
+2025-11-03 22:40:24,415: Argument tiny: True
+2025-11-03 22:40:24,415: Argument use_quantization: False
+2025-11-03 22:40:40,896: 
+Loading a TINY CausalLM model for testing purposes!
+2025-11-03 22:40:40,896: 
+Loading pre-trained CausalLM model for COLD START!
+2025-11-03 22:40:47,960: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+The new lm_head weights will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-11-03 22:40:49,632: Using prompt type: standard
+2025-11-03 22:40:49,632: Model type: general, Model name: meta-llama/Llama-3.2-1B
+2025-11-03 22:40:52,974: Example train text: Sequential events: M E N Z N I G Z T X V D E X E N W O C F
+Outcome (0 or 1):
+2025-11-03 22:40:53,265: Average train text length: 26.00 words
+2025-11-03 22:40:53,265: Average validation text length: 26.00 words
+2025-11-03 22:40:53,265: Average test text length: 26.00 words
+2025-11-03 22:40:53,265: Training on 400000 samples, validating on 50000, testing on 50000 samples
+2025-11-03 22:40:57,459: Early stopping criterion: loss
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+Traceback (most recent call last):
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_FOX_time_simulation_tiny.py", line 611, in <module>
+    best_auc, best_model_path, best_val_f1, best_val_loss, epochs_done = train_and_evaluate_causal(
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_FOX_time_simulation_tiny.py", line 421, in train_and_evaluate_causal
+    loss.backward()
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_tensor.py", line 492, in backward
+    torch.autograd.backward(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/autograd/__init__.py", line 251, in backward
+    Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+torch.cuda.OutOfMemoryError: CUDA out of memory. Tried to allocate 9.46 GiB. GPU 0 has a total capacty of 39.67 GiB of which 8.20 GiB is free. Including non-PyTorch memory, this process has 31.47 GiB memory in use. Of the allocated memory 30.96 GiB is allocated by PyTorch, and 30.24 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+
+Job 2089340 consumed 0.8 billing hours from project ec12.
+
+Submitted 2025-11-03T22:38:02; waited 27.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 5.0 hours
+Elapsed wallclock time:   2.6 minutes
+
+Job failed.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+2089340          16            0.0 %  2025-11-03T22:38:29  154.0 s  1
+2089340.batch    16      1     0.9 %  2025-11-03T22:38:29  154.0 s  1
+
+Used CPU time:   22.8 CPU seconds
+Unused CPU time: 40.7 CPU minutes
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+2089340          80.0        
+2089340.batch    80.0     1.0
+
+Job 2089340 completed at Mon Nov 3 22:41:03 CET 2025

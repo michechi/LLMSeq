@@ -1,0 +1,72 @@
+Starting job 2172322 on gpu-13 on Fox at Wed Dec 3 21:14:22 CET 2025
+
+/var/spool/slurmd/job2172322/slurm_script: line 14: /fp/homes01/u01/ec-michelec/.bashrc: No such file or directory
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/cuda/__init__.py:51: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+2025-12-03 21:15:12,593: Argument batch_size: 32
+2025-12-03 21:15:12,593: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache/'
+2025-12-03 21:15:12,593: Argument csv_to_use: '9_med'
+2025-12-03 21:15:12,593: Argument embedding_dir: '/cluster/work/projects/ec12/michechi/embeddings/'
+2025-12-03 21:15:12,593: Argument first_time: True
+2025-12-03 21:15:12,593: Argument max_length: 200
+2025-12-03 21:15:12,593: Argument model_name: 'meta-llama/Llama-3.2-1B'
+2025-12-03 21:15:12,593: Argument output_dir: '/fp/homes01/u01/ec-michelec/MIMICIV/src/output_slurms_fox/'
+2025-12-03 21:15:12,593: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-12-03 21:15:12,593: Argument seed: 9550
+2025-12-03 21:15:12,593: Argument tokenizer: 'LLM'
+2025-12-03 21:15:12,639: Loading data...
+2025-12-03 21:15:17,653: 
+Processing train set...
+2025-12-03 21:15:17,658: Loading meta-llama/Llama-3.2-1B on cuda...
+2025-12-03 21:15:17,658: Batch size: 32, Max length: 200
+2025-12-03 21:15:27,980: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-12-03 21:21:01,496: Train embeddings shape: (400000, 2048)
+2025-12-03 21:21:01,496: 
+Processing validation set...
+2025-12-03 21:21:01,497: Loading meta-llama/Llama-3.2-1B on cuda...
+2025-12-03 21:21:01,497: Batch size: 32, Max length: 200
+2025-12-03 21:21:04,356: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-12-03 21:21:47,045: Val embeddings shape: (50000, 2048)
+2025-12-03 21:21:47,046: 
+Processing test set...
+2025-12-03 21:21:47,046: Loading meta-llama/Llama-3.2-1B on cuda...
+2025-12-03 21:21:47,047: Batch size: 32, Max length: 200
+2025-12-03 21:21:49,802: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-12-03 21:22:32,388: Test embeddings shape: (50000, 2048)
+2025-12-03 21:22:32,911: Setting up XGBoost classifier and hyperparameter distributions...
+2025-12-03 21:22:32,912: Defining hyperparameter distributions...
+2025-12-03 21:22:32,915: Parameter distributions: {'n_estimators': <scipy.stats._distn_infrastructure.rv_discrete_frozen object at 0x152c4f04bee0>, 'max_depth': <scipy.stats._distn_infrastructure.rv_discrete_frozen object at 0x152c4f1fba90>, 'learning_rate': <scipy.stats._distn_infrastructure.rv_continuous_frozen object at 0x152c4f069990>, 'subsample': <scipy.stats._distn_infrastructure.rv_continuous_frozen object at 0x152c4f069de0>, 'colsample_bytree': <scipy.stats._distn_infrastructure.rv_continuous_frozen object at 0x152c4f069c00>, 'min_child_weight': <scipy.stats._distn_infrastructure.rv_discrete_frozen object at 0x152c4f0685e0>, 'gamma': <scipy.stats._distn_infrastructure.rv_continuous_frozen object at 0x152c4f068cd0>}
+2025-12-03 21:22:32,916: Starting Randomized Search...
+/fp/homes01/u01/ec-michelec/xgboost-env/lib/python3.10/site-packages/xgboost/core.py:774: UserWarning: [21:24:15] WARNING: /workspace/src/common/error_msg.cc:62: Falling back to prediction using DMatrix due to mismatched devices. This might lead to higher memory usage and slower performance. XGBoost is running on: cuda:0, while the input data is on: cpu.
+Potential solutions:
+- Use a data structure that matches the device ordinal in the booster.
+- Set the device for booster before call to inplace_predict.
+
+This warning will only be shown once.
+
+  return func(**kwargs)
+slurmstepd: error: *** JOB 2172322 ON gpu-13 CANCELLED AT 2025-12-03T22:14:22 DUE TO TIME LIMIT ***
+
+Job 2172322 consumed 19.0 billing hours from project ec12.
+
+Submitted 2025-12-03T17:44:00; waited 3.5 hours in the queue after becoming eligible to run.
+
+Requested wallclock time: 60.0 minutes
+Elapsed wallclock time:   60.0 minutes
+
+Job timed out.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start   Elapsed  Exit status
+2172322          16            0.0 %  2025-12-03T21:14:22  3600.0 s  0
+2172322.batch    16      1    40.9 %  2025-12-03T21:14:22  3601.0 s  Signal 15
+
+Used CPU time:   6.5 CPU hours
+Unused CPU time: 9.5 CPU hours
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+2172322         128.0        
+2172322.batch   128.0    18.8
+
+Job 2172322 completed at Wed Dec 3 22:14:25 CET 2025

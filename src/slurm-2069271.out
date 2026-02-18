@@ -1,0 +1,93 @@
+Starting job 2069271 on gpu-15 on Fox at Sat Oct 25 01:29:14 CEST 2025
+
+
+[notice] A new release of pip is available: 23.3.2 -> 25.2
+[notice] To update, run: pip install --upgrade pip
+2025-10-25 01:30:33,953: Argument X_test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/X_test_9.csv'
+2025-10-25 01:30:33,953: Argument X_train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/X_train_9.csv'
+2025-10-25 01:30:33,953: Argument X_val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/X_val_9.csv'
+2025-10-25 01:30:33,953: Argument batch_size: 64
+2025-10-25 01:30:33,953: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-10-25 01:30:33,953: Argument early: 'loss'
+2025-10-25 01:30:33,953: Argument epochs: 20
+2025-10-25 01:30:33,953: Argument gradient_accumulation_steps: 1
+2025-10-25 01:30:33,953: Argument lr: 2e-05
+2025-10-25 01:30:33,953: Argument max_length: 100
+2025-10-25 01:30:33,953: Argument model_name: 'meta-llama/Llama-3.2-1B'
+2025-10-25 01:30:33,953: Argument model_type: 'general'
+2025-10-25 01:30:33,953: Argument patience: 3
+2025-10-25 01:30:33,953: Argument peft: False
+2025-10-25 01:30:33,953: Argument prompt_type: 'standard'
+2025-10-25 01:30:33,953: Argument seed: 9550
+2025-10-25 01:30:33,953: Argument test_rnd: True
+2025-10-25 01:30:33,954: Argument use_quantization: False
+2025-10-25 01:30:33,954: Argument y_test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/y_test_9.csv'
+2025-10-25 01:30:33,954: Argument y_train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/y_train_9.csv'
+2025-10-25 01:30:33,954: Argument y_val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/y_val_9.csv'
+2025-10-25 01:30:44,219: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-10-25 01:30:51,056: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-10-25 01:31:00,873: Using prompt type: standard
+2025-10-25 01:31:00,873: Model type: general, Model name: meta-llama/Llama-3.2-1B
+2025-10-25 01:31:01,512: Need to shuffle each sequence in the test set to check for data leakage!
+2025-10-25 01:31:04,698: Example train text: Sequential events: M E N Z N I G Z T X V D E X E N W O C F
+Outcome (0 or 1):
+2025-10-25 01:31:04,982: Average train text length: 26.00 words
+2025-10-25 01:31:04,982: Average validation text length: 26.00 words
+2025-10-25 01:31:04,982: Average test text length: 26.00 words
+2025-10-25 01:31:04,982: Training on 400000 samples, validating on 50000, testing on 50000 samples
+2025-10-25 01:31:06,863: Early stopping criterion: loss
+2025-10-25 02:28:03,382: Epoch 1/20 | Total Loss: 2.9611 | Causal Loss: 2.2825 | Classification Loss: 0.6786 | Val Loss: 2.7692 | Val AUC: 0.6078 | F1-Score: 0.4129
+2025-10-25 02:28:05,075: New best model saved with AUC: 0.6078
+2025-10-25 03:24:55,998: Epoch 2/20 | Total Loss: 2.7444 | Causal Loss: 2.1032 | Classification Loss: 0.6412 | Val Loss: 2.7262 | Val AUC: 0.6639 | F1-Score: 0.5747
+2025-10-25 03:24:57,774: New best model saved with AUC: 0.6639
+2025-10-25 04:21:49,141: Epoch 3/20 | Total Loss: 2.7252 | Causal Loss: 2.1030 | Classification Loss: 0.6222 | Val Loss: 2.7209 | Val AUC: 0.6669 | F1-Score: 0.5738
+2025-10-25 04:21:50,858: New best model saved with AUC: 0.6669
+2025-10-25 05:18:41,291: Epoch 4/20 | Total Loss: 2.7212 | Causal Loss: 2.1029 | Classification Loss: 0.6182 | Val Loss: 2.7200 | Val AUC: 0.6660 | F1-Score: 0.5741
+2025-10-25 05:18:42,998: New best model saved with AUC: 0.6660
+2025-10-25 06:15:34,501: Epoch 5/20 | Total Loss: 2.7198 | Causal Loss: 2.1030 | Classification Loss: 0.6168 | Val Loss: 2.7200 | Val AUC: 0.6667 | F1-Score: 0.5749
+2025-10-25 07:12:31,524: Epoch 6/20 | Total Loss: 2.7189 | Causal Loss: 2.1031 | Classification Loss: 0.6159 | Val Loss: 2.7190 | Val AUC: 0.6675 | F1-Score: 0.5735
+2025-10-25 07:12:33,197: New best model saved with AUC: 0.6675
+2025-10-25 08:09:31,581: Epoch 7/20 | Total Loss: 2.7179 | Causal Loss: 2.1031 | Classification Loss: 0.6148 | Val Loss: 2.7191 | Val AUC: 0.6669 | F1-Score: 0.5730
+2025-10-25 09:06:29,744: Epoch 8/20 | Total Loss: 2.7175 | Causal Loss: 2.1031 | Classification Loss: 0.6145 | Val Loss: 2.7188 | Val AUC: 0.6662 | F1-Score: 0.5732
+2025-10-25 09:06:31,406: New best model saved with AUC: 0.6662
+2025-10-25 10:03:23,532: Epoch 9/20 | Total Loss: 2.7163 | Causal Loss: 2.1030 | Classification Loss: 0.6133 | Val Loss: 2.7197 | Val AUC: 0.6657 | F1-Score: 0.5709
+2025-10-25 11:00:19,628: Epoch 10/20 | Total Loss: 2.7154 | Causal Loss: 2.1030 | Classification Loss: 0.6124 | Val Loss: 2.7202 | Val AUC: 0.6671 | F1-Score: 0.5711
+2025-10-25 11:57:18,065: Epoch 11/20 | Total Loss: 2.7138 | Causal Loss: 2.1029 | Classification Loss: 0.6109 | Val Loss: 2.7208 | Val AUC: 0.6666 | F1-Score: 0.5716
+2025-10-25 11:57:18,065: Early stopping at epoch 11
+2025-10-25 11:57:19,144: Tempo medio per epoca: 3415.8 secondi
+2025-10-25 11:57:19,146: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.2-1B_9550_standard_100_20251025_013106_.pt for final evaluation on test set
+2025-10-25 11:59:31,164: Final Test AUC: 0.5196 | Test F1-Score: 0.3832
+2025-10-25 11:59:31,165: Saving results to results_general_meta-llama_Llama-3.2-1B__9550_100_standard_20251025_115931.csv
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+  Val AUC Val F1-Score  ... Validation Loss Training Time (s)
+0  0.6662       0.5732  ...          2.7188           37574.2
+
+[1 rows x 8 columns]
+
+Job 2069271 consumed 199.6 billing hours from project ec12.
+
+Submitted 2025-10-24T09:31:54; waited 16.0 hours in the queue after becoming eligible to run.
+
+Requested wallclock time: 15.0 hours
+Elapsed wallclock time:   10.5 hours
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+2069271          16            0.0 %  2025-10-25T01:29:14   10.5 h  0
+2069271.batch    16      1     6.2 %  2025-10-25T01:29:14   10.5 h  0
+
+Used CPU time:   10.4 CPU hours
+Unused CPU time: 6.6 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+2069271          32.0        
+2069271.batch    32.0     1.5
+
+Job 2069271 completed at Sat Oct 25 11:59:34 CEST 2025

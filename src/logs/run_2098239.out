@@ -1,0 +1,82 @@
+Starting job 2098239 on gpu-13 on Fox at Sat Nov 8 11:55:52 CET 2025
+
+=== Starting sequential fine-tuning job ===
+Sat Nov  8 11:55:53 AM CET 2025
+Cache directory: /localscratch/2098239/hf_cache
+--------------------------------------------------------
+Starting training with fraction = 0.00001
+--------------------------------------------------------
+Sat Nov  8 11:56:01 AM CET 2025
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/cuda/__init__.py:51: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/utils/hub.py:128: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+2025-11-08 11:56:36,325: Argument batch_size: 64
+2025-11-08 11:56:36,326: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-08 11:56:36,326: Argument cold_start: False
+2025-11-08 11:56:36,326: Argument early: 'loss'
+2025-11-08 11:56:36,326: Argument epochs: 40
+2025-11-08 11:56:36,326: Argument fraction: 1e-05
+2025-11-08 11:56:36,326: Argument gradient_accumulation_steps: 1
+2025-11-08 11:56:36,326: Argument lr: 0.0002
+2025-11-08 11:56:36,326: Argument max_length: 100
+2025-11-08 11:56:36,326: Argument model_name: 'meta-llama/Llama-3.2-1B'
+2025-11-08 11:56:36,326: Argument model_type: 'general'
+2025-11-08 11:56:36,326: Argument number_to_use: 9
+2025-11-08 11:56:36,326: Argument output_dir: 'src/output_slurms_fox/fraction_0.00001_tiny_1M'
+2025-11-08 11:56:36,326: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-11-08 11:56:36,326: Argument patience: 3
+2025-11-08 11:56:36,326: Argument peft: False
+2025-11-08 11:56:36,326: Argument prompt_type: 'standard'
+2025-11-08 11:56:36,326: Argument seed: 9550
+2025-11-08 11:56:36,326: Argument test_rnd: False
+2025-11-08 11:56:36,326: Argument tiny: True
+2025-11-08 11:56:36,326: Argument tiny_type: '1M'
+2025-11-08 11:56:36,326: Argument use_quantization: False
+2025-11-08 11:56:39,391: Loading a TINY CausalLM model for testing purposes!
+2025-11-08 11:56:39,391: Loading pre-trained CausalLM model for COLD START!
+2025-11-08 11:56:39,391: Tiny model config - Hidden size: 128, Num layers: 4, Num heads: 4, Intermediate size: 512, Vocab size: 100
+2025-11-08 11:56:40,875: Using Flash Attention 2 for LLaMA tiny model
+2025-11-08 11:56:41,117: 
+New model parameters: 1,005,378
+2025-11-08 11:56:41,117: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-11-08 11:56:41,208: Using prompt type: standard
+2025-11-08 11:56:41,209: Model type: general, Model name: meta-llama/Llama-3.2-1B
+2025-11-08 11:56:41,209: Training with dataset fraction = 1e-05
+Traceback (most recent call last):
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_FOX_time_simulation_tiny.py", line 649, in <module>
+    X_val, y_val = sample_dataset(X_val, y_val, fraction=args.fraction, seed=args.seed)
+  File "/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_FOX_time_simulation_tiny.py", line 47, in sample_dataset
+    idx_subset, _ = next(splitter.split(X, y_array))
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-scikit-bundle/1.3.2-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/sklearn/model_selection/_split.py", line 1746, in split
+    for train, test in self._iter_indices(X, y, groups):
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-scikit-bundle/1.3.2-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/sklearn/model_selection/_split.py", line 2130, in _iter_indices
+    n_train, n_test = _validate_shuffle_split(
+  File "/fp/projects01/ec30/software/easybuild/software/nlpl-scikit-bundle/1.3.2-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/sklearn/model_selection/_split.py", line 2305, in _validate_shuffle_split
+    raise ValueError(
+ValueError: With n_samples=50000, test_size=None and train_size=1e-05, the resulting train set will be empty. Adjust any of the aforementioned parameters.
+
+Job 2098239 consumed 0.3 billing hours from project ec12.
+
+Submitted 2025-11-08T10:17:00; waited 1.6 hours in the queue after becoming eligible to run.
+
+Requested wallclock time: 20.0 hours
+Elapsed wallclock time:   50.0 seconds
+
+Job failed.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+2098239          16            0.0 %  2025-11-08T11:55:52   50.0 s  1
+2098239.batch    16      1     1.7 %  2025-11-08T11:55:52   50.0 s  1
+
+Used CPU time:   13.4 CPU seconds
+Unused CPU time: 13.1 CPU minutes
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+2098239          80.0        
+2098239.batch    80.0     0.3
+
+Job 2098239 completed at Sat Nov 8 11:56:42 CET 2025

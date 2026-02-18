@@ -1,0 +1,68 @@
+Starting job 2103634 on gpu-12 on Fox at Sun Nov 9 22:49:55 CET 2025
+
+
+[notice] A new release of pip is available: 23.3.2 -> 25.3
+[notice] To update, run: pip install --upgrade pip
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/cuda/__init__.py:51: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+2025-11-09 22:50:38,670: Argument X_test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/X_test_9_med.csv'
+2025-11-09 22:50:38,671: Argument X_train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/X_train_9_med.csv'
+2025-11-09 22:50:38,671: Argument X_val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/X_val_9_med.csv'
+2025-11-09 22:50:38,671: Argument batch_size: 32
+2025-11-09 22:50:38,671: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-09 22:50:38,671: Argument cold_start: False
+2025-11-09 22:50:38,671: Argument early: 'loss'
+2025-11-09 22:50:38,671: Argument epochs: 40
+2025-11-09 22:50:38,671: Argument gradient_accumulation_steps: 1
+2025-11-09 22:50:38,671: Argument lr: 2e-05
+2025-11-09 22:50:38,671: Argument max_length: 200
+2025-11-09 22:50:38,671: Argument model_name: 'meta-llama/Llama-3.2-1B'
+2025-11-09 22:50:38,671: Argument model_type: 'general'
+2025-11-09 22:50:38,671: Argument patience: 3
+2025-11-09 22:50:38,672: Argument peft: False
+2025-11-09 22:50:38,672: Argument prompt_type: 'standard'
+2025-11-09 22:50:38,672: Argument seed: 9550
+2025-11-09 22:50:38,672: Argument test_rnd: False
+2025-11-09 22:50:38,672: Argument use_quantization: False
+2025-11-09 22:50:38,672: Argument y_test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/y_test_9_med.csv'
+2025-11-09 22:50:38,672: Argument y_train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/y_train_9_med.csv'
+2025-11-09 22:50:38,672: Argument y_val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/y_val_9_med.csv'
+2025-11-09 22:50:41,609: 
+Loading pre-trained CausalLM model for WARM START!
+2025-11-09 22:50:46,120: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-11-09 22:50:51,826: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-11-09 22:51:02,338: Using prompt type: standard
+2025-11-09 22:51:02,340: Model type: general, Model name: meta-llama/Llama-3.2-1B
+2025-11-09 22:51:07,377: Example train text: Sequential events: M E N Z N I G Z T X V D E X E N W O C F
+Outcome (0 or 1):
+2025-11-09 22:51:07,673: Average train text length: 26.00 words
+2025-11-09 22:51:07,673: Average validation text length: 26.00 words
+2025-11-09 22:51:07,673: Average test text length: 26.00 words
+2025-11-09 22:51:07,673: Training on 400000 samples, validating on 50000, testing on 50000 samples
+2025-11-09 22:51:09,181: Early stopping criterion: loss
+slurmstepd: error: *** JOB 2103634 ON gpu-12 CANCELLED AT 2025-11-09T22:51:50 ***
+
+Job 2103634 consumed 0.6 billing hours from project ec12.
+
+Submitted 2025-11-09T22:49:47; waited 8.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 20.0 hours
+Elapsed wallclock time:   1.9 minutes
+
+Job was cancelled.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+2103634          16            0.0 %  2025-11-09T22:49:55  115.0 s  0
+2103634.batch    16      1     7.1 %  2025-11-09T22:49:55  115.0 s  Signal 15
+
+Used CPU time:   2.2 CPU minutes
+Unused CPU time: 28.5 CPU minutes
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+2103634          32.0        
+2103634.batch    32.0     5.6
+
+Job 2103634 completed at Sun Nov 9 22:51:50 CET 2025

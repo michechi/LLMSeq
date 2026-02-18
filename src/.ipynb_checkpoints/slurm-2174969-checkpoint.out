@@ -1,0 +1,25 @@
+Starting job 2174969 on gpu-11 on Fox at Sat Dec 6 18:19:40 CET 2025
+
+/var/spool/slurmd/job2174969/slurm_script: line 14: /fp/homes01/u01/ec-michelec/.bashrc: No such file or directory
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/cuda/__init__.py:51: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+2025-12-06 18:20:22,810: Argument batch_size: 32
+2025-12-06 18:20:22,810: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache/'
+2025-12-06 18:20:22,810: Argument csv_to_use: '9'
+2025-12-06 18:20:22,810: Argument embedding_dir: '/cluster/work/projects/ec12/michechi/embeddings/'
+2025-12-06 18:20:22,810: Argument first_time: True
+2025-12-06 18:20:22,810: Argument max_length: 100
+2025-12-06 18:20:22,810: Argument model_name: 'meta-llama/Llama-3.2-1B'
+2025-12-06 18:20:22,810: Argument output_dir: '/fp/homes01/u01/ec-michelec/MIMICIV/src/output_slurms_fox/'
+2025-12-06 18:20:22,810: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-12-06 18:20:22,810: Argument seed: 9550
+2025-12-06 18:20:22,810: Argument tiny: False
+2025-12-06 18:20:22,810: Argument tokenizer: 'LLM'
+2025-12-06 18:20:22,855: Loading data...
+2025-12-06 18:20:26,091: 
+Processing train set...
+2025-12-06 18:20:26,096: Loading meta-llama/Llama-3.2-1B on cuda...
+2025-12-06 18:20:26,096: Batch size: 32, Max length: 100
+2025-12-06 18:20:32,224: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-12-06 18:20:37,145: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`

@@ -1,0 +1,913 @@
+Starting job 2109973 on gpu-1 on Fox at Wed Nov 12 10:57:28 CET 2025
+
+=== Starting sequential fine-tuning job ===
+Wed Nov 12 10:57:28 AM CET 2025
+Cache directory: /localscratch/2109973/hf_cache
+--------------------------------------------------------
+Starting training with fraction = 0.00001
+--------------------------------------------------------
+Wed Nov 12 10:57:36 AM CET 2025
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/cuda/__init__.py:51: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/utils/hub.py:128: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+2025-11-12 10:57:50,816: Argument batch_size: 64
+2025-11-12 10:57:50,816: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-12 10:57:50,817: Argument check_truncation: False
+2025-11-12 10:57:50,817: Argument cold_start: False
+2025-11-12 10:57:50,817: Argument csv_to_use: '10'
+2025-11-12 10:57:50,817: Argument early: 'loss'
+2025-11-12 10:57:50,817: Argument epochs: 40
+2025-11-12 10:57:50,817: Argument fraction: 1e-05
+2025-11-12 10:57:50,817: Argument gradient_accumulation_steps: 1
+2025-11-12 10:57:50,817: Argument lr: 2e-05
+2025-11-12 10:57:50,817: Argument max_length: 100
+2025-11-12 10:57:50,817: Argument model_name: 'Qwen/Qwen2.5-0.5B'
+2025-11-12 10:57:50,817: Argument model_type: 'general'
+2025-11-12 10:57:50,817: Argument output_dir: 'src/output_slurms_fox/fraction_0.00001_tiny_1M'
+2025-11-12 10:57:50,817: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-11-12 10:57:50,817: Argument patience: 3
+2025-11-12 10:57:50,817: Argument peft: True
+2025-11-12 10:57:50,817: Argument prompt_type: 'standard'
+2025-11-12 10:57:50,817: Argument seed: 9550
+2025-11-12 10:57:50,817: Argument test_rnd: False
+2025-11-12 10:57:50,817: Argument tiny: False
+2025-11-12 10:57:50,817: Argument tiny_type: '1M'
+2025-11-12 10:57:50,817: Argument use_quantization: False
+2025-11-12 10:57:52,696: Loading pre-trained CausalLM model for WARM START!
+2025-11-12 10:57:54,259: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-11-12 10:57:57,048: Using prompt type: standard
+2025-11-12 10:57:57,048: Model type: general, Model name: Qwen/Qwen2.5-0.5B
+2025-11-12 10:57:57,048: Training with dataset fraction = 1e-05
+2025-11-12 10:57:57,820: Could not sample validation set with fraction 1e-05: With n_samples=50000, test_size=None and train_size=1e-05, the resulting train set will be empty. Adjust any of the aforementioned parameters.. Using just 10 observation from validation set.
+2025-11-12 10:57:57,821: Train Subset size: 4 / 400000
+2025-11-12 10:57:57,821: Val Subset size: 10 / 50000
+2025-11-12 10:57:57,821: Distributions Train y's:
+2025-11-12 10:57:57,823: Outcome
+0          0.75
+1          0.25
+dtype: float64
+2025-11-12 10:57:57,824: Distributions Val y's:
+2025-11-12 10:57:57,825: Outcome
+1          0.7
+0          0.3
+dtype: float64
+2025-11-12 10:57:58,220: Example train text: Sequential events: V Y L S C J W B T J X N B H B Y D O J K I Y B Y H J Y T J E S B X R F C G S F K
+Outcome (0 or 1):
+2025-11-12 10:57:58,265: Average train text length: 46.00 words
+2025-11-12 10:57:58,265: Average validation text length: 46.00 words
+2025-11-12 10:57:58,265: Average test text length: 46.00 words
+2025-11-12 10:57:58,265: Training on 4 samples, validating on 10, testing on 50000 samples
+2025-11-12 10:57:58,265: DataLoaders created.
+2025-11-12 10:57:58,930: Early stopping criterion: loss
+trainable params: 1,081,344 || all params: 495,114,112 || trainable%: 0.2184
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 10:58:00,955: Epoch 1/40 | Total Loss: 4.5037 | Causal Loss: 3.9607 | Classification Loss: 0.5430 | Val Loss: 4.8895 | Val AUC: 0.8571 | F1-Score: 0.0000
+2025-11-12 10:58:01,682: New best model saved with AUC: 0.8571
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 10:58:03,182: Epoch 2/40 | Total Loss: 4.5935 | Causal Loss: 3.9607 | Classification Loss: 0.6328 | Val Loss: 4.8910 | Val AUC: 0.8571 | F1-Score: 0.0000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 10:58:04,700: Epoch 3/40 | Total Loss: 4.5310 | Causal Loss: 3.9607 | Classification Loss: 0.5703 | Val Loss: 4.8951 | Val AUC: 0.8571 | F1-Score: 0.0000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 10:58:06,209: Epoch 4/40 | Total Loss: 4.5545 | Causal Loss: 3.9607 | Classification Loss: 0.5938 | Val Loss: 4.8973 | Val AUC: 0.8571 | F1-Score: 0.0000
+2025-11-12 10:58:06,209: Early stopping at epoch 4
+2025-11-12 10:58:06,837: Tempo medio per epoca: 2.1 secondi
+2025-11-12 10:58:06,843: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_Qwen_Qwen2.5-0.5B_9550_standard_100_False_20251112_105758_.pt for final evaluation on test set
+2025-11-12 10:59:28,795: Final Test AUC: 0.4978 | Test F1-Score: 0.0000
+2025-11-12 10:59:28,796: Saving results to results_general_Qwen_Qwen2.5-0.5B__peft_9550_100_standard_1M_1e-05_20251112_105928.csv
+  Val AUC Val F1-Score  ... Validation Loss Training Time (s)
+0  0.8571       0.0000  ...          4.8895               8.4
+
+[1 rows x 8 columns]
+Completed fraction 0.00001
+========================================================
+Wed Nov 12 10:59:30 AM CET 2025
+--------------------------------------------------------
+Starting training with fraction = 0.0001
+--------------------------------------------------------
+Wed Nov 12 10:59:30 AM CET 2025
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/cuda/__init__.py:51: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/utils/hub.py:128: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+2025-11-12 10:59:37,950: Argument batch_size: 64
+2025-11-12 10:59:37,950: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-12 10:59:37,950: Argument check_truncation: False
+2025-11-12 10:59:37,950: Argument cold_start: False
+2025-11-12 10:59:37,950: Argument csv_to_use: '10'
+2025-11-12 10:59:37,950: Argument early: 'loss'
+2025-11-12 10:59:37,950: Argument epochs: 40
+2025-11-12 10:59:37,950: Argument fraction: 0.0001
+2025-11-12 10:59:37,950: Argument gradient_accumulation_steps: 1
+2025-11-12 10:59:37,950: Argument lr: 2e-05
+2025-11-12 10:59:37,950: Argument max_length: 100
+2025-11-12 10:59:37,950: Argument model_name: 'Qwen/Qwen2.5-0.5B'
+2025-11-12 10:59:37,950: Argument model_type: 'general'
+2025-11-12 10:59:37,950: Argument output_dir: 'src/output_slurms_fox/fraction_0.0001_tiny_1M'
+2025-11-12 10:59:37,951: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-11-12 10:59:37,951: Argument patience: 3
+2025-11-12 10:59:37,951: Argument peft: True
+2025-11-12 10:59:37,951: Argument prompt_type: 'standard'
+2025-11-12 10:59:37,951: Argument seed: 9550
+2025-11-12 10:59:37,951: Argument test_rnd: False
+2025-11-12 10:59:37,951: Argument tiny: False
+2025-11-12 10:59:37,951: Argument tiny_type: '1M'
+2025-11-12 10:59:37,951: Argument use_quantization: False
+2025-11-12 10:59:39,874: Loading pre-trained CausalLM model for WARM START!
+2025-11-12 10:59:40,749: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-11-12 10:59:43,551: Using prompt type: standard
+2025-11-12 10:59:43,551: Model type: general, Model name: Qwen/Qwen2.5-0.5B
+2025-11-12 10:59:43,551: Training with dataset fraction = 0.0001
+2025-11-12 10:59:44,170: Train Subset size: 40 / 400000
+2025-11-12 10:59:44,170: Val Subset size: 5 / 50000
+2025-11-12 10:59:44,170: Distributions Train y's:
+2025-11-12 10:59:44,171: Outcome
+0          0.625
+1          0.375
+dtype: float64
+2025-11-12 10:59:44,172: Distributions Val y's:
+2025-11-12 10:59:44,173: Outcome
+0          0.6
+1          0.4
+dtype: float64
+2025-11-12 10:59:44,519: Example train text: Sequential events: Z W G O F X S W I O G S O N H G L M L F B B A W X P E U H U L H U N S C K T Q T
+Outcome (0 or 1):
+2025-11-12 10:59:44,562: Average train text length: 46.00 words
+2025-11-12 10:59:44,562: Average validation text length: 46.00 words
+2025-11-12 10:59:44,562: Average test text length: 46.00 words
+2025-11-12 10:59:44,562: Training on 40 samples, validating on 5, testing on 50000 samples
+2025-11-12 10:59:44,563: DataLoaders created.
+2025-11-12 10:59:45,208: Early stopping criterion: loss
+trainable params: 1,081,344 || all params: 495,114,112 || trainable%: 0.2184
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 10:59:46,999: Epoch 1/40 | Total Loss: 4.6550 | Causal Loss: 3.9557 | Classification Loss: 0.6992 | Val Loss: 4.6820 | Val AUC: 0.3333 | F1-Score: 0.0000
+2025-11-12 10:59:47,701: New best model saved with AUC: 0.3333
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 10:59:49,245: Epoch 2/40 | Total Loss: 4.6511 | Causal Loss: 3.9557 | Classification Loss: 0.6953 | Val Loss: 4.6789 | Val AUC: 0.4167 | F1-Score: 0.0000
+2025-11-12 10:59:49,965: New best model saved with AUC: 0.4167
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 10:59:51,531: Epoch 3/40 | Total Loss: 4.6237 | Causal Loss: 3.9557 | Classification Loss: 0.6680 | Val Loss: 4.6754 | Val AUC: 0.5833 | F1-Score: 0.0000
+2025-11-12 10:59:52,262: New best model saved with AUC: 0.5833
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 10:59:53,828: Epoch 4/40 | Total Loss: 4.6628 | Causal Loss: 3.9557 | Classification Loss: 0.7070 | Val Loss: 4.6746 | Val AUC: 0.5000 | F1-Score: 0.0000
+2025-11-12 10:59:54,544: New best model saved with AUC: 0.5000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 10:59:56,100: Epoch 5/40 | Total Loss: 4.6198 | Causal Loss: 3.9557 | Classification Loss: 0.6641 | Val Loss: 4.6715 | Val AUC: 0.5000 | F1-Score: 0.0000
+2025-11-12 10:59:56,842: New best model saved with AUC: 0.5000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 10:59:58,399: Epoch 6/40 | Total Loss: 4.6354 | Causal Loss: 3.9557 | Classification Loss: 0.6797 | Val Loss: 4.6676 | Val AUC: 0.5000 | F1-Score: 0.0000
+2025-11-12 10:59:59,118: New best model saved with AUC: 0.5000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:00:00,670: Epoch 7/40 | Total Loss: 4.6511 | Causal Loss: 3.9557 | Classification Loss: 0.6953 | Val Loss: 4.6656 | Val AUC: 0.5000 | F1-Score: 0.0000
+2025-11-12 11:00:01,396: New best model saved with AUC: 0.5000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:00:02,956: Epoch 8/40 | Total Loss: 4.6042 | Causal Loss: 3.9557 | Classification Loss: 0.6484 | Val Loss: 4.6644 | Val AUC: 0.5000 | F1-Score: 0.0000
+2025-11-12 11:00:03,696: New best model saved with AUC: 0.5000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:00:05,258: Epoch 9/40 | Total Loss: 4.6159 | Causal Loss: 3.9557 | Classification Loss: 0.6602 | Val Loss: 4.6644 | Val AUC: 0.5000 | F1-Score: 0.0000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:00:06,827: Epoch 10/40 | Total Loss: 4.6432 | Causal Loss: 3.9557 | Classification Loss: 0.6875 | Val Loss: 4.6640 | Val AUC: 0.5000 | F1-Score: 0.0000
+2025-11-12 11:00:07,566: New best model saved with AUC: 0.5000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:00:09,124: Epoch 11/40 | Total Loss: 4.6159 | Causal Loss: 3.9557 | Classification Loss: 0.6602 | Val Loss: 4.6625 | Val AUC: 0.5000 | F1-Score: 0.0000
+2025-11-12 11:00:09,856: New best model saved with AUC: 0.5000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:00:11,408: Epoch 12/40 | Total Loss: 4.6237 | Causal Loss: 3.9557 | Classification Loss: 0.6680 | Val Loss: 4.6613 | Val AUC: 0.5000 | F1-Score: 0.0000
+2025-11-12 11:00:12,145: New best model saved with AUC: 0.5000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:00:13,704: Epoch 13/40 | Total Loss: 4.6237 | Causal Loss: 3.9557 | Classification Loss: 0.6680 | Val Loss: 4.6597 | Val AUC: 0.5000 | F1-Score: 0.0000
+2025-11-12 11:00:14,431: New best model saved with AUC: 0.5000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:00:15,998: Epoch 14/40 | Total Loss: 4.6550 | Causal Loss: 3.9557 | Classification Loss: 0.6992 | Val Loss: 4.6597 | Val AUC: 0.5000 | F1-Score: 0.0000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:00:17,567: Epoch 15/40 | Total Loss: 4.6315 | Causal Loss: 3.9557 | Classification Loss: 0.6758 | Val Loss: 4.6594 | Val AUC: 0.5000 | F1-Score: 0.0000
+2025-11-12 11:00:18,293: New best model saved with AUC: 0.5000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:00:19,851: Epoch 16/40 | Total Loss: 4.6511 | Causal Loss: 3.9557 | Classification Loss: 0.6953 | Val Loss: 4.6597 | Val AUC: 0.5000 | F1-Score: 0.0000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:00:21,423: Epoch 17/40 | Total Loss: 4.6198 | Causal Loss: 3.9557 | Classification Loss: 0.6641 | Val Loss: 4.6609 | Val AUC: 0.5000 | F1-Score: 0.0000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:00:22,994: Epoch 18/40 | Total Loss: 4.6159 | Causal Loss: 3.9557 | Classification Loss: 0.6602 | Val Loss: 4.6590 | Val AUC: 0.5000 | F1-Score: 0.0000
+2025-11-12 11:00:23,756: New best model saved with AUC: 0.5000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:00:25,318: Epoch 19/40 | Total Loss: 4.6081 | Causal Loss: 3.9557 | Classification Loss: 0.6523 | Val Loss: 4.6590 | Val AUC: 0.5000 | F1-Score: 0.0000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:00:26,881: Epoch 20/40 | Total Loss: 4.6354 | Causal Loss: 3.9557 | Classification Loss: 0.6797 | Val Loss: 4.6582 | Val AUC: 0.5000 | F1-Score: 0.0000
+2025-11-12 11:00:27,616: New best model saved with AUC: 0.5000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:00:29,167: Epoch 21/40 | Total Loss: 4.6393 | Causal Loss: 3.9557 | Classification Loss: 0.6836 | Val Loss: 4.6590 | Val AUC: 0.5000 | F1-Score: 0.0000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:00:30,730: Epoch 22/40 | Total Loss: 4.6393 | Causal Loss: 3.9557 | Classification Loss: 0.6836 | Val Loss: 4.6558 | Val AUC: 0.5000 | F1-Score: 0.0000
+2025-11-12 11:00:31,495: New best model saved with AUC: 0.5000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:00:33,093: Epoch 23/40 | Total Loss: 4.6745 | Causal Loss: 3.9557 | Classification Loss: 0.7188 | Val Loss: 4.6582 | Val AUC: 0.5000 | F1-Score: 0.0000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:00:34,710: Epoch 24/40 | Total Loss: 4.6276 | Causal Loss: 3.9557 | Classification Loss: 0.6719 | Val Loss: 4.6582 | Val AUC: 0.5000 | F1-Score: 0.0000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:00:36,332: Epoch 25/40 | Total Loss: 4.6276 | Causal Loss: 3.9557 | Classification Loss: 0.6719 | Val Loss: 4.6582 | Val AUC: 0.5000 | F1-Score: 0.0000
+2025-11-12 11:00:36,332: Early stopping at epoch 25
+2025-11-12 11:00:36,932: Tempo medio per epoca: 2.1 secondi
+2025-11-12 11:00:36,938: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_Qwen_Qwen2.5-0.5B_9550_standard_100_False_20251112_105945_.pt for final evaluation on test set
+2025-11-12 11:01:58,269: Final Test AUC: 0.4983 | Test F1-Score: 0.0000
+2025-11-12 11:01:58,270: Saving results to results_general_Qwen_Qwen2.5-0.5B__peft_9550_100_standard_1M_0.0001_20251112_110158.csv
+  Val AUC Val F1-Score  ... Validation Loss Training Time (s)
+0  0.5000       0.0000  ...          4.6558              52.2
+
+[1 rows x 8 columns]
+Completed fraction 0.0001
+========================================================
+Wed Nov 12 11:01:59 AM CET 2025
+--------------------------------------------------------
+Starting training with fraction = 0.001
+--------------------------------------------------------
+Wed Nov 12 11:01:59 AM CET 2025
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/cuda/__init__.py:51: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/utils/hub.py:128: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+2025-11-12 11:02:07,468: Argument batch_size: 64
+2025-11-12 11:02:07,468: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-12 11:02:07,468: Argument check_truncation: False
+2025-11-12 11:02:07,468: Argument cold_start: False
+2025-11-12 11:02:07,468: Argument csv_to_use: '10'
+2025-11-12 11:02:07,468: Argument early: 'loss'
+2025-11-12 11:02:07,468: Argument epochs: 40
+2025-11-12 11:02:07,468: Argument fraction: 0.001
+2025-11-12 11:02:07,468: Argument gradient_accumulation_steps: 1
+2025-11-12 11:02:07,468: Argument lr: 2e-05
+2025-11-12 11:02:07,469: Argument max_length: 100
+2025-11-12 11:02:07,469: Argument model_name: 'Qwen/Qwen2.5-0.5B'
+2025-11-12 11:02:07,469: Argument model_type: 'general'
+2025-11-12 11:02:07,469: Argument output_dir: 'src/output_slurms_fox/fraction_0.001_tiny_1M'
+2025-11-12 11:02:07,469: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-11-12 11:02:07,469: Argument patience: 3
+2025-11-12 11:02:07,469: Argument peft: True
+2025-11-12 11:02:07,469: Argument prompt_type: 'standard'
+2025-11-12 11:02:07,469: Argument seed: 9550
+2025-11-12 11:02:07,469: Argument test_rnd: False
+2025-11-12 11:02:07,469: Argument tiny: False
+2025-11-12 11:02:07,469: Argument tiny_type: '1M'
+2025-11-12 11:02:07,469: Argument use_quantization: False
+2025-11-12 11:02:09,355: Loading pre-trained CausalLM model for WARM START!
+2025-11-12 11:02:10,184: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-11-12 11:02:12,967: Using prompt type: standard
+2025-11-12 11:02:12,968: Model type: general, Model name: Qwen/Qwen2.5-0.5B
+2025-11-12 11:02:12,968: Training with dataset fraction = 0.001
+2025-11-12 11:02:13,579: Train Subset size: 400 / 400000
+2025-11-12 11:02:13,579: Val Subset size: 50 / 50000
+2025-11-12 11:02:13,579: Distributions Train y's:
+2025-11-12 11:02:13,581: Outcome
+0          0.6375
+1          0.3625
+dtype: float64
+2025-11-12 11:02:13,582: Distributions Val y's:
+2025-11-12 11:02:13,582: Outcome
+0          0.64
+1          0.36
+dtype: float64
+2025-11-12 11:02:13,952: Example train text: Sequential events: F N N T X K I F G T C D X E W M M G O W V B K Y N I H K O N U I I H V D K D J K
+Outcome (0 or 1):
+2025-11-12 11:02:13,999: Average train text length: 46.00 words
+2025-11-12 11:02:13,999: Average validation text length: 46.00 words
+2025-11-12 11:02:13,999: Average test text length: 46.00 words
+2025-11-12 11:02:13,999: Training on 400 samples, validating on 50, testing on 50000 samples
+2025-11-12 11:02:13,999: DataLoaders created.
+2025-11-12 11:02:14,568: Early stopping criterion: loss
+trainable params: 1,081,344 || all params: 495,114,112 || trainable%: 0.2184
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:02:17,102: Epoch 1/40 | Total Loss: 4.6427 | Causal Loss: 3.9764 | Classification Loss: 0.6663 | Val Loss: 4.6437 | Val AUC: 0.4540 | F1-Score: 0.0000
+2025-11-12 11:02:17,926: New best model saved with AUC: 0.4540
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:02:20,150: Epoch 2/40 | Total Loss: 4.6547 | Causal Loss: 3.9717 | Classification Loss: 0.6830 | Val Loss: 4.6407 | Val AUC: 0.4540 | F1-Score: 0.0000
+2025-11-12 11:02:21,023: New best model saved with AUC: 0.4540
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:02:23,224: Epoch 3/40 | Total Loss: 4.6558 | Causal Loss: 3.9722 | Classification Loss: 0.6836 | Val Loss: 4.6356 | Val AUC: 0.4583 | F1-Score: 0.0000
+2025-11-12 11:02:23,990: New best model saved with AUC: 0.4583
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:02:26,220: Epoch 4/40 | Total Loss: 4.6590 | Causal Loss: 3.9698 | Classification Loss: 0.6892 | Val Loss: 4.6328 | Val AUC: 0.4609 | F1-Score: 0.0000
+2025-11-12 11:02:27,104: New best model saved with AUC: 0.4609
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:02:29,306: Epoch 5/40 | Total Loss: 4.6348 | Causal Loss: 3.9741 | Classification Loss: 0.6607 | Val Loss: 4.6305 | Val AUC: 0.4679 | F1-Score: 0.0000
+2025-11-12 11:02:30,215: New best model saved with AUC: 0.4679
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:02:32,435: Epoch 6/40 | Total Loss: 4.6341 | Causal Loss: 3.9762 | Classification Loss: 0.6579 | Val Loss: 4.6301 | Val AUC: 0.4688 | F1-Score: 0.0000
+2025-11-12 11:02:33,295: New best model saved with AUC: 0.4688
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:02:35,629: Epoch 7/40 | Total Loss: 4.6006 | Causal Loss: 3.9714 | Classification Loss: 0.6292 | Val Loss: 4.6297 | Val AUC: 0.4696 | F1-Score: 0.0000
+2025-11-12 11:02:36,508: New best model saved with AUC: 0.4696
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:02:38,850: Epoch 8/40 | Total Loss: 4.6586 | Causal Loss: 3.9783 | Classification Loss: 0.6802 | Val Loss: 4.6298 | Val AUC: 0.4653 | F1-Score: 0.0000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:02:41,181: Epoch 9/40 | Total Loss: 4.6343 | Causal Loss: 3.9697 | Classification Loss: 0.6646 | Val Loss: 4.6299 | Val AUC: 0.4635 | F1-Score: 0.0000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:02:43,509: Epoch 10/40 | Total Loss: 4.6223 | Causal Loss: 3.9738 | Classification Loss: 0.6484 | Val Loss: 4.6303 | Val AUC: 0.4609 | F1-Score: 0.0000
+2025-11-12 11:02:43,509: Early stopping at epoch 10
+2025-11-12 11:02:44,194: Tempo medio per epoca: 3.0 secondi
+2025-11-12 11:02:44,199: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_Qwen_Qwen2.5-0.5B_9550_standard_100_False_20251112_110214_.pt for final evaluation on test set
+2025-11-12 11:04:05,602: Final Test AUC: 0.4982 | Test F1-Score: 0.0000
+2025-11-12 11:04:05,604: Saving results to results_general_Qwen_Qwen2.5-0.5B__peft_9550_100_standard_1M_0.001_20251112_110405.csv
+  Val AUC Val F1-Score  ... Validation Loss Training Time (s)
+0  0.4696       0.0000  ...          4.6297              30.1
+
+[1 rows x 8 columns]
+Completed fraction 0.001
+========================================================
+Wed Nov 12 11:04:06 AM CET 2025
+--------------------------------------------------------
+Starting training with fraction = 0.1
+--------------------------------------------------------
+Wed Nov 12 11:04:06 AM CET 2025
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/cuda/__init__.py:51: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/utils/hub.py:128: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+2025-11-12 11:04:14,983: Argument batch_size: 64
+2025-11-12 11:04:14,983: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-12 11:04:14,983: Argument check_truncation: False
+2025-11-12 11:04:14,983: Argument cold_start: False
+2025-11-12 11:04:14,983: Argument csv_to_use: '10'
+2025-11-12 11:04:14,983: Argument early: 'loss'
+2025-11-12 11:04:14,983: Argument epochs: 40
+2025-11-12 11:04:14,983: Argument fraction: 0.1
+2025-11-12 11:04:14,983: Argument gradient_accumulation_steps: 1
+2025-11-12 11:04:14,983: Argument lr: 2e-05
+2025-11-12 11:04:14,984: Argument max_length: 100
+2025-11-12 11:04:14,984: Argument model_name: 'Qwen/Qwen2.5-0.5B'
+2025-11-12 11:04:14,984: Argument model_type: 'general'
+2025-11-12 11:04:14,984: Argument output_dir: 'src/output_slurms_fox/fraction_0.1_tiny_1M'
+2025-11-12 11:04:14,984: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-11-12 11:04:14,984: Argument patience: 3
+2025-11-12 11:04:14,984: Argument peft: True
+2025-11-12 11:04:14,984: Argument prompt_type: 'standard'
+2025-11-12 11:04:14,984: Argument seed: 9550
+2025-11-12 11:04:14,984: Argument test_rnd: False
+2025-11-12 11:04:14,984: Argument tiny: False
+2025-11-12 11:04:14,984: Argument tiny_type: '1M'
+2025-11-12 11:04:14,984: Argument use_quantization: False
+2025-11-12 11:04:16,881: Loading pre-trained CausalLM model for WARM START!
+2025-11-12 11:04:17,640: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-11-12 11:04:20,391: Using prompt type: standard
+2025-11-12 11:04:20,391: Model type: general, Model name: Qwen/Qwen2.5-0.5B
+2025-11-12 11:04:20,391: Training with dataset fraction = 0.1
+2025-11-12 11:04:21,005: Train Subset size: 40000 / 400000
+2025-11-12 11:04:21,006: Val Subset size: 5000 / 50000
+2025-11-12 11:04:21,006: Distributions Train y's:
+2025-11-12 11:04:21,007: Outcome
+0          0.63635
+1          0.36365
+dtype: float64
+2025-11-12 11:04:21,008: Distributions Val y's:
+2025-11-12 11:04:21,009: Outcome
+0          0.636
+1          0.364
+dtype: float64
+2025-11-12 11:04:21,698: Example train text: Sequential events: W K P Q U S I Q Y V Q Z U I B C A H J A I X R V X K A L B V H H J B O L B F U D
+Outcome (0 or 1):
+2025-11-12 11:04:21,781: Average train text length: 46.00 words
+2025-11-12 11:04:21,782: Average validation text length: 46.00 words
+2025-11-12 11:04:21,782: Average test text length: 46.00 words
+2025-11-12 11:04:21,782: Training on 40000 samples, validating on 5000, testing on 50000 samples
+2025-11-12 11:04:21,782: DataLoaders created.
+2025-11-12 11:04:22,403: Early stopping criterion: loss
+trainable params: 1,081,344 || all params: 495,114,112 || trainable%: 0.2184
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:05:40,811: Epoch 1/40 | Total Loss: 4.6441 | Causal Loss: 3.9686 | Classification Loss: 0.6754 | Val Loss: 4.6298 | Val AUC: 0.4947 | F1-Score: 0.0000
+2025-11-12 11:05:41,626: New best model saved with AUC: 0.4947
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:06:59,873: Epoch 2/40 | Total Loss: 4.6330 | Causal Loss: 3.9686 | Classification Loss: 0.6644 | Val Loss: 4.6260 | Val AUC: 0.4958 | F1-Score: 0.0000
+2025-11-12 11:07:00,586: New best model saved with AUC: 0.4958
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:08:18,634: Epoch 3/40 | Total Loss: 4.6313 | Causal Loss: 3.9686 | Classification Loss: 0.6627 | Val Loss: 4.6256 | Val AUC: 0.4950 | F1-Score: 0.0000
+2025-11-12 11:08:19,322: New best model saved with AUC: 0.4950
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:09:37,568: Epoch 4/40 | Total Loss: 4.6315 | Causal Loss: 3.9686 | Classification Loss: 0.6629 | Val Loss: 4.6255 | Val AUC: 0.4959 | F1-Score: 0.0000
+2025-11-12 11:09:38,272: New best model saved with AUC: 0.4959
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:10:56,817: Epoch 5/40 | Total Loss: 4.6324 | Causal Loss: 3.9686 | Classification Loss: 0.6637 | Val Loss: 4.6255 | Val AUC: 0.4978 | F1-Score: 0.0000
+2025-11-12 11:10:57,505: New best model saved with AUC: 0.4978
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:12:15,537: Epoch 6/40 | Total Loss: 4.6315 | Causal Loss: 3.9686 | Classification Loss: 0.6629 | Val Loss: 4.6253 | Val AUC: 0.4991 | F1-Score: 0.0000
+2025-11-12 11:12:16,219: New best model saved with AUC: 0.4991
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:13:34,324: Epoch 7/40 | Total Loss: 4.6304 | Causal Loss: 3.9686 | Classification Loss: 0.6618 | Val Loss: 4.6253 | Val AUC: 0.5009 | F1-Score: 0.0000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:14:52,317: Epoch 8/40 | Total Loss: 4.6305 | Causal Loss: 3.9686 | Classification Loss: 0.6619 | Val Loss: 4.6252 | Val AUC: 0.5017 | F1-Score: 0.0000
+2025-11-12 11:14:52,980: New best model saved with AUC: 0.5017
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:16:10,398: Epoch 9/40 | Total Loss: 4.6310 | Causal Loss: 3.9686 | Classification Loss: 0.6624 | Val Loss: 4.6253 | Val AUC: 0.5026 | F1-Score: 0.0000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:17:28,577: Epoch 10/40 | Total Loss: 4.6313 | Causal Loss: 3.9686 | Classification Loss: 0.6627 | Val Loss: 4.6252 | Val AUC: 0.5029 | F1-Score: 0.0000
+2025-11-12 11:17:29,261: New best model saved with AUC: 0.5029
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:18:47,231: Epoch 11/40 | Total Loss: 4.6308 | Causal Loss: 3.9686 | Classification Loss: 0.6622 | Val Loss: 4.6251 | Val AUC: 0.5036 | F1-Score: 0.0000
+2025-11-12 11:18:47,906: New best model saved with AUC: 0.5036
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:20:05,972: Epoch 12/40 | Total Loss: 4.6299 | Causal Loss: 3.9686 | Classification Loss: 0.6613 | Val Loss: 4.6252 | Val AUC: 0.5035 | F1-Score: 0.0000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:21:24,066: Epoch 13/40 | Total Loss: 4.6296 | Causal Loss: 3.9686 | Classification Loss: 0.6610 | Val Loss: 4.6251 | Val AUC: 0.5043 | F1-Score: 0.0000
+2025-11-12 11:21:24,746: New best model saved with AUC: 0.5043
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:22:42,945: Epoch 14/40 | Total Loss: 4.6313 | Causal Loss: 3.9686 | Classification Loss: 0.6627 | Val Loss: 4.6251 | Val AUC: 0.5041 | F1-Score: 0.0000
+2025-11-12 11:22:43,630: New best model saved with AUC: 0.5041
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:24:01,903: Epoch 15/40 | Total Loss: 4.6303 | Causal Loss: 3.9686 | Classification Loss: 0.6617 | Val Loss: 4.6251 | Val AUC: 0.5044 | F1-Score: 0.0000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:25:19,979: Epoch 16/40 | Total Loss: 4.6303 | Causal Loss: 3.9686 | Classification Loss: 0.6617 | Val Loss: 4.6251 | Val AUC: 0.5048 | F1-Score: 0.0000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:26:38,269: Epoch 17/40 | Total Loss: 4.6312 | Causal Loss: 3.9686 | Classification Loss: 0.6626 | Val Loss: 4.6251 | Val AUC: 0.5044 | F1-Score: 0.0000
+2025-11-12 11:26:38,269: Early stopping at epoch 17
+2025-11-12 11:26:39,049: Tempo medio per epoca: 78.7 secondi
+2025-11-12 11:26:39,055: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_Qwen_Qwen2.5-0.5B_9550_standard_100_False_20251112_110422_.pt for final evaluation on test set
+2025-11-12 11:28:00,480: Final Test AUC: 0.5100 | Test F1-Score: 0.0000
+2025-11-12 11:28:00,481: Saving results to results_general_Qwen_Qwen2.5-0.5B__peft_9550_100_standard_1M_0.1_20251112_112800.csv
+  Val AUC Val F1-Score  ... Validation Loss Training Time (s)
+0  0.5041       0.0000  ...          4.6251            1337.1
+
+[1 rows x 8 columns]
+Completed fraction 0.1
+========================================================
+Wed Nov 12 11:28:01 AM CET 2025
+--------------------------------------------------------
+Starting training with fraction = 0.25
+--------------------------------------------------------
+Wed Nov 12 11:28:01 AM CET 2025
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/cuda/__init__.py:51: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/utils/hub.py:128: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+2025-11-12 11:28:08,883: Argument batch_size: 64
+2025-11-12 11:28:08,883: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-12 11:28:08,883: Argument check_truncation: False
+2025-11-12 11:28:08,883: Argument cold_start: False
+2025-11-12 11:28:08,883: Argument csv_to_use: '10'
+2025-11-12 11:28:08,883: Argument early: 'loss'
+2025-11-12 11:28:08,883: Argument epochs: 40
+2025-11-12 11:28:08,883: Argument fraction: 0.25
+2025-11-12 11:28:08,883: Argument gradient_accumulation_steps: 1
+2025-11-12 11:28:08,883: Argument lr: 2e-05
+2025-11-12 11:28:08,883: Argument max_length: 100
+2025-11-12 11:28:08,883: Argument model_name: 'Qwen/Qwen2.5-0.5B'
+2025-11-12 11:28:08,883: Argument model_type: 'general'
+2025-11-12 11:28:08,883: Argument output_dir: 'src/output_slurms_fox/fraction_0.25_tiny_1M'
+2025-11-12 11:28:08,883: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-11-12 11:28:08,883: Argument patience: 3
+2025-11-12 11:28:08,883: Argument peft: True
+2025-11-12 11:28:08,883: Argument prompt_type: 'standard'
+2025-11-12 11:28:08,883: Argument seed: 9550
+2025-11-12 11:28:08,883: Argument test_rnd: False
+2025-11-12 11:28:08,883: Argument tiny: False
+2025-11-12 11:28:08,883: Argument tiny_type: '1M'
+2025-11-12 11:28:08,883: Argument use_quantization: False
+2025-11-12 11:28:10,750: Not Tiny model: loading full model.
+2025-11-12 11:28:10,750: Loading pre-trained CausalLM model for WARM START!
+2025-11-12 11:28:11,484: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-11-12 11:28:14,646: Using prompt type: standard
+2025-11-12 11:28:14,646: Model type: general, Model name: Qwen/Qwen2.5-0.5B
+2025-11-12 11:28:14,646: Training with dataset fraction = 0.25
+2025-11-12 11:28:15,258: Train Subset size: 100000 / 400000
+2025-11-12 11:28:15,259: Val Subset size: 12500 / 50000
+2025-11-12 11:28:15,259: Distributions Train y's:
+2025-11-12 11:28:15,261: Outcome
+0          0.63634
+1          0.36366
+dtype: float64
+2025-11-12 11:28:15,262: Distributions Val y's:
+2025-11-12 11:28:15,263: Outcome
+0          0.63592
+1          0.36408
+dtype: float64
+2025-11-12 11:28:16,400: Example train text: Sequential events: I X C N E K P R Q W E K H F E Q R F L K L O M Q O M B H J Z C H I E Y C V H J X
+Outcome (0 or 1):
+2025-11-12 11:28:16,547: Average train text length: 46.00 words
+2025-11-12 11:28:16,548: Average validation text length: 46.00 words
+2025-11-12 11:28:16,548: Average test text length: 46.00 words
+2025-11-12 11:28:16,548: Training on 100000 samples, validating on 12500, testing on 50000 samples
+2025-11-12 11:28:16,548: DataLoaders created.
+2025-11-12 11:28:17,127: Early stopping criterion: loss
+trainable params: 1,081,344 || all params: 495,114,112 || trainable%: 0.2184
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:31:30,727: Epoch 1/40 | Total Loss: 4.6414 | Causal Loss: 3.9687 | Classification Loss: 0.6727 | Val Loss: 4.6272 | Val AUC: 0.4884 | F1-Score: 0.0000
+2025-11-12 11:31:31,413: New best model saved with AUC: 0.4884
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:34:45,469: Epoch 2/40 | Total Loss: 4.6332 | Causal Loss: 3.9687 | Classification Loss: 0.6645 | Val Loss: 4.6252 | Val AUC: 0.4913 | F1-Score: 0.0000
+2025-11-12 11:34:46,190: New best model saved with AUC: 0.4913
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:37:59,378: Epoch 3/40 | Total Loss: 4.6325 | Causal Loss: 3.9687 | Classification Loss: 0.6638 | Val Loss: 4.6241 | Val AUC: 0.5010 | F1-Score: 0.0000
+2025-11-12 11:38:00,061: New best model saved with AUC: 0.5010
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:41:13,478: Epoch 4/40 | Total Loss: 4.6313 | Causal Loss: 3.9687 | Classification Loss: 0.6626 | Val Loss: 4.6238 | Val AUC: 0.5052 | F1-Score: 0.0000
+2025-11-12 11:41:14,241: New best model saved with AUC: 0.5052
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:44:26,958: Epoch 5/40 | Total Loss: 4.6316 | Causal Loss: 3.9687 | Classification Loss: 0.6629 | Val Loss: 4.6234 | Val AUC: 0.5088 | F1-Score: 0.0000
+2025-11-12 11:44:27,640: New best model saved with AUC: 0.5088
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:47:40,381: Epoch 6/40 | Total Loss: 4.6313 | Causal Loss: 3.9687 | Classification Loss: 0.6626 | Val Loss: 4.6233 | Val AUC: 0.5099 | F1-Score: 0.0000
+2025-11-12 11:47:41,063: New best model saved with AUC: 0.5099
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:50:54,171: Epoch 7/40 | Total Loss: 4.6306 | Causal Loss: 3.9687 | Classification Loss: 0.6619 | Val Loss: 4.6233 | Val AUC: 0.5114 | F1-Score: 0.0000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:54:07,053: Epoch 8/40 | Total Loss: 4.6310 | Causal Loss: 3.9687 | Classification Loss: 0.6623 | Val Loss: 4.6232 | Val AUC: 0.5114 | F1-Score: 0.0000
+2025-11-12 11:54:07,748: New best model saved with AUC: 0.5114
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 11:57:21,150: Epoch 9/40 | Total Loss: 4.6310 | Causal Loss: 3.9687 | Classification Loss: 0.6623 | Val Loss: 4.6233 | Val AUC: 0.5125 | F1-Score: 0.0000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 12:00:34,099: Epoch 10/40 | Total Loss: 4.6310 | Causal Loss: 3.9687 | Classification Loss: 0.6623 | Val Loss: 4.6232 | Val AUC: 0.5126 | F1-Score: 0.0000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 12:03:47,005: Epoch 11/40 | Total Loss: 4.6304 | Causal Loss: 3.9687 | Classification Loss: 0.6617 | Val Loss: 4.6231 | Val AUC: 0.5126 | F1-Score: 0.0000
+2025-11-12 12:03:47,699: New best model saved with AUC: 0.5126
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 12:07:00,789: Epoch 12/40 | Total Loss: 4.6310 | Causal Loss: 3.9687 | Classification Loss: 0.6623 | Val Loss: 4.6232 | Val AUC: 0.5127 | F1-Score: 0.0000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 12:10:13,660: Epoch 13/40 | Total Loss: 4.6314 | Causal Loss: 3.9687 | Classification Loss: 0.6627 | Val Loss: 4.6232 | Val AUC: 0.5132 | F1-Score: 0.0000
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/utils/checkpoint.py:61: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+2025-11-12 12:13:26,621: Epoch 14/40 | Total Loss: 4.6303 | Causal Loss: 3.9687 | Classification Loss: 0.6616 | Val Loss: 4.6231 | Val AUC: 0.5132 | F1-Score: 0.0000
+2025-11-12 12:13:26,621: Early stopping at epoch 14
+2025-11-12 12:13:27,249: Tempo medio per epoca: 193.6 secondi
+2025-11-12 12:13:27,255: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_Qwen_Qwen2.5-0.5B_9550_standard_100_False_20251112_112817_False_.pt for final evaluation on test set
+2025-11-12 12:14:48,773: Final Test AUC: 0.5151 | Test F1-Score: 0.0000
+2025-11-12 12:14:48,775: Saving results to results_general_Qwen_Qwen2.5-0.5B__peft_9550_100_standard_1M_0.25_20251112_121448.csv
+  Val AUC Val F1-Score  ... Validation Loss Training Time (s)
+0  0.5126       0.0000  ...          4.6231            2710.6
+
+[1 rows x 8 columns]
+Completed fraction 0.25
+========================================================
+Wed Nov 12 12:14:49 PM CET 2025
+--------------------------------------------------------
+Starting training with fraction = 0.5
+--------------------------------------------------------
+Wed Nov 12 12:14:49 PM CET 2025
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/cuda/__init__.py:51: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/utils/hub.py:128: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+2025-11-12 12:15:20,234: Argument batch_size: 64
+2025-11-12 12:15:20,234: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-12 12:15:20,234: Argument check_truncation: False
+2025-11-12 12:15:20,234: Argument cold_start: False
+2025-11-12 12:15:20,234: Argument csv_to_use: '10'
+2025-11-12 12:15:20,234: Argument early: 'loss'
+2025-11-12 12:15:20,234: Argument epochs: 40
+2025-11-12 12:15:20,234: Argument fraction: 0.5
+2025-11-12 12:15:20,234: Argument gradient_accumulation_steps: 1
+2025-11-12 12:15:20,234: Argument lr: 2e-05
+2025-11-12 12:15:20,234: Argument max_length: 100
+2025-11-12 12:15:20,234: Argument model_name: 'Qwen/Qwen2.5-0.5B'
+2025-11-12 12:15:20,234: Argument model_type: 'general'
+2025-11-12 12:15:20,234: Argument output_dir: 'src/output_slurms_fox/fraction_0.5_tiny_1M'
+2025-11-12 12:15:20,234: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-11-12 12:15:20,234: Argument patience: 3
+2025-11-12 12:15:20,234: Argument peft: True
+2025-11-12 12:15:20,234: Argument prompt_type: 'standard'
+2025-11-12 12:15:20,234: Argument seed: 9550
+2025-11-12 12:15:20,234: Argument test_rnd: False
+2025-11-12 12:15:20,234: Argument tiny: False
+2025-11-12 12:15:20,234: Argument tiny_type: '1M'
+2025-11-12 12:15:20,234: Argument use_quantization: False
+2025-11-12 12:15:22,240: Not Tiny model: loading full model.
+2025-11-12 12:15:22,240: Loading pre-trained CausalLM model for WARM START!
+2025-11-12 12:15:24,336: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-11-12 12:15:27,721: Using prompt type: standard
+2025-11-12 12:15:27,721: Model type: general, Model name: Qwen/Qwen2.5-0.5B
+2025-11-12 12:15:27,721: Training with dataset fraction = 0.5
+2025-11-12 12:15:28,440: Train Subset size: 200000 / 400000
+2025-11-12 12:15:28,440: Val Subset size: 25000 / 50000
+2025-11-12 12:15:28,440: Distributions Train y's:
+2025-11-12 12:15:28,444: Outcome
+0          0.63634
+1          0.36366
+dtype: float64
+2025-11-12 12:15:28,444: Distributions Val y's:
+2025-11-12 12:15:28,445: Outcome
+0          0.63592
+1          0.36408
+dtype: float64
+2025-11-12 12:15:30,356: Example train text: Sequential events: H J Y O W P J M C J R H T I A E G P M E X B A E M E Y D U O Q D T X R C U M Q D
+Outcome (0 or 1):
+2025-11-12 12:15:30,603: Average train text length: 46.00 words
+2025-11-12 12:15:30,603: Average validation text length: 46.00 words
+2025-11-12 12:15:30,603: Average test text length: 46.00 words
+2025-11-12 12:15:30,603: Training on 200000 samples, validating on 25000, testing on 50000 samples
+2025-11-12 12:15:30,604: DataLoaders created.
+2025-11-12 12:15:31,976: Early stopping criterion: loss
+trainable params: 1,081,344 || all params: 495,114,112 || trainable%: 0.2184
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+2025-11-12 12:29:52,527: Epoch 1/40 | Total Loss: 3.6266 | Causal Loss: 2.9602 | Classification Loss: 0.6664 | Val Loss: 3.2676 | Val AUC: 0.5061 | F1-Score: 0.0000
+2025-11-12 12:29:53,196: New best model saved with AUC: 0.5061
+2025-11-12 12:44:13,155: Epoch 2/40 | Total Loss: 3.2715 | Causal Loss: 2.6093 | Classification Loss: 0.6622 | Val Loss: 3.2635 | Val AUC: 0.5198 | F1-Score: 0.0000
+2025-11-12 12:44:13,811: New best model saved with AUC: 0.5198
+2025-11-12 12:58:31,978: Epoch 3/40 | Total Loss: 3.2702 | Causal Loss: 2.6083 | Classification Loss: 0.6619 | Val Loss: 3.2700 | Val AUC: 0.5362 | F1-Score: 0.0000
+2025-11-12 13:12:49,704: Epoch 4/40 | Total Loss: 3.2696 | Causal Loss: 2.6088 | Classification Loss: 0.6608 | Val Loss: 3.2636 | Val AUC: 0.5410 | F1-Score: 0.0000
+2025-11-12 13:27:07,694: Epoch 5/40 | Total Loss: 3.2682 | Causal Loss: 2.6096 | Classification Loss: 0.6586 | Val Loss: 3.2657 | Val AUC: 0.5477 | F1-Score: 0.0264
+2025-11-12 13:27:07,694: Early stopping at epoch 5
+2025-11-12 13:27:09,171: Tempo medio per epoca: 859.7 secondi
+2025-11-12 13:27:09,177: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_Qwen_Qwen2.5-0.5B_9550_standard_100_False_20251112_121531_False_.pt for final evaluation on test set
+2025-11-12 13:28:33,532: Final Test AUC: 0.5217 | Test F1-Score: 0.0000
+2025-11-12 13:28:33,533: Saving results to results_general_Qwen_Qwen2.5-0.5B__peft_9550_100_standard_1M_0.5_20251112_132833.csv
+  Val AUC Val F1-Score  ... Validation Loss Training Time (s)
+0  0.5198       0.0000  ...          3.2635            4298.4
+
+[1 rows x 8 columns]
+Completed fraction 0.5
+========================================================
+Wed Nov 12 01:28:34 PM CET 2025
+--------------------------------------------------------
+Starting training with fraction = 0.75
+--------------------------------------------------------
+Wed Nov 12 01:28:34 PM CET 2025
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/cuda/__init__.py:51: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/utils/hub.py:128: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+2025-11-12 13:29:12,145: Argument batch_size: 64
+2025-11-12 13:29:12,145: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-12 13:29:12,145: Argument check_truncation: False
+2025-11-12 13:29:12,145: Argument cold_start: False
+2025-11-12 13:29:12,145: Argument csv_to_use: '10'
+2025-11-12 13:29:12,145: Argument early: 'loss'
+2025-11-12 13:29:12,145: Argument epochs: 40
+2025-11-12 13:29:12,145: Argument fraction: 0.75
+2025-11-12 13:29:12,145: Argument gradient_accumulation_steps: 1
+2025-11-12 13:29:12,145: Argument lr: 2e-05
+2025-11-12 13:29:12,145: Argument max_length: 100
+2025-11-12 13:29:12,145: Argument model_name: 'Qwen/Qwen2.5-0.5B'
+2025-11-12 13:29:12,145: Argument model_type: 'general'
+2025-11-12 13:29:12,145: Argument output_dir: 'src/output_slurms_fox/fraction_0.75_tiny_1M'
+2025-11-12 13:29:12,145: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-11-12 13:29:12,145: Argument patience: 3
+2025-11-12 13:29:12,145: Argument peft: True
+2025-11-12 13:29:12,145: Argument prompt_type: 'standard'
+2025-11-12 13:29:12,146: Argument seed: 9550
+2025-11-12 13:29:12,146: Argument test_rnd: False
+2025-11-12 13:29:12,146: Argument tiny: False
+2025-11-12 13:29:12,146: Argument tiny_type: '1M'
+2025-11-12 13:29:12,146: Argument use_quantization: False
+2025-11-12 13:29:14,263: Not Tiny model: loading full model.
+2025-11-12 13:29:14,263: Loading pre-trained CausalLM model for WARM START!
+2025-11-12 13:29:16,954: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-11-12 13:29:20,264: Using prompt type: standard
+2025-11-12 13:29:20,264: Model type: general, Model name: Qwen/Qwen2.5-0.5B
+2025-11-12 13:29:20,264: Training with dataset fraction = 0.75
+2025-11-12 13:29:20,987: Train Subset size: 300000 / 400000
+2025-11-12 13:29:20,987: Val Subset size: 37500 / 50000
+2025-11-12 13:29:20,987: Distributions Train y's:
+2025-11-12 13:29:20,991: Outcome
+0          0.636337
+1          0.363663
+dtype: float64
+2025-11-12 13:29:20,992: Distributions Val y's:
+2025-11-12 13:29:20,993: Outcome
+0          0.635947
+1          0.364053
+dtype: float64
+2025-11-12 13:29:23,537: Example train text: Sequential events: V J U U A S K H S I D R C O M P G P F K T E F L Q H V X Q X Y D E J C U G T Q Y
+Outcome (0 or 1):
+2025-11-12 13:29:23,882: Average train text length: 46.00 words
+2025-11-12 13:29:23,882: Average validation text length: 46.00 words
+2025-11-12 13:29:23,882: Average test text length: 46.00 words
+2025-11-12 13:29:23,882: Training on 300000 samples, validating on 37500, testing on 50000 samples
+2025-11-12 13:29:23,882: DataLoaders created.
+2025-11-12 13:29:25,521: Early stopping criterion: loss
+trainable params: 1,081,344 || all params: 495,114,112 || trainable%: 0.2184
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+2025-11-12 13:50:54,489: Epoch 1/40 | Total Loss: 3.5627 | Causal Loss: 2.8964 | Classification Loss: 0.6662 | Val Loss: 3.2663 | Val AUC: 0.5118 | F1-Score: 0.0000
+2025-11-12 13:50:55,179: New best model saved with AUC: 0.5118
+2025-11-12 14:36:58,875: Epoch 2/40 | Total Loss: 3.2715 | Causal Loss: 2.6088 | Classification Loss: 0.6627 | Val Loss: 3.2624 | Val AUC: 0.5342 | F1-Score: 0.0000
+2025-11-12 14:36:59,691: New best model saved with AUC: 0.5342
+2025-11-12 15:23:05,730: Epoch 3/40 | Total Loss: 3.2693 | Causal Loss: 2.6083 | Classification Loss: 0.6610 | Val Loss: 3.2665 | Val AUC: 0.5479 | F1-Score: 0.0327
+2025-11-12 16:09:10,613: Epoch 4/40 | Total Loss: 3.2681 | Causal Loss: 2.6094 | Classification Loss: 0.6587 | Val Loss: 3.2620 | Val AUC: 0.5517 | F1-Score: 0.0000
+2025-11-12 16:09:11,298: New best model saved with AUC: 0.5517
+2025-11-12 16:55:18,933: Epoch 5/40 | Total Loss: 3.2671 | Causal Loss: 2.6097 | Classification Loss: 0.6574 | Val Loss: 3.2615 | Val AUC: 0.5560 | F1-Score: 0.0010
+2025-11-12 16:55:19,602: New best model saved with AUC: 0.5560
+2025-11-12 17:41:24,094: Epoch 6/40 | Total Loss: 3.2661 | Causal Loss: 2.6097 | Classification Loss: 0.6564 | Val Loss: 3.2606 | Val AUC: 0.5568 | F1-Score: 0.0036
+2025-11-12 17:41:24,953: New best model saved with AUC: 0.5568
+2025-11-12 18:27:28,939: Epoch 7/40 | Total Loss: 3.2648 | Causal Loss: 2.6098 | Classification Loss: 0.6550 | Val Loss: 3.2604 | Val AUC: 0.5632 | F1-Score: 0.0110
+2025-11-12 18:27:29,601: New best model saved with AUC: 0.5632
+2025-11-12 19:13:36,620: Epoch 8/40 | Total Loss: 3.2631 | Causal Loss: 2.6099 | Classification Loss: 0.6532 | Val Loss: 3.2599 | Val AUC: 0.5728 | F1-Score: 0.0653
+2025-11-12 19:13:37,289: New best model saved with AUC: 0.5728
+2025-11-12 19:59:47,148: Epoch 9/40 | Total Loss: 3.2610 | Causal Loss: 2.6100 | Classification Loss: 0.6511 | Val Loss: 3.2584 | Val AUC: 0.5768 | F1-Score: 0.0097
+2025-11-12 19:59:47,971: New best model saved with AUC: 0.5768
+2025-11-12 20:45:54,110: Epoch 10/40 | Total Loss: 3.2592 | Causal Loss: 2.6099 | Classification Loss: 0.6493 | Val Loss: 3.2570 | Val AUC: 0.5764 | F1-Score: 0.0130
+2025-11-12 20:45:54,945: New best model saved with AUC: 0.5764
+2025-11-12 21:32:04,980: Epoch 11/40 | Total Loss: 3.2586 | Causal Loss: 2.6099 | Classification Loss: 0.6487 | Val Loss: 3.2574 | Val AUC: 0.5758 | F1-Score: 0.0230
+2025-11-12 22:18:07,464: Epoch 12/40 | Total Loss: 3.2577 | Causal Loss: 2.6099 | Classification Loss: 0.6478 | Val Loss: 3.2576 | Val AUC: 0.5776 | F1-Score: 0.0495
+2025-11-12 23:04:12,024: Epoch 13/40 | Total Loss: 3.2568 | Causal Loss: 2.6099 | Classification Loss: 0.6470 | Val Loss: 3.2571 | Val AUC: 0.5792 | F1-Score: 0.0209
+2025-11-12 23:04:12,024: Early stopping at epoch 13
+2025-11-12 23:04:13,778: Tempo medio per epoca: 2653.1 secondi
+2025-11-12 23:04:13,785: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_Qwen_Qwen2.5-0.5B_9550_standard_100_False_20251112_132925_False_.pt for final evaluation on test set
+2025-11-12 23:05:37,890: Final Test AUC: 0.5779 | Test F1-Score: 0.0144
+2025-11-12 23:05:37,891: Saving results to results_general_Qwen_Qwen2.5-0.5B__peft_9550_100_standard_1M_0.75_20251112_230537.csv
+  Val AUC Val F1-Score  ... Validation Loss Training Time (s)
+0  0.5764       0.0130  ...          3.2570           34489.8
+
+[1 rows x 8 columns]
+Completed fraction 0.75
+========================================================
+Wed Nov 12 11:05:39 PM CET 2025
+--------------------------------------------------------
+Starting training with fraction = 1.0
+--------------------------------------------------------
+Wed Nov 12 11:05:39 PM CET 2025
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/cuda/__init__.py:51: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/utils/hub.py:128: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+2025-11-12 23:06:08,593: Argument batch_size: 64
+2025-11-12 23:06:08,593: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-12 23:06:08,593: Argument check_truncation: False
+2025-11-12 23:06:08,593: Argument cold_start: False
+2025-11-12 23:06:08,593: Argument csv_to_use: '10'
+2025-11-12 23:06:08,593: Argument early: 'loss'
+2025-11-12 23:06:08,593: Argument epochs: 40
+2025-11-12 23:06:08,593: Argument fraction: 1.0
+2025-11-12 23:06:08,593: Argument gradient_accumulation_steps: 1
+2025-11-12 23:06:08,593: Argument lr: 2e-05
+2025-11-12 23:06:08,594: Argument max_length: 100
+2025-11-12 23:06:08,594: Argument model_name: 'Qwen/Qwen2.5-0.5B'
+2025-11-12 23:06:08,594: Argument model_type: 'general'
+2025-11-12 23:06:08,594: Argument output_dir: 'src/output_slurms_fox/fraction_1.0_tiny_1M'
+2025-11-12 23:06:08,594: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-11-12 23:06:08,594: Argument patience: 3
+2025-11-12 23:06:08,594: Argument peft: True
+2025-11-12 23:06:08,594: Argument prompt_type: 'standard'
+2025-11-12 23:06:08,594: Argument seed: 9550
+2025-11-12 23:06:08,594: Argument test_rnd: False
+2025-11-12 23:06:08,594: Argument tiny: False
+2025-11-12 23:06:08,594: Argument tiny_type: '1M'
+2025-11-12 23:06:08,594: Argument use_quantization: False
+2025-11-12 23:06:10,688: Not Tiny model: loading full model.
+2025-11-12 23:06:10,688: Loading pre-trained CausalLM model for WARM START!
+2025-11-12 23:06:12,837: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-11-12 23:06:16,160: Using prompt type: standard
+2025-11-12 23:06:16,160: Model type: general, Model name: Qwen/Qwen2.5-0.5B
+2025-11-12 23:06:16,160: Training with dataset fraction = 1.0
+2025-11-12 23:06:16,733: Train Subset size: 400000 / 400000
+2025-11-12 23:06:16,734: Val Subset size: 50000 / 50000
+2025-11-12 23:06:16,734: Distributions Train y's:
+2025-11-12 23:06:16,739: Outcome
+0          0.636338
+1          0.363662
+dtype: float64
+2025-11-12 23:06:16,740: Distributions Val y's:
+2025-11-12 23:06:16,741: Outcome
+0          0.63594
+1          0.36406
+dtype: float64
+2025-11-12 23:06:19,841: Example train text: Sequential events: N G D B W X P Z F C O U O N B Q D U E S L H M J N I U H R C L N T A A N W S U E
+Outcome (0 or 1):
+2025-11-12 23:06:20,278: Average train text length: 46.00 words
+2025-11-12 23:06:20,278: Average validation text length: 46.00 words
+2025-11-12 23:06:20,278: Average test text length: 46.00 words
+2025-11-12 23:06:20,278: Training on 400000 samples, validating on 50000, testing on 50000 samples
+2025-11-12 23:06:20,278: DataLoaders created.
+2025-11-12 23:06:21,646: Early stopping criterion: loss
+trainable params: 1,081,344 || all params: 495,114,112 || trainable%: 0.2184
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+2025-11-12 23:34:55,299: Epoch 1/40 | Total Loss: 3.5247 | Causal Loss: 2.8591 | Classification Loss: 0.6656 | Val Loss: 3.2652 | Val AUC: 0.5182 | F1-Score: 0.0000
+2025-11-12 23:34:55,990: New best model saved with AUC: 0.5182
+2025-11-13 00:03:30,884: Epoch 2/40 | Total Loss: 3.2709 | Causal Loss: 2.6084 | Classification Loss: 0.6625 | Val Loss: 3.2633 | Val AUC: 0.5278 | F1-Score: 0.0000
+2025-11-13 00:03:31,557: New best model saved with AUC: 0.5278
+2025-11-13 00:32:07,376: Epoch 3/40 | Total Loss: 3.2710 | Causal Loss: 2.6095 | Classification Loss: 0.6615 | Val Loss: 3.2627 | Val AUC: 0.5433 | F1-Score: 0.0000
+2025-11-13 00:32:08,064: New best model saved with AUC: 0.5433
+2025-11-13 01:00:47,506: Epoch 4/40 | Total Loss: 3.2685 | Causal Loss: 2.6097 | Classification Loss: 0.6588 | Val Loss: 3.2617 | Val AUC: 0.5520 | F1-Score: 0.0000
+2025-11-13 01:00:48,138: New best model saved with AUC: 0.5520
+2025-11-13 01:29:22,374: Epoch 5/40 | Total Loss: 3.2671 | Causal Loss: 2.6100 | Classification Loss: 0.6571 | Val Loss: 3.2618 | Val AUC: 0.5558 | F1-Score: 0.0002
+2025-11-13 01:57:56,004: Epoch 6/40 | Total Loss: 3.2657 | Causal Loss: 2.6100 | Classification Loss: 0.6558 | Val Loss: 3.2638 | Val AUC: 0.5585 | F1-Score: 0.0003
+2025-11-13 02:26:25,625: Epoch 7/40 | Total Loss: 3.2647 | Causal Loss: 2.6101 | Classification Loss: 0.6546 | Val Loss: 3.2638 | Val AUC: 0.5621 | F1-Score: 0.0002
+2025-11-13 02:26:25,625: Early stopping at epoch 7
+2025-11-13 02:26:27,234: Tempo medio per epoca: 1715.3 secondi
+2025-11-13 02:26:27,240: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_Qwen_Qwen2.5-0.5B_9550_standard_100_False_20251112_230621_False_.pt for final evaluation on test set
+2025-11-13 02:27:50,272: Final Test AUC: 0.5531 | Test F1-Score: 0.0001
+2025-11-13 02:27:50,273: Saving results to results_general_Qwen_Qwen2.5-0.5B__peft_9550_100_standard_1M_1.0_20251113_022750.csv
+  Val AUC Val F1-Score  ... Validation Loss Training Time (s)
+0  0.5520       0.0000  ...          3.2617           12006.8
+
+[1 rows x 8 columns]
+Completed fraction 1.0
+========================================================
+Thu Nov 13 02:27:51 AM CET 2025
+All training runs completed!
+Thu Nov 13 02:27:51 AM CET 2025
+
+Job 2109973 consumed 294.6 billing hours from project ec12.
+
+Submitted 2025-11-12T10:56:59; waited 29.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 20.0 hours
+Elapsed wallclock time:   15.5 hours
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+2109973          16            0.0 %  2025-11-12T10:57:28   15.5 h  0
+2109973.batch    16      1     4.8 %  2025-11-12T10:57:28   15.5 h  0
+
+Used CPU time:   11.8 CPU hours
+Unused CPU time: 9.8 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+2109973          80.0        
+2109973.batch    80.0     3.8
+
+Job 2109973 completed at Thu Nov 13 02:27:52 CET 2025

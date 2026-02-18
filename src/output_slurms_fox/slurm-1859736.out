@@ -1,0 +1,163 @@
+Starting job 1859736 on gpu-8 on fox at Fri Aug 22 11:12:07 CEST 2025
+
+
+[notice] A new release of pip is available: 23.3.2 -> 25.2
+[notice] To update, run: pip install --upgrade pip
+2025-08-22 11:12:58,187: Argument CI: False
+2025-08-22 11:12:58,187: Argument all_landmarks: True
+2025-08-22 11:12:58,187: Argument batch_size: 8
+2025-08-22 11:12:58,187: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-08-22 11:12:58,187: Argument early: 'loss'
+2025-08-22 11:12:58,187: Argument epochs: 20
+2025-08-22 11:12:58,187: Argument gradient_accumulation_steps: 1
+2025-08-22 11:12:58,187: Argument input_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_df_evo.csv'
+2025-08-22 11:12:58,187: Argument lr: 2e-05
+2025-08-22 11:12:58,187: Argument max_length: 512
+2025-08-22 11:12:58,187: Argument max_visits: 3
+2025-08-22 11:12:58,188: Argument model_name: 'emilyalsentzer/Bio_ClinicalBERT'
+2025-08-22 11:12:58,188: Argument model_type: 'medical'
+2025-08-22 11:12:58,188: Argument patience: 1
+2025-08-22 11:12:58,188: Argument peft: False
+2025-08-22 11:12:58,188: Argument prompt_type: 'compact_narrative'
+2025-08-22 11:12:58,188: Argument seed: 4550
+2025-08-22 11:12:58,188: Argument test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_test_dod_fxd.csv'
+2025-08-22 11:12:58,188: Argument train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_train_dod_fxd.csv'
+2025-08-22 11:12:58,188: Argument use_quantization: False
+2025-08-22 11:12:58,188: Argument val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_vali_dod_fxd.csv'
+2025-08-22 11:12:58,188: Argument when_counting_death: 'last_visit'
+2025-08-22 11:12:58,226: Using prompt type: compact_narrative
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:89: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:91: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_test_df = pd.read_csv(args.test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+2025-08-22 11:13:30,306: Processing all landmarks from 1 to 3
+2025-08-22 11:13:30,306: Preparing data for Landmark 1
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_utils.py:831: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  return self.fget.__get__(instance, owner)()
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at emilyalsentzer/Bio_ClinicalBERT and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-22 11:13:38,797: Example train text: You are a Doctor.
+A thirty-two-years-old F patient is currently hospitalized for a emergency admission (visit number one).
+Given the following clinical history, what is the probability of death in the next ninety days?
+Diagnosis history:
+	During the current visit, new diagnoses include: Alcoholic cirrhosis of liver; Pneumonia, organism unspecified; Other ascites; Portal hypertension; Urinary tract infection, site not specified; Unspecified protein-calorie malnutrition; Hyposmolality and/or hyponatremia; Other specified forms of effusion, except tuberculous; Acute alcoholic hepatitis; Hypopotassemia; Other and unspecified alcohol dependence, continuous; Other constipation; Unspecified deficiency anemia; Anxiety state, unspecified
+Medication history:
+	New medications prescribed in this visit are: Morphine Sulfate; Lorazepam; Heparin; Docusate Sodium; OxycoDONE (Immediate Release) ; Thiamine; Multivitamins; Ciprofloxacin HCl; Neutra-Phos; Albumin 25% (12.5g / 50mL); Phytonadione; 0.9% Sodium Chloride; Potassium Chloride; Sodium Chloride 0.9%  Flush; Magnesium Sulfate; SW; Ondansetron; Lidocaine 5% Patch; Senna; Multivitamin IV; FoLIC Acid; 1/2 NS; Nicotine Patch; Furosemide; Acetaminophen
+Procedures history:
+	New procedures during this visit include: Percutaneous abdominal drainage
+2025-08-22 11:13:38,952: Average train text length: 162.39 words
+2025-08-22 11:13:38,952: Average validation text length: 161.56 words
+2025-08-22 11:13:38,952: Average test text length: 163.14 words
+2025-08-22 11:13:38,952: Training on 14472 samples, validating on 1608, testing on 4020 samples
+2025-08-22 11:13:54,693: Fine-tuning at Landmark 1
+2025-08-22 11:13:56,218: Early stopping criterion: loss
+2025-08-22 11:16:05,695: Landmark 1 | Epoch 1/20 | Train Loss: 0.4050 | Val Loss: 0.3376 | Validation AUC: 0.8005 | F1-Score: 0.2922
+2025-08-22 11:16:06,309: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_emilyalsentzer_Bio_ClinicalBERT_4550_landmark1_compact_narrative_3_512_last_visit_all_landmarks_True_20250822_111356_.pt with AUC: 0.8005, F1: 0.2922, Val Loss: 0.3376
+2025-08-22 11:18:15,121: Landmark 1 | Epoch 2/20 | Train Loss: 0.3464 | Val Loss: 0.3187 | Validation AUC: 0.8338 | F1-Score: 0.2733
+2025-08-22 11:18:15,594: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_emilyalsentzer_Bio_ClinicalBERT_4550_landmark1_compact_narrative_3_512_last_visit_all_landmarks_True_20250822_111356_.pt with AUC: 0.8338, F1: 0.2733, Val Loss: 0.3187
+2025-08-22 11:20:24,379: Landmark 1 | Epoch 3/20 | Train Loss: 0.3187 | Val Loss: 0.3350 | Validation AUC: 0.8220 | F1-Score: 0.1716
+2025-08-22 11:20:24,379: No improvement in epoch 3. Current best AUC: 0.8338, F1: 0.2733, Val Loss: 0.3187. Epochs without improvement: 1/1
+2025-08-22 11:20:24,379: Early stopping triggered at epoch 3. Best AUC: 0.8338, F1: 0.2733, Val Loss: 0.3187
+2025-08-22 11:20:24,922: Tempo impiegato per Landmark 1: 390.2 secondi
+2025-08-22 11:20:24,922: Tempo medio per epoca: 130.1 secondi
+2025-08-22 11:20:24,924: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_emilyalsentzer_Bio_ClinicalBERT_4550_landmark1_compact_narrative_3_512_last_visit_all_landmarks_True_20250822_111356_.pt for final evaluation on test set
+2025-08-22 11:20:35,758: Final Test AUC (Landmark 1): 0.8246 | Test F1-Score: 0.2547
+2025-08-22 11:20:35,758: Preparing data for Landmark 2
+Using device: cuda
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at emilyalsentzer/Bio_ClinicalBERT and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-22 11:20:44,673: Example train text: You are a Doctor.
+A thirty-two-years-old F patient is currently hospitalized for a emergency admission (visit number two).
+Given the following clinical history, what is the probability of death in the next ninety days?
+The previous visit occurred six days ago.
+Diagnosis history:
+	The patient has a chronic history of: Other ascites; Urinary tract infection, site not specified; Hyposmolality and/or hyponatremia; Acute alcoholic hepatitis; Other and unspecified alcohol dependence, continuous
+	During the current visit, new diagnoses include: Sepsis; Unspecified pleural effusion; Alcoholic fatty liver; Tobacco use disorder
+Medication history:
+	This patient was repeatedly prescribed these medications: Morphine Sulfate; Heparin; OxycoDONE (Immediate Release) ; Thiamine; Multivitamins; Albumin 25% (12.5g / 50mL); Phytonadione; 0.9% Sodium Chloride; Sodium Chloride 0.9%  Flush; Magnesium Sulfate; Ondansetron; Lidocaine 5% Patch; FoLIC Acid; Nicotine Patch
+	New medications prescribed in this visit are: Sarna Lotion; Sodium Polystyrene Sulfonate; Lactulose; Iso-Osmotic Dextrose; CeftriaXONE; Acetylcysteine 20%; 5% Dextrose; Heparin Sodium; D5 1/2NS; Spironolactone
+Procedures history:
+	The patient has undergone repeated procedures such as: Percutaneous abdominal drainage
+2025-08-22 11:20:44,849: Average train text length: 186.97 words
+2025-08-22 11:20:44,850: Average validation text length: 186.89 words
+2025-08-22 11:20:44,850: Average test text length: 185.10 words
+2025-08-22 11:20:44,850: Training on 14472 samples, validating on 1608, testing on 4020 samples
+2025-08-22 11:21:02,714: Fine-tuning at Landmark 2
+2025-08-22 11:21:02,719: Early stopping criterion: loss
+2025-08-22 11:23:11,735: Landmark 2 | Epoch 1/20 | Train Loss: 0.3963 | Val Loss: 0.3353 | Validation AUC: 0.8587 | F1-Score: 0.2482
+2025-08-22 11:23:12,054: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_emilyalsentzer_Bio_ClinicalBERT_4550_landmark2_compact_narrative_3_512_last_visit_all_landmarks_True_20250822_112102_.pt with AUC: 0.8587, F1: 0.2482, Val Loss: 0.3353
+2025-08-22 11:25:21,446: Landmark 2 | Epoch 2/20 | Train Loss: 0.3211 | Val Loss: 0.2726 | Validation AUC: 0.8832 | F1-Score: 0.4575
+2025-08-22 11:25:21,804: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_emilyalsentzer_Bio_ClinicalBERT_4550_landmark2_compact_narrative_3_512_last_visit_all_landmarks_True_20250822_112102_.pt with AUC: 0.8832, F1: 0.4575, Val Loss: 0.2726
+2025-08-22 11:27:30,894: Landmark 2 | Epoch 3/20 | Train Loss: 0.2962 | Val Loss: 0.2840 | Validation AUC: 0.8785 | F1-Score: 0.4464
+2025-08-22 11:27:30,896: No improvement in epoch 3. Current best AUC: 0.8832, F1: 0.4575, Val Loss: 0.2726. Epochs without improvement: 1/1
+2025-08-22 11:27:30,896: Early stopping triggered at epoch 3. Best AUC: 0.8832, F1: 0.4575, Val Loss: 0.2726
+2025-08-22 11:27:31,233: Tempo impiegato per Landmark 2: 388.5 secondi
+2025-08-22 11:27:31,234: Tempo medio per epoca: 129.5 secondi
+2025-08-22 11:27:31,235: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_emilyalsentzer_Bio_ClinicalBERT_4550_landmark2_compact_narrative_3_512_last_visit_all_landmarks_True_20250822_112102_.pt for final evaluation on test set
+2025-08-22 11:27:42,039: Final Test AUC (Landmark 2): 0.8570 | Test F1-Score: 0.3966
+2025-08-22 11:27:42,039: Preparing data for Landmark 3
+Using device: cuda
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at emilyalsentzer/Bio_ClinicalBERT and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-08-22 11:27:53,171: Example train text: You are a Doctor.
+A thirty-two-years-old F patient is currently hospitalized for a emergency admission (visit number three).
+Given the following clinical history, what is the probability of death in the next ninety days?
+The previous visit occurred six days ago.
+Diagnosis history:
+	The patient has a chronic history of: Alcoholic cirrhosis of liver; Other ascites; Portal hypertension; Urinary tract infection, site not specified; Hyposmolality and/or hyponatremia; Acute alcoholic hepatitis; Other and unspecified alcohol dependence, continuous
+	During the current visit, new diagnoses include: Thrombocytopenia, unspecified; Lumbago; Other chronic pain
+Medication history:
+	This patient was repeatedly prescribed these medications: Morphine Sulfate; Lorazepam; Heparin; OxycoDONE (Immediate Release) ; Thiamine; Multivitamins; Albumin 25% (12.5g / 50mL); Phytonadione; 0.9% Sodium Chloride; Sodium Chloride 0.9%  Flush; Magnesium Sulfate; Ondansetron; Lidocaine 5% Patch; FoLIC Acid; Nicotine Patch; Lactulose
+	New medications prescribed in this visit are: Amitriptyline
+Procedures history:
+	The patient has undergone repeated procedures such as: Percutaneous abdominal drainage
+2025-08-22 11:27:53,378: Average train text length: 216.08 words
+2025-08-22 11:27:53,378: Average validation text length: 212.58 words
+2025-08-22 11:27:53,378: Average test text length: 215.56 words
+2025-08-22 11:27:53,378: Training on 14472 samples, validating on 1608, testing on 4020 samples
+2025-08-22 11:28:14,414: Fine-tuning at Landmark 3
+2025-08-22 11:28:14,424: Early stopping criterion: loss
+2025-08-22 11:30:23,834: Landmark 3 | Epoch 1/20 | Train Loss: 0.3046 | Val Loss: 0.2385 | Validation AUC: 0.9441 | F1-Score: 0.6284
+2025-08-22 11:30:24,168: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_emilyalsentzer_Bio_ClinicalBERT_4550_landmark3_compact_narrative_3_512_last_visit_all_landmarks_True_20250822_112814_.pt with AUC: 0.9441, F1: 0.6284, Val Loss: 0.2385
+2025-08-22 11:32:33,947: Landmark 3 | Epoch 2/20 | Train Loss: 0.2111 | Val Loss: 0.1913 | Validation AUC: 0.9508 | F1-Score: 0.6915
+2025-08-22 11:32:34,276: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_emilyalsentzer_Bio_ClinicalBERT_4550_landmark3_compact_narrative_3_512_last_visit_all_landmarks_True_20250822_112814_.pt with AUC: 0.9508, F1: 0.6915, Val Loss: 0.1913
+2025-08-22 11:34:43,740: Landmark 3 | Epoch 3/20 | Train Loss: 0.1958 | Val Loss: 0.1918 | Validation AUC: 0.9510 | F1-Score: 0.7163
+2025-08-22 11:34:43,741: No improvement in epoch 3. Current best AUC: 0.9508, F1: 0.6915, Val Loss: 0.1913. Epochs without improvement: 1/1
+2025-08-22 11:34:43,741: Early stopping triggered at epoch 3. Best AUC: 0.9508, F1: 0.6915, Val Loss: 0.1913
+2025-08-22 11:34:44,121: Tempo impiegato per Landmark 3: 389.7 secondi
+2025-08-22 11:34:44,122: Tempo medio per epoca: 129.9 secondi
+2025-08-22 11:34:44,124: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_emilyalsentzer_Bio_ClinicalBERT_4550_landmark3_compact_narrative_3_512_last_visit_all_landmarks_True_20250822_112814_.pt for final evaluation on test set
+2025-08-22 11:34:54,938: Final Test AUC (Landmark 3): 0.9446 | Test F1-Score: 0.7024
+2025-08-22 11:34:54,995: Saving results to results_medical_True_emilyalsentzer_Bio_ClinicalBERT_last_visit_visits3_4550_512_compact_narrative_20250822_113454.csv
+Using device: cuda
+   Landmark Val AUC  ... Validation Loss Training Time (s)
+0         1  0.8338  ...          0.3187             390.2
+1         2  0.8832  ...          0.2726             388.5
+2         3  0.9508  ...          0.1913             389.7
+
+[3 rows x 9 columns]
+
+Job 1859736 consumed 7.3 billing hours from project ec12.
+
+Submitted 2025-08-22T11:12:06; waited 0.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 60.0 minutes
+Elapsed wallclock time:   22.9 minutes
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start   Elapsed  Exit status
+1859736          16            0.0 %  2025-08-22T11:12:06  1376.0 s  0
+1859736.batch    16      1     6.0 %  2025-08-22T11:12:06  1376.0 s  0
+
+Used CPU time:   22.1 CPU minutes
+Unused CPU time: 5.7 CPU hours
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1859736          32.0        
+1859736.batch    32.0     8.9
+
+GPU usage stats:
+Job 1859736 completed at Fri Aug 22 11:35:03 CEST 2025

@@ -1,0 +1,92 @@
+Starting job 1879429 on gpu-9 on Fox at Sat Sep 6 23:57:05 CEST 2025
+
+
+[notice] A new release of pip is available: 23.3.2 -> 25.2
+[notice] To update, run: pip install --upgrade pip
+2025-09-06 23:57:48,598: Argument CI: False
+2025-09-06 23:57:48,598: Argument all_landmarks: False
+2025-09-06 23:57:48,598: Argument batch_size: 8
+2025-09-06 23:57:48,598: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-09-06 23:57:48,598: Argument early: 'loss'
+2025-09-06 23:57:48,598: Argument epochs: 20
+2025-09-06 23:57:48,599: Argument gradient_accumulation_steps: 1
+2025-09-06 23:57:48,599: Argument input_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_df_evo.csv'
+2025-09-06 23:57:48,599: Argument lr: 2e-05
+2025-09-06 23:57:48,599: Argument max_length: 512
+2025-09-06 23:57:48,599: Argument max_visits: 4
+2025-09-06 23:57:48,599: Argument model_name: 'Charangan/MedBERT'
+2025-09-06 23:57:48,599: Argument model_type: 'medical'
+2025-09-06 23:57:48,599: Argument patience: 3
+2025-09-06 23:57:48,599: Argument peft: False
+2025-09-06 23:57:48,599: Argument prompt_type: 'no'
+2025-09-06 23:57:48,599: Argument seed: 4550
+2025-09-06 23:57:48,599: Argument test_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_test_dod_fxd.csv'
+2025-09-06 23:57:48,599: Argument train_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_train_dod_fxd.csv'
+2025-09-06 23:57:48,599: Argument use_quantization: False
+2025-09-06 23:57:48,599: Argument val_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/splitted/splitted/landmark_evo_vali_dod_fxd.csv'
+2025-09-06 23:57:48,599: Argument when_counting_death: 'last_visit'
+2025-09-06 23:57:48,639: Using prompt type: no
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:93: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_train_df = pd.read_csv(args.train_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+/fp/homes01/u01/ec-michelec/MIMICIV/src/Finetuning_rfct.py:95: DtypeWarning: Columns (16,17,18,19) have mixed types. Specify dtype option on import or set low_memory=False.
+  full_test_df = pd.read_csv(args.test_csv, na_values=['', 'None', 'NaN', 'na', 'nan']).fillna('')
+2025-09-06 23:58:20,188: Processing only the last landmark visit: 4
+2025-09-06 23:58:20,188: Preparing data for Landmark 4
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/_utils.py:831: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  return self.fget.__get__(instance, owner)()
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at Charangan/MedBERT and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-09-06 23:58:28,934: Example train text: Based on this information, what is the probability of mortality within 90 days?Nafcillin; Golytely; Ibuprofen; Senna; Acetaminophen; Ranitidine; 0.45% Sodium Chloride; ; Other and unspecified ovarian cyst; Cellulitis and abscess of trunk; LR; Ciprofloxacin; OxycoDONE (Immediate Release) ; Nausea with vomiting; Magnesium Citrate; Other specified disorders of intestine; Hydrocortisone (Rectal) 2.5% Cream; Esophageal reflux; Removal of other organ (partial) (total) causing abnormal patient reaction, or later complication, without mention of misadventure at time of operation; Naproxen; Cephalexin; Clindamycin; Promethazine; Hypovolemia; 0.9% Sodium Chloride; Influenza Virus Vaccine; Iso-Osmotic Dextrose; D5 1/2NS; Vancomycin; Lorazepam; Abscess of intestine; Bupivacaine 0.5%; Promethazine HCl; Multivitamins; Ketorolac; Potassium Chloride; Neutra-Phos; Heparin; Other specified aftercare following surgery; Anxiety state, unspecified; Magnesium Sulfate; Intestinal bypass or anastomosis status; Vitamin D; Metoclopramide; Fluticasone Propionate NASAL; Omeprazole; Pantoprazole; Acute kidney failure, unspecified; Prochlorperazine; Ulceration of intestine; SW; Sodium Chloride 0.9%  Flush; Piperacillin-Tazobactam Na; Open and other sigmoidectomy; Morphine Sulfate; OxycoDONE-Acetaminophen Elixir; NS; MetRONIDAZOLE (FLagyl); Insulin; Diverticulitis of colon (without mention of hemorrhage); D5W; HYDROmorphone (Dilaudid); Docusate Sodium; Maalox/Diphenhydramine/Lidocaine; Other postoperative infection; Chest pain, unspecified; Hydrocodone-Acetaminophen; Closed [endoscopic] biopsy of large intestine; Desitin; Ondansetron; Fish Oil (Omega 3); Orthostatic hypotension; Methicillin susceptible Staphylococcus aureus in conditions classified elsewhere and of unspecified site; Calcium Carbonate; Ondansetron ODT; Escitalopram Oxalate; Diverticulosis of colon (without mention of hemorrhage); HydrOXYzine; Potassium Chl 20 mEq / 1000 mL D5 1/2 NS
+2025-09-06 23:58:29,120: Average train text length: 334.96 words
+2025-09-06 23:58:29,120: Average validation text length: 338.61 words
+2025-09-06 23:58:29,120: Average test text length: 334.10 words
+2025-09-06 23:58:29,120: Training on 8040 samples, validating on 894, testing on 2234 samples
+2025-09-06 23:58:46,073: Fine-tuning at Landmark 4
+2025-09-06 23:58:47,538: Early stopping criterion: loss
+2025-09-06 23:59:58,142: Landmark 4 | Epoch 1/20 | Train Loss: 0.4751 | Val Loss: 0.3212 | Validation AUC: 0.9040 | F1-Score: 0.6359
+2025-09-06 23:59:58,508: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_4550_landmark4_no_4_512_last_visit_all_landmarks_False_20250906_235847_.pt with AUC: 0.9040, F1: 0.6359, Val Loss: 0.3212
+2025-09-07 00:01:10,686: Landmark 4 | Epoch 2/20 | Train Loss: 0.3274 | Val Loss: 0.2865 | Validation AUC: 0.9162 | F1-Score: 0.6289
+2025-09-07 00:01:11,068: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_4550_landmark4_no_4_512_last_visit_all_landmarks_False_20250906_235847_.pt with AUC: 0.9162, F1: 0.6289, Val Loss: 0.2865
+2025-09-07 00:02:21,705: Landmark 4 | Epoch 3/20 | Train Loss: 0.2720 | Val Loss: 0.2731 | Validation AUC: 0.9148 | F1-Score: 0.6416
+2025-09-07 00:02:22,073: New best model saved at /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_4550_landmark4_no_4_512_last_visit_all_landmarks_False_20250906_235847_.pt with AUC: 0.9148, F1: 0.6416, Val Loss: 0.2731
+2025-09-07 00:03:36,709: Landmark 4 | Epoch 4/20 | Train Loss: 0.2193 | Val Loss: 0.3193 | Validation AUC: 0.9072 | F1-Score: 0.6189
+2025-09-07 00:03:36,709: No improvement in epoch 4. Current best AUC: 0.9148, F1: 0.6416, Val Loss: 0.2731. Epochs without improvement: 1/3
+2025-09-07 00:04:47,372: Landmark 4 | Epoch 5/20 | Train Loss: 0.1512 | Val Loss: 0.3523 | Validation AUC: 0.8950 | F1-Score: 0.6369
+2025-09-07 00:04:47,372: No improvement in epoch 5. Current best AUC: 0.9148, F1: 0.6416, Val Loss: 0.2731. Epochs without improvement: 2/3
+2025-09-07 00:05:58,020: Landmark 4 | Epoch 6/20 | Train Loss: 0.0905 | Val Loss: 0.4455 | Validation AUC: 0.8913 | F1-Score: 0.6053
+2025-09-07 00:05:58,020: No improvement in epoch 6. Current best AUC: 0.9148, F1: 0.6416, Val Loss: 0.2731. Epochs without improvement: 3/3
+2025-09-07 00:05:58,020: Early stopping triggered at epoch 6. Best AUC: 0.9148, F1: 0.6416, Val Loss: 0.2731
+2025-09-07 00:05:58,311: Tempo impiegato per Landmark 4: 432.2 secondi
+2025-09-07 00:05:58,311: Tempo medio per epoca: 72.0 secondi
+2025-09-07 00:05:58,312: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_Charangan_MedBERT_4550_landmark4_no_4_512_last_visit_all_landmarks_False_20250906_235847_.pt for final evaluation on test set
+2025-09-07 00:06:04,196: Final Test AUC (Landmark 4): 0.8748 | Test F1-Score: 0.5654
+2025-09-07 00:06:04,197: Saving results to results_medical_False_Charangan_MedBERT_last_visit_visits4_4550_512_no_20250907_000604.csv
+Using device: cuda
+   Landmark Val AUC  ... Validation Loss Training Time (s)
+0         4  0.9148  ...          0.2731             432.2
+
+[1 rows x 9 columns]
+
+Job 1879429 consumed 2.9 billing hours from project ec12.
+
+Submitted 2025-09-06T17:46:11; waited 6.2 hours in the queue after becoming eligible to run.
+
+Requested wallclock time: 20.0 hours
+Elapsed wallclock time:   9.1 minutes
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+1879429          16            0.0 %  2025-09-06T23:57:05  543.0 s  0
+1879429.batch    16      1     5.8 %  2025-09-06T23:57:05  543.0 s  0
+
+Used CPU time:   8.4 CPU minutes
+Unused CPU time: 2.3 CPU hours
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+1879429          32.0        
+1879429.batch    32.0     7.3
+
+Job 1879429 completed at Sun Sep 7 00:06:08 CEST 2025

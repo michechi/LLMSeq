@@ -1,0 +1,126 @@
+Starting job 2050426 on gpu-13 on Fox at Fri Oct 17 18:18:26 CEST 2025
+
+
+[notice] A new release of pip is available: 23.3.2 -> 25.2
+[notice] To update, run: pip install --upgrade pip
+
+Using device: cuda
+
+============================================================
+Loading Data...
+============================================================
+Loading data from:
+  X: /fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/X_train_5.csv
+  y: /fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/y_train_5.csv
+  Shape X: (400000, 1), Shape y: (400000, 1)
+  Columns X: ['Sequences']
+  Columns y: ['Outcome']
+  Loaded 400000 sequences
+  Label distribution: 0=224381, 1=175619
+  Example sequence: RXYZARQOOEXXCBWWQBJR...
+Loading data from:
+  X: /fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/X_val_5.csv
+  y: /fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/y_val_5.csv
+  Shape X: (50000, 1), Shape y: (50000, 1)
+  Columns X: ['Sequences']
+  Columns y: ['Outcome']
+  Loaded 50000 sequences
+  Label distribution: 0=28106, 1=21894
+  Example sequence: QEEKVERZXACMFSMMWLZH...
+Loading data from:
+  X: /fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/X_test_5.csv
+  y: /fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/y_test_5.csv
+  Shape X: (50000, 1), Shape y: (50000, 1)
+  Columns X: ['Sequences']
+  Columns y: ['Outcome']
+  Loaded 50000 sequences
+  Label distribution: 0=28021, 1=21979
+  Example sequence: RAEYYMMUCMHWDBQKQPPP...
+
+============================================================
+Creating Datasets...
+============================================================
+Auto-detected max_seq_len: 20
+  Created vocabulary with 28 tokens
+  Sample tokens: ['<PAD>', '<UNK>', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+
+============================================================
+Initializing Model: cnn
+============================================================
+Total parameters: 117,793
+Trainable parameters: 117,793
+
+============================================================
+Starting Training...
+============================================================
+Epoch 1/20 (47.2s) - Train: Loss=0.6729, AUC=0.5982 - Val: Loss=0.6672, AUC=0.6167, Acc=0.5954
+  → New best model! Val AUC: 0.6167
+Epoch 2/20 (45.9s) - Train: Loss=0.6683, AUC=0.6099 - Val: Loss=0.6647, AUC=0.6176, Acc=0.6034
+  → New best model! Val AUC: 0.6176
+Epoch 3/20 (45.0s) - Train: Loss=0.6673, AUC=0.6131 - Val: Loss=0.6673, AUC=0.6158, Acc=0.5955
+Epoch 4/20 (45.3s) - Train: Loss=0.6669, AUC=0.6138 - Val: Loss=0.6684, AUC=0.6154, Acc=0.5955
+Epoch 5/20 (45.4s) - Train: Loss=0.6664, AUC=0.6156 - Val: Loss=0.6670, AUC=0.6166, Acc=0.5995
+Epoch 6/20 (45.5s) - Train: Loss=0.6661, AUC=0.6166 - Val: Loss=0.6645, AUC=0.6179, Acc=0.6012
+  → New best model! Val AUC: 0.6179
+Epoch 7/20 (45.6s) - Train: Loss=0.6657, AUC=0.6176 - Val: Loss=0.6659, AUC=0.6155, Acc=0.6022
+Epoch 8/20 (44.6s) - Train: Loss=0.6655, AUC=0.6178 - Val: Loss=0.6677, AUC=0.6150, Acc=0.6008
+Epoch 9/20 (45.8s) - Train: Loss=0.6652, AUC=0.6189 - Val: Loss=0.6655, AUC=0.6173, Acc=0.6008
+Epoch 10/20 (48.2s) - Train: Loss=0.6654, AUC=0.6185 - Val: Loss=0.6658, AUC=0.6168, Acc=0.6015
+Epoch 11/20 (47.4s) - Train: Loss=0.6651, AUC=0.6189 - Val: Loss=0.6664, AUC=0.6160, Acc=0.5997
+Epoch 12/20 (44.9s) - Train: Loss=0.6647, AUC=0.6201 - Val: Loss=0.6654, AUC=0.6166, Acc=0.6025
+Epoch 13/20 (46.1s) - Train: Loss=0.6647, AUC=0.6203 - Val: Loss=0.6713, AUC=0.6142, Acc=0.5891
+Epoch 14/20 (45.2s) - Train: Loss=0.6644, AUC=0.6212 - Val: Loss=0.6658, AUC=0.6160, Acc=0.6002
+Epoch 15/20 (46.4s) - Train: Loss=0.6645, AUC=0.6208 - Val: Loss=0.6658, AUC=0.6155, Acc=0.6015
+Epoch 16/20 (46.2s) - Train: Loss=0.6643, AUC=0.6212 - Val: Loss=0.6654, AUC=0.6163, Acc=0.6017
+Epoch 17/20 (47.3s) - Train: Loss=0.6642, AUC=0.6216 - Val: Loss=0.6654, AUC=0.6170, Acc=0.6025
+Epoch 18/20 (46.7s) - Train: Loss=0.6639, AUC=0.6223 - Val: Loss=0.6657, AUC=0.6160, Acc=0.6016
+Epoch 19/20 (46.4s) - Train: Loss=0.6640, AUC=0.6222 - Val: Loss=0.6655, AUC=0.6164, Acc=0.6007
+Epoch 20/20 (47.9s) - Train: Loss=0.6637, AUC=0.6229 - Val: Loss=0.6659, AUC=0.6161, Acc=0.6007
+
+============================================================
+Final Test Evaluation...
+============================================================
+
+Test Results:
+  Loss: 0.6660
+  AUC: 0.6169
+  Accuracy: 0.6009
+
+Classification Report:
+              precision    recall  f1-score   support
+
+         0.0       0.62      0.77      0.68     28021
+         1.0       0.57      0.39      0.46     21979
+
+    accuracy                           0.60     50000
+   macro avg       0.59      0.58      0.57     50000
+weighted avg       0.59      0.60      0.59     50000
+
+
+============================================================
+Training completed! Final test AUC: 0.6169
+============================================================
+
+Job 2050426 consumed 5.3 billing hours from project ec12.
+
+Submitted 2025-10-17T18:18:20; waited 6.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 10.0 hours
+Elapsed wallclock time:   16.7 minutes
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start   Elapsed  Exit status
+2050426          16            0.0 %  2025-10-17T18:18:26  1003.0 s  0
+2050426.batch    16      1     8.8 %  2025-10-17T18:18:26  1003.0 s  0
+
+Used CPU time:   23.5 CPU minutes
+Unused CPU time: 4.1 CPU hours
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+2050426          32.0        
+2050426.batch    32.0     1.3
+
+Job 2050426 completed at Fri Oct 17 18:35:09 CEST 2025

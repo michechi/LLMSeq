@@ -1,0 +1,464 @@
+Starting job 2104171 on gpu-1 on Fox at Mon Nov 10 10:29:03 CET 2025
+
+=== Starting sequential fine-tuning job ===
+Mon Nov 10 10:29:03 AM CET 2025
+Cache directory: /localscratch/2104171/hf_cache
+--------------------------------------------------------
+Starting training with fraction = 0.5
+--------------------------------------------------------
+Mon Nov 10 10:29:11 AM CET 2025
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/cuda/__init__.py:51: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/utils/hub.py:128: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+2025-11-10 10:29:23,629: Argument batch_size: 64
+2025-11-10 10:29:23,629: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-10 10:29:23,629: Argument cold_start: False
+2025-11-10 10:29:23,629: Argument csv_to_use: '10'
+2025-11-10 10:29:23,629: Argument early: 'loss'
+2025-11-10 10:29:23,629: Argument epochs: 40
+2025-11-10 10:29:23,629: Argument fraction: 0.5
+2025-11-10 10:29:23,629: Argument gradient_accumulation_steps: 1
+2025-11-10 10:29:23,629: Argument lr: 0.0002
+2025-11-10 10:29:23,629: Argument max_length: 200
+2025-11-10 10:29:23,629: Argument model_name: 'meta-llama/Llama-3.2-1B'
+2025-11-10 10:29:23,629: Argument model_type: 'general'
+2025-11-10 10:29:23,629: Argument output_dir: 'src/output_slurms_fox/fraction_0.5_tiny_1M'
+2025-11-10 10:29:23,629: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-11-10 10:29:23,629: Argument patience: 3
+2025-11-10 10:29:23,629: Argument peft: False
+2025-11-10 10:29:23,629: Argument prompt_type: 'standard'
+2025-11-10 10:29:23,629: Argument seed: 9550
+2025-11-10 10:29:23,629: Argument test_rnd: False
+2025-11-10 10:29:23,629: Argument tiny: True
+2025-11-10 10:29:23,629: Argument tiny_type: '1M'
+2025-11-10 10:29:23,629: Argument use_quantization: False
+2025-11-10 10:29:26,746: Loading a TINY CausalLM model for testing purposes!
+2025-11-10 10:29:26,746: Loading pre-trained CausalLM model for COLD START!
+2025-11-10 10:29:26,746: Tiny model config - Hidden size: 128, Num layers: 4, Num heads: 4, Intermediate size: 512, Vocab size: 100
+2025-11-10 10:29:27,924: Using Flash Attention 2 for LLaMA tiny model
+2025-11-10 10:29:28,160: 
+New model parameters: 1,005,378
+2025-11-10 10:29:28,160: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-11-10 10:29:28,530: Using prompt type: standard
+2025-11-10 10:29:28,531: Model type: general, Model name: meta-llama/Llama-3.2-1B
+2025-11-10 10:29:28,531: Training with dataset fraction = 0.5
+2025-11-10 10:29:29,304: Train Subset size: 200000 / 400000
+2025-11-10 10:29:29,304: Val Subset size: 25000 / 50000
+2025-11-10 10:29:29,304: Distributions Train y's:
+2025-11-10 10:29:29,308: Outcome
+0          0.63634
+1          0.36366
+dtype: float64
+2025-11-10 10:29:29,309: Distributions Val y's:
+2025-11-10 10:29:29,310: Outcome
+0          0.63592
+1          0.36408
+dtype: float64
+2025-11-10 10:29:31,188: Example train text: Sequential events: H J Y O W P J M C J R H T I A E G P M E X B A E M E Y D U O Q D T X R C U M Q D
+Outcome (0 or 1):
+2025-11-10 10:29:31,433: Average train text length: 46.00 words
+2025-11-10 10:29:31,433: Average validation text length: 46.00 words
+2025-11-10 10:29:31,435: Average test text length: 46.00 words
+2025-11-10 10:29:31,435: Training on 200000 samples, validating on 25000, testing on 50000 samples
+2025-11-10 10:29:31,435: DataLoaders created.
+2025-11-10 10:29:31,435: Analyzing TRAIN set...
+2025-11-10 10:29:31,435: Analyzing truncation for 200000 samples...
+2025-11-10 10:29:54,490: ============================================================
+2025-11-10 10:29:54,490: TRUNCATION ANALYSIS
+2025-11-10 10:29:54,490: ============================================================
+2025-11-10 10:29:54,490: Total samples: 200000
+2025-11-10 10:29:54,490: Truncated samples: 0 (0.0%)
+2025-11-10 10:29:54,490: Average truncated length (for truncated samples): 0.0 tokens
+2025-11-10 10:29:54,490: Max length threshold: 200
+2025-11-10 10:29:54,490: 
+Token length distribution:
+2025-11-10 10:29:54,490:   Min:    52
+2025-11-10 10:29:54,491:   Q1:     52
+2025-11-10 10:29:54,492:   Median: 52
+2025-11-10 10:29:54,492:   Mean:   52.0
+2025-11-10 10:29:54,493:   Q3:     52
+2025-11-10 10:29:54,493:   Max:    52
+2025-11-10 10:29:54,493: ============================================================
+2025-11-10 10:29:54,493: Analyzing VALIDATION set...
+2025-11-10 10:29:54,493: Analyzing truncation for 25000 samples...
+2025-11-10 10:29:57,373: ============================================================
+2025-11-10 10:29:57,374: TRUNCATION ANALYSIS
+2025-11-10 10:29:57,374: ============================================================
+2025-11-10 10:29:57,374: Total samples: 25000
+2025-11-10 10:29:57,374: Truncated samples: 0 (0.0%)
+2025-11-10 10:29:57,374: Average truncated length (for truncated samples): 0.0 tokens
+2025-11-10 10:29:57,374: Max length threshold: 200
+2025-11-10 10:29:57,374: 
+Token length distribution:
+2025-11-10 10:29:57,374:   Min:    52
+2025-11-10 10:29:57,375:   Q1:     52
+2025-11-10 10:29:57,375:   Median: 52
+2025-11-10 10:29:57,375:   Mean:   52.0
+2025-11-10 10:29:57,375:   Q3:     52
+2025-11-10 10:29:57,375:   Max:    52
+2025-11-10 10:29:57,375: ============================================================
+2025-11-10 10:29:57,375: Analyzing TEST set...
+2025-11-10 10:29:57,375: Analyzing truncation for 50000 samples...
+2025-11-10 10:30:03,147: ============================================================
+2025-11-10 10:30:03,147: TRUNCATION ANALYSIS
+2025-11-10 10:30:03,147: ============================================================
+2025-11-10 10:30:03,147: Total samples: 50000
+2025-11-10 10:30:03,147: Truncated samples: 0 (0.0%)
+2025-11-10 10:30:03,148: Average truncated length (for truncated samples): 0.0 tokens
+2025-11-10 10:30:03,148: Max length threshold: 200
+2025-11-10 10:30:03,148: 
+Token length distribution:
+2025-11-10 10:30:03,148:   Min:    52
+2025-11-10 10:30:03,148:   Q1:     52
+2025-11-10 10:30:03,148:   Median: 52
+2025-11-10 10:30:03,148:   Mean:   52.0
+2025-11-10 10:30:03,149:   Q3:     52
+2025-11-10 10:30:03,149:   Max:    52
+2025-11-10 10:30:03,149: ============================================================
+2025-11-10 10:30:04,508: Early stopping criterion: loss
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+2025-11-10 10:37:56,837: Epoch 1/40 | Total Loss: 9.6418 | Causal Loss: 8.9843 | Classification Loss: 0.6575 | Val Loss: 7.0305 | Val AUC: 0.5208 | F1-Score: 0.0000
+2025-11-10 10:37:56,914: New best model saved with AUC: 0.5208
+2025-11-10 11:13:15,591: Epoch 2/40 | Total Loss: 5.8165 | Causal Loss: 5.1597 | Classification Loss: 0.6568 | Val Loss: 5.0900 | Val AUC: 0.5012 | F1-Score: 0.0000
+2025-11-10 11:13:15,666: New best model saved with AUC: 0.5012
+2025-11-10 11:48:33,221: Epoch 3/40 | Total Loss: 4.6603 | Causal Loss: 4.0038 | Classification Loss: 0.6565 | Val Loss: 4.5222 | Val AUC: 0.5003 | F1-Score: 0.0000
+2025-11-10 11:48:33,310: New best model saved with AUC: 0.5003
+2025-11-10 12:23:50,782: Epoch 4/40 | Total Loss: 4.5165 | Causal Loss: 3.8602 | Classification Loss: 0.6563 | Val Loss: 4.5159 | Val AUC: 0.4972 | F1-Score: 0.0000
+2025-11-10 12:23:50,853: New best model saved with AUC: 0.4972
+2025-11-10 12:59:09,871: Epoch 5/40 | Total Loss: 4.5160 | Causal Loss: 3.8600 | Classification Loss: 0.6560 | Val Loss: 4.5168 | Val AUC: 0.5081 | F1-Score: 0.0000
+2025-11-10 13:34:28,381: Epoch 6/40 | Total Loss: 4.5157 | Causal Loss: 3.8597 | Classification Loss: 0.6560 | Val Loss: 4.5156 | Val AUC: 0.5071 | F1-Score: 0.0000
+2025-11-10 13:34:28,472: New best model saved with AUC: 0.5071
+2025-11-10 14:09:45,817: Epoch 7/40 | Total Loss: 4.5160 | Causal Loss: 3.8600 | Classification Loss: 0.6560 | Val Loss: 4.5158 | Val AUC: 0.5091 | F1-Score: 0.0000
+2025-11-10 14:45:05,087: Epoch 8/40 | Total Loss: 4.5155 | Causal Loss: 3.8596 | Classification Loss: 0.6559 | Val Loss: 4.5158 | Val AUC: 0.5020 | F1-Score: 0.0000
+2025-11-10 15:20:23,564: Epoch 9/40 | Total Loss: 4.5153 | Causal Loss: 3.8595 | Classification Loss: 0.6559 | Val Loss: 4.5164 | Val AUC: 0.5096 | F1-Score: 0.0000
+2025-11-10 15:20:23,564: Early stopping at epoch 9
+2025-11-10 15:20:23,725: Tempo medio per epoca: 1935.6 secondi
+2025-11-10 15:20:23,725: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.2-1B_9550_standard_200_False_20251110_103004_.pt for final evaluation on test set
+2025-11-10 15:21:09,215: Final Test AUC: 0.5012 | Test F1-Score: 0.0000
+2025-11-10 15:21:09,216: Saving results to results_general_meta-llama_Llama-3.2-1B__9550_200_standard_1M_0.5_20251110_152109.csv
+  Val AUC Val F1-Score  ... Validation Loss Training Time (s)
+0  0.5071       0.0000  ...          4.5156           17420.5
+
+[1 rows x 8 columns]
+Completed fraction 0.5
+========================================================
+Mon Nov 10 03:21:11 PM CET 2025
+--------------------------------------------------------
+Starting training with fraction = 0.75
+--------------------------------------------------------
+Mon Nov 10 03:21:11 PM CET 2025
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/cuda/__init__.py:51: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/utils/hub.py:128: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+2025-11-10 15:21:47,413: Argument batch_size: 64
+2025-11-10 15:21:47,413: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-10 15:21:47,413: Argument cold_start: False
+2025-11-10 15:21:47,413: Argument csv_to_use: '10'
+2025-11-10 15:21:47,413: Argument early: 'loss'
+2025-11-10 15:21:47,413: Argument epochs: 40
+2025-11-10 15:21:47,413: Argument fraction: 0.75
+2025-11-10 15:21:47,413: Argument gradient_accumulation_steps: 1
+2025-11-10 15:21:47,413: Argument lr: 0.0002
+2025-11-10 15:21:47,413: Argument max_length: 200
+2025-11-10 15:21:47,413: Argument model_name: 'meta-llama/Llama-3.2-1B'
+2025-11-10 15:21:47,413: Argument model_type: 'general'
+2025-11-10 15:21:47,413: Argument output_dir: 'src/output_slurms_fox/fraction_0.75_tiny_1M'
+2025-11-10 15:21:47,413: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-11-10 15:21:47,413: Argument patience: 3
+2025-11-10 15:21:47,413: Argument peft: False
+2025-11-10 15:21:47,413: Argument prompt_type: 'standard'
+2025-11-10 15:21:47,414: Argument seed: 9550
+2025-11-10 15:21:47,414: Argument test_rnd: False
+2025-11-10 15:21:47,414: Argument tiny: True
+2025-11-10 15:21:47,414: Argument tiny_type: '1M'
+2025-11-10 15:21:47,414: Argument use_quantization: False
+2025-11-10 15:21:50,167: Loading a TINY CausalLM model for testing purposes!
+2025-11-10 15:21:50,167: Loading pre-trained CausalLM model for COLD START!
+2025-11-10 15:21:50,167: Tiny model config - Hidden size: 128, Num layers: 4, Num heads: 4, Intermediate size: 512, Vocab size: 100
+2025-11-10 15:21:51,707: Using Flash Attention 2 for LLaMA tiny model
+2025-11-10 15:21:52,032: 
+New model parameters: 1,005,378
+2025-11-10 15:21:52,032: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-11-10 15:21:52,128: Using prompt type: standard
+2025-11-10 15:21:52,128: Model type: general, Model name: meta-llama/Llama-3.2-1B
+2025-11-10 15:21:52,128: Training with dataset fraction = 0.75
+2025-11-10 15:21:52,883: Train Subset size: 300000 / 400000
+2025-11-10 15:21:52,883: Val Subset size: 37500 / 50000
+2025-11-10 15:21:52,883: Distributions Train y's:
+2025-11-10 15:21:52,887: Outcome
+0          0.636337
+1          0.363663
+dtype: float64
+2025-11-10 15:21:52,888: Distributions Val y's:
+2025-11-10 15:21:52,889: Outcome
+0          0.635947
+1          0.364053
+dtype: float64
+2025-11-10 15:21:55,473: Example train text: Sequential events: V J U U A S K H S I D R C O M P G P F K T E F L Q H V X Q X Y D E J C U G T Q Y
+Outcome (0 or 1):
+2025-11-10 15:21:55,810: Average train text length: 46.00 words
+2025-11-10 15:21:55,810: Average validation text length: 46.00 words
+2025-11-10 15:21:55,810: Average test text length: 46.00 words
+2025-11-10 15:21:55,810: Training on 300000 samples, validating on 37500, testing on 50000 samples
+2025-11-10 15:21:55,810: DataLoaders created.
+2025-11-10 15:21:55,810: Analyzing TRAIN set...
+2025-11-10 15:21:55,810: Analyzing truncation for 300000 samples...
+2025-11-10 15:22:29,864: ============================================================
+2025-11-10 15:22:29,864: TRUNCATION ANALYSIS
+2025-11-10 15:22:29,864: ============================================================
+2025-11-10 15:22:29,864: Total samples: 300000
+2025-11-10 15:22:29,864: Truncated samples: 0 (0.0%)
+2025-11-10 15:22:29,864: Average truncated length (for truncated samples): 0.0 tokens
+2025-11-10 15:22:29,864: Max length threshold: 200
+2025-11-10 15:22:29,864: 
+Token length distribution:
+2025-11-10 15:22:29,865:   Min:    52
+2025-11-10 15:22:29,866:   Q1:     52
+2025-11-10 15:22:29,867:   Median: 52
+2025-11-10 15:22:29,867:   Mean:   52.0
+2025-11-10 15:22:29,868:   Q3:     52
+2025-11-10 15:22:29,868:   Max:    52
+2025-11-10 15:22:29,868: ============================================================
+2025-11-10 15:22:29,868: Analyzing VALIDATION set...
+2025-11-10 15:22:29,868: Analyzing truncation for 37500 samples...
+2025-11-10 15:22:34,128: ============================================================
+2025-11-10 15:22:34,128: TRUNCATION ANALYSIS
+2025-11-10 15:22:34,128: ============================================================
+2025-11-10 15:22:34,128: Total samples: 37500
+2025-11-10 15:22:34,129: Truncated samples: 0 (0.0%)
+2025-11-10 15:22:34,129: Average truncated length (for truncated samples): 0.0 tokens
+2025-11-10 15:22:34,129: Max length threshold: 200
+2025-11-10 15:22:34,129: 
+Token length distribution:
+2025-11-10 15:22:34,129:   Min:    52
+2025-11-10 15:22:34,129:   Q1:     52
+2025-11-10 15:22:34,129:   Median: 52
+2025-11-10 15:22:34,129:   Mean:   52.0
+2025-11-10 15:22:34,130:   Q3:     52
+2025-11-10 15:22:34,130:   Max:    52
+2025-11-10 15:22:34,130: ============================================================
+2025-11-10 15:22:34,130: Analyzing TEST set...
+2025-11-10 15:22:34,130: Analyzing truncation for 50000 samples...
+2025-11-10 15:22:39,824: ============================================================
+2025-11-10 15:22:39,824: TRUNCATION ANALYSIS
+2025-11-10 15:22:39,824: ============================================================
+2025-11-10 15:22:39,824: Total samples: 50000
+2025-11-10 15:22:39,825: Truncated samples: 0 (0.0%)
+2025-11-10 15:22:39,825: Average truncated length (for truncated samples): 0.0 tokens
+2025-11-10 15:22:39,825: Max length threshold: 200
+2025-11-10 15:22:39,825: 
+Token length distribution:
+2025-11-10 15:22:39,825:   Min:    52
+2025-11-10 15:22:39,825:   Q1:     52
+2025-11-10 15:22:39,825:   Median: 52
+2025-11-10 15:22:39,825:   Mean:   52.0
+2025-11-10 15:22:39,826:   Q3:     52
+2025-11-10 15:22:39,826:   Max:    52
+2025-11-10 15:22:39,826: ============================================================
+2025-11-10 15:22:41,689: Early stopping criterion: loss
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+2025-11-10 15:34:28,422: Epoch 1/40 | Total Loss: 9.6303 | Causal Loss: 8.9730 | Classification Loss: 0.6573 | Val Loss: 7.0511 | Val AUC: 0.5303 | F1-Score: 0.0000
+2025-11-10 15:34:28,511: New best model saved with AUC: 0.5303
+2025-11-10 16:27:26,562: Epoch 2/40 | Total Loss: 5.8276 | Causal Loss: 5.1709 | Classification Loss: 0.6566 | Val Loss: 4.7504 | Val AUC: 0.5091 | F1-Score: 0.0000
+2025-11-10 16:27:26,670: New best model saved with AUC: 0.5091
+2025-11-10 17:20:23,911: Epoch 3/40 | Total Loss: 4.6860 | Causal Loss: 4.0297 | Classification Loss: 0.6563 | Val Loss: 4.6646 | Val AUC: 0.5094 | F1-Score: 0.0000
+2025-11-10 17:20:24,008: New best model saved with AUC: 0.5094
+2025-11-10 18:09:05,651: Epoch 4/40 | Total Loss: 4.6662 | Causal Loss: 4.0101 | Classification Loss: 0.6561 | Val Loss: 4.6657 | Val AUC: 0.5061 | F1-Score: 0.0000
+2025-11-10 19:02:03,083: Epoch 5/40 | Total Loss: 4.6659 | Causal Loss: 4.0100 | Classification Loss: 0.6559 | Val Loss: 4.6651 | Val AUC: 0.5133 | F1-Score: 0.0000
+2025-11-10 19:48:53,879: Epoch 6/40 | Total Loss: 4.6657 | Causal Loss: 4.0098 | Classification Loss: 0.6559 | Val Loss: 4.6656 | Val AUC: 0.5140 | F1-Score: 0.0000
+2025-11-10 19:48:53,879: Early stopping at epoch 6
+2025-11-10 19:48:53,985: Tempo medio per epoca: 2662.3 secondi
+2025-11-10 19:48:53,986: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.2-1B_9550_standard_200_False_20251110_152241_.pt for final evaluation on test set
+2025-11-10 19:49:39,903: Final Test AUC: 0.5013 | Test F1-Score: 0.0000
+2025-11-10 19:49:39,904: Saving results to results_general_meta-llama_Llama-3.2-1B__9550_200_standard_1M_0.75_20251110_194939.csv
+  Val AUC Val F1-Score  ... Validation Loss Training Time (s)
+0  0.5094       0.0000  ...          4.6646           15974.0
+
+[1 rows x 8 columns]
+Completed fraction 0.75
+========================================================
+Mon Nov 10 07:49:41 PM CET 2025
+--------------------------------------------------------
+Starting training with fraction = 1.0
+--------------------------------------------------------
+Mon Nov 10 07:49:41 PM CET 2025
+/fp/projects01/ec30/software/easybuild/software/nlpl-pytorch/2.1.2-foss-2022b-cuda-12.0.0-Python-3.10.8/lib/python3.10/site-packages/torch/cuda/__init__.py:51: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/fp/projects01/ec30/software/easybuild/software/nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8/lib/python3.10/site-packages/transformers/utils/hub.py:128: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+2025-11-10 19:50:09,677: Argument batch_size: 64
+2025-11-10 19:50:09,677: Argument cache_dir: '/cluster/work/projects/ec12/michechi/cache'
+2025-11-10 19:50:09,677: Argument cold_start: False
+2025-11-10 19:50:09,677: Argument csv_to_use: '10'
+2025-11-10 19:50:09,677: Argument early: 'loss'
+2025-11-10 19:50:09,677: Argument epochs: 40
+2025-11-10 19:50:09,677: Argument fraction: 1.0
+2025-11-10 19:50:09,677: Argument gradient_accumulation_steps: 1
+2025-11-10 19:50:09,677: Argument lr: 0.0002
+2025-11-10 19:50:09,677: Argument max_length: 200
+2025-11-10 19:50:09,677: Argument model_name: 'meta-llama/Llama-3.2-1B'
+2025-11-10 19:50:09,677: Argument model_type: 'general'
+2025-11-10 19:50:09,677: Argument output_dir: 'src/output_slurms_fox/fraction_1.0_tiny_1M'
+2025-11-10 19:50:09,677: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/'
+2025-11-10 19:50:09,677: Argument patience: 3
+2025-11-10 19:50:09,677: Argument peft: False
+2025-11-10 19:50:09,677: Argument prompt_type: 'standard'
+2025-11-10 19:50:09,677: Argument seed: 9550
+2025-11-10 19:50:09,678: Argument test_rnd: False
+2025-11-10 19:50:09,678: Argument tiny: True
+2025-11-10 19:50:09,678: Argument tiny_type: '1M'
+2025-11-10 19:50:09,678: Argument use_quantization: False
+2025-11-10 19:50:12,433: Loading a TINY CausalLM model for testing purposes!
+2025-11-10 19:50:12,433: Loading pre-trained CausalLM model for COLD START!
+2025-11-10 19:50:12,433: Tiny model config - Hidden size: 128, Num layers: 4, Num heads: 4, Intermediate size: 512, Vocab size: 100
+2025-11-10 19:50:13,642: Using Flash Attention 2 for LLaMA tiny model
+2025-11-10 19:50:13,974: 
+New model parameters: 1,005,378
+2025-11-10 19:50:13,974: Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2025-11-10 19:50:14,067: Using prompt type: standard
+2025-11-10 19:50:14,067: Model type: general, Model name: meta-llama/Llama-3.2-1B
+2025-11-10 19:50:14,067: Training with dataset fraction = 1.0
+2025-11-10 19:50:14,682: Train Subset size: 400000 / 400000
+2025-11-10 19:50:14,682: Val Subset size: 50000 / 50000
+2025-11-10 19:50:14,682: Distributions Train y's:
+2025-11-10 19:50:14,688: Outcome
+0          0.636338
+1          0.363662
+dtype: float64
+2025-11-10 19:50:14,689: Distributions Val y's:
+2025-11-10 19:50:14,690: Outcome
+0          0.63594
+1          0.36406
+dtype: float64
+2025-11-10 19:50:17,860: Example train text: Sequential events: N G D B W X P Z F C O U O N B Q D U E S L H M J N I U H R C L N T A A N W S U E
+Outcome (0 or 1):
+2025-11-10 19:50:18,299: Average train text length: 46.00 words
+2025-11-10 19:50:18,300: Average validation text length: 46.00 words
+2025-11-10 19:50:18,300: Average test text length: 46.00 words
+2025-11-10 19:50:18,300: Training on 400000 samples, validating on 50000, testing on 50000 samples
+2025-11-10 19:50:18,300: DataLoaders created.
+2025-11-10 19:50:18,300: Analyzing TRAIN set...
+2025-11-10 19:50:18,300: Analyzing truncation for 400000 samples...
+2025-11-10 19:51:03,784: ============================================================
+2025-11-10 19:51:03,784: TRUNCATION ANALYSIS
+2025-11-10 19:51:03,784: ============================================================
+2025-11-10 19:51:03,785: Total samples: 400000
+2025-11-10 19:51:03,785: Truncated samples: 0 (0.0%)
+2025-11-10 19:51:03,785: Average truncated length (for truncated samples): 0.0 tokens
+2025-11-10 19:51:03,785: Max length threshold: 200
+2025-11-10 19:51:03,785: 
+Token length distribution:
+2025-11-10 19:51:03,785:   Min:    52
+2025-11-10 19:51:03,787:   Q1:     52
+2025-11-10 19:51:03,787:   Median: 52
+2025-11-10 19:51:03,788:   Mean:   52.0
+2025-11-10 19:51:03,789:   Q3:     52
+2025-11-10 19:51:03,789:   Max:    52
+2025-11-10 19:51:03,789: ============================================================
+2025-11-10 19:51:03,789: Analyzing VALIDATION set...
+2025-11-10 19:51:03,789: Analyzing truncation for 50000 samples...
+2025-11-10 19:51:09,379: ============================================================
+2025-11-10 19:51:09,379: TRUNCATION ANALYSIS
+2025-11-10 19:51:09,379: ============================================================
+2025-11-10 19:51:09,379: Total samples: 50000
+2025-11-10 19:51:09,379: Truncated samples: 0 (0.0%)
+2025-11-10 19:51:09,379: Average truncated length (for truncated samples): 0.0 tokens
+2025-11-10 19:51:09,379: Max length threshold: 200
+2025-11-10 19:51:09,379: 
+Token length distribution:
+2025-11-10 19:51:09,379:   Min:    52
+2025-11-10 19:51:09,380:   Q1:     52
+2025-11-10 19:51:09,380:   Median: 52
+2025-11-10 19:51:09,380:   Mean:   52.0
+2025-11-10 19:51:09,380:   Q3:     52
+2025-11-10 19:51:09,381:   Max:    52
+2025-11-10 19:51:09,381: ============================================================
+2025-11-10 19:51:09,381: Analyzing TEST set...
+2025-11-10 19:51:09,381: Analyzing truncation for 50000 samples...
+2025-11-10 19:51:14,988: ============================================================
+2025-11-10 19:51:14,989: TRUNCATION ANALYSIS
+2025-11-10 19:51:14,989: ============================================================
+2025-11-10 19:51:14,989: Total samples: 50000
+2025-11-10 19:51:14,989: Truncated samples: 0 (0.0%)
+2025-11-10 19:51:14,989: Average truncated length (for truncated samples): 0.0 tokens
+2025-11-10 19:51:14,989: Max length threshold: 200
+2025-11-10 19:51:14,989: 
+Token length distribution:
+2025-11-10 19:51:14,989:   Min:    52
+2025-11-10 19:51:14,989:   Q1:     52
+2025-11-10 19:51:14,989:   Median: 52
+2025-11-10 19:51:14,989:   Mean:   52.0
+2025-11-10 19:51:14,990:   Q3:     52
+2025-11-10 19:51:14,990:   Max:    52
+2025-11-10 19:51:14,990: ============================================================
+2025-11-10 19:51:16,468: Early stopping criterion: loss
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+2025-11-10 20:06:57,585: Epoch 1/40 | Total Loss: 9.6335 | Causal Loss: 8.9763 | Classification Loss: 0.6572 | Val Loss: 7.1105 | Val AUC: 0.5388 | F1-Score: 0.0000
+2025-11-10 20:06:57,682: New best model saved with AUC: 0.5388
+2025-11-10 20:22:38,558: Epoch 2/40 | Total Loss: 5.9147 | Causal Loss: 5.2582 | Classification Loss: 0.6565 | Val Loss: 5.2323 | Val AUC: 0.5213 | F1-Score: 0.0000
+2025-11-10 20:22:38,646: New best model saved with AUC: 0.5213
+2025-11-10 20:38:19,704: Epoch 3/40 | Total Loss: 4.8978 | Causal Loss: 4.2416 | Classification Loss: 0.6562 | Val Loss: 4.8063 | Val AUC: 0.5013 | F1-Score: 0.0000
+2025-11-10 20:38:19,800: New best model saved with AUC: 0.5013
+2025-11-10 20:54:01,704: Epoch 4/40 | Total Loss: 4.8057 | Causal Loss: 4.1497 | Classification Loss: 0.6560 | Val Loss: 4.8058 | Val AUC: 0.5101 | F1-Score: 0.0000
+2025-11-10 20:54:01,807: New best model saved with AUC: 0.5101
+2025-11-10 21:09:43,475: Epoch 5/40 | Total Loss: 4.8054 | Causal Loss: 4.1495 | Classification Loss: 0.6559 | Val Loss: 4.8058 | Val AUC: 0.5045 | F1-Score: 0.0000
+2025-11-10 21:25:26,029: Epoch 6/40 | Total Loss: 4.8054 | Causal Loss: 4.1495 | Classification Loss: 0.6559 | Val Loss: 4.8056 | Val AUC: 0.4986 | F1-Score: 0.0000
+2025-11-10 21:25:26,099: New best model saved with AUC: 0.4986
+2025-11-10 21:41:08,394: Epoch 7/40 | Total Loss: 4.8054 | Causal Loss: 4.1495 | Classification Loss: 0.6559 | Val Loss: 4.8065 | Val AUC: 0.5131 | F1-Score: 0.0000
+2025-11-10 21:56:48,073: Epoch 8/40 | Total Loss: 4.8054 | Causal Loss: 4.1495 | Classification Loss: 0.6559 | Val Loss: 4.8048 | Val AUC: 0.5165 | F1-Score: 0.0000
+2025-11-10 21:56:48,168: New best model saved with AUC: 0.5165
+2025-11-10 22:12:28,732: Epoch 9/40 | Total Loss: 4.8053 | Causal Loss: 4.1495 | Classification Loss: 0.6558 | Val Loss: 4.8059 | Val AUC: 0.5028 | F1-Score: 0.0000
+2025-11-10 22:28:11,647: Epoch 10/40 | Total Loss: 4.8052 | Causal Loss: 4.1495 | Classification Loss: 0.6557 | Val Loss: 4.8061 | Val AUC: 0.5038 | F1-Score: 0.0000
+2025-11-10 22:43:53,733: Epoch 11/40 | Total Loss: 4.8053 | Causal Loss: 4.1495 | Classification Loss: 0.6558 | Val Loss: 4.8050 | Val AUC: 0.5200 | F1-Score: 0.0000
+2025-11-10 22:43:53,733: Early stopping at epoch 11
+2025-11-10 22:43:53,798: Tempo medio per epoca: 941.7 secondi
+2025-11-10 22:43:53,799: Loading best model from /cluster/work/projects/ec12/michechi/cache/best/best_model_meta-llama_Llama-3.2-1B_9550_standard_200_False_20251110_195116_.pt for final evaluation on test set
+2025-11-10 22:44:39,405: Final Test AUC: 0.5052 | Test F1-Score: 0.0000
+2025-11-10 22:44:39,407: Saving results to results_general_meta-llama_Llama-3.2-1B__9550_200_standard_1M_1.0_20251110_224439.csv
+  Val AUC Val F1-Score  ... Validation Loss Training Time (s)
+0  0.5165       0.0000  ...          4.8048           10358.7
+
+[1 rows x 8 columns]
+Completed fraction 1.0
+========================================================
+Mon Nov 10 10:44:40 PM CET 2025
+All training runs completed!
+Mon Nov 10 10:44:40 PM CET 2025
+
+Job 2104171 consumed 232.9 billing hours from project ec12.
+
+Submitted 2025-11-10T10:21:33; waited 7.5 minutes in the queue after becoming eligible to run.
+
+Requested wallclock time: 20.0 hours
+Elapsed wallclock time:   12.3 hours
+
+Job exited normally.
+
+Task and CPU statistics:
+ID             CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+2104171          16            0.0 %  2025-11-10T10:29:03   12.3 h  0
+2104171.batch    16      1     3.3 %  2025-11-10T10:29:03   12.3 h  0
+
+Used CPU time:   6.5 CPU hours
+Unused CPU time: 7.9 CPU days
+
+Memory statistics, in GiB:
+ID              Alloc   Usage
+2104171          80.0        
+2104171.batch    80.0     2.5
+
+Job 2104171 completed at Mon Nov 10 22:44:41 CET 2025
