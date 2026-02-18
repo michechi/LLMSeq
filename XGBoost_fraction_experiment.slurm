@@ -1,73 +1,37 @@
 #!/bin/bash
-#SBATCH --job-name=test_speed
-#SBATCH --account=NN12048K
-#SBATCH --time=20:00:00
-#SBATCH --partition=accel
-#SBATCH --mem=128G
-#SBATCH --ntasks=1
-#SBATCH --nodes=1
-#SBATCH --gpus=1
 
+#SBATCH --job-name=XGB_fraction
+#SBATCH --account=ec12
+#SBATCH --time=06:00:00
+#SBATCH --nodes=1
+#SBATCH --mem-per-cpu=16G
+#SBATCH --partition=accel --gpus=1
+#SBATCH --cpus-per-task=16
+#SBATCH --output=/root/MIMICIV/output_xgb_fraction_%j.out
+
+source ${HOME}/.bashrc
+
+# Exit on error and disallow unset variables
 set -o errexit
 set -o nounset
 
-# ============== PARTE 1: SETUP CACHE E TOKEN ==============
-export SCRATCH_CACHE="$SCRATCH/hf_cache_$SLURM_JOB_ID"
-mkdir -p "$SCRATCH_CACHE"
-
-export HF_HOME="$SCRATCH_CACHE"
-export HF_DATASETS_CACHE="$SCRATCH_CACHE"
-export XDG_CACHE_HOME="$SCRATCH_CACHE"
-export HUGGING_FACE_HUB_TOKEN="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"
-
-echo "=== JOB CONFIGURATION ==="
-echo "Job ID: $SLURM_JOB_ID"
-echo "Node: $(hostname)"
-echo "Scratch Cache: $SCRATCH_CACHE"
-echo "Free space in SCRATCH: $(df -h $SCRATCH | tail -1 | awk '{print $4}')"
-
-# ============== PARTE 2: CARICA MODULI ==============
+# Load required modules
 module purge
-module load NRIS/GPU
+module use -a /fp/projects01/ec30/software/easybuild/modules/all/
 
-if ! command -v apptainer &> /dev/null && ! command -v singularity &> /dev/null; then
-    echo "ERROR: Apptainer/Singularity not found. Trying to load module..."
-    module load Apptainer
-fi
+module load nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8
+module load nlpl-llmtools/06-foss-2022b-Python-3.10.8
+module load nlpl-datasets/3.2.0-foss-2022b-Python-3.10.8
+module load nlpl-nlptools/04-foss-2022b-Python-3.10.8
+module load nlpl-scikit-bundle/1.3.2-foss-2022b-Python-3.10.8
 
-# ============== PARTE 3: PREPARA DIRECTORY ==============
-mkdir -p /cluster/work/projects/nn12048k/michechi/cache/embeddings/
-
-# ============== PARTE 4: COMANDO DI ESECUZIONE ==============
-CONTAINER_ENV="HUGGING_FACE_HUB_TOKEN=$HUGGING_FACE_HUB_TOKEN"
-CONTAINER_ENV="$CONTAINER_ENV,HF_HOME=$SCRATCH_CACHE"
-CONTAINER_ENV="$CONTAINER_ENV,HF_DATASETS_CACHE=$SCRATCH_CACHE"
-CONTAINER_ENV="$CONTAINER_ENV,XDG_CACHE_HOME=$SCRATCH_CACHE"
-
-echo "=== STARTING CONTAINER ==="
-echo "Container: /cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif"
-echo "Environment: $CONTAINER_ENV"
-
-# CHECK VERSIONE XGBOOST
-echo "=== CHECKING XGBOOST VERSION ==="
-srun apptainer exec --nv \
---bind "$SCRATCH_CACHE:$SCRATCH_CACHE" \
---bind /cluster/work/projects/nn12048k:/cluster/work/projects/nn12048k \
---env "$CONTAINER_ENV" \
-/cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif \
-python3 -c "import xgboost; print(f'XGBoost version: {xgboost.__version__}')"
-
-# Usa $HOME invece di /fp/homes01
-srun apptainer exec --nv \
---bind "$SCRATCH_CACHE:$SCRATCH_CACHE" \
---bind /cluster/work/projects/nn12048k:/cluster/work/projects/nn12048k \
---env "$CONTAINER_ENV" \
-/cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif \
-python3 -u ./XGBoost_fraction_experiment.py \
---csv_to_use 6 \
---path_csv /cluster/home/michechi/MIMICIV/data/simulation/tested/ \
---output_dir results_XGB \
---model_name meta-llama/Llama-3.1-8B \
---seed 9550 \
---run_basic \
---run_llm
+# Run the experiment with both encodings
+python3 /root/MIMICIV/XGBoost_fraction_experiment.py \
+    --csv_to_use 9 \
+    --path_csv /root/MIMICIV/data/simulation/ \
+    --output_dir /root/MIMICIV/results/ \
+    --model_name meta-llama/Llama-3.1-8B \
+    --seed 9550 \
+    --run_basic \
+    --run_llm \
+    ${@}

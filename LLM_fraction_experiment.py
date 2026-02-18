@@ -1,12 +1,11 @@
 """
-BERT Fine-tuning Training Data Fraction Experiment
+LLM Fine-tuning Training Data Fraction Experiment
 
-Tests BERT fine-tuning performance across different training data fractions (1%, 10%, 30%, 50%, 75%, 100%)
-using encoder models with sequence classification.
+Tests LLM fine-tuning performance across different training data fractions (1%, 10%, 30%, 50%, 75%, 100%)
+using tiny CausalLM models with classification head.
 
 Usage:
-    python BERT_fraction_experiment.py --number_to_use 9 --tiny --tiny_type 1M
-    python BERT_fraction_experiment.py --number_to_use 9 --model_name bert-base-uncased
+    python LLM_fraction_experiment.py --number_to_use 9 --tiny --tiny_type 1M
 """
 
 import os
@@ -22,30 +21,38 @@ import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
 from torch.amp import autocast
 from transformers import (
-    AutoTokenizer, AutoModelForSequenceClassification, AutoConfig,
-    BertConfig, get_linear_schedule_with_warmup
+    AutoTokenizer, AutoModelForSequenceClassification, get_linear_schedule_with_warmup,
+    BitsAndBytesConfig, AutoModelForCausalLM, AutoConfig, LlamaConfig, Qwen2Config
 )
 from peft import LoraConfig, get_peft_model
 from sklearn.metrics import roc_auc_score, f1_score, accuracy_score, precision_score, recall_score
 from sklearn.model_selection import train_test_split
+from huggingface_hub import login
 
+import sys
 torch.set_float32_matmul_precision('high')
 
-# Setup logging
+# Setup logging with unbuffered output
 logging.basicConfig(level=logging.INFO, format="%(asctime)s: %(message)s")
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+logging.getLogger().setLevel(logging.INFO)
+
+# Training data fractions to test
+FRACTIONS = [0.01, 0.10, 0.30, 0.50, 0.75, 1.0]
 
 
 def standard_narrative_prompt(row, to_split='\x1f'):
-    """Convert row to text format for BERT input."""
     events = row["Sequences"].split(to_split)
-    prompt = f'Sequential events: {" ".join(events)}'
+    prompt = f'Sequential events: {" ".join(events)}\n'
+    prompt += 'Outcome (0 or 1):'
     return prompt
 
 
 def set_seed(seed_value=5550):
     os.environ["PYTHONHASHSEED"] = str(seed_value)
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
+    os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":16:8"
     random.seed(seed_value)
     np.random.seed(seed_value)
     torch.manual_seed(seed_value)
@@ -55,25 +62,25 @@ def set_seed(seed_value=5550):
 
 
 def parse_args(args=None):
-    parser = argparse.ArgumentParser(description="BERT Fine-tuning Fraction Experiment")
+    parser = argparse.ArgumentParser(description="LLM Fine-tuning Fraction Experiment")
 
     # Model settings
-    parser.add_argument("--model_name", type=str, default="bert-base-uncased",
-                        help="Name of the BERT model from Hugging Face (e.g., bert-base-uncased, "
-                             "dmis-lab/biobert-base-cased-v1.2, emilyalsentzer/Bio_ClinicalBERT)")
+    parser.add_argument("--model_type", type=str, choices=["general", "medical"], default="general",
+                        help="Model type: general-purpose or medical-purpose")
+    parser.add_argument("--model_name", type=str, default="meta-llama/Llama-3.1-8B",
+                        help="Name of the model from Hugging Face")
     parser.add_argument("--tiny", action="store_true", help="Use a tiny model for testing purposes")
-    parser.add_argument("--tiny_type", type=str, default="1M",
-                        help="Type of tiny model (0.2M, 1M, 5M, 10M, 25M, 50M)")
+    parser.add_argument("--tiny_type", type=str, default="1M", help="Type of tiny model (0.2M, 1M, 5M, 10M, 25M, 50M)")
     parser.add_argument("--peft", action="store_true", help="Use PEFT (LoRA)")
-    parser.add_argument("--cold_start", action="store_true",
-                        help="Random initialization (no pre-trained weights)")
+    parser.add_argument("--use_quantization", action="store_true", help="Use 4-bit quantization")
+    parser.add_argument("--cold_start", action="store_true", help="Random initialization (no pre-trained weights)")
 
     # Data paths
     parser.add_argument("--number_to_use", type=int, required=True, help="Dataset ID number")
     parser.add_argument("--path_csv", type=str, default="/root/MIMICIV/data/simulation/",
                         help="Path to CSV files")
 
-    # Output directories
+    # Output directories - use SCRATCH environment variable
     scratch_dir = os.environ.get("SCRATCH", "/tmp")
     parser.add_argument("--cache_dir", type=str, default=f"{scratch_dir}/cache",
                         help="Cache directory for HuggingFace models")
@@ -81,9 +88,8 @@ def parse_args(args=None):
                         help="Directory to save results")
 
     # Training hyperparameters
-    parser.add_argument("--batch_size", type=int, default=16, help="Batch size for DataLoader")
-    parser.add_argument("--gradient_accumulation_steps", type=int, default=1,
-                        help="Gradient accumulation steps")
+    parser.add_argument("--batch_size", type=int, default=8, help="Batch size for DataLoader")
+    parser.add_argument("--gradient_accumulation_steps", type=int, default=1, help="Gradient accumulation steps")
     parser.add_argument("--epochs", type=int, default=20, help="Max epochs for training")
     parser.add_argument("--patience", type=int, default=3, help="Early stopping patience")
     parser.add_argument("--max_length", type=int, default=512, help="Token max length")
@@ -108,8 +114,233 @@ def parse_args(args=None):
     return args
 
 
-class SequenceClassificationDataset(Dataset):
-    """Simple dataset for sequence classification with BERT."""
+class CausalLMWithClassificationHead(nn.Module):
+    """
+    Wrapper combining CausalLM with classification head.
+    Learns both next token prediction and outcome classification.
+    """
+
+    def __init__(self, backbone_model, num_classes=2):
+        super().__init__()
+        self.backbone = backbone_model
+        self.config = backbone_model.config
+        self.num_classes = num_classes
+
+        self.classification_head = nn.Sequential(
+            nn.Linear(self.config.hidden_size, self.config.hidden_size // 2),
+            nn.Tanh(),
+            nn.Dropout(0.1),
+            nn.Linear(self.config.hidden_size // 2, num_classes)
+        )
+
+        self.classification_head = self.classification_head.to(
+            dtype=backbone_model.dtype,
+            device=backbone_model.device
+        )
+
+    def forward(self, input_ids, attention_mask=None, labels=None, outcome_labels=None):
+        causal_outputs = self.backbone(
+            input_ids=input_ids,
+            attention_mask=attention_mask,
+            labels=labels,
+            output_hidden_states=True,
+            return_dict=True
+        )
+
+        hidden_states = causal_outputs.hidden_states[-1]
+
+        if outcome_labels is not None:
+            batch_size = input_ids.shape[0]
+            classification_representations = []
+
+            for b in range(batch_size):
+                if attention_mask is not None:
+                    last_token_pos = attention_mask[b].sum().item() - 1
+                else:
+                    sequence = input_ids[b]
+                    pad_token_id = self.backbone.config.pad_token_id
+                    last_token_pos = len(sequence) - 1
+                    while last_token_pos >= 0 and sequence[last_token_pos] == pad_token_id:
+                        last_token_pos -= 1
+                    last_token_pos = max(0, last_token_pos)
+
+                classification_representations.append(hidden_states[b, last_token_pos, :])
+
+            classification_input = torch.stack(classification_representations)
+            classification_logits = self.classification_head(classification_input)
+            classification_loss = nn.functional.cross_entropy(classification_logits, outcome_labels)
+            total_loss = causal_outputs.loss + classification_loss
+
+            return {
+                'loss': total_loss,
+                'causal_loss': causal_outputs.loss,
+                'classification_loss': classification_loss,
+                'logits': classification_logits,
+                'causal_logits': causal_outputs.logits,
+                'hidden_states': hidden_states
+            }
+        else:
+            batch_size = input_ids.shape[0]
+            classification_representations = []
+
+            for b in range(batch_size):
+                if attention_mask is not None:
+                    last_token_pos = attention_mask[b].sum().item() - 1
+                else:
+                    last_token_pos = input_ids.shape[1] - 1
+                classification_representations.append(hidden_states[b, last_token_pos, :])
+
+            classification_input = torch.stack(classification_representations)
+            classification_logits = self.classification_head(classification_input)
+
+            return {
+                'loss': causal_outputs.loss,
+                'logits': classification_logits,
+                'causal_logits': causal_outputs.logits,
+                'hidden_states': hidden_states
+            }
+
+    def resize_token_embeddings(self, new_num_tokens):
+        return self.backbone.resize_token_embeddings(new_num_tokens)
+
+
+def load_tokenizer(model_name, model_type, hf_token, cache_dir):
+    tokenizer = AutoTokenizer.from_pretrained(
+        model_name,
+        token=hf_token if model_type == "general" else None,
+        cache_dir=cache_dir,
+        trust_remote_code=True
+    )
+    return tokenizer
+
+
+def load_model_causal(args, tokenizer, hf_token):
+    """Load CausalLM model with classification head."""
+
+    if not args.tiny:
+        if args.model_type == "general":
+            if args.use_quantization:
+                bnb_config = BitsAndBytesConfig(
+                    load_in_4bit=True,
+                    bnb_4bit_quant_type="nf4",
+                    bnb_4bit_use_double_quant=True,
+                    bnb_4bit_compute_dtype=torch.bfloat16
+                )
+            else:
+                bnb_config = None
+
+            if not args.cold_start:
+                logger.info("Loading pre-trained CausalLM model (WARM START)")
+                base_model = AutoModelForCausalLM.from_pretrained(
+                    args.model_name,
+                    torch_dtype=torch.bfloat16,
+                    device_map='auto',
+                    token=hf_token,
+                    cache_dir=args.cache_dir,
+                    tie_word_embeddings=True,
+                    quantization_config=bnb_config if args.use_quantization else None
+                )
+            else:
+                logger.info("Loading CausalLM model (COLD START)")
+                config = AutoConfig.from_pretrained(args.model_name)
+                base_model = AutoModelForCausalLM.from_config(config)
+
+            base_model.config.pad_token_id = tokenizer.pad_token_id
+            model = CausalLMWithClassificationHead(base_model, num_classes=2)
+
+            if args.peft:
+                lora_config = LoraConfig(
+                    r=8,
+                    lora_alpha=16,
+                    target_modules=['q_proj', 'k_proj', 'v_proj', 'o_proj'],
+                    lora_dropout=0.1,
+                    bias='none',
+                    task_type="CAUSAL_LM"
+                )
+                model.backbone = get_peft_model(model.backbone, lora_config)
+                model.backbone.print_trainable_parameters()
+        else:
+            model = AutoModelForSequenceClassification.from_pretrained(
+                args.model_name,
+                num_labels=2,
+                cache_dir=args.cache_dir
+            )
+    else:
+        # Tiny model for testing
+        logger.info(f"Loading TINY CausalLM model ({args.tiny_type})")
+
+        dimensions = {
+            '0.2M': [64, 4, 4, 256, 100],
+            '1M': [128, 4, 4, 512, 100],
+            '5M': [256, 6, 6, 820, 100],
+            '10M': [512, 6, 8, 1024, 2000],
+            '25M': [384, 6, 12, 1024, 4000],
+            '50M': [512, 8, 16, 1280, 8000]
+        }
+
+        hidden_size, num_layers, num_heads, intermediate_size, vocab_size = dimensions.get(
+            args.tiny_type, [128, 4, 4, 512, 100]
+        )
+        logger.info(f"Tiny model config - Hidden: {hidden_size}, Layers: {num_layers}, "
+                   f"Heads: {num_heads}, Intermediate: {intermediate_size}, Vocab: {vocab_size}")
+
+        if "llama" in args.model_name.lower():
+            tiny_config = LlamaConfig(
+                hidden_size=hidden_size,
+                num_hidden_layers=num_layers,
+                num_attention_heads=num_heads,
+                num_key_value_heads=num_heads // 2,
+                intermediate_size=intermediate_size,
+                vocab_size=vocab_size,
+                max_position_embeddings=512,
+                rope_theta=10000.0,
+                torch_dtype=torch.bfloat16,
+                tie_word_embeddings=True
+            )
+            base_model = AutoModelForCausalLM.from_config(tiny_config)
+        elif "qwen" in args.model_name.lower():
+            tiny_config = Qwen2Config(
+                hidden_size=hidden_size,
+                num_hidden_layers=num_layers,
+                num_attention_heads=num_heads,
+                num_key_value_heads=num_heads // 2,
+                intermediate_size=intermediate_size,
+                vocab_size=len(tokenizer),
+                max_position_embeddings=512,
+                torch_dtype=torch.bfloat16,
+                tie_word_embeddings=True
+            )
+            base_model = AutoModelForCausalLM.from_config(tiny_config)
+        else:
+            # Default to Llama config
+            tiny_config = LlamaConfig(
+                hidden_size=hidden_size,
+                num_hidden_layers=num_layers,
+                num_attention_heads=num_heads,
+                num_key_value_heads=num_heads // 2,
+                intermediate_size=intermediate_size,
+                vocab_size=vocab_size,
+                max_position_embeddings=512,
+                torch_dtype=torch.bfloat16,
+                tie_word_embeddings=True
+            )
+            base_model = AutoModelForCausalLM.from_config(tiny_config)
+
+        base_model = base_model.to(torch.bfloat16).cuda()
+        base_model.config.pad_token_id = tokenizer.pad_token_id
+        # base_model.gradient_checkpointing_enable()
+
+        model = CausalLMWithClassificationHead(base_model, num_classes=2)
+        model.classification_head = model.classification_head.to(torch.bfloat16)
+
+        total_params = sum(p.numel() for p in model.parameters())
+        logger.info(f"Model parameters: {total_params:,}")
+
+    return model
+
+
+class TemporalCausalDataset(Dataset):
+    """Dataset for causal learning + classification."""
 
     def __init__(self, texts, labels, tokenizer, max_length=512):
         self.texts = texts
@@ -132,89 +363,18 @@ class SequenceClassificationDataset(Dataset):
             return_tensors='pt'
         )
 
+        input_ids = encoding['input_ids'].squeeze()
+        attention_mask = encoding['attention_mask'].squeeze()
+
+        causal_labels = input_ids.clone()
+        causal_labels[attention_mask == 0] = -100
+
         return {
-            'input_ids': encoding['input_ids'].squeeze(),
-            'attention_mask': encoding['attention_mask'].squeeze(),
-            'labels': torch.tensor(label, dtype=torch.long)
+            'input_ids': input_ids,
+            'attention_mask': attention_mask,
+            'labels': causal_labels,
+            'outcome_labels': torch.tensor(label, dtype=torch.long)
         }
-
-
-def load_tokenizer(model_name, cache_dir):
-    """Load tokenizer for BERT model."""
-    tokenizer = AutoTokenizer.from_pretrained(
-        model_name,
-        cache_dir=cache_dir,
-        trust_remote_code=True
-    )
-    return tokenizer
-
-
-def load_model(args, tokenizer):
-    """Load BERT model for sequence classification."""
-
-    if not args.tiny:
-        if not args.cold_start:
-            logger.info("Loading pre-trained BERT model (WARM START)")
-            model = AutoModelForSequenceClassification.from_pretrained(
-                args.model_name,
-                num_labels=2,
-                cache_dir=args.cache_dir,
-                trust_remote_code=True
-            )
-        else:
-            logger.info("Loading BERT model (COLD START)")
-            config = AutoConfig.from_pretrained(args.model_name, num_labels=2)
-            model = AutoModelForSequenceClassification.from_config(config)
-
-        if args.peft:
-            lora_config = LoraConfig(
-                r=8,
-                lora_alpha=16,
-                target_modules=['query', 'key', 'value'],
-                lora_dropout=0.1,
-                bias='none',
-                task_type="SEQ_CLS"
-            )
-            model = get_peft_model(model, lora_config)
-            model.print_trainable_parameters()
-    else:
-        # Tiny model for testing
-        logger.info(f"Loading TINY BERT model ({args.tiny_type})")
-
-        dimensions = {
-            '0.2M': [64, 2, 2, 256],
-            '1M': [128, 4, 4, 512],
-            '5M': [256, 6, 4, 1024],
-            '10M': [384, 6, 6, 1536],
-            '25M': [512, 8, 8, 2048],
-            '50M': [768, 12, 12, 3072]
-        }
-
-        hidden_size, num_layers, num_heads, intermediate_size = dimensions.get(
-            args.tiny_type, [128, 4, 4, 512]
-        )
-
-        logger.info(f"Tiny BERT config - Hidden: {hidden_size}, Layers: {num_layers}, "
-                   f"Heads: {num_heads}, Intermediate: {intermediate_size}")
-
-        tiny_config = BertConfig(
-            vocab_size=len(tokenizer),
-            hidden_size=hidden_size,
-            num_hidden_layers=num_layers,
-            num_attention_heads=num_heads,
-            intermediate_size=intermediate_size,
-            max_position_embeddings=512,
-            num_labels=2
-        )
-        model = AutoModelForSequenceClassification.from_config(tiny_config)
-
-    # Resize embeddings if tokenizer was modified
-    model.resize_token_embeddings(len(tokenizer))
-
-    total_params = sum(p.numel() for p in model.parameters())
-    logger.info(f"Model parameters: {total_params:,}")
-
-    return model
 
 
 def subsample_training_data(X_train, y_train, fraction, seed):
@@ -231,7 +391,7 @@ def subsample_training_data(X_train, y_train, fraction, seed):
     return X_subset.reset_index(drop=True), y_subset.reset_index(drop=True)
 
 
-def train_and_evaluate(model, train_loader, val_loader, args, device):
+def train_and_evaluate_causal(model, train_loader, val_loader, args, device):
     """Training loop with early stopping."""
     model = model.to(device)
 
@@ -253,17 +413,10 @@ def train_and_evaluate(model, train_loader, val_loader, args, device):
         optimizer.zero_grad()
 
         for step, batch in enumerate(train_loader):
-            input_ids = batch['input_ids'].to(device)
-            attention_mask = batch['attention_mask'].to(device)
-            labels = batch['labels'].to(device)
+            inputs = {k: v.to(device) for k, v in batch.items()}
+            outputs = model(**inputs)
 
-            outputs = model(
-                input_ids=input_ids,
-                attention_mask=attention_mask,
-                labels=labels
-            )
-
-            loss = outputs.loss / args.gradient_accumulation_steps
+            loss = outputs['loss'] / args.gradient_accumulation_steps
             loss.backward()
             total_train_loss += loss.detach().item()
 
@@ -279,23 +432,17 @@ def train_and_evaluate(model, train_loader, val_loader, args, device):
         total_val_loss = 0
         val_preds, val_labels = [], []
 
-        with torch.no_grad():
+        with torch.no_grad(), autocast('cuda', dtype=torch.bfloat16):
             for batch in val_loader:
-                input_ids = batch['input_ids'].to(device)
-                attention_mask = batch['attention_mask'].to(device)
-                labels = batch['labels'].to(device)
+                inputs = {k: v.to(device) for k, v in batch.items()}
+                outputs = model(**inputs)
 
-                outputs = model(
-                    input_ids=input_ids,
-                    attention_mask=attention_mask,
-                    labels=labels
-                )
+                val_loss = outputs['loss']
+                total_val_loss += val_loss.item()
 
-                total_val_loss += outputs.loss.item()
-
-                probs = torch.softmax(outputs.logits, dim=-1)[:, 1].cpu().numpy()
+                probs = torch.softmax(outputs['logits'], dim=-1)[:, 1].cpu().float().numpy()
                 val_preds.extend(probs)
-                val_labels.extend(batch['labels'].cpu().numpy())
+                val_labels.extend(batch['outcome_labels'].cpu().numpy())
 
         avg_val_loss = total_val_loss / len(val_loader)
         val_auc = roc_auc_score(val_labels, val_preds)
@@ -339,15 +486,13 @@ def train_and_evaluate(model, train_loader, val_loader, args, device):
     # Get final validation predictions for threshold optimization
     model.eval()
     final_val_preds, final_val_labels = [], []
-    with torch.no_grad():
+    with torch.no_grad(), autocast('cuda', dtype=torch.bfloat16):
         for batch in val_loader:
-            input_ids = batch['input_ids'].to(device)
-            attention_mask = batch['attention_mask'].to(device)
-
-            outputs = model(input_ids=input_ids, attention_mask=attention_mask)
-            probs = torch.softmax(outputs.logits, dim=-1)[:, 1].cpu().numpy()
+            inputs = {k: v.to(device) for k, v in batch.items()}
+            outputs = model(**inputs)
+            probs = torch.softmax(outputs['logits'], dim=-1)[:, 1].cpu().float().numpy()
             final_val_preds.extend(probs)
-            final_val_labels.extend(batch['labels'].cpu().numpy())
+            final_val_labels.extend(batch['outcome_labels'].cpu().numpy())
 
     return best_auc, best_f1, best_val_loss, epoch + 1, final_val_preds, final_val_labels
 
@@ -377,13 +522,11 @@ def evaluate_on_test(model, test_loader, device, threshold=0.5):
 
     with torch.no_grad():
         for batch in test_loader:
-            input_ids = batch['input_ids'].to(device)
-            attention_mask = batch['attention_mask'].to(device)
-
-            outputs = model(input_ids=input_ids, attention_mask=attention_mask)
-            probs = torch.softmax(outputs.logits, dim=-1)[:, 1].cpu().numpy()
+            inputs = {k: v.to(device) for k, v in batch.items()}
+            outputs = model(**inputs)
+            probs = torch.softmax(outputs['logits'], dim=-1)[:, 1].cpu().float().numpy()
             test_preds.extend(probs)
-            test_labels_list.extend(batch['labels'].cpu().numpy())
+            test_labels_list.extend(batch['outcome_labels'].cpu().float().numpy())
 
     test_auc = roc_auc_score(test_labels_list, test_preds)
     test_preds_binary = (np.array(test_preds) >= threshold).astype(int)
@@ -419,8 +562,14 @@ def run_experiment(args):
         logger.error(f"Failed to create output directories: {e}")
         raise
 
+    # HuggingFace token
+    hf_token = os.environ.get("HF_TOKEN", None)
+
     # Load tokenizer
-    tokenizer = load_tokenizer(args.model_name, args.cache_dir)
+    tokenizer = load_tokenizer(args.model_name, args.model_type, hf_token, args.cache_dir)
+    if tokenizer.pad_token is None:
+        logger.warning("Tokenizer has no pad_token. Adding [PAD].")
+        tokenizer.add_special_tokens({'pad_token': '[PAD]'})
 
     # Load data
     logger.info("Loading datasets...")
@@ -449,8 +598,8 @@ def run_experiment(args):
     val_labels = y_val["Outcome"].tolist()
     test_labels = y_test["Outcome"].tolist()
 
-    val_dataset = SequenceClassificationDataset(val_texts, val_labels, tokenizer, max_length=args.max_length)
-    test_dataset = SequenceClassificationDataset(test_texts, test_labels, tokenizer, max_length=args.max_length)
+    val_dataset = TemporalCausalDataset(val_texts, val_labels, tokenizer, max_length=args.max_length)
+    test_dataset = TemporalCausalDataset(test_texts, test_labels, tokenizer, max_length=args.max_length)
     val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False,
                            pin_memory=True, num_workers=0)
     test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False,
@@ -478,7 +627,7 @@ def run_experiment(args):
             train_texts = X_train_subset.apply(standard_narrative_prompt, axis=1).tolist()
             train_labels = y_train_subset["Outcome"].tolist()
 
-            train_dataset = SequenceClassificationDataset(
+            train_dataset = TemporalCausalDataset(
                 train_texts, train_labels, tokenizer, max_length=args.max_length
             )
             train_loader = DataLoader(
@@ -487,17 +636,22 @@ def run_experiment(args):
             )
 
             # Load fresh model for each fraction
-            model = load_model(args, tokenizer)
+            model = load_model_causal(args, tokenizer, hf_token)
+            if tokenizer.pad_token is not None:
+                model.resize_token_embeddings(len(tokenizer))
 
             # Move model to device
-            model = model.to(device)
+            model = model.to(device, dtype=torch.bfloat16)
+            # if hasattr(model, 'backbone'): # Gradient here get's zero
+            #     # model.backbone.gradient_checkpointing_enable()
+            #     model.backbone.config.use_cache = False
 
             # Clear cache
             torch.cuda.empty_cache()
             gc.collect()
 
             # Train
-            best_auc, best_f1, best_val_loss, epochs_done, val_preds, val_labels_list = train_and_evaluate(
+            best_auc, best_f1, best_val_loss, epochs_done, val_preds, val_labels_list = train_and_evaluate_causal(
                 model, train_loader, val_loader, args, device
             )
 
@@ -548,7 +702,7 @@ def run_experiment(args):
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     model_tag = args.model_name.replace("/", "_")
     tiny_tag = f"_tiny_{args.tiny_type}" if args.tiny else ""
-    output_filename = f"bert_fraction_experiment_{model_tag}{tiny_tag}_{args.number_to_use}_{timestamp}.csv"
+    output_filename = f"llm_fraction_experiment_{model_tag}{tiny_tag}_{args.number_to_use}_{timestamp}.csv"
 
     output_path = os.path.join(args.output_dir, output_filename)
     results_df.to_csv(output_path, index=False)

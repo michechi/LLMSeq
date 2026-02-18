@@ -2,14 +2,10 @@
 XGBoost Training Data Fraction Experiment
 
 Tests XGBoost performance across different training data fractions (1%, 10%, 30%, 50%, 75%, 100%)
-with three encoding methods:
-- basic: positional encoding (1-26)
-- llm: LLM embeddings (Llama-3.1-8B)
-- categorical: XGBoost native categorical encoding (20 features, memory efficient)
-- tfidf: TF-IDF with n-grams (1,2) - captures letter frequencies and bigram patterns
+with two encoding methods: basic positional encoding (1-26) and LLM embeddings (Llama-3.1-8B).
 
 Usage:
-    python XGBoost_fraction_experiment.py --csv_to_use 9 --run_basic --run_llm --run_categorical --run_tfidf
+    python XGBoost_fraction_experiment.py --csv_to_use 9 --run_basic --run_llm
 """
 
 import os
@@ -28,7 +24,6 @@ from sklearn.metrics import (
     roc_auc_score, f1_score, accuracy_score,
     precision_score, recall_score
 )
-from sklearn.feature_extraction.text import TfidfVectorizer
 
 # Optional imports for LLM encoding
 try:
@@ -65,26 +60,26 @@ def parse_args(args=None):
 
     parser.add_argument(
         "--path_csv", type=str,
-        default="/cluster/home/michechi/MIMICIV/data/simulation/tested/",
+        default="/root/MIMICIV/data/simulation/",
         help="Path to CSV files"
     )
 
     parser.add_argument(
         "--output_dir", type=str,
-        default="/cluster/work/projects/nn12048k/michechi/reults/",
+        default=os.environ.get("SCRATCH", "/tmp") + "/results/",
         help="Directory to save results"
     )
 
     # Cache and embedding directories
     parser.add_argument(
         "--cache_dir", type=str,
-        default="/cluster/work/projects/nn12048k/michechi/cache/",
+        default=os.environ.get("SCRATCH", "/tmp") + "/cache/",
         help="Cache directory for HuggingFace models"
     )
 
     parser.add_argument(
         "--embedding_dir", type=str,
-        default="/cluster/work/projects/nn12048k/michechi/cache/embeddings/",
+        default=os.environ.get("SCRATCH", "/tmp") + "/embeddings/",
         help="Directory to save/load embeddings"
     )
 
@@ -119,16 +114,6 @@ def parse_args(args=None):
     parser.add_argument(
         "--run_llm", action="store_true",
         help="Run LLM encoding experiments"
-    )
-
-    parser.add_argument(
-        "--run_categorical", action="store_true",
-        help="Run categorical (one-hot) encoding experiments"
-    )
-
-    parser.add_argument(
-        "--run_tfidf", action="store_true",
-        help="Run TF-IDF n-gram encoding experiments"
     )
 
     if args:
@@ -172,89 +157,6 @@ def ordinal_encoding_1to26(X_input, desc="Encoding sequences"):
     df = pd.DataFrame(X, dtype=np.int32)
     df = df.add_prefix("pos_")
     return df
-
-
-def categorical_encoding(X_input, desc="Categorical encoding sequences"):
-    """
-    Categorical encoding for XGBoost native categorical support.
-
-    Each letter at each position is encoded as a categorical feature (0-25).
-    XGBoost handles the categorical splits internally (requires enable_categorical=True).
-
-    Parameters
-    ----------
-    X_input : pd.DataFrame
-        DataFrame with 'Sequences' column containing letter sequences
-    desc : str
-        Description for progress bar
-
-    Returns
-    -------
-    pd.DataFrame
-        DataFrame with categorical features (pos_0, pos_1, ..., pos_19) as category dtype
-    """
-    n_samples = len(X_input)
-    sequence_length = len(X_input['Sequences'].iloc[0].split('\x1f'))
-
-    # Pre-allocate array
-    X = np.zeros((n_samples, sequence_length), dtype=np.int8)
-
-    for i, seq in enumerate(tqdm(X_input['Sequences'], desc=desc)):
-        for j, char in enumerate(seq.split('\x1f')):
-            # A=0, B=1, ..., Z=25
-            X[i, j] = ord(char.upper()) - ord('A')
-
-    # Create DataFrame with position-based column names
-    df = pd.DataFrame(X, dtype=np.int8)
-    df = df.add_prefix("pos_")
-
-    # Convert to categorical dtype for XGBoost native support
-    for col in df.columns:
-        df[col] = df[col].astype('category')
-
-    return df
-
-
-def tfidf_encoding(X_input, vectorizer=None, fit=True):
-    """
-    TF-IDF encoding with character n-grams (1,2).
-
-    Converts sequences to space-separated letters and applies TF-IDF.
-    Captures both single letter frequencies and bigram patterns.
-
-    Parameters
-    ----------
-    X_input : pd.DataFrame
-        DataFrame with 'Sequences' column containing letter sequences
-    vectorizer : TfidfVectorizer or None
-        Pre-fitted vectorizer (for val/test sets). If None, creates new one.
-    fit : bool
-        If True, fit the vectorizer on the data (for training set).
-        If False, only transform (for val/test sets).
-
-    Returns
-    -------
-    tuple or np.ndarray
-        If fit=True: (encoded_array, fitted_vectorizer)
-        If fit=False: encoded_array
-    """
-    # Convert sequences: "A\x1fB\x1fC" -> "A B C"
-    texts = X_input['Sequences'].str.replace('\x1f', ' ')
-
-    if fit:
-        # Create and fit vectorizer on training data
-        vectorizer = TfidfVectorizer(
-            analyzer='char',
-            ngram_range=(1, 2),  # unigrams + bigrams
-            lowercase=False,
-            token_pattern=r'[A-Z]'  # only letters
-        )
-        X_encoded = vectorizer.fit_transform(texts)
-        return X_encoded.toarray(), vectorizer
-    else:
-        # Transform using pre-fitted vectorizer
-        X_encoded = vectorizer.transform(texts)
-        return X_encoded.toarray()
 
 
 def standard_narrative_prompt(row, to_split='\x1f', column_name="Sequences"):
@@ -390,7 +292,7 @@ def subsample_training_data(X_train, y_train, fraction, seed):
     logger.info(f"Subsampled {len(X_subset)} samples ({fraction*100:.1f}%) from {len(X_train)}")
     if isinstance(y_subset, np.ndarray):
         y_subset = pd.DataFrame(y_subset, columns=['Outcome'])
-    class_dist = np.bincount(y_subset.values.ravel().astype(int))
+    class_dist = np.bincount(y_subset.values.ravel())
     logger.info(f"Class distribution: {class_dist} ({class_dist[1]/len(y_subset)*100:.2f}% positive)")
 
     return X_subset, pd.DataFrame(y_subset, columns=['Outcome']) if not isinstance(y_subset, pd.DataFrame) else y_subset
@@ -488,9 +390,22 @@ def run_experiment(args):
     logger.info(f"Using device: {device}")
     logger.info(f"CUDA available: {TORCH_AVAILABLE and torch.cuda.is_available()}")
 
-    # Create output directory
-    os.makedirs(args.output_dir, exist_ok=True)
-    os.makedirs(args.embedding_dir, exist_ok=True)
+    # Create output directories
+    try:
+        # Ensure parent directory exists
+        scratch_parent = os.environ.get("SCRATCH", "/tmp")
+        if scratch_parent and scratch_parent != "/tmp":
+            os.makedirs(scratch_parent, exist_ok=True)
+
+        os.makedirs(args.output_dir, exist_ok=True)
+        os.makedirs(args.embedding_dir, exist_ok=True)
+        logger.info(f"Output directory: {args.output_dir}")
+        logger.info(f"Embedding directory: {args.embedding_dir}")
+    except OSError as e:
+        logger.error(f"Failed to create output directories: {e}")
+        logger.error(f"SCRATCH env var: {os.environ.get('SCRATCH', 'not set')}")
+        logger.error(f"Current working directory: {os.getcwd()}")
+        raise
 
     # Load datasets
     logger.info("Loading datasets...")
@@ -523,48 +438,6 @@ def run_experiment(args):
 
     logger.info(f"Train set: {len(X_train)}, Val set: {len(X_val)}, Test set: {len(X_test)}")
 
-    # If csv_to_use is "test_just_pair", sample 50% of all sets (stratified)
-    if args.csv_to_use == "test_just_pair":
-        logger.info("Detected 'test_just_pair' dataset - sampling 50% of all sets (stratified)...")
-
-        # Stratified sample of train set
-        X_train, _, y_train, _ = train_test_split(
-            X_train, y_train,
-            train_size=0.5,
-            stratify=y_train['Outcome'].values,
-            random_state=args.seed
-        )
-        X_train = X_train.reset_index(drop=True)
-        y_train = y_train.reset_index(drop=True)
-
-        # Stratified sample of val set
-        X_val, _, y_val, _ = train_test_split(
-            X_val, y_val,
-            train_size=0.5,
-            stratify=y_val['Outcome'].values,
-            random_state=args.seed
-        )
-        X_val = X_val.reset_index(drop=True)
-        y_val = y_val.reset_index(drop=True)
-
-        # Stratified sample of test set
-        X_test, _, y_test, _ = train_test_split(
-            X_test, y_test,
-            train_size=0.5,
-            stratify=y_test['Outcome'].values,
-            random_state=args.seed
-        )
-        X_test = X_test.reset_index(drop=True)
-        y_test = y_test.reset_index(drop=True)
-
-        logger.info(f"After 50% sampling - Train: {len(X_train)}, Val: {len(X_val)}, Test: {len(X_test)}")
-
-        # Log class distributions
-        train_pos = y_train['Outcome'].sum() / len(y_train) * 100
-        val_pos = y_val['Outcome'].sum() / len(y_val) * 100
-        test_pos = y_test['Outcome'].sum() / len(y_test) * 100
-        logger.info(f"Class balance (% positive) - Train: {train_pos:.2f}%, Val: {val_pos:.2f}%, Test: {test_pos:.2f}%")
-
     # Data fractions to test
     fractions = [0.01, 0.10, 0.30, 0.50, 0.75, 1.00]
     results = []
@@ -575,13 +448,9 @@ def run_experiment(args):
         encodings_to_run.append('basic')
     if args.run_llm:
         encodings_to_run.append('llm')
-    if args.run_categorical:
-        encodings_to_run.append('categorical')
-    if args.run_tfidf:
-        encodings_to_run.append('tfidf')
 
     if not encodings_to_run:
-        logger.error("No encoding methods selected. Use --run_basic, --run_llm, --run_categorical, and/or --run_tfidf")
+        logger.error("No encoding methods selected. Use --run_basic and/or --run_llm")
         return
 
     logger.info(f"Will run: {encodings_to_run}")
@@ -632,33 +501,6 @@ def run_experiment(args):
                         device, args.cache_dir, args.embedding_dir, is_subset=False
                     )
 
-                elif encoding_method == 'categorical':
-                    logger.info("Encoding with XGBoost native categorical method...")
-                    X_train_encoded = categorical_encoding(
-                        X_train_subset, desc=f"Categorical train ({fraction*100:.0f}%)"
-                    )
-                    X_val_encoded = categorical_encoding(
-                        X_val, desc="Categorical val"
-                    )
-                    X_test_encoded = categorical_encoding(
-                        X_test, desc="Categorical test"
-                    )
-
-                elif encoding_method == 'tfidf':
-                    logger.info("Encoding with TF-IDF n-gram method...")
-                    # Fit vectorizer on training data
-                    X_train_encoded, tfidf_vectorizer = tfidf_encoding(
-                        X_train_subset, fit=True
-                    )
-                    # Transform val and test with fitted vectorizer
-                    X_val_encoded = tfidf_encoding(
-                        X_val, vectorizer=tfidf_vectorizer, fit=False
-                    )
-                    X_test_encoded = tfidf_encoding(
-                        X_test, vectorizer=tfidf_vectorizer, fit=False
-                    )
-                    logger.info(f"TF-IDF features: {X_train_encoded.shape[1]}")
-
                 # 3. Calculate scale_pos_weight for class imbalance
                 y_train_subset_array = y_train_subset.values.ravel()
                 n_negative = np.sum(y_train_subset_array == 0)
@@ -669,12 +511,14 @@ def run_experiment(args):
                 # 4. Train XGBoost with fixed parameters
                 logger.info("Training XGBoost...")
                 xgb_device = 'cuda' if (TORCH_AVAILABLE and torch.cuda.is_available()) else 'cpu'
-
-                # Enable categorical support for categorical encoding
-                use_categorical = (encoding_method == 'categorical')
+                # Manual early stopping implementation
+                best_val_loss = float('inf')
+                patience = 10
+                patience_counter = 0
+                best_round = 0
 
                 xgb_model = XGBClassifier(
-                    n_estimators=200,
+                    n_estimators=1,
                     max_depth=6,
                     learning_rate=0.05,
                     subsample=0.8,
@@ -687,20 +531,34 @@ def run_experiment(args):
                     device=xgb_device,
                     scale_pos_weight=scale_pos_weight,
                     random_state=args.seed,
-                    verbosity=0,
-                    enable_categorical=use_categorical,
-                    early_stopping_rounds=10
+                    warm_start=True,
+                    verbosity=0
                 )
 
-                # Train with native early stopping
+                # Train incrementally with early stopping
                 y_val_array = y_val.values.ravel()
-                xgb_model.fit(
-                    X_train_encoded,
-                    y_train_subset_array,
-                    eval_set=[(X_val_encoded, y_val_array)],
-                    verbose=False
-                )
-                logger.info(f"Best iteration: {xgb_model.best_iteration}")
+                for round_num in range(200):
+                    xgb_model.fit(
+                        X_train_encoded,
+                        y_train_subset_array,
+                        verbose=False
+                    )
+
+                    # Evaluate on validation set
+                    y_val_pred = xgb_model.predict_proba(X_val_encoded)[:, 1]
+                    from sklearn.metrics import log_loss
+                    val_loss = log_loss(y_val_array, y_val_pred)
+
+                    if val_loss < best_val_loss:
+                        best_val_loss = val_loss
+                        patience_counter = 0
+                        best_round = round_num
+                    else:
+                        patience_counter += 1
+
+                    if patience_counter >= patience:
+                        logger.info(f"Early stopping at round {round_num} (best: {best_round})")
+                        break
 
                 # 5. Evaluate on full test set
                 y_test_array = y_test.values.ravel()
@@ -739,7 +597,6 @@ def run_experiment(args):
             except Exception as e:
                 logger.error(f"Error in {encoding_method} with fraction {fraction}: {e}")
                 raise
-
 
     # Save results
     logger.info("=" * 70)
