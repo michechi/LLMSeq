@@ -1,0 +1,236 @@
+Starting job 98801 on gpu-1-47 on Olivia at Sun Jan 25 16:15:01 CET 2026
+
+=== JOB CONFIGURATION ===
+Job ID: 98801
+Node: gpu-1-47
+Scratch Cache: /cluster/software/gpujobscratch/jobs/98801/hf_cache_98801
+Free space in SCRATCH: 472T
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) init-NRIS
+=== STARTING CONTAINER ===
+Container: /cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif
+Environment: HUGGING_FACE_HUB_TOKEN=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,HF_HOME=/cluster/software/gpujobscratch/jobs/98801/hf_cache_98801,HF_DATASETS_CACHE=/cluster/software/gpujobscratch/jobs/98801/hf_cache_98801,XDG_CACHE_HOME=/cluster/software/gpujobscratch/jobs/98801/hf_cache_98801
+=== CHECKING XGBOOST VERSION ===
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+XGBoost version: 2.1.4
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+2026-01-25 16:15:18,382 [INFO] Argument batch_size: 8
+2026-01-25 16:15:18,382 [INFO] Argument cache_dir: /cluster/work/projects/nn12048k/michechi/cache/
+2026-01-25 16:15:18,382 [INFO] Argument csv_to_use: 9
+2026-01-25 16:15:18,382 [INFO] Argument embedding_dir: /cluster/work/projects/nn12048k/michechi/cache/embeddings/
+2026-01-25 16:15:18,383 [INFO] Argument max_length: 512
+2026-01-25 16:15:18,383 [INFO] Argument model_name: meta-llama/Llama-3.1-8B
+2026-01-25 16:15:18,383 [INFO] Argument output_dir: results_XGB
+2026-01-25 16:15:18,383 [INFO] Argument path_csv: /cluster/home/michechi/MIMICIV/data/simulation/tested/
+2026-01-25 16:15:18,383 [INFO] Argument run_basic: True
+2026-01-25 16:15:18,383 [INFO] Argument run_llm: True
+2026-01-25 16:15:18,383 [INFO] Argument seed: 666
+2026-01-25 16:15:18,976 [INFO] Using device: cuda
+2026-01-25 16:15:18,976 [INFO] CUDA available: True
+2026-01-25 16:15:18,977 [INFO] Loading datasets...
+2026-01-25 16:15:19,315 [INFO] Train set: 400000, Val set: 50000, Test set: 50000
+2026-01-25 16:15:19,315 [INFO] Will run: ['basic', 'llm']
+2026-01-25 16:15:19,315 [INFO] ======================================================================
+2026-01-25 16:15:19,315 [INFO] Encoding: BASIC, Fraction: 1%
+2026-01-25 16:15:19,315 [INFO] ======================================================================
+2026-01-25 16:15:19,410 [INFO] Subsampled 4000 samples (1.0%) from 400000
+2026-01-25 16:15:19,411 [INFO] Class distribution: [2326 1674] (41.85% positive)
+2026-01-25 16:15:19,411 [INFO] Encoding with basic method (1-26)...
+Encoding train (1%):   0%|          | 0/4000 [00:00<?, ?it/s]Encoding train (1%): 100%|██████████| 4000/4000 [00:00<00:00, 323279.11it/s]
+Encoding val:   0%|          | 0/50000 [00:00<?, ?it/s]Encoding val:  72%|███████▏  | 36225/50000 [00:00<00:00, 362234.80it/s]Encoding val: 100%|██████████| 50000/50000 [00:00<00:00, 363889.89it/s]
+Encoding test:   0%|          | 0/50000 [00:00<?, ?it/s]Encoding test:  73%|███████▎  | 36487/50000 [00:00<00:00, 364852.95it/s]Encoding test: 100%|██████████| 50000/50000 [00:00<00:00, 366574.72it/s]
+2026-01-25 16:15:19,703 [INFO] Scale pos weight: 1.3895
+2026-01-25 16:15:19,703 [INFO] Training XGBoost...
+2026-01-25 16:15:20,297 [INFO] Early stopping at round 10 (best: 0)
+2026-01-25 16:15:20,337 [INFO] AUC: 0.5055 | F1: 0.4022 | Accuracy: 0.5247 | Time: 1.00s
+2026-01-25 16:15:20,420 [INFO] ======================================================================
+2026-01-25 16:15:20,421 [INFO] Encoding: BASIC, Fraction: 10%
+2026-01-25 16:15:20,421 [INFO] ======================================================================
+2026-01-25 16:15:20,491 [INFO] Subsampled 40000 samples (10.0%) from 400000
+2026-01-25 16:15:20,492 [INFO] Class distribution: [23263 16737] (41.84% positive)
+2026-01-25 16:15:20,492 [INFO] Encoding with basic method (1-26)...
+Encoding train (10%):   0%|          | 0/40000 [00:00<?, ?it/s]Encoding train (10%):  86%|████████▌ | 34391/40000 [00:00<00:00, 343898.85it/s]Encoding train (10%): 100%|██████████| 40000/40000 [00:00<00:00, 344511.26it/s]
+Encoding val:   0%|          | 0/50000 [00:00<?, ?it/s]Encoding val:  73%|███████▎  | 36274/50000 [00:00<00:00, 362729.97it/s]Encoding val: 100%|██████████| 50000/50000 [00:00<00:00, 364490.08it/s]
+Encoding test:   0%|          | 0/50000 [00:00<?, ?it/s]Encoding test:  72%|███████▏  | 36211/50000 [00:00<00:00, 362096.53it/s]Encoding test: 100%|██████████| 50000/50000 [00:00<00:00, 363946.09it/s]
+2026-01-25 16:15:20,889 [INFO] Scale pos weight: 1.3899
+2026-01-25 16:15:20,889 [INFO] Training XGBoost...
+2026-01-25 16:15:21,674 [INFO] Early stopping at round 10 (best: 0)
+2026-01-25 16:15:21,715 [INFO] AUC: 0.5157 | F1: 0.4618 | Accuracy: 0.5108 | Time: 1.27s
+2026-01-25 16:15:21,793 [INFO] ======================================================================
+2026-01-25 16:15:21,793 [INFO] Encoding: BASIC, Fraction: 30%
+2026-01-25 16:15:21,793 [INFO] ======================================================================
+2026-01-25 16:15:21,863 [INFO] Subsampled 120000 samples (30.0%) from 400000
+2026-01-25 16:15:21,863 [INFO] Class distribution: [69789 50211] (41.84% positive)
+2026-01-25 16:15:21,864 [INFO] Encoding with basic method (1-26)...
+Encoding train (30%):   0%|          | 0/120000 [00:00<?, ?it/s]Encoding train (30%):  28%|██▊       | 34166/120000 [00:00<00:00, 341649.74it/s]Encoding train (30%):  58%|█████▊    | 69203/120000 [00:00<00:00, 346772.14it/s]Encoding train (30%):  87%|████████▋ | 104285/120000 [00:00<00:00, 348616.04it/s]Encoding train (30%): 100%|██████████| 120000/120000 [00:00<00:00, 347909.25it/s]
+Encoding val:   0%|          | 0/50000 [00:00<?, ?it/s]Encoding val:  72%|███████▏  | 36049/50000 [00:00<00:00, 360479.17it/s]Encoding val: 100%|██████████| 50000/50000 [00:00<00:00, 362464.72it/s]
+Encoding test:   0%|          | 0/50000 [00:00<?, ?it/s]Encoding test:  72%|███████▏  | 36073/50000 [00:00<00:00, 360720.88it/s]Encoding test: 100%|██████████| 50000/50000 [00:00<00:00, 363095.42it/s]
+2026-01-25 16:15:22,493 [INFO] Scale pos weight: 1.3899
+2026-01-25 16:15:22,493 [INFO] Training XGBoost...
+2026-01-25 16:15:24,278 [INFO] Early stopping at round 10 (best: 0)
+2026-01-25 16:15:24,318 [INFO] AUC: 0.5213 | F1: 0.3397 | Accuracy: 0.5550 | Time: 2.51s
+2026-01-25 16:15:24,397 [INFO] ======================================================================
+2026-01-25 16:15:24,397 [INFO] Encoding: BASIC, Fraction: 50%
+2026-01-25 16:15:24,397 [INFO] ======================================================================
+2026-01-25 16:15:24,467 [INFO] Subsampled 200000 samples (50.0%) from 400000
+2026-01-25 16:15:24,468 [INFO] Class distribution: [116315  83685] (41.84% positive)
+2026-01-25 16:15:24,468 [INFO] Encoding with basic method (1-26)...
+Encoding train (50%):   0%|          | 0/200000 [00:00<?, ?it/s]Encoding train (50%):  17%|█▋        | 34369/200000 [00:00<00:00, 343673.94it/s]Encoding train (50%):  35%|███▍      | 69436/200000 [00:00<00:00, 347782.56it/s]Encoding train (50%):  52%|█████▏    | 104413/200000 [00:00<00:00, 348682.61it/s]Encoding train (50%):  70%|██████▉   | 139581/200000 [00:00<00:00, 349862.42it/s]Encoding train (50%):  87%|████████▋ | 174750/200000 [00:00<00:00, 350517.35it/s]Encoding train (50%): 100%|██████████| 200000/200000 [00:00<00:00, 350399.58it/s]
+Encoding val:   0%|          | 0/50000 [00:00<?, ?it/s]Encoding val:  72%|███████▏  | 36100/50000 [00:00<00:00, 360989.16it/s]Encoding val: 100%|██████████| 50000/50000 [00:00<00:00, 362761.91it/s]
+Encoding test:   0%|          | 0/50000 [00:00<?, ?it/s]Encoding test:  72%|███████▏  | 36224/50000 [00:00<00:00, 362227.39it/s]Encoding test: 100%|██████████| 50000/50000 [00:00<00:00, 364137.57it/s]
+2026-01-25 16:15:25,326 [INFO] Scale pos weight: 1.3899
+2026-01-25 16:15:25,326 [INFO] Training XGBoost...
+2026-01-25 16:15:28,107 [INFO] Early stopping at round 10 (best: 0)
+2026-01-25 16:15:28,147 [INFO] AUC: 0.5360 | F1: 0.4105 | Accuracy: 0.5512 | Time: 3.73s
+2026-01-25 16:15:28,228 [INFO] ======================================================================
+2026-01-25 16:15:28,228 [INFO] Encoding: BASIC, Fraction: 75%
+2026-01-25 16:15:28,228 [INFO] ======================================================================
+2026-01-25 16:15:28,297 [INFO] Subsampled 300000 samples (75.0%) from 400000
+2026-01-25 16:15:28,298 [INFO] Class distribution: [174472 125528] (41.84% positive)
+2026-01-25 16:15:28,299 [INFO] Encoding with basic method (1-26)...
+Encoding train (75%):   0%|          | 0/300000 [00:00<?, ?it/s]Encoding train (75%):  11%|█▏        | 34450/300000 [00:00<00:00, 344490.47it/s]Encoding train (75%):  23%|██▎       | 69749/300000 [00:00<00:00, 349483.47it/s]Encoding train (75%):  35%|███▌      | 105097/300000 [00:00<00:00, 351303.52it/s]Encoding train (75%):  47%|████▋     | 140506/300000 [00:00<00:00, 352402.38it/s]Encoding train (75%):  59%|█████▊    | 176096/300000 [00:00<00:00, 353661.62it/s]Encoding train (75%):  71%|███████   | 211680/300000 [00:00<00:00, 354399.22it/s]Encoding train (75%):  82%|████████▏ | 247340/300000 [00:00<00:00, 355115.48it/s]Encoding train (75%):  94%|█████████▍| 283092/300000 [00:00<00:00, 355879.44it/s]Encoding train (75%): 100%|██████████| 300000/300000 [00:00<00:00, 354037.04it/s]
+Encoding val:   0%|          | 0/50000 [00:00<?, ?it/s]Encoding val:  72%|███████▏  | 36181/50000 [00:00<00:00, 361804.31it/s]Encoding val: 100%|██████████| 50000/50000 [00:00<00:00, 362904.41it/s]
+Encoding test:   0%|          | 0/50000 [00:00<?, ?it/s]Encoding test:  73%|███████▎  | 36256/50000 [00:00<00:00, 362552.57it/s]Encoding test: 100%|██████████| 50000/50000 [00:00<00:00, 364421.04it/s]
+2026-01-25 16:15:29,437 [INFO] Scale pos weight: 1.3899
+2026-01-25 16:15:29,437 [INFO] Training XGBoost...
+2026-01-25 16:15:33,516 [INFO] Early stopping at round 10 (best: 0)
+2026-01-25 16:15:33,556 [INFO] AUC: 0.5369 | F1: 0.4012 | Accuracy: 0.5569 | Time: 5.31s
+2026-01-25 16:15:33,639 [INFO] ======================================================================
+2026-01-25 16:15:33,639 [INFO] Encoding: BASIC, Fraction: 100%
+2026-01-25 16:15:33,639 [INFO] ======================================================================
+2026-01-25 16:15:33,643 [INFO] Encoding with basic method (1-26)...
+Encoding train (100%):   0%|          | 0/400000 [00:00<?, ?it/s]Encoding train (100%):   9%|▉         | 36165/400000 [00:00<00:01, 361638.27it/s]Encoding train (100%):  18%|█▊        | 73097/400000 [00:00<00:00, 366151.95it/s]Encoding train (100%):  28%|██▊       | 110039/400000 [00:00<00:00, 367639.14it/s]Encoding train (100%):  37%|███▋      | 147013/400000 [00:00<00:00, 368465.89it/s]Encoding train (100%):  46%|████▌     | 183971/400000 [00:00<00:00, 368865.55it/s]Encoding train (100%):  55%|█████▌    | 220928/400000 [00:00<00:00, 369101.89it/s]Encoding train (100%):  64%|██████▍   | 257959/400000 [00:00<00:00, 369493.79it/s]Encoding train (100%):  74%|███████▎  | 294909/400000 [00:00<00:00, 369329.93it/s]Encoding train (100%):  83%|████████▎ | 331892/400000 [00:00<00:00, 369482.46it/s]Encoding train (100%):  92%|█████████▏| 368841/400000 [00:01<00:00, 369468.04it/s]Encoding train (100%): 100%|██████████| 400000/400000 [00:01<00:00, 368851.78it/s]
+Encoding val:   0%|          | 0/50000 [00:00<?, ?it/s]Encoding val:  73%|███████▎  | 36259/50000 [00:00<00:00, 362584.29it/s]Encoding val: 100%|██████████| 50000/50000 [00:00<00:00, 364260.90it/s]
+Encoding test:   0%|          | 0/50000 [00:00<?, ?it/s]Encoding test:  72%|███████▏  | 36175/50000 [00:00<00:00, 361740.00it/s]Encoding test: 100%|██████████| 50000/50000 [00:00<00:00, 363474.89it/s]
+2026-01-25 16:15:35,023 [INFO] Scale pos weight: 1.3899
+2026-01-25 16:15:35,023 [INFO] Training XGBoost...
+2026-01-25 16:15:40,262 [INFO] Early stopping at round 10 (best: 0)
+2026-01-25 16:15:40,307 [INFO] AUC: 0.5368 | F1: 0.4451 | Accuracy: 0.5434 | Time: 6.65s
+2026-01-25 16:15:40,388 [INFO] ======================================================================
+2026-01-25 16:15:40,389 [INFO] Encoding: LLM, Fraction: 1%
+2026-01-25 16:15:40,389 [INFO] ======================================================================
+2026-01-25 16:15:40,459 [INFO] Subsampled 4000 samples (1.0%) from 400000
+2026-01-25 16:15:40,459 [INFO] Class distribution: [2326 1674] (41.85% positive)
+2026-01-25 16:15:40,461 [INFO] Encoding with LLM method...
+2026-01-25 16:15:40,462 [INFO] Loading cached embeddings from /cluster/work/projects/nn12048k/michechi/cache/embeddings/X_train_9_llama_001_embeddings.npy
+2026-01-25 16:15:40,478 [INFO] Loading cached embeddings from /cluster/work/projects/nn12048k/michechi/cache/embeddings/X_val_9_llama_embeddings.npy
+2026-01-25 16:15:40,609 [INFO] Loading cached embeddings from /cluster/work/projects/nn12048k/michechi/cache/embeddings/X_val_9_llama_embeddings.npy
+2026-01-25 16:15:40,685 [INFO] Scale pos weight: 1.3895
+2026-01-25 16:15:40,685 [INFO] Training XGBoost...
+2026-01-25 16:16:12,062 [INFO] Early stopping at round 10 (best: 0)
+2026-01-25 16:16:14,355 [INFO] AUC: 0.5014 | F1: 0.5019 | Accuracy: 0.4840 | Time: 33.95s
+2026-01-25 16:16:14,440 [INFO] ======================================================================
+2026-01-25 16:16:14,440 [INFO] Encoding: LLM, Fraction: 10%
+2026-01-25 16:16:14,440 [INFO] ======================================================================
+2026-01-25 16:16:14,511 [INFO] Subsampled 40000 samples (10.0%) from 400000
+2026-01-25 16:16:14,512 [INFO] Class distribution: [23263 16737] (41.84% positive)
+2026-01-25 16:16:14,512 [INFO] Encoding with LLM method...
+2026-01-25 16:16:14,513 [INFO] Loading cached embeddings from /cluster/work/projects/nn12048k/michechi/cache/embeddings/X_train_9_llama_010_embeddings.npy
+2026-01-25 16:16:14,623 [INFO] Loading cached embeddings from /cluster/work/projects/nn12048k/michechi/cache/embeddings/X_val_9_llama_embeddings.npy
+2026-01-25 16:16:14,700 [INFO] Loading cached embeddings from /cluster/work/projects/nn12048k/michechi/cache/embeddings/X_val_9_llama_embeddings.npy
+2026-01-25 16:16:14,773 [INFO] Scale pos weight: 1.3899
+2026-01-25 16:16:14,773 [INFO] Training XGBoost...
+2026-01-25 16:19:49,994 [INFO] Early stopping at round 10 (best: 0)
+2026-01-25 16:19:52,299 [INFO] AUC: 0.5037 | F1: 0.3666 | Accuracy: 0.5301 | Time: 217.84s
+2026-01-25 16:19:52,379 [INFO] ======================================================================
+2026-01-25 16:19:52,379 [INFO] Encoding: LLM, Fraction: 30%
+2026-01-25 16:19:52,379 [INFO] ======================================================================
+2026-01-25 16:19:52,449 [INFO] Subsampled 120000 samples (30.0%) from 400000
+2026-01-25 16:19:52,449 [INFO] Class distribution: [69789 50211] (41.84% positive)
+2026-01-25 16:19:52,450 [INFO] Encoding with LLM method...
+2026-01-25 16:19:52,451 [INFO] Loading cached embeddings from /cluster/work/projects/nn12048k/michechi/cache/embeddings/X_train_9_llama_030_embeddings.npy
+2026-01-25 16:19:52,767 [INFO] Loading cached embeddings from /cluster/work/projects/nn12048k/michechi/cache/embeddings/X_val_9_llama_embeddings.npy
+2026-01-25 16:19:52,838 [INFO] Loading cached embeddings from /cluster/work/projects/nn12048k/michechi/cache/embeddings/X_val_9_llama_embeddings.npy
+2026-01-25 16:19:52,914 [INFO] Scale pos weight: 1.3899
+2026-01-25 16:19:52,914 [INFO] Training XGBoost...
+2026-01-25 16:30:20,515 [INFO] Early stopping at round 10 (best: 0)
+2026-01-25 16:30:22,810 [INFO] AUC: 0.4973 | F1: 0.4834 | Accuracy: 0.4852 | Time: 630.41s
+2026-01-25 16:30:22,891 [INFO] ======================================================================
+2026-01-25 16:30:22,891 [INFO] Encoding: LLM, Fraction: 50%
+2026-01-25 16:30:22,892 [INFO] ======================================================================
+2026-01-25 16:30:22,961 [INFO] Subsampled 200000 samples (50.0%) from 400000
+2026-01-25 16:30:22,962 [INFO] Class distribution: [116315  83685] (41.84% positive)
+2026-01-25 16:30:22,963 [INFO] Encoding with LLM method...
+2026-01-25 16:30:22,964 [INFO] Loading cached embeddings from /cluster/work/projects/nn12048k/michechi/cache/embeddings/X_train_9_llama_050_embeddings.npy
+2026-01-25 16:30:23,461 [INFO] Loading cached embeddings from /cluster/work/projects/nn12048k/michechi/cache/embeddings/X_val_9_llama_embeddings.npy
+2026-01-25 16:30:23,537 [INFO] Loading cached embeddings from /cluster/work/projects/nn12048k/michechi/cache/embeddings/X_val_9_llama_embeddings.npy
+2026-01-25 16:30:23,610 [INFO] Scale pos weight: 1.3899
+2026-01-25 16:30:23,610 [INFO] Training XGBoost...
+2026-01-25 16:48:00,736 [INFO] Early stopping at round 10 (best: 0)
+2026-01-25 16:48:02,935 [INFO] AUC: 0.5012 | F1: 0.5759 | Accuracy: 0.4358 | Time: 1060.03s
+2026-01-25 16:48:03,019 [INFO] ======================================================================
+2026-01-25 16:48:03,019 [INFO] Encoding: LLM, Fraction: 75%
+2026-01-25 16:48:03,019 [INFO] ======================================================================
+2026-01-25 16:48:03,087 [INFO] Subsampled 300000 samples (75.0%) from 400000
+2026-01-25 16:48:03,088 [INFO] Class distribution: [174472 125528] (41.84% positive)
+2026-01-25 16:48:03,089 [INFO] Encoding with LLM method...
+2026-01-25 16:48:03,091 [INFO] Loading cached embeddings from /cluster/work/projects/nn12048k/michechi/cache/embeddings/X_train_9_llama_075_embeddings.npy
+2026-01-25 16:48:03,740 [INFO] Loading cached embeddings from /cluster/work/projects/nn12048k/michechi/cache/embeddings/X_val_9_llama_embeddings.npy
+2026-01-25 16:48:03,797 [INFO] Loading cached embeddings from /cluster/work/projects/nn12048k/michechi/cache/embeddings/X_val_9_llama_embeddings.npy
+2026-01-25 16:48:03,853 [INFO] Scale pos weight: 1.3899
+2026-01-25 16:48:03,854 [INFO] Training XGBoost...
+2026-01-25 17:14:27,325 [INFO] Early stopping at round 10 (best: 0)
+2026-01-25 17:14:29,523 [INFO] AUC: 0.4990 | F1: 0.5416 | Accuracy: 0.4560 | Time: 1586.48s
+2026-01-25 17:14:29,599 [INFO] ======================================================================
+2026-01-25 17:14:29,600 [INFO] Encoding: LLM, Fraction: 100%
+2026-01-25 17:14:29,600 [INFO] ======================================================================
+2026-01-25 17:14:29,604 [INFO] Encoding with LLM method...
+2026-01-25 17:14:29,612 [INFO] Loading cached embeddings from /cluster/work/projects/nn12048k/michechi/cache/embeddings/X_train_9_llama_100_embeddings.npy
+2026-01-25 17:14:30,478 [INFO] Loading cached embeddings from /cluster/work/projects/nn12048k/michechi/cache/embeddings/X_val_9_llama_embeddings.npy
+2026-01-25 17:14:30,534 [INFO] Loading cached embeddings from /cluster/work/projects/nn12048k/michechi/cache/embeddings/X_val_9_llama_embeddings.npy
+2026-01-25 17:14:30,591 [INFO] Scale pos weight: 1.3899
+2026-01-25 17:14:30,591 [INFO] Training XGBoost...
+2026-01-25 17:49:37,262 [INFO] Early stopping at round 10 (best: 0)
+2026-01-25 17:49:39,554 [INFO] AUC: 0.5001 | F1: 0.4302 | Accuracy: 0.5104 | Time: 2109.93s
+2026-01-25 17:49:39,632 [INFO] ======================================================================
+2026-01-25 17:49:39,633 [INFO] Saving results...
+2026-01-25 17:49:39,641 [INFO] Results saved to results_XGB/xgb_fraction_experiment_results.csv
+2026-01-25 17:49:39,642 [INFO] 
+Final Results Summary:
+2026-01-25 17:49:39,646 [INFO]    encoding_method  fraction  train_samples  test_samples       auc        f1  accuracy  precision    recall  training_time_sec  seed dataset_id                   timestamp
+0            basic      0.01           4000         50000  0.505533  0.402234   0.52474   0.426400  0.380660           1.002206   666          9  2026-01-25T16:15:20.337470
+1            basic      0.10          40000         50000  0.515662  0.461769   0.51078   0.429267  0.499595           1.274138   666          9  2026-01-25T16:15:21.715218
+2            basic      0.30         120000         50000  0.521337  0.339734   0.55502   0.450922  0.272532           2.505562   666          9  2026-01-25T16:15:24.318090
+3            basic      0.50         200000         50000  0.536005  0.410519   0.55124   0.457945  0.371994           3.729975   666          9  2026-01-25T16:15:28.147350
+4            basic      0.75         300000         50000  0.536916  0.401243   0.55686   0.463942  0.353473           5.308714   666          9  2026-01-25T16:15:33.556930
+5            basic      1.00         400000         50000  0.536790  0.445098   0.54336   0.454600  0.435985           6.647425   666          9  2026-01-25T16:15:40.307043
+6              llm      0.01           4000         50000  0.501369  0.501873   0.48404   0.422126  0.618769          33.946395   666          9  2026-01-25T16:16:14.355661
+7              llm      0.10          40000         50000  0.503706  0.366636   0.53012   0.422596  0.323763         217.838730   666          9  2026-01-25T16:19:52.299283
+8              llm      0.30         120000         50000  0.497327  0.483382   0.48520   0.417820  0.573347         630.410925   666          9  2026-01-25T16:30:22.810567
+9              llm      0.50         200000         50000  0.501169  0.575874   0.43576   0.420806  0.911917        1060.025519   666          9  2026-01-25T16:48:02.935884
+10             llm      0.75         300000         50000  0.499007  0.541587   0.45602   0.419176  0.764986        1586.484136   666          9  2026-01-25T17:14:29.523082
+11             llm      1.00         400000         50000  0.500086  0.430237   0.51038   0.420825  0.440080        2109.933792   666          9  2026-01-25T17:49:39.554574
+
+Job 98801 consumed 0.0 billing hours and 1.6 GPU hours from project nn12048k.
+
+Submitted 2026-01-25T10:37:16; waited 5.6 hours in the queue after becoming eligible to run.
+
+Requested wallclock time: 20.0 hours
+Elapsed wallclock time:   1.6 hours
+
+Job exited normally.
+
+Task and CPU statistics:
+ID               CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+98801               1            0.0 %  2026-01-25T16:15:01    1.6 h  0
+98801.batch         1      1     0.0 %  2026-01-25T16:15:01    1.6 h  0
+98801.apptainer     1      1     0.0 %  2026-01-25T16:15:02    0.0 h  0
+98801.apptainer     1      1     0.0 %  2026-01-25T16:15:07    1.6 h  0
+
+Used CPU time:   0.2 CPU seconds
+Unused CPU time: 1.6 CPU hours
+
+Memory statistics, in GiB:
+ID                Alloc   Usage
+98801             128.0        
+98801.batch       128.0     0.0
+98801.apptainer   128.0     0.9
+98801.apptainer   128.0    47.3
+
+Job 98801 completed at Sun Jan 25 17:49:41 CET 2026

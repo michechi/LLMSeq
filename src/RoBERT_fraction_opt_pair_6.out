@@ -1,0 +1,297 @@
+Starting job 97077 on gpu-1-75 on Olivia at Fri Jan 23 00:03:39 CET 2026
+
+=== JOB CONFIGURATION ===
+Job ID: 97077
+Node: gpu-1-75
+Scratch Cache: /cluster/software/gpujobscratch/jobs/97077/hf_cache_97077
+Free space in SCRATCH: 468T
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) init-NRIS
+=== STARTING CONTAINER ===
+Container: /cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif
+Environment: HUGGING_FACE_HUB_TOKEN=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,HF_HOME=/cluster/software/gpujobscratch/jobs/97077/hf_cache_97077,HF_DATASETS_CACHE=/cluster/software/gpujobscratch/jobs/97077/hf_cache_97077,XDG_CACHE_HOME=/cluster/software/gpujobscratch/jobs/97077/hf_cache_97077,PYTHONUNBUFFERED=1
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+INFO:__main__:Argument batch_size: 32
+INFO:__main__:Argument cache_dir: '/cluster/work/projects/nn12048k/michechi/cache/'
+INFO:__main__:Argument cold_start: False
+INFO:__main__:Argument early: 'loss'
+INFO:__main__:Argument epochs: 20
+INFO:__main__:Argument fractions: '0.01,0.10,0.30,0.50,0.75,1.0'
+INFO:__main__:Argument gradient_accumulation_steps: 1
+INFO:__main__:Argument lr: 2e-05
+INFO:__main__:Argument max_length: 100
+INFO:__main__:Argument model_name: 'FacebookAI/roberta-base'
+INFO:__main__:Argument number_to_use: '6'
+INFO:__main__:Argument output_dir: '/cluster/work/projects/nn12048k/michechi/results/llm_fraction/'
+INFO:__main__:Argument path_csv: '/cluster/home/michechi/MIMICIV/data/simulation/tested/'
+INFO:__main__:Argument patience: 3
+INFO:__main__:Argument peft: False
+INFO:__main__:Argument seed: 9550
+INFO:__main__:Argument tiny: False
+INFO:__main__:Argument tiny_type: '1M'
+INFO:__main__:Using device: cuda
+INFO:__main__:Output directory: /cluster/work/projects/nn12048k/michechi/results/llm_fraction/
+INFO:__main__:Loading datasets...
+INFO:__main__:Dataset sizes - Train: 400000, Val: 50000, Test: 50000
+INFO:__main__:Testing fractions: [0.01, 0.1, 0.3, 0.5, 0.75, 1.0]
+INFO:__main__:======================================================================
+INFO:__main__:Training with 1% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 4000
+INFO:__main__:Loading pre-trained BERT model (WARM START)
+Some weights of RobertaForSequenceClassification were not initialized from the model checkpoint at FacebookAI/roberta-base and are newly initialized: ['classifier.dense.bias', 'classifier.dense.weight', 'classifier.out_proj.bias', 'classifier.out_proj.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+INFO:__main__:Model parameters: 124,647,170
+INFO:__main__:Epoch 1/20 | Train Loss: 0.6406 | Val Loss: 0.5958 | Val AUC: 0.7833 | Val F1: 0.2606
+INFO:__main__:New best model (AUC: 0.7833)
+INFO:__main__:Epoch 2/20 | Train Loss: 0.5524 | Val Loss: 0.5322 | Val AUC: 0.8332 | Val F1: 0.5918
+INFO:__main__:New best model (AUC: 0.8332)
+INFO:__main__:Epoch 3/20 | Train Loss: 0.4622 | Val Loss: 0.4569 | Val AUC: 0.8585 | Val F1: 0.6716
+INFO:__main__:New best model (AUC: 0.8585)
+INFO:__main__:Epoch 4/20 | Train Loss: 0.4332 | Val Loss: 0.4611 | Val AUC: 0.8610 | Val F1: 0.7157
+INFO:__main__:Epoch 5/20 | Train Loss: 0.3972 | Val Loss: 0.4758 | Val AUC: 0.8713 | Val F1: 0.7273
+INFO:__main__:Epoch 6/20 | Train Loss: 0.3842 | Val Loss: 0.3995 | Val AUC: 0.8836 | Val F1: 0.7435
+INFO:__main__:New best model (AUC: 0.8836)
+INFO:__main__:Epoch 7/20 | Train Loss: 0.3596 | Val Loss: 0.4095 | Val AUC: 0.8855 | Val F1: 0.7429
+INFO:__main__:Epoch 8/20 | Train Loss: 0.3357 | Val Loss: 0.4374 | Val AUC: 0.8893 | Val F1: 0.7404
+INFO:__main__:Epoch 9/20 | Train Loss: 0.3157 | Val Loss: 0.4282 | Val AUC: 0.8766 | Val F1: 0.7343
+INFO:__main__:Early stopping at epoch 9
+INFO:__main__:Optimal threshold: 0.51 (Val F1: 0.7437)
+INFO:__main__:Fraction 1% - Test AUC: 0.8851, Test F1: 0.7452, Time: 266.4s
+INFO:__main__:======================================================================
+INFO:__main__:Training with 10% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 40000
+INFO:__main__:Loading pre-trained BERT model (WARM START)
+Some weights of RobertaForSequenceClassification were not initialized from the model checkpoint at FacebookAI/roberta-base and are newly initialized: ['classifier.dense.bias', 'classifier.dense.weight', 'classifier.out_proj.bias', 'classifier.out_proj.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+INFO:__main__:Model parameters: 124,647,170
+INFO:__main__:Epoch 1/20 | Train Loss: 0.5077 | Val Loss: 0.4051 | Val AUC: 0.8773 | Val F1: 0.7146
+INFO:__main__:New best model (AUC: 0.8773)
+INFO:__main__:Epoch 2/20 | Train Loss: 0.2858 | Val Loss: 0.0407 | Val AUC: 0.9968 | Val F1: 0.9877
+INFO:__main__:New best model (AUC: 0.9968)
+INFO:__main__:Epoch 3/20 | Train Loss: 0.0733 | Val Loss: 0.0266 | Val AUC: 0.9982 | Val F1: 0.9922
+INFO:__main__:New best model (AUC: 0.9982)
+INFO:__main__:Epoch 4/20 | Train Loss: 0.0481 | Val Loss: 0.0286 | Val AUC: 0.9987 | Val F1: 0.9915
+INFO:__main__:Epoch 5/20 | Train Loss: 0.0409 | Val Loss: 0.0234 | Val AUC: 0.9990 | Val F1: 0.9924
+INFO:__main__:New best model (AUC: 0.9990)
+INFO:__main__:Epoch 6/20 | Train Loss: 0.0399 | Val Loss: 0.0218 | Val AUC: 0.9993 | Val F1: 0.9923
+INFO:__main__:New best model (AUC: 0.9993)
+INFO:__main__:Epoch 7/20 | Train Loss: 0.0369 | Val Loss: 0.0209 | Val AUC: 0.9993 | Val F1: 0.9924
+INFO:__main__:New best model (AUC: 0.9993)
+INFO:__main__:Epoch 8/20 | Train Loss: 0.0334 | Val Loss: 0.0203 | Val AUC: 0.9993 | Val F1: 0.9924
+INFO:__main__:New best model (AUC: 0.9993)
+INFO:__main__:Epoch 9/20 | Train Loss: 0.0278 | Val Loss: 0.0180 | Val AUC: 0.9996 | Val F1: 0.9924
+INFO:__main__:New best model (AUC: 0.9996)
+INFO:__main__:Epoch 10/20 | Train Loss: 0.0247 | Val Loss: 0.0188 | Val AUC: 0.9995 | Val F1: 0.9923
+INFO:__main__:Epoch 11/20 | Train Loss: 0.0236 | Val Loss: 0.0291 | Val AUC: 0.9995 | Val F1: 0.9832
+INFO:__main__:Epoch 12/20 | Train Loss: 0.0201 | Val Loss: 0.0164 | Val AUC: 0.9997 | Val F1: 0.9923
+INFO:__main__:New best model (AUC: 0.9997)
+INFO:__main__:Epoch 13/20 | Train Loss: 0.0185 | Val Loss: 0.0165 | Val AUC: 0.9996 | Val F1: 0.9930
+INFO:__main__:Epoch 14/20 | Train Loss: 0.0175 | Val Loss: 0.0139 | Val AUC: 0.9998 | Val F1: 0.9935
+INFO:__main__:New best model (AUC: 0.9998)
+INFO:__main__:Epoch 15/20 | Train Loss: 0.0145 | Val Loss: 0.0147 | Val AUC: 0.9998 | Val F1: 0.9929
+INFO:__main__:Epoch 16/20 | Train Loss: 0.0137 | Val Loss: 0.0148 | Val AUC: 0.9998 | Val F1: 0.9938
+INFO:__main__:Epoch 17/20 | Train Loss: 0.0125 | Val Loss: 0.0152 | Val AUC: 0.9998 | Val F1: 0.9930
+INFO:__main__:Early stopping at epoch 17
+INFO:__main__:Optimal threshold: 0.38 (Val F1: 0.9936)
+INFO:__main__:Fraction 10% - Test AUC: 0.9998, Test F1: 0.9933, Time: 1083.5s
+INFO:__main__:======================================================================
+INFO:__main__:Training with 30% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 120000
+INFO:__main__:Loading pre-trained BERT model (WARM START)
+Some weights of RobertaForSequenceClassification were not initialized from the model checkpoint at FacebookAI/roberta-base and are newly initialized: ['classifier.dense.bias', 'classifier.dense.weight', 'classifier.out_proj.bias', 'classifier.out_proj.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+INFO:__main__:Model parameters: 124,647,170
+INFO:__main__:Epoch 1/20 | Train Loss: 0.4115 | Val Loss: 0.1130 | Val AUC: 0.9904 | Val F1: 0.9394
+INFO:__main__:New best model (AUC: 0.9904)
+INFO:__main__:Epoch 2/20 | Train Loss: 0.0846 | Val Loss: 0.0235 | Val AUC: 0.9992 | Val F1: 0.9912
+INFO:__main__:New best model (AUC: 0.9992)
+INFO:__main__:Epoch 3/20 | Train Loss: 0.0404 | Val Loss: 0.0225 | Val AUC: 0.9996 | Val F1: 0.9922
+INFO:__main__:New best model (AUC: 0.9996)
+INFO:__main__:Epoch 4/20 | Train Loss: 0.0286 | Val Loss: 0.0165 | Val AUC: 0.9997 | Val F1: 0.9923
+INFO:__main__:New best model (AUC: 0.9997)
+INFO:__main__:Epoch 5/20 | Train Loss: 0.0234 | Val Loss: 0.0165 | Val AUC: 0.9997 | Val F1: 0.9926
+INFO:__main__:Epoch 6/20 | Train Loss: 0.0187 | Val Loss: 0.0135 | Val AUC: 0.9999 | Val F1: 0.9928
+INFO:__main__:New best model (AUC: 0.9999)
+INFO:__main__:Epoch 7/20 | Train Loss: 0.0165 | Val Loss: 0.0147 | Val AUC: 0.9999 | Val F1: 0.9927
+INFO:__main__:Epoch 8/20 | Train Loss: 0.0142 | Val Loss: 0.0148 | Val AUC: 0.9999 | Val F1: 0.9914
+INFO:__main__:Epoch 9/20 | Train Loss: 0.0121 | Val Loss: 0.0077 | Val AUC: 1.0000 | Val F1: 0.9954
+INFO:__main__:New best model (AUC: 1.0000)
+INFO:__main__:Epoch 10/20 | Train Loss: 0.0098 | Val Loss: 0.0073 | Val AUC: 1.0000 | Val F1: 0.9958
+INFO:__main__:New best model (AUC: 1.0000)
+INFO:__main__:Epoch 11/20 | Train Loss: 0.0084 | Val Loss: 0.0058 | Val AUC: 1.0000 | Val F1: 0.9965
+INFO:__main__:New best model (AUC: 1.0000)
+INFO:__main__:Epoch 12/20 | Train Loss: 0.0068 | Val Loss: 0.0058 | Val AUC: 1.0000 | Val F1: 0.9968
+INFO:__main__:New best model (AUC: 1.0000)
+INFO:__main__:Epoch 13/20 | Train Loss: 0.0058 | Val Loss: 0.0048 | Val AUC: 1.0000 | Val F1: 0.9973
+INFO:__main__:New best model (AUC: 1.0000)
+INFO:__main__:Epoch 14/20 | Train Loss: 0.0054 | Val Loss: 0.0048 | Val AUC: 1.0000 | Val F1: 0.9970
+INFO:__main__:Epoch 15/20 | Train Loss: 0.0045 | Val Loss: 0.0053 | Val AUC: 1.0000 | Val F1: 0.9972
+INFO:__main__:Epoch 16/20 | Train Loss: 0.0036 | Val Loss: 0.0046 | Val AUC: 1.0000 | Val F1: 0.9975
+INFO:__main__:New best model (AUC: 1.0000)
+INFO:__main__:Epoch 17/20 | Train Loss: 0.0027 | Val Loss: 0.0055 | Val AUC: 1.0000 | Val F1: 0.9975
+INFO:__main__:Epoch 18/20 | Train Loss: 0.0024 | Val Loss: 0.0046 | Val AUC: 1.0000 | Val F1: 0.9979
+INFO:__main__:Epoch 19/20 | Train Loss: 0.0018 | Val Loss: 0.0051 | Val AUC: 1.0000 | Val F1: 0.9979
+INFO:__main__:Early stopping at epoch 19
+INFO:__main__:Optimal threshold: 0.47 (Val F1: 0.9976)
+INFO:__main__:Fraction 30% - Test AUC: 1.0000, Test F1: 0.9975, Time: 2747.0s
+INFO:__main__:======================================================================
+INFO:__main__:Training with 50% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 200000
+INFO:__main__:Loading pre-trained BERT model (WARM START)
+Some weights of RobertaForSequenceClassification were not initialized from the model checkpoint at FacebookAI/roberta-base and are newly initialized: ['classifier.dense.bias', 'classifier.dense.weight', 'classifier.out_proj.bias', 'classifier.out_proj.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+INFO:__main__:Model parameters: 124,647,170
+INFO:__main__:Epoch 1/20 | Train Loss: 0.3166 | Val Loss: 0.0405 | Val AUC: 0.9979 | Val F1: 0.9831
+INFO:__main__:New best model (AUC: 0.9979)
+INFO:__main__:Epoch 2/20 | Train Loss: 0.0488 | Val Loss: 0.0210 | Val AUC: 0.9996 | Val F1: 0.9921
+INFO:__main__:New best model (AUC: 0.9996)
+INFO:__main__:Epoch 3/20 | Train Loss: 0.0280 | Val Loss: 0.0163 | Val AUC: 0.9998 | Val F1: 0.9918
+INFO:__main__:New best model (AUC: 0.9998)
+INFO:__main__:Epoch 4/20 | Train Loss: 0.0197 | Val Loss: 0.0133 | Val AUC: 0.9999 | Val F1: 0.9933
+INFO:__main__:New best model (AUC: 0.9999)
+INFO:__main__:Epoch 5/20 | Train Loss: 0.0158 | Val Loss: 0.0105 | Val AUC: 0.9999 | Val F1: 0.9946
+INFO:__main__:New best model (AUC: 0.9999)
+INFO:__main__:Epoch 6/20 | Train Loss: 0.0119 | Val Loss: 0.0087 | Val AUC: 1.0000 | Val F1: 0.9952
+INFO:__main__:New best model (AUC: 1.0000)
+INFO:__main__:Epoch 7/20 | Train Loss: 0.0102 | Val Loss: 0.0065 | Val AUC: 1.0000 | Val F1: 0.9955
+INFO:__main__:New best model (AUC: 1.0000)
+INFO:__main__:Epoch 8/20 | Train Loss: 0.0086 | Val Loss: 0.0045 | Val AUC: 1.0000 | Val F1: 0.9974
+INFO:__main__:New best model (AUC: 1.0000)
+INFO:__main__:Epoch 9/20 | Train Loss: 0.0071 | Val Loss: 0.0041 | Val AUC: 1.0000 | Val F1: 0.9974
+INFO:__main__:New best model (AUC: 1.0000)
+INFO:__main__:Epoch 10/20 | Train Loss: 0.0057 | Val Loss: 0.0070 | Val AUC: 1.0000 | Val F1: 0.9955
+INFO:__main__:Epoch 11/20 | Train Loss: 0.0048 | Val Loss: 0.0035 | Val AUC: 1.0000 | Val F1: 0.9980
+INFO:__main__:New best model (AUC: 1.0000)
+INFO:__main__:Epoch 12/20 | Train Loss: 0.0041 | Val Loss: 0.0026 | Val AUC: 1.0000 | Val F1: 0.9987
+INFO:__main__:New best model (AUC: 1.0000)
+INFO:__main__:Epoch 13/20 | Train Loss: 0.0033 | Val Loss: 0.0029 | Val AUC: 1.0000 | Val F1: 0.9985
+INFO:__main__:Epoch 14/20 | Train Loss: 0.0026 | Val Loss: 0.0027 | Val AUC: 1.0000 | Val F1: 0.9985
+INFO:__main__:Epoch 15/20 | Train Loss: 0.0022 | Val Loss: 0.0021 | Val AUC: 1.0000 | Val F1: 0.9988
+INFO:__main__:New best model (AUC: 1.0000)
+INFO:__main__:Epoch 16/20 | Train Loss: 0.0017 | Val Loss: 0.0021 | Val AUC: 1.0000 | Val F1: 0.9989
+INFO:__main__:New best model (AUC: 1.0000)
+INFO:__main__:Epoch 17/20 | Train Loss: 0.0013 | Val Loss: 0.0026 | Val AUC: 1.0000 | Val F1: 0.9985
+INFO:__main__:Epoch 18/20 | Train Loss: 0.0008 | Val Loss: 0.0026 | Val AUC: 1.0000 | Val F1: 0.9988
+INFO:__main__:Epoch 19/20 | Train Loss: 0.0007 | Val Loss: 0.0023 | Val AUC: 1.0000 | Val F1: 0.9991
+INFO:__main__:Early stopping at epoch 19
+INFO:__main__:Optimal threshold: 0.10 (Val F1: 0.9991)
+INFO:__main__:Fraction 50% - Test AUC: 1.0000, Test F1: 0.9986, Time: 4268.0s
+INFO:__main__:======================================================================
+INFO:__main__:Training with 75% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 300000
+INFO:__main__:Loading pre-trained BERT model (WARM START)
+Some weights of RobertaForSequenceClassification were not initialized from the model checkpoint at FacebookAI/roberta-base and are newly initialized: ['classifier.dense.bias', 'classifier.dense.weight', 'classifier.out_proj.bias', 'classifier.out_proj.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+INFO:__main__:Model parameters: 124,647,170
+INFO:__main__:Epoch 1/20 | Train Loss: 0.2586 | Val Loss: 0.0267 | Val AUC: 0.9985 | Val F1: 0.9922
+INFO:__main__:New best model (AUC: 0.9985)
+INFO:__main__:Epoch 2/20 | Train Loss: 0.0373 | Val Loss: 0.0288 | Val AUC: 0.9992 | Val F1: 0.9882
+INFO:__main__:Epoch 3/20 | Train Loss: 0.0249 | Val Loss: 0.0160 | Val AUC: 0.9998 | Val F1: 0.9924
+INFO:__main__:New best model (AUC: 0.9998)
+INFO:__main__:Epoch 4/20 | Train Loss: 0.0195 | Val Loss: 0.0113 | Val AUC: 0.9999 | Val F1: 0.9933
+INFO:__main__:New best model (AUC: 0.9999)
+INFO:__main__:Epoch 5/20 | Train Loss: 0.0146 | Val Loss: 0.0109 | Val AUC: 0.9999 | Val F1: 0.9937
+INFO:__main__:New best model (AUC: 0.9999)
+INFO:__main__:Epoch 6/20 | Train Loss: 0.1241 | Val Loss: 0.0077 | Val AUC: 1.0000 | Val F1: 0.9957
+INFO:__main__:New best model (AUC: 1.0000)
+INFO:__main__:Epoch 7/20 | Train Loss: 0.0100 | Val Loss: 0.0075 | Val AUC: 1.0000 | Val F1: 0.9961
+INFO:__main__:New best model (AUC: 1.0000)
+INFO:__main__:Epoch 8/20 | Train Loss: 0.0080 | Val Loss: 0.0045 | Val AUC: 1.0000 | Val F1: 0.9975
+INFO:__main__:New best model (AUC: 1.0000)
+INFO:__main__:Epoch 9/20 | Train Loss: 0.0068 | Val Loss: 0.0046 | Val AUC: 1.0000 | Val F1: 0.9975
+INFO:__main__:Epoch 10/20 | Train Loss: 0.0055 | Val Loss: 0.0046 | Val AUC: 1.0000 | Val F1: 0.9972
+INFO:__main__:Epoch 11/20 | Train Loss: 0.0046 | Val Loss: 0.0058 | Val AUC: 1.0000 | Val F1: 0.9971
+INFO:__main__:Early stopping at epoch 11
+INFO:__main__:Optimal threshold: 0.58 (Val F1: 0.9975)
+INFO:__main__:Fraction 75% - Test AUC: 1.0000, Test F1: 0.9971, Time: 3622.4s
+INFO:__main__:======================================================================
+INFO:__main__:Training with 100% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 400000
+INFO:__main__:Loading pre-trained BERT model (WARM START)
+Some weights of RobertaForSequenceClassification were not initialized from the model checkpoint at FacebookAI/roberta-base and are newly initialized: ['classifier.dense.bias', 'classifier.dense.weight', 'classifier.out_proj.bias', 'classifier.out_proj.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+INFO:__main__:Model parameters: 124,647,170
+INFO:__main__:Epoch 1/20 | Train Loss: 0.2360 | Val Loss: 0.0259 | Val AUC: 0.9991 | Val F1: 0.9907
+INFO:__main__:New best model (AUC: 0.9991)
+INFO:__main__:Epoch 2/20 | Train Loss: 0.0332 | Val Loss: 0.0901 | Val AUC: 0.9947 | Val F1: 0.9622
+INFO:__main__:Epoch 3/20 | Train Loss: 0.0186 | Val Loss: 0.0100 | Val AUC: 0.9999 | Val F1: 0.9946
+INFO:__main__:New best model (AUC: 0.9999)
+INFO:__main__:Epoch 4/20 | Train Loss: 0.0134 | Val Loss: 0.0085 | Val AUC: 1.0000 | Val F1: 0.9946
+INFO:__main__:New best model (AUC: 1.0000)
+INFO:__main__:Epoch 5/20 | Train Loss: 0.0095 | Val Loss: 0.0054 | Val AUC: 1.0000 | Val F1: 0.9967
+INFO:__main__:New best model (AUC: 1.0000)
+INFO:__main__:Epoch 6/20 | Train Loss: 0.0083 | Val Loss: 0.0046 | Val AUC: 1.0000 | Val F1: 0.9974
+INFO:__main__:New best model (AUC: 1.0000)
+INFO:__main__:Epoch 7/20 | Train Loss: 0.0066 | Val Loss: 0.0033 | Val AUC: 1.0000 | Val F1: 0.9980
+INFO:__main__:New best model (AUC: 1.0000)
+INFO:__main__:Epoch 8/20 | Train Loss: 0.0052 | Val Loss: 0.0030 | Val AUC: 1.0000 | Val F1: 0.9986
+INFO:__main__:New best model (AUC: 1.0000)
+INFO:__main__:Epoch 9/20 | Train Loss: 0.0041 | Val Loss: 0.0026 | Val AUC: 1.0000 | Val F1: 0.9987
+INFO:__main__:New best model (AUC: 1.0000)
+INFO:__main__:Epoch 10/20 | Train Loss: 0.0034 | Val Loss: 0.0023 | Val AUC: 1.0000 | Val F1: 0.9988
+INFO:__main__:New best model (AUC: 1.0000)
+INFO:__main__:Epoch 11/20 | Train Loss: 0.0024 | Val Loss: 0.0018 | Val AUC: 1.0000 | Val F1: 0.9991
+INFO:__main__:New best model (AUC: 1.0000)
+INFO:__main__:Epoch 12/20 | Train Loss: 0.0022 | Val Loss: 0.0031 | Val AUC: 1.0000 | Val F1: 0.9984
+INFO:__main__:Epoch 13/20 | Train Loss: 0.0018 | Val Loss: 0.0011 | Val AUC: 1.0000 | Val F1: 0.9995
+INFO:__main__:New best model (AUC: 1.0000)
+INFO:__main__:Epoch 14/20 | Train Loss: 0.0014 | Val Loss: 0.0010 | Val AUC: 1.0000 | Val F1: 0.9997
+INFO:__main__:New best model (AUC: 1.0000)
+INFO:__main__:Epoch 15/20 | Train Loss: 0.0010 | Val Loss: 0.0011 | Val AUC: 1.0000 | Val F1: 0.9996
+INFO:__main__:Epoch 16/20 | Train Loss: 0.0008 | Val Loss: 0.0014 | Val AUC: 1.0000 | Val F1: 0.9996
+INFO:__main__:Epoch 17/20 | Train Loss: 0.0006 | Val Loss: 0.0009 | Val AUC: 1.0000 | Val F1: 0.9997
+INFO:__main__:New best model (AUC: 1.0000)
+INFO:__main__:Epoch 18/20 | Train Loss: 0.0004 | Val Loss: 0.0007 | Val AUC: 1.0000 | Val F1: 0.9998
+INFO:__main__:New best model (AUC: 1.0000)
+INFO:__main__:Epoch 19/20 | Train Loss: 0.0003 | Val Loss: 0.0010 | Val AUC: 1.0000 | Val F1: 0.9997
+INFO:__main__:Epoch 20/20 | Train Loss: 0.0002 | Val Loss: 0.0010 | Val AUC: 1.0000 | Val F1: 0.9997
+INFO:__main__:Optimal threshold: 0.30 (Val F1: 0.9998)
+INFO:__main__:Fraction 100% - Test AUC: 1.0000, Test F1: 0.9993, Time: 8585.4s
+INFO:__main__:Results saved to: /cluster/work/projects/nn12048k/michechi/results/llm_fraction/bert_fraction_experiment_FacebookAI_roberta-base_6_20260123_054645.csv
+INFO:__main__:
+======================================================================
+INFO:__main__:EXPERIMENT SUMMARY
+INFO:__main__:======================================================================
+ fraction  train_samples  val_auc   val_f1  val_f1_optimal  val_loss  optimal_threshold  test_auc  test_f1  test_accuracy  test_precision  test_recall  epochs  training_time_s
+     0.01           4000 0.883559 0.743505        0.743678  0.399543               0.51  0.885085 0.745197        0.78702        0.652121     0.869264       9       266.401937
+     0.10          40000 0.999792 0.993462        0.993610  0.013906               0.38  0.999765 0.993329        0.99520        0.989259     0.997432      17      1083.461419
+     0.30         120000 0.999989 0.997545        0.997573  0.004607               0.47  0.999985 0.997462        0.99818        0.996767     0.998158      19      2747.015069
+     0.50         200000 0.999998 0.998939        0.999135  0.002064               0.10  0.999966 0.998606        0.99900        0.997604     0.999609      19      4267.982713
+     0.75         300000 0.999985 0.997464        0.997490  0.004497               0.58  0.999980 0.997128        0.99794        0.996045     0.998214      11      3622.449127
+     1.00         400000 0.999991 0.999777        0.999777  0.000741               0.30  0.999994 0.999275        0.99948        0.998940     0.999609      20      8585.442175
+
+Job 97077 consumed 0.0 billing hours and 5.7 GPU hours from project nn12048k.
+
+Submitted 2026-01-23T00:03:38; waited 0.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 24.0 hours
+Elapsed wallclock time:   5.7 hours
+
+Job exited normally.
+
+Task and CPU statistics:
+ID               CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+97077               1            0.0 %  2026-01-23T00:03:38    5.7 h  0
+97077.batch         1      1     0.0 %  2026-01-23T00:03:38    5.7 h  0
+97077.apptainer     1      1     0.0 %  2026-01-23T00:03:39    5.7 h  0
+
+Used CPU time:   0.2 CPU seconds
+Unused CPU time: 5.7 CPU hours
+
+Memory statistics, in GiB:
+ID                Alloc   Usage
+97077             128.0        
+97077.batch       128.0     0.1
+97077.apptainer   128.0     4.9
+
+Job 97077 completed at Fri Jan 23 05:46:47 CET 2026

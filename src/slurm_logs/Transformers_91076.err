@@ -1,0 +1,54 @@
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) init-NRIS
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+2026-01-20 16:25:57,270: Arguments:
+2026-01-20 16:25:57,270:   batch_size: 64
+2026-01-20 16:25:57,271:   epochs: 30
+2026-01-20 16:25:57,271:   fractions: 0.01,0.10,0.30,0.50,0.75,1.0
+2026-01-20 16:25:57,271:   label_column: label
+2026-01-20 16:25:57,271:   models: all
+2026-01-20 16:25:57,271:   no_search: False
+2026-01-20 16:25:57,271:   number_to_use: 9
+2026-01-20 16:25:57,271:   optimal: True
+2026-01-20 16:25:57,271:   output_dir: results
+2026-01-20 16:25:57,271:   path_csv: /cluster/home/michechi/MIMICIV/data/simulation/tested/
+2026-01-20 16:25:57,271:   patience: 5
+2026-01-20 16:25:57,272:   seed: 42
+2026-01-20 16:25:57,272:   sequence_column: Sequences
+2026-01-20 16:25:57,272:   sequence_separator: 
+2026-01-20 16:25:57,779: Using device: cuda
+2026-01-20 16:25:57,780: Loading data from: /cluster/home/michechi/MIMICIV/data/simulation/tested/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.12/dist-packages/pandas/core/indexes/base.py", line 3812, in get_loc
+    return self._engine.get_loc(casted_key)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "pandas/_libs/index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/hashtable_class_helper.pxi", line 7088, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas/_libs/hashtable_class_helper.pxi", line 7096, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'label'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/cluster/home/michechi/MIMICIV/src/DL_TR_baselines_experiment.py", line 1130, in <module>
+    results_df = run_fraction_experiment(args)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/cluster/home/michechi/MIMICIV/src/DL_TR_baselines_experiment.py", line 937, in run_fraction_experiment
+    test_sequences, test_labels) = load_data(args)
+                                   ^^^^^^^^^^^^^^^
+  File "/cluster/home/michechi/MIMICIV/src/DL_TR_baselines_experiment.py", line 904, in load_data
+    train_labels = y_train[args.label_column].values
+                   ~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/pandas/core/frame.py", line 4113, in __getitem__
+    indexer = self.columns.get_loc(key)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/pandas/core/indexes/base.py", line 3819, in get_loc
+    raise KeyError(key) from err
+KeyError: 'label'
+srun: error: gpu-1-13: task 0: Exited with exit code 1
+srun: Terminating StepId=91076.0

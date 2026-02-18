@@ -1,0 +1,61 @@
+Starting job 72350 on gpu-1-74 on Olivia at Sun Dec 28 12:01:18 CET 2025
+
+=== JOB CONFIGURATION ===
+Job ID: 72350
+Node: gpu-1-74
+Permanent Cache: /cluster/work/projects/nn12048k/michechi/cache
+=== STARTING CONTAINER ===
+Container: /cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif
+Environment: HUGGING_FACE_HUB_TOKEN=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,HF_HOME=/cluster/work/projects/nn12048k/michechi/cache,HF_DATASETS_CACHE=/cluster/work/projects/nn12048k/michechi/cache,XDG_CACHE_HOME=/cluster/work/projects/nn12048k/michechi/cache,PYTHONUNBUFFERED=1
+2025-12-28 12:01:26 - RNN_Baseline - INFO - Logging initialized. Log file: results_rnn_baseline/dataset_9/logs/training_20251228_120126.log
+2025-12-28 12:01:26 - RNN_Baseline - INFO - ======================================================================
+2025-12-28 12:01:26 - RNN_Baseline - INFO - RNN BASELINE TRAINING SCRIPT
+2025-12-28 12:01:26 - RNN_Baseline - INFO - ======================================================================
+2025-12-28 12:01:26 - RNN_Baseline - INFO - Arguments:
+2025-12-28 12:01:26 - RNN_Baseline - INFO -   path_csv: /fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/
+2025-12-28 12:01:26 - RNN_Baseline - INFO -   number_to_use: 9
+2025-12-28 12:01:26 - RNN_Baseline - INFO -   sequence_column: Sequences
+2025-12-28 12:01:26 - RNN_Baseline - INFO -   label_column: label
+2025-12-28 12:01:26 - RNN_Baseline - INFO -   test_rnd: False
+2025-12-28 12:01:26 - RNN_Baseline - INFO -   sequence_separator: 
+2025-12-28 12:01:26 - RNN_Baseline - INFO -   models: all
+2025-12-28 12:01:26 - RNN_Baseline - INFO -   no_search: False
+2025-12-28 12:01:26 - RNN_Baseline - INFO -   search_trials: 20
+2025-12-28 12:01:26 - RNN_Baseline - INFO -   batch_size: 64
+2025-12-28 12:01:26 - RNN_Baseline - INFO -   final_epochs: 30
+2025-12-28 12:01:26 - RNN_Baseline - INFO -   seed: 42
+2025-12-28 12:01:26 - RNN_Baseline - INFO -   save_models: True
+2025-12-28 12:01:26 - RNN_Baseline - INFO -   output_dir: results_rnn_baseline
+2025-12-28 12:01:26 - RNN_Baseline - INFO - Random seed set to: 42
+2025-12-28 12:01:26 - RNN_Baseline - INFO - Using device: cuda
+2025-12-28 12:01:26 - RNN_Baseline - INFO -   GPU: NVIDIA GH200 120GB
+2025-12-28 12:01:26 - RNN_Baseline - INFO -   Memory: 102.01 GB
+2025-12-28 12:01:26 - RNN_Baseline - INFO - Loading data from: /fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/
+2025-12-28 12:01:26 - RNN_Baseline - INFO - Using dataset number: 9
+2025-12-28 12:01:26 - RNN_Baseline - INFO - Sequence separator: '\x1f'
+
+Job 72350 consumed 0.0 billing hours and 0.0 GPU hours from project nn12048k.
+
+Submitted 2025-12-28T12:01:17; waited 0.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 24.0 hours
+Elapsed wallclock time:   10.0 seconds
+
+Job failed.
+
+Task and CPU statistics:
+ID               CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+72350               1            0.0 %  2025-12-28T12:01:17   10.0 s  1
+72350.batch         1      1     1.8 %  2025-12-28T12:01:17   10.0 s  1
+72350.apptainer     1      1     0.0 %  2025-12-28T12:01:19    8.0 s  1
+
+Used CPU time:   0.2 CPU seconds
+Unused CPU time: 9.8 CPU seconds
+
+Memory statistics, in GiB:
+ID                Alloc   Usage
+72350             128.0        
+72350.batch       128.0     0.1
+72350.apptainer   128.0     3.0
+
+Job 72350 completed at Sun Dec 28 12:01:27 CET 2025

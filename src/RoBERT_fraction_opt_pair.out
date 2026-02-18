@@ -1,0 +1,197 @@
+Starting job 97078 on gpu-1-75 on Olivia at Fri Jan 23 00:04:00 CET 2026
+
+=== JOB CONFIGURATION ===
+Job ID: 97078
+Node: gpu-1-75
+Scratch Cache: /cluster/software/gpujobscratch/jobs/97078/hf_cache_97078
+Free space in SCRATCH: 468T
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) init-NRIS
+=== STARTING CONTAINER ===
+Container: /cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif
+Environment: HUGGING_FACE_HUB_TOKEN=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,HF_HOME=/cluster/software/gpujobscratch/jobs/97078/hf_cache_97078,HF_DATASETS_CACHE=/cluster/software/gpujobscratch/jobs/97078/hf_cache_97078,XDG_CACHE_HOME=/cluster/software/gpujobscratch/jobs/97078/hf_cache_97078,PYTHONUNBUFFERED=1
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+INFO:__main__:Argument batch_size: 32
+INFO:__main__:Argument cache_dir: '/cluster/work/projects/nn12048k/michechi/cache/'
+INFO:__main__:Argument cold_start: False
+INFO:__main__:Argument early: 'loss'
+INFO:__main__:Argument epochs: 20
+INFO:__main__:Argument fractions: '0.01,0.10,0.30,0.50,0.75,1.0'
+INFO:__main__:Argument gradient_accumulation_steps: 1
+INFO:__main__:Argument lr: 2e-05
+INFO:__main__:Argument max_length: 100
+INFO:__main__:Argument model_name: 'FacebookAI/roberta-base'
+INFO:__main__:Argument number_to_use: 'test_just_pair'
+INFO:__main__:Argument output_dir: '/cluster/work/projects/nn12048k/michechi/results/llm_fraction/'
+INFO:__main__:Argument path_csv: '/cluster/home/michechi/MIMICIV/data/simulation/tested/'
+INFO:__main__:Argument patience: 3
+INFO:__main__:Argument peft: False
+INFO:__main__:Argument seed: 9550
+INFO:__main__:Argument tiny: False
+INFO:__main__:Argument tiny_type: '1M'
+INFO:__main__:Using device: cuda
+INFO:__main__:Output directory: /cluster/work/projects/nn12048k/michechi/results/llm_fraction/
+INFO:__main__:Loading datasets...
+INFO:__main__:Dataset sizes - Train: 800000, Val: 100000, Test: 100000
+INFO:__main__:Testing fractions: [0.01, 0.1, 0.3, 0.5, 0.75, 1.0]
+INFO:__main__:======================================================================
+INFO:__main__:Training with 1% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 8000
+INFO:__main__:Loading pre-trained BERT model (WARM START)
+Some weights of RobertaForSequenceClassification were not initialized from the model checkpoint at FacebookAI/roberta-base and are newly initialized: ['classifier.dense.bias', 'classifier.dense.weight', 'classifier.out_proj.bias', 'classifier.out_proj.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+INFO:__main__:Model parameters: 124,647,170
+INFO:__main__:Epoch 1/20 | Train Loss: 0.6945 | Val Loss: 0.6933 | Val AUC: 0.4964 | Val F1: 0.6682
+INFO:__main__:New best model (AUC: 0.4964)
+INFO:__main__:Epoch 2/20 | Train Loss: 0.6957 | Val Loss: 0.6937 | Val AUC: 0.5017 | Val F1: 0.0000
+INFO:__main__:Epoch 3/20 | Train Loss: 0.6943 | Val Loss: 0.6970 | Val AUC: 0.4995 | Val F1: 0.0000
+INFO:__main__:Epoch 4/20 | Train Loss: 0.6941 | Val Loss: 0.6937 | Val AUC: 0.5020 | Val F1: 0.0000
+INFO:__main__:Early stopping at epoch 4
+INFO:__main__:Optimal threshold: 0.10 (Val F1: 0.6682)
+INFO:__main__:Fraction 1% - Test AUC: 0.4979, Test F1: 0.6679, Time: 284.3s
+INFO:__main__:======================================================================
+INFO:__main__:Training with 10% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 80000
+INFO:__main__:Loading pre-trained BERT model (WARM START)
+Some weights of RobertaForSequenceClassification were not initialized from the model checkpoint at FacebookAI/roberta-base and are newly initialized: ['classifier.dense.bias', 'classifier.dense.weight', 'classifier.out_proj.bias', 'classifier.out_proj.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+INFO:__main__:Model parameters: 124,647,170
+INFO:__main__:Epoch 1/20 | Train Loss: 0.6941 | Val Loss: 0.6942 | Val AUC: 0.4954 | Val F1: 0.6682
+INFO:__main__:New best model (AUC: 0.4954)
+INFO:__main__:Epoch 2/20 | Train Loss: 0.6942 | Val Loss: 0.6931 | Val AUC: 0.5001 | Val F1: 0.6682
+INFO:__main__:New best model (AUC: 0.5001)
+INFO:__main__:Epoch 3/20 | Train Loss: 0.6940 | Val Loss: 0.6932 | Val AUC: 0.5017 | Val F1: 0.0000
+INFO:__main__:Epoch 4/20 | Train Loss: 0.6940 | Val Loss: 0.6932 | Val AUC: 0.4998 | Val F1: 0.6682
+INFO:__main__:Epoch 5/20 | Train Loss: 0.6937 | Val Loss: 0.6932 | Val AUC: 0.4969 | Val F1: 0.6682
+INFO:__main__:Early stopping at epoch 5
+INFO:__main__:Optimal threshold: 0.10 (Val F1: 0.6682)
+INFO:__main__:Fraction 10% - Test AUC: 0.5035, Test F1: 0.6679, Time: 687.6s
+INFO:__main__:======================================================================
+INFO:__main__:Training with 30% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 240000
+INFO:__main__:Loading pre-trained BERT model (WARM START)
+Some weights of RobertaForSequenceClassification were not initialized from the model checkpoint at FacebookAI/roberta-base and are newly initialized: ['classifier.dense.bias', 'classifier.dense.weight', 'classifier.out_proj.bias', 'classifier.out_proj.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+INFO:__main__:Model parameters: 124,647,170
+INFO:__main__:Epoch 1/20 | Train Loss: 0.6941 | Val Loss: 0.6932 | Val AUC: 0.4990 | Val F1: 0.6682
+INFO:__main__:New best model (AUC: 0.4990)
+INFO:__main__:Epoch 2/20 | Train Loss: 0.6940 | Val Loss: 0.6931 | Val AUC: 0.4967 | Val F1: 0.6682
+INFO:__main__:New best model (AUC: 0.4967)
+INFO:__main__:Epoch 3/20 | Train Loss: 0.6939 | Val Loss: 0.6931 | Val AUC: 0.4990 | Val F1: 0.6682
+INFO:__main__:Epoch 4/20 | Train Loss: 0.6938 | Val Loss: 0.6931 | Val AUC: 0.5014 | Val F1: 0.6682
+INFO:__main__:Epoch 5/20 | Train Loss: 0.6936 | Val Loss: 0.6932 | Val AUC: 0.5018 | Val F1: 0.0000
+INFO:__main__:Early stopping at epoch 5
+INFO:__main__:Optimal threshold: 0.10 (Val F1: 0.6682)
+INFO:__main__:Fraction 30% - Test AUC: 0.5014, Test F1: 0.6679, Time: 1490.9s
+INFO:__main__:======================================================================
+INFO:__main__:Training with 50% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 400000
+INFO:__main__:Loading pre-trained BERT model (WARM START)
+Some weights of RobertaForSequenceClassification were not initialized from the model checkpoint at FacebookAI/roberta-base and are newly initialized: ['classifier.dense.bias', 'classifier.dense.weight', 'classifier.out_proj.bias', 'classifier.out_proj.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+INFO:__main__:Model parameters: 124,647,170
+INFO:__main__:Epoch 1/20 | Train Loss: 0.6941 | Val Loss: 0.6941 | Val AUC: 0.5039 | Val F1: 0.0000
+INFO:__main__:New best model (AUC: 0.5039)
+INFO:__main__:Epoch 2/20 | Train Loss: 0.6939 | Val Loss: 0.6935 | Val AUC: 0.4955 | Val F1: 0.6682
+INFO:__main__:New best model (AUC: 0.4955)
+INFO:__main__:Epoch 3/20 | Train Loss: 0.6938 | Val Loss: 0.6937 | Val AUC: 0.5014 | Val F1: 0.6682
+INFO:__main__:Epoch 4/20 | Train Loss: 0.6937 | Val Loss: 0.6939 | Val AUC: 0.5015 | Val F1: 0.0000
+INFO:__main__:Epoch 5/20 | Train Loss: 0.6936 | Val Loss: 0.6931 | Val AUC: 0.5002 | Val F1: 0.0000
+INFO:__main__:New best model (AUC: 0.5002)
+INFO:__main__:Epoch 6/20 | Train Loss: 0.6935 | Val Loss: 0.6932 | Val AUC: 0.4997 | Val F1: 0.0000
+INFO:__main__:Epoch 7/20 | Train Loss: 0.6934 | Val Loss: 0.6931 | Val AUC: 0.5014 | Val F1: 0.6682
+INFO:__main__:New best model (AUC: 0.5014)
+INFO:__main__:Epoch 8/20 | Train Loss: 0.6934 | Val Loss: 0.6931 | Val AUC: 0.4996 | Val F1: 0.6682
+INFO:__main__:New best model (AUC: 0.4996)
+INFO:__main__:Epoch 9/20 | Train Loss: 0.6933 | Val Loss: 0.6932 | Val AUC: 0.4998 | Val F1: 0.0000
+INFO:__main__:Epoch 10/20 | Train Loss: 0.6933 | Val Loss: 0.6932 | Val AUC: 0.5015 | Val F1: 0.0000
+INFO:__main__:Epoch 11/20 | Train Loss: 0.6933 | Val Loss: 0.6932 | Val AUC: 0.5009 | Val F1: 0.0000
+INFO:__main__:Early stopping at epoch 11
+INFO:__main__:Optimal threshold: 0.10 (Val F1: 0.6682)
+INFO:__main__:Fraction 50% - Test AUC: 0.5010, Test F1: 0.6679, Time: 4948.0s
+INFO:__main__:======================================================================
+INFO:__main__:Training with 75% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 600000
+INFO:__main__:Loading pre-trained BERT model (WARM START)
+Some weights of RobertaForSequenceClassification were not initialized from the model checkpoint at FacebookAI/roberta-base and are newly initialized: ['classifier.dense.bias', 'classifier.dense.weight', 'classifier.out_proj.bias', 'classifier.out_proj.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+INFO:__main__:Model parameters: 124,647,170
+INFO:__main__:Epoch 1/20 | Train Loss: 0.6940 | Val Loss: 0.6933 | Val AUC: 0.5004 | Val F1: 0.0000
+INFO:__main__:New best model (AUC: 0.5004)
+INFO:__main__:Epoch 2/20 | Train Loss: 0.6939 | Val Loss: 0.6933 | Val AUC: 0.5009 | Val F1: 0.0000
+INFO:__main__:New best model (AUC: 0.5009)
+INFO:__main__:Epoch 3/20 | Train Loss: 0.6937 | Val Loss: 0.6933 | Val AUC: 0.4986 | Val F1: 0.0000
+INFO:__main__:Epoch 4/20 | Train Loss: 0.6936 | Val Loss: 0.6931 | Val AUC: 0.4982 | Val F1: 0.6682
+INFO:__main__:New best model (AUC: 0.4982)
+INFO:__main__:Epoch 5/20 | Train Loss: 0.6935 | Val Loss: 0.6931 | Val AUC: 0.5017 | Val F1: 0.6682
+INFO:__main__:Epoch 6/20 | Train Loss: 0.6934 | Val Loss: 0.6933 | Val AUC: 0.5014 | Val F1: 0.0000
+INFO:__main__:Epoch 7/20 | Train Loss: 0.6933 | Val Loss: 0.6932 | Val AUC: 0.5012 | Val F1: 0.0000
+INFO:__main__:Early stopping at epoch 7
+INFO:__main__:Optimal threshold: 0.10 (Val F1: 0.6682)
+INFO:__main__:Fraction 75% - Test AUC: 0.5004, Test F1: 0.6679, Time: 4570.6s
+INFO:__main__:======================================================================
+INFO:__main__:Training with 100% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 800000
+INFO:__main__:Loading pre-trained BERT model (WARM START)
+Some weights of RobertaForSequenceClassification were not initialized from the model checkpoint at FacebookAI/roberta-base and are newly initialized: ['classifier.dense.bias', 'classifier.dense.weight', 'classifier.out_proj.bias', 'classifier.out_proj.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+INFO:__main__:Model parameters: 124,647,170
+INFO:__main__:Epoch 1/20 | Train Loss: 0.6940 | Val Loss: 0.6932 | Val AUC: 0.4949 | Val F1: 0.6682
+INFO:__main__:New best model (AUC: 0.4949)
+INFO:__main__:Epoch 2/20 | Train Loss: 0.6938 | Val Loss: 0.6932 | Val AUC: 0.4971 | Val F1: 0.0000
+INFO:__main__:Epoch 3/20 | Train Loss: 0.6936 | Val Loss: 0.6931 | Val AUC: 0.5015 | Val F1: 0.6682
+INFO:__main__:New best model (AUC: 0.5015)
+INFO:__main__:Epoch 4/20 | Train Loss: 0.6935 | Val Loss: 0.6932 | Val AUC: 0.4972 | Val F1: 0.6682
+INFO:__main__:Epoch 5/20 | Train Loss: 0.6934 | Val Loss: 0.6932 | Val AUC: 0.4987 | Val F1: 0.0000
+INFO:__main__:Epoch 6/20 | Train Loss: 0.6933 | Val Loss: 0.6934 | Val AUC: 0.5029 | Val F1: 0.0000
+INFO:__main__:Early stopping at epoch 6
+INFO:__main__:Optimal threshold: 0.10 (Val F1: 0.6682)
+INFO:__main__:Fraction 100% - Test AUC: 0.5008, Test F1: 0.6679, Time: 5129.3s
+INFO:__main__:Results saved to: /cluster/work/projects/nn12048k/michechi/results/llm_fraction/bert_fraction_experiment_FacebookAI_roberta-base_test_just_pair_20260123_044925.csv
+INFO:__main__:
+======================================================================
+INFO:__main__:EXPERIMENT SUMMARY
+INFO:__main__:======================================================================
+ fraction  train_samples  val_auc   val_f1  val_f1_optimal  val_loss  optimal_threshold  test_auc  test_f1  test_accuracy  test_precision  test_recall  epochs  training_time_s
+     0.01           8000 0.496378 0.668203        0.668203  0.693287                0.1  0.497884 0.667866        0.50135         0.50135          1.0       4       284.325305
+     0.10          80000 0.500053 0.668203        0.668203  0.693145                0.1  0.503500 0.667866        0.50135         0.50135          1.0       5       687.602944
+     0.30         240000 0.496704 0.668203        0.668203  0.693141                0.1  0.501385 0.667866        0.50135         0.50135          1.0       5      1490.867053
+     0.50         400000 0.499561 0.668203        0.668203  0.693142                0.1  0.501045 0.667866        0.50135         0.50135          1.0      11      4947.970196
+     0.75         600000 0.498229 0.668203        0.668203  0.693142                0.1  0.500404 0.667866        0.50135         0.50135          1.0       7      4570.600048
+     1.00         800000 0.501482 0.668203        0.668203  0.693141                0.1  0.500785 0.667866        0.50135         0.50135          1.0       6      5129.318411
+
+Job 97078 consumed 0.0 billing hours and 4.8 GPU hours from project nn12048k.
+
+Submitted 2026-01-23T00:03:59; waited 0.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 24.0 hours
+Elapsed wallclock time:   4.8 hours
+
+Job exited normally.
+
+Task and CPU statistics:
+ID               CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+97078               1            0.0 %  2026-01-23T00:03:59    4.8 h  0
+97078.batch         1      1     0.0 %  2026-01-23T00:03:59    4.8 h  0
+97078.apptainer     1      1     0.0 %  2026-01-23T00:04:00    4.8 h  0
+
+Used CPU time:   0.2 CPU seconds
+Unused CPU time: 4.8 CPU hours
+
+Memory statistics, in GiB:
+ID                Alloc   Usage
+97078             128.0        
+97078.batch       128.0     0.0
+97078.apptainer   128.0     4.7
+
+Job 97078 completed at Fri Jan 23 04:49:27 CET 2026

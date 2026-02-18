@@ -1,0 +1,53 @@
+Starting job 68910 on gpu-1-76 on Olivia at Wed Dec 24 16:21:24 CET 2025
+
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+`torch_dtype` is deprecated! Use `dtype` instead!
+WARNING:__main__:Tokenizer non ha un pad_token. Lo aggiungo manualmente come [PAD].
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py:626: UserWarning: This DataLoader will create 4 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+trainable params: 1,703,936 || all params: 1,237,518,336 || trainable%: 0.1377
+Overlap train-val: 0 (0.0%)
+Overlap train-test: 0 (0.0%)
+Overlap val-test: 0 (0.0%)
+Using device: cuda
+/usr/local/lib/python3.12/dist-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+/cluster/home/michechi/MIMICIV/src/./Finetuning_FOX_time_simulation_tiny.py:471: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /opt/pytorch/pytorch/aten/src/ATen/native/Scalar.cpp:22.)
+  total_train_loss += loss.item()
+/cluster/home/michechi/MIMICIV/src/./Finetuning_FOX_time_simulation_tiny.py:490: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.no_grad(), autocast(dtype=torch.bfloat16):
+/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py:626: UserWarning: This DataLoader will create 4 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+[2025-12-24T16:51:32.009] error: *** STEP 68910.0 ON gpu-1-76 CANCELLED AT 2025-12-24T16:51:32 DUE TO TIME LIMIT ***
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+[2025-12-24T16:51:32.010] error: *** JOB 68910 ON gpu-1-76 CANCELLED AT 2025-12-24T16:51:32 DUE TO TIME LIMIT ***
+
+Job 68910 consumed 0.0 billing hours and 0.5 GPU hours from project nn12048k.
+
+Submitted 2025-12-24T16:21:23; waited 1.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 30.0 minutes
+Elapsed wallclock time:   30.1 minutes
+
+Job timed out.
+
+Task and CPU statistics:
+ID               CPUs  Tasks  CPU util                Start   Elapsed  Exit status
+68910               1            0.0 %  2025-12-24T16:21:24  1808.0 s  0
+68910.batch         1      1     0.0 %  2025-12-24T16:21:24  1808.0 s  Signal 15
+68910.apptainer     1      1     0.0 %  2025-12-24T16:21:24  1812.0 s  Signal 15
+
+Used CPU time:   0.1 CPU seconds
+Unused CPU time: 30.1 CPU minutes
+
+Memory statistics, in GiB:
+ID                Alloc   Usage
+68910             128.0        
+68910.batch       128.0     0.0
+68910.apptainer   128.0     7.0
+
+Job 68910 completed at Wed Dec 24 16:51:37 CET 2025

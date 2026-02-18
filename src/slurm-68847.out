@@ -1,0 +1,51 @@
+Starting job 68847 on gpu-1-75 on Olivia at Wed Dec 24 09:40:08 CET 2025
+
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+Traceback (most recent call last):
+  File "/cluster/home/michechi/MIMICIV/src/./Finetuning_FOX_time_simulation_tiny.py", line 18, in <module>
+    from peft import LoraConfig, get_peft_model
+  File "/usr/local/lib/python3.12/dist-packages/peft/__init__.py", line 17, in <module>
+    from .auto import (
+  File "/usr/local/lib/python3.12/dist-packages/peft/auto.py", line 32, in <module>
+    from .peft_model import (
+  File "/usr/local/lib/python3.12/dist-packages/peft/peft_model.py", line 42, in <module>
+    from peft.tuners.lora.variants import get_alora_offsets_for_forward, get_alora_offsets_for_generate
+  File "/usr/local/lib/python3.12/dist-packages/peft/tuners/__init__.py", line 15, in <module>
+    from .adalora import AdaLoraConfig, AdaLoraModel
+  File "/usr/local/lib/python3.12/dist-packages/peft/tuners/adalora/__init__.py", line 18, in <module>
+    from .config import AdaLoraConfig
+  File "/usr/local/lib/python3.12/dist-packages/peft/tuners/adalora/config.py", line 19, in <module>
+    from peft.tuners.lora import LoraConfig
+  File "/usr/local/lib/python3.12/dist-packages/peft/tuners/lora/__init__.py", line 23, in <module>
+    from .model import LoraModel
+  File "/usr/local/lib/python3.12/dist-packages/peft/tuners/lora/model.py", line 26, in <module>
+    from transformers.modeling_layers import GradientCheckpointingLayer
+ModuleNotFoundError: No module named 'transformers.modeling_layers'
+srun: error: gpu-1-75: task 0: Exited with exit code 1
+srun: Terminating StepId=68847.0
+
+Job 68847 consumed 0.0 billing hours and 0.0 GPU hours from project nn12048k.
+
+Submitted 2025-12-24T09:40:07; waited 0.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 30.0 minutes
+Elapsed wallclock time:   10.0 seconds
+
+Job failed.
+
+Task and CPU statistics:
+ID                 CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+68847                 1            0.0 %  2025-12-24T09:40:07   10.0 s  1
+68847.batch           1      1     2.5 %  2025-12-24T09:40:07   10.0 s  1
+68847.singularity     1      1     0.0 %  2025-12-24T09:40:09    8.0 s  1
+
+Used CPU time:   0.2 CPU seconds
+Unused CPU time: 9.8 CPU seconds
+
+Memory statistics, in GiB:
+ID                  Alloc   Usage
+68847               128.0        
+68847.batch         128.0     0.1
+68847.singularity   128.0     3.0
+
+Job 68847 completed at Wed Dec 24 09:40:17 CET 2025

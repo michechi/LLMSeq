@@ -1,0 +1,84 @@
+Starting job 92960 on gpu-1-62 on Olivia at Wed Jan 21 15:38:06 CET 2026
+
+=== JOB CONFIGURATION ===
+Job ID: 92960
+Node: gpu-1-62
+Scratch Cache: /cluster/software/gpujobscratch/jobs/92960/hf_cache_92960
+Free space in SCRATCH: 472T
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) init-NRIS
+=== STARTING CONTAINER ===
+Container: /cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif
+Environment: HUGGING_FACE_HUB_TOKEN=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,HF_HOME=/cluster/software/gpujobscratch/jobs/92960/hf_cache_92960,HF_DATASETS_CACHE=/cluster/software/gpujobscratch/jobs/92960/hf_cache_92960,XDG_CACHE_HOME=/cluster/software/gpujobscratch/jobs/92960/hf_cache_92960
+=== CHECKING XGBOOST VERSION ===
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+XGBoost version: 2.1.4
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+2026-01-21 15:38:22,317 [INFO] Argument batch_size: 8
+2026-01-21 15:38:22,318 [INFO] Argument cache_dir: /cluster/work/projects/nn12048k/michechi/cache/
+2026-01-21 15:38:22,318 [INFO] Argument csv_to_use: 6
+2026-01-21 15:38:22,318 [INFO] Argument embedding_dir: /cluster/work/projects/nn12048k/michechi/cache/embeddings/
+2026-01-21 15:38:22,318 [INFO] Argument max_length: 512
+2026-01-21 15:38:22,318 [INFO] Argument model_name: meta-llama/Llama-3.1-8B
+2026-01-21 15:38:22,318 [INFO] Argument output_dir: results_XGB
+2026-01-21 15:38:22,318 [INFO] Argument path_csv: /cluster/home/michechi/MIMICIV/data/simulation/tested/
+2026-01-21 15:38:22,318 [INFO] Argument run_basic: True
+2026-01-21 15:38:22,319 [INFO] Argument run_llm: True
+2026-01-21 15:38:22,319 [INFO] Argument seed: 9550
+2026-01-21 15:38:22,495 [INFO] Using device: cuda
+2026-01-21 15:38:22,495 [INFO] CUDA available: True
+2026-01-21 15:38:22,496 [INFO] Loading datasets...
+2026-01-21 15:38:22,843 [INFO] Train set: 400000, Val set: 50000, Test set: 50000
+2026-01-21 15:38:22,843 [INFO] Will run: ['basic', 'llm']
+2026-01-21 15:38:22,844 [INFO] ======================================================================
+2026-01-21 15:38:22,844 [INFO] Encoding: BASIC, Fraction: 1%
+2026-01-21 15:38:22,844 [INFO] ======================================================================
+2026-01-21 15:38:22,915 [INFO] Subsampled 4000 samples (1.0%) from 400000
+2026-01-21 15:38:22,916 [ERROR] Error in basic with fraction 0.01: Cannot cast array data from dtype('float64') to dtype('int64') according to the rule 'safe'
+Traceback (most recent call last):
+  File "/cluster/home/michechi/MIMICIV/src/./XGBoost_fraction_experiment.py", line 605, in <module>
+    results_df = run_experiment(args)
+                 ^^^^^^^^^^^^^^^^^^^^
+  File "/cluster/home/michechi/MIMICIV/src/./XGBoost_fraction_experiment.py", line 456, in run_experiment
+    X_train_subset, y_train_subset = subsample_training_data(
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/cluster/home/michechi/MIMICIV/src/./XGBoost_fraction_experiment.py", line 295, in subsample_training_data
+    class_dist = np.bincount(y_subset.values.ravel())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: Cannot cast array data from dtype('float64') to dtype('int64') according to the rule 'safe'
+srun: error: gpu-1-62: task 0: Exited with exit code 1
+srun: Terminating StepId=92960.1
+
+Job 92960 consumed 0.0 billing hours and 0.0 GPU hours from project nn12048k.
+
+Submitted 2026-01-21T15:38:05; waited 0.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 20.0 hours
+Elapsed wallclock time:   18.0 seconds
+
+Job failed.
+
+Task and CPU statistics:
+ID               CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+92960               1            0.0 %  2026-01-21T15:38:05   18.0 s  1
+92960.batch         1      1     1.2 %  2026-01-21T15:38:05   18.0 s  1
+92960.apptainer     1      1     0.0 %  2026-01-21T15:38:07    5.0 s  0
+92960.apptainer     1      1     0.0 %  2026-01-21T15:38:12   11.0 s  1
+
+Used CPU time:   0.2 CPU seconds
+Unused CPU time: 17.8 CPU seconds
+
+Memory statistics, in GiB:
+ID                Alloc   Usage
+92960             128.0        
+92960.batch       128.0     0.1
+92960.apptainer   128.0     1.0
+92960.apptainer   128.0     3.4
+
+Job 92960 completed at Wed Jan 21 15:38:24 CET 2026

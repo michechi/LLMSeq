@@ -1,0 +1,46 @@
+Starting job 68994 on gpu-1-74 on Olivia at Wed Dec 24 19:10:53 CET 2025
+
+=== JOB CONFIGURATION ===
+Job ID: 68994
+Node: gpu-1-74
+Scratch Cache: /cluster/software/gpujobscratch/jobs/68994/hf_cache_68994
+Free space in SCRATCH: 472T
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) init-NRIS
+=== STARTING CONTAINER ===
+Container: /cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif
+Environment: HUGGING_FACE_HUB_TOKEN=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,HF_HOME=/cluster/software/gpujobscratch/jobs/68994/hf_cache_68994,HF_DATASETS_CACHE=/cluster/software/gpujobscratch/jobs/68994/hf_cache_68994,XDG_CACHE_HOME=/cluster/software/gpujobscratch/jobs/68994/hf_cache_68994
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+[2025-12-24T19:11:05.339] error: *** STEP 68994.0 ON gpu-1-74 CANCELLED AT 2025-12-24T19:11:05 DUE to SIGNAL Terminated ***
+[2025-12-24T19:11:05.340] error: *** JOB 68994 ON gpu-1-74 CANCELLED AT 2025-12-24T19:11:05 DUE to SIGNAL Terminated ***
+
+Job 68994 consumed 0.0 billing hours and 0.0 GPU hours from project nn12048k.
+
+Submitted 2025-12-24T19:10:50; waited 3.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 15.0 hours
+Elapsed wallclock time:   12.0 seconds
+
+Job was cancelled.
+
+Task and CPU statistics:
+ID               CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+68994               1            0.0 %  2025-12-24T19:10:53   12.0 s  0
+68994.batch         1      1     1.7 %  2025-12-24T19:10:53   13.0 s  Signal 15
+68994.apptainer     1      1     0.0 %  2025-12-24T19:10:54   13.0 s  Signal 15
+
+Used CPU time:   0.2 CPU seconds
+Unused CPU time: 11.8 CPU seconds
+
+Memory statistics, in GiB:
+ID                Alloc   Usage
+68994             128.0        
+68994.batch       128.0     0.1
+68994.apptainer   128.0     3.2
+
+Job 68994 completed at Wed Dec 24 19:11:09 CET 2025

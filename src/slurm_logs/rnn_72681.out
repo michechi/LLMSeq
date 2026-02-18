@@ -1,0 +1,219 @@
+Starting job 72681 on gpu-1-74 on Olivia at Sun Dec 28 23:02:22 CET 2025
+
+=== JOB CONFIGURATION ===
+Job ID: 72681
+Node: gpu-1-74
+Permanent Cache: /cluster/work/projects/nn12048k/michechi/cache
+=== STARTING CONTAINER ===
+Container: /cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif
+Environment: HUGGING_FACE_HUB_TOKEN=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,HF_HOME=/cluster/work/projects/nn12048k/michechi/cache,HF_DATASETS_CACHE=/cluster/work/projects/nn12048k/michechi/cache,XDG_CACHE_HOME=/cluster/work/projects/nn12048k/michechi/cache,PYTHONUNBUFFERED=1
+2025-12-28 23:02:30 - RNN_Baseline - INFO - Logging initialized. Log file: results_rnn_baseline/dataset_9/logs/training_20251228_230230.log
+2025-12-28 23:02:30 - RNN_Baseline - INFO - ======================================================================
+2025-12-28 23:02:30 - RNN_Baseline - INFO - RNN BASELINE TRAINING SCRIPT
+2025-12-28 23:02:30 - RNN_Baseline - INFO - ======================================================================
+2025-12-28 23:02:30 - RNN_Baseline - INFO - Arguments:
+2025-12-28 23:02:30 - RNN_Baseline - INFO -   path_csv: /cluster/home/michechi/MIMICIV/data/simulation/tested/
+2025-12-28 23:02:30 - RNN_Baseline - INFO -   number_to_use: 9
+2025-12-28 23:02:30 - RNN_Baseline - INFO -   sequence_column: Sequences
+2025-12-28 23:02:30 - RNN_Baseline - INFO -   label_column: Outcome
+2025-12-28 23:02:30 - RNN_Baseline - INFO -   test_rnd: False
+2025-12-28 23:02:30 - RNN_Baseline - INFO -   sequence_separator: 
+2025-12-28 23:02:30 - RNN_Baseline - INFO -   models: MLP,CNN1D,Transformer
+2025-12-28 23:02:30 - RNN_Baseline - INFO -   no_search: False
+2025-12-28 23:02:30 - RNN_Baseline - INFO -   search_trials: 20
+2025-12-28 23:02:30 - RNN_Baseline - INFO -   batch_size: 64
+2025-12-28 23:02:30 - RNN_Baseline - INFO -   final_epochs: 30
+2025-12-28 23:02:30 - RNN_Baseline - INFO -   seed: 42
+2025-12-28 23:02:30 - RNN_Baseline - INFO -   save_models: True
+2025-12-28 23:02:30 - RNN_Baseline - INFO -   output_dir: results_rnn_baseline
+2025-12-28 23:02:30 - RNN_Baseline - INFO - Random seed set to: 42
+2025-12-28 23:02:30 - RNN_Baseline - INFO - Using device: cuda
+2025-12-28 23:02:30 - RNN_Baseline - INFO -   GPU: NVIDIA GH200 120GB
+2025-12-28 23:02:30 - RNN_Baseline - INFO -   Memory: 102.01 GB
+2025-12-28 23:02:30 - RNN_Baseline - INFO - Loading data from: /cluster/home/michechi/MIMICIV/data/simulation/tested/
+2025-12-28 23:02:30 - RNN_Baseline - INFO - Using dataset number: 9
+2025-12-28 23:02:30 - RNN_Baseline - INFO - Sequence separator: '\x1f'
+2025-12-28 23:02:31 - RNN_Baseline - INFO - Preprocessing sequences (splitting by separator)...
+2025-12-28 23:02:31 - RNN_Baseline - INFO - Data loaded successfully:
+2025-12-28 23:02:31 - RNN_Baseline - INFO -   Train: 400000 sequences
+2025-12-28 23:02:31 - RNN_Baseline - INFO -   Val:   50000 sequences
+2025-12-28 23:02:31 - RNN_Baseline - INFO -   Test:  50000 sequences
+2025-12-28 23:02:31 - RNN_Baseline - INFO -   Class distribution (train): 232630 (label=0) / 167370 (label=1)
+2025-12-28 23:02:31 - RNN_Baseline - INFO -   Sequence length: min=20, max=20, mean=20.0
+2025-12-28 23:02:31 - RNN_Baseline - INFO - Maximum sequence length in dataset: 20
+2025-12-28 23:02:31 - RNN_Baseline - INFO - Creating PyTorch datasets...
+2025-12-28 23:02:31 - RNN_Baseline - INFO - Creating dataloaders (batch_size=64)...
+2025-12-28 23:02:31 - RNN_Baseline - INFO -   Train batches: 6250
+2025-12-28 23:02:31 - RNN_Baseline - INFO -   Val batches:   782
+2025-12-28 23:02:31 - RNN_Baseline - INFO -   Test batches:  782
+2025-12-28 23:02:31 - RNN_Baseline - INFO - Models to train: MLP, CNN1D, Transformer
+2025-12-28 23:02:31 - RNN_Baseline - INFO - 
+######################################################################
+2025-12-28 23:02:31 - RNN_Baseline - INFO - # TRAINING MLP
+2025-12-28 23:02:31 - RNN_Baseline - INFO - ######################################################################
+2025-12-28 23:02:31 - RNN_Baseline - INFO - ============================================================
+2025-12-28 23:02:31 - RNN_Baseline - INFO - RANDOM SEARCH for MLP (20 trials)
+2025-12-28 23:02:31 - RNN_Baseline - INFO - ============================================================
+2025-12-28 23:02:31 - RNN_Baseline - INFO - 
+Trial 1/20:
+2025-12-28 23:02:31 - RNN_Baseline - INFO -   Config: {'vocab_size': 26, 'max_seq_length': 30, 'hidden_dims': [256, 128], 'num_classes': 2, 'dropout': 0.2}
+2025-12-28 23:02:31 - RNN_Baseline - INFO -   LR: 0.002
+2025-12-28 23:02:31 - RNN_Baseline - INFO - Starting training for MLP_trial0
+2025-12-28 23:42:00 - RNN_Baseline - INFO -   Epoch [5/15] Train Loss: 0.6146, Val F1: 0.4078, Val AUC: 0.6113
+2025-12-29 00:21:20 - RNN_Baseline - INFO -   Epoch [10/15] Train Loss: 0.5564, Val F1: 0.4198, Val AUC: 0.5977
+2025-12-29 00:44:46 - RNN_Baseline - INFO -   Early stopping at epoch 13
+2025-12-29 00:44:46 - RNN_Baseline - INFO - Training completed. Best epoch: 8, Best Val F1: 0.4475
+2025-12-29 00:44:46 - RNN_Baseline - INFO -   → Val F1: 0.4475
+2025-12-29 00:44:46 - RNN_Baseline - INFO - 
+Trial 2/20:
+2025-12-29 00:44:46 - RNN_Baseline - INFO -   Config: {'vocab_size': 26, 'max_seq_length': 30, 'hidden_dims': [256, 128, 64], 'num_classes': 2, 'dropout': 0.3}
+2025-12-29 00:44:46 - RNN_Baseline - INFO -   LR: 0.0005
+2025-12-29 00:44:46 - RNN_Baseline - INFO - Starting training for MLP_trial1
+2025-12-29 01:24:31 - RNN_Baseline - INFO -   Epoch [5/15] Train Loss: 0.6164, Val F1: 0.4461, Val AUC: 0.6155
+2025-12-29 02:04:12 - RNN_Baseline - INFO -   Epoch [10/15] Train Loss: 0.5717, Val F1: 0.4629, Val AUC: 0.6038
+2025-12-29 02:43:54 - RNN_Baseline - INFO -   Epoch [15/15] Train Loss: 0.5461, Val F1: 0.4607, Val AUC: 0.5969
+2025-12-29 02:43:54 - RNN_Baseline - INFO -   Early stopping at epoch 15
+2025-12-29 02:43:54 - RNN_Baseline - INFO - Training completed. Best epoch: 10, Best Val F1: 0.4629
+2025-12-29 02:43:54 - RNN_Baseline - INFO -   → Val F1: 0.4629
+2025-12-29 02:43:54 - RNN_Baseline - INFO - 
+Trial 3/20:
+2025-12-29 02:43:54 - RNN_Baseline - INFO -   Config: {'vocab_size': 26, 'max_seq_length': 30, 'hidden_dims': [512, 256], 'num_classes': 2, 'dropout': 0.2}
+2025-12-29 02:43:54 - RNN_Baseline - INFO -   LR: 0.002
+2025-12-29 02:43:54 - RNN_Baseline - INFO - Starting training for MLP_trial2
+2025-12-29 03:23:18 - RNN_Baseline - INFO -   Epoch [5/15] Train Loss: 0.5935, Val F1: 0.4381, Val AUC: 0.6055
+2025-12-29 04:02:41 - RNN_Baseline - INFO -   Epoch [10/15] Train Loss: 0.4922, Val F1: 0.4378, Val AUC: 0.5884
+2025-12-29 04:42:01 - RNN_Baseline - INFO -   Epoch [15/15] Train Loss: 0.4329, Val F1: 0.4440, Val AUC: 0.5820
+2025-12-29 04:42:01 - RNN_Baseline - INFO - Training completed. Best epoch: 13, Best Val F1: 0.4595
+2025-12-29 04:42:01 - RNN_Baseline - INFO -   → Val F1: 0.4595
+2025-12-29 04:42:01 - RNN_Baseline - INFO - 
+Trial 4/20:
+2025-12-29 04:42:01 - RNN_Baseline - INFO -   Config: {'vocab_size': 26, 'max_seq_length': 30, 'hidden_dims': [256, 128], 'num_classes': 2, 'dropout': 0.5}
+2025-12-29 04:42:01 - RNN_Baseline - INFO -   LR: 0.0005
+2025-12-29 04:42:01 - RNN_Baseline - INFO - Starting training for MLP_trial3
+2025-12-29 05:21:23 - RNN_Baseline - INFO -   Epoch [5/15] Train Loss: 0.6389, Val F1: 0.3583, Val AUC: 0.6186
+2025-12-29 06:00:44 - RNN_Baseline - INFO -   Epoch [10/15] Train Loss: 0.6092, Val F1: 0.4194, Val AUC: 0.6197
+2025-12-29 06:16:28 - RNN_Baseline - INFO -   Early stopping at epoch 12
+2025-12-29 06:16:28 - RNN_Baseline - INFO - Training completed. Best epoch: 7, Best Val F1: 0.4231
+2025-12-29 06:16:28 - RNN_Baseline - INFO -   → Val F1: 0.4231
+2025-12-29 06:16:28 - RNN_Baseline - INFO - 
+Trial 5/20:
+2025-12-29 06:16:28 - RNN_Baseline - INFO -   Config: {'vocab_size': 26, 'max_seq_length': 30, 'hidden_dims': [256, 128], 'num_classes': 2, 'dropout': 0.2}
+2025-12-29 06:16:28 - RNN_Baseline - INFO -   LR: 0.0005
+2025-12-29 06:16:28 - RNN_Baseline - INFO - Starting training for MLP_trial4
+2025-12-29 06:55:41 - RNN_Baseline - INFO -   Epoch [5/15] Train Loss: 0.5962, Val F1: 0.4491, Val AUC: 0.6128
+2025-12-29 07:34:41 - RNN_Baseline - INFO -   Epoch [10/15] Train Loss: 0.5411, Val F1: 0.4498, Val AUC: 0.5985
+2025-12-29 08:13:42 - RNN_Baseline - INFO -   Epoch [15/15] Train Loss: 0.5086, Val F1: 0.4351, Val AUC: 0.5942
+2025-12-29 08:13:42 - RNN_Baseline - INFO -   Early stopping at epoch 15
+2025-12-29 08:13:42 - RNN_Baseline - INFO - Training completed. Best epoch: 10, Best Val F1: 0.4498
+2025-12-29 08:13:42 - RNN_Baseline - INFO -   → Val F1: 0.4498
+2025-12-29 08:13:42 - RNN_Baseline - INFO - 
+Trial 6/20:
+2025-12-29 08:13:42 - RNN_Baseline - INFO -   Config: {'vocab_size': 26, 'max_seq_length': 30, 'hidden_dims': [512, 256], 'num_classes': 2, 'dropout': 0.2}
+2025-12-29 08:13:42 - RNN_Baseline - INFO -   LR: 0.002
+2025-12-29 08:13:42 - RNN_Baseline - INFO - Starting training for MLP_trial5
+2025-12-29 08:53:05 - RNN_Baseline - INFO -   Epoch [5/15] Train Loss: 0.5891, Val F1: 0.3993, Val AUC: 0.6070
+2025-12-29 09:24:34 - RNN_Baseline - INFO -   Early stopping at epoch 9
+2025-12-29 09:24:34 - RNN_Baseline - INFO - Training completed. Best epoch: 4, Best Val F1: 0.4366
+2025-12-29 09:24:34 - RNN_Baseline - INFO -   → Val F1: 0.4366
+2025-12-29 09:24:34 - RNN_Baseline - INFO - 
+Trial 7/20:
+2025-12-29 09:24:34 - RNN_Baseline - INFO -   Config: {'vocab_size': 26, 'max_seq_length': 30, 'hidden_dims': [512, 256], 'num_classes': 2, 'dropout': 0.5}
+2025-12-29 09:24:34 - RNN_Baseline - INFO -   LR: 0.0005
+2025-12-29 09:24:34 - RNN_Baseline - INFO - Starting training for MLP_trial6
+2025-12-29 10:03:55 - RNN_Baseline - INFO -   Epoch [5/15] Train Loss: 0.6220, Val F1: 0.4259, Val AUC: 0.6212
+2025-12-29 10:43:17 - RNN_Baseline - INFO -   Epoch [10/15] Train Loss: 0.5691, Val F1: 0.4362, Val AUC: 0.6152
+2025-12-29 11:14:48 - RNN_Baseline - INFO -   Early stopping at epoch 14
+2025-12-29 11:14:48 - RNN_Baseline - INFO - Training completed. Best epoch: 9, Best Val F1: 0.4604
+2025-12-29 11:14:48 - RNN_Baseline - INFO -   → Val F1: 0.4604
+2025-12-29 11:14:48 - RNN_Baseline - INFO - 
+Trial 8/20:
+2025-12-29 11:14:48 - RNN_Baseline - INFO -   Config: {'vocab_size': 26, 'max_seq_length': 30, 'hidden_dims': [512, 256, 128], 'num_classes': 2, 'dropout': 0.4}
+2025-12-29 11:14:48 - RNN_Baseline - INFO -   LR: 0.0005
+2025-12-29 11:14:48 - RNN_Baseline - INFO - Starting training for MLP_trial7
+2025-12-29 11:54:21 - RNN_Baseline - INFO -   Epoch [5/15] Train Loss: 0.6065, Val F1: 0.4785, Val AUC: 0.6190
+2025-12-29 12:33:52 - RNN_Baseline - INFO -   Epoch [10/15] Train Loss: 0.5407, Val F1: 0.4742, Val AUC: 0.6081
+2025-12-29 12:33:52 - RNN_Baseline - INFO -   Early stopping at epoch 10
+2025-12-29 12:33:52 - RNN_Baseline - INFO - Training completed. Best epoch: 5, Best Val F1: 0.4785
+2025-12-29 12:33:52 - RNN_Baseline - INFO -   → Val F1: 0.4785
+2025-12-29 12:33:52 - RNN_Baseline - INFO - 
+Trial 9/20:
+2025-12-29 12:33:52 - RNN_Baseline - INFO -   Config: {'vocab_size': 26, 'max_seq_length': 30, 'hidden_dims': [512, 256], 'num_classes': 2, 'dropout': 0.5}
+2025-12-29 12:33:52 - RNN_Baseline - INFO -   LR: 0.001
+2025-12-29 12:33:52 - RNN_Baseline - INFO - Starting training for MLP_trial8
+2025-12-29 13:13:09 - RNN_Baseline - INFO -   Epoch [5/15] Train Loss: 0.6353, Val F1: 0.3354, Val AUC: 0.6127
+2025-12-29 13:52:09 - RNN_Baseline - INFO -   Epoch [10/15] Train Loss: 0.5803, Val F1: 0.3731, Val AUC: 0.6088
+2025-12-29 14:31:08 - RNN_Baseline - INFO -   Epoch [15/15] Train Loss: 0.5431, Val F1: 0.4043, Val AUC: 0.6047
+2025-12-29 14:31:08 - RNN_Baseline - INFO - Training completed. Best epoch: 14, Best Val F1: 0.4384
+2025-12-29 14:31:08 - RNN_Baseline - INFO -   → Val F1: 0.4384
+2025-12-29 14:31:08 - RNN_Baseline - INFO - 
+Trial 10/20:
+2025-12-29 14:31:08 - RNN_Baseline - INFO -   Config: {'vocab_size': 26, 'max_seq_length': 30, 'hidden_dims': [256, 128, 64], 'num_classes': 2, 'dropout': 0.3}
+2025-12-29 14:31:08 - RNN_Baseline - INFO -   LR: 0.0005
+2025-12-29 14:31:08 - RNN_Baseline - INFO - Starting training for MLP_trial9
+2025-12-29 15:10:43 - RNN_Baseline - INFO -   Epoch [5/15] Train Loss: 0.6176, Val F1: 0.4285, Val AUC: 0.6215
+2025-12-29 15:50:21 - RNN_Baseline - INFO -   Epoch [10/15] Train Loss: 0.5724, Val F1: 0.4457, Val AUC: 0.6068
+2025-12-29 16:14:07 - RNN_Baseline - INFO -   Early stopping at epoch 13
+2025-12-29 16:14:07 - RNN_Baseline - INFO - Training completed. Best epoch: 8, Best Val F1: 0.4490
+2025-12-29 16:14:07 - RNN_Baseline - INFO -   → Val F1: 0.4490
+2025-12-29 16:14:07 - RNN_Baseline - INFO - 
+Trial 11/20:
+2025-12-29 16:14:07 - RNN_Baseline - INFO -   Config: {'vocab_size': 26, 'max_seq_length': 30, 'hidden_dims': [256, 128, 64], 'num_classes': 2, 'dropout': 0.2}
+2025-12-29 16:14:07 - RNN_Baseline - INFO -   LR: 0.0005
+2025-12-29 16:14:07 - RNN_Baseline - INFO - Starting training for MLP_trial10
+2025-12-29 16:53:50 - RNN_Baseline - INFO -   Epoch [5/15] Train Loss: 0.5997, Val F1: 0.4485, Val AUC: 0.6115
+2025-12-29 17:33:32 - RNN_Baseline - INFO -   Epoch [10/15] Train Loss: 0.5457, Val F1: 0.4575, Val AUC: 0.5999
+2025-12-29 18:13:14 - RNN_Baseline - INFO -   Epoch [15/15] Train Loss: 0.5137, Val F1: 0.4513, Val AUC: 0.5894
+2025-12-29 18:13:14 - RNN_Baseline - INFO - Training completed. Best epoch: 12, Best Val F1: 0.4707
+2025-12-29 18:13:14 - RNN_Baseline - INFO -   → Val F1: 0.4707
+2025-12-29 18:13:14 - RNN_Baseline - INFO - 
+Trial 12/20:
+2025-12-29 18:13:14 - RNN_Baseline - INFO -   Config: {'vocab_size': 26, 'max_seq_length': 30, 'hidden_dims': [512, 256, 128], 'num_classes': 2, 'dropout': 0.2}
+2025-12-29 18:13:14 - RNN_Baseline - INFO -   LR: 0.001
+2025-12-29 18:13:14 - RNN_Baseline - INFO - Starting training for MLP_trial11
+2025-12-29 18:52:51 - RNN_Baseline - INFO -   Epoch [5/15] Train Loss: 0.5704, Val F1: 0.4206, Val AUC: 0.6098
+2025-12-29 19:24:33 - RNN_Baseline - INFO -   Early stopping at epoch 9
+2025-12-29 19:24:33 - RNN_Baseline - INFO - Training completed. Best epoch: 4, Best Val F1: 0.4622
+2025-12-29 19:24:33 - RNN_Baseline - INFO -   → Val F1: 0.4622
+2025-12-29 19:24:33 - RNN_Baseline - INFO - 
+Trial 13/20:
+2025-12-29 19:24:33 - RNN_Baseline - INFO -   Config: {'vocab_size': 26, 'max_seq_length': 30, 'hidden_dims': [256, 128, 64], 'num_classes': 2, 'dropout': 0.4}
+2025-12-29 19:24:33 - RNN_Baseline - INFO -   LR: 0.0005
+2025-12-29 19:24:33 - RNN_Baseline - INFO - Starting training for MLP_trial12
+2025-12-29 20:04:06 - RNN_Baseline - INFO -   Epoch [5/15] Train Loss: 0.6288, Val F1: 0.4268, Val AUC: 0.6223
+2025-12-29 20:43:45 - RNN_Baseline - INFO -   Epoch [10/15] Train Loss: 0.5931, Val F1: 0.4554, Val AUC: 0.6161
+2025-12-29 21:23:24 - RNN_Baseline - INFO -   Epoch [15/15] Train Loss: 0.5711, Val F1: 0.4539, Val AUC: 0.6107
+2025-12-29 21:23:24 - RNN_Baseline - INFO - Training completed. Best epoch: 14, Best Val F1: 0.4640
+2025-12-29 21:23:24 - RNN_Baseline - INFO -   → Val F1: 0.4640
+2025-12-29 21:23:24 - RNN_Baseline - INFO - 
+Trial 14/20:
+2025-12-29 21:23:24 - RNN_Baseline - INFO -   Config: {'vocab_size': 26, 'max_seq_length': 30, 'hidden_dims': [512, 256, 128], 'num_classes': 2, 'dropout': 0.2}
+2025-12-29 21:23:24 - RNN_Baseline - INFO -   LR: 0.001
+2025-12-29 21:23:24 - RNN_Baseline - INFO - Starting training for MLP_trial13
+2025-12-29 22:03:02 - RNN_Baseline - INFO -   Epoch [5/15] Train Loss: 0.5739, Val F1: 0.4421, Val AUC: 0.6072
+2025-12-29 22:42:40 - RNN_Baseline - INFO -   Epoch [10/15] Train Loss: 0.4666, Val F1: 0.4802, Val AUC: 0.5962
+
+Job 72681 consumed 0.0 billing hours and 24.0 GPU hours from project nn12048k.
+
+Submitted 2025-12-28T23:02:21; waited 0.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 24.0 hours
+Elapsed wallclock time:   1.0 days
+
+Job timed out.
+
+Task and CPU statistics:
+ID               CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+72681               1            0.0 %  2025-12-28T23:02:21   24.0 h  0
+72681.batch         1      1     0.0 %  2025-12-28T23:02:21   24.0 h  Signal 15
+72681.apptainer     1      1     0.0 %  2025-12-28T23:02:22   24.0 h  Signal 15
+
+Used CPU time:   0.2 CPU seconds
+Unused CPU time: 1.0 CPU days
+
+Memory statistics, in GiB:
+ID                Alloc   Usage
+72681             128.0        
+72681.batch       128.0     0.0
+72681.apptainer   128.0     4.2
+
+Job 72681 completed at Mon Dec 29 23:02:36 CET 2025
