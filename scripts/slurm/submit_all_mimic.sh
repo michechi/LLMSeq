@@ -19,22 +19,22 @@ if [[ "${1:-}" == "--dry-run" ]]; then
 fi
 
 # ---------- Experiment matrix ----------
-# Format: MODEL:DATA:TIME:MEM:EXTRA_ARGS
+# Format: MODEL|DATA|TIME|MEM|EXTRA_ARGS
 EXPERIMENTS=(
-    "transformer:ordered:04:00:00:32GB:"
-    "transformer:shuffled:04:00:00:32GB:"
-    "lstm:ordered:04:00:00:32GB:"
-    "lstm:shuffled:04:00:00:32GB:"
-    "bilstm:ordered:04:00:00:32GB:"
-    "bilstm:shuffled:04:00:00:32GB:"
-    "bert:ordered:08:00:00:64GB:--llm_batch_size 16 --max_length 512"
-    "bert:shuffled:08:00:00:64GB:--llm_batch_size 16 --max_length 512"
+    "transformer|ordered|04:00:00|32GB|"
+    "transformer|shuffled|04:00:00|32GB|"
+    "lstm|ordered|04:00:00|32GB|"
+    "lstm|shuffled|04:00:00|32GB|"
+    "bilstm|ordered|04:00:00|32GB|"
+    "bilstm|shuffled|04:00:00|32GB|"
+    "bert|ordered|08:00:00|64GB|--llm_batch_size 16 --max_length 512"
+    "bert|shuffled|08:00:00|64GB|--llm_batch_size 16 --max_length 512"
 )
 
 mkdir -p logs
 
 for exp in "${EXPERIMENTS[@]}"; do
-    IFS=':' read -r MODEL DATA TIME MEM EXTRA <<< "$exp"
+    IFS='|' read -r MODEL DATA TIME MEM EXTRA <<< "$exp"
 
     JOB_NAME="mimic_${MODEL}_${DATA}"
     LOG_FILE="./logs/${JOB_NAME}_%j.out"
