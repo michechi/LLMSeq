@@ -48,15 +48,16 @@ CONTAINER_ENV="$CONTAINER_ENV,PYTHONUNBUFFERED=1"
 
 
 echo "=== STARTING CONTAINER ==="
-echo "Container: /cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif"
+echo "Container: /cluster/work/support/container/pytorch_nvidia_24.12_extended.sif"
 echo "Environment: $CONTAINER_ENV"
 
 # Run the LLM fraction experiment
 srun apptainer exec --nv \
 --bind "$SCRATCH_CACHE:$SCRATCH_CACHE" \
 --bind /cluster/work/projects/nn12048k:/cluster/work/projects/nn12048k \
+--bind /cluster/home/michechi:/cluster/home/michechi \
 --env "$CONTAINER_ENV" \
-/cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif \
+/cluster/work/support/container/pytorch_nvidia_24.12_extended.sif \
 python3 -u ./LLM_fraction_experiment_quant.py \
 --number_to_use "9" \
 --path_csv /cluster/home/michechi/MIMICIV/data/simulation/tested/ \
