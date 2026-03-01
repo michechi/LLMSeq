@@ -1,6 +1,9 @@
 # MIMIC-IV data (cannot be shared per PhysioNet agreement)
 data/raw/mimic-iv/
-data/processed/
+data/processed/*
+!data/processed/mimic_training/
+!data/processed/mimic_training/*.csv
+!data/processed/mimic_training/*.json
 
 # Data files
 *.csv
@@ -13,6 +16,8 @@ data/processed/
 # Allow specific data directories
 !data/simulation/tested/
 !data/simulation/tested/*.csv
+!data/processed/mimic_training/*.csv
+!data/processed/mimic_training/*.json
 
 # Large files
 data/simulation/holes/sequences_with_holes.jsonl
