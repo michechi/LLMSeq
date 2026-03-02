@@ -1,6 +1,6 @@
-# MIMICIV - Sequential Clinical Data Analysis
+# LLMSeq - Sequential Data and LLMs
 
-Research repository for evaluating ML/LLM architectures on clinical sequential data, comparing how different model families learn from temporal medical event sequences.
+Research repository for evaluating ML/LLM architectures on sequential data, comparing how different model families learn from both simulated and real event sequences.
 
 ## Research Overview
 
@@ -30,7 +30,7 @@ This project investigates:
 ```bash
 # Clone the repository
 git clone <repo-url>
-cd MIMICIV
+cd LLMSeq
 
 # Install in editable mode
 pip install -e .
