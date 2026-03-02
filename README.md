@@ -277,8 +277,7 @@ If you use this code in your research, please cite:
 ```bibtex
 @misc{mimiciv-llm-research,
   author = {Michele Chini},
-  title = {Evaluating ML/LLM Architectures on Clinical Sequential Data},
-  year = {2024},
+  title = {Do Large Language Models Detect and Exploit Decisive Sequential Information?},
   publisher = {GitHub},
   url = {https://github.com/...}
 }
