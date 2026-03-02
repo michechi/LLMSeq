@@ -1,15 +1,10 @@
 # MIMICIV
-Repo with all the passages for preprocessing pipeline of MIMICIV on DataCrunch
 
-## LLM Fraction Experiment Scripts
+Research repository for evaluating ML/LLM architectures on clinical sequential data from MIMIC-IV.
 
-There are three copies of the LLM fraction experiment script. **Use `src/LLM_fraction_experiment.py`** for all runs.
+## LLM Fraction Experiment
 
-| File | Status | Notes |
-|------|--------|-------|
-| `src/LLM_fraction_experiment.py` | **Use this one** | Handles both small and large models. Saves best-epoch checkpoint and supports quantization-compatible device placement. |
-| `src/LLM_fraction_experiment_quant.py` | Deprecated | Older version that skips best-model checkpointing (evaluates test on last epoch's weights). Was a workaround for 70B RAM concerns, but no longer needed. Safe to delete. |
-| `LLM_fraction_experiment.py` (repo root) | Deprecated | Original version before quantization support. Uses `--number_to_use` as `int` instead of `str`, lacks quantization device guards, and missing `0.1M` tiny size. |
+Use `src/LLM_fraction_experiment.py` for all LLM runs.
 
 ### Usage
 
@@ -28,8 +23,8 @@ Tiny model (local testing):
 python src/LLM_fraction_experiment.py --number_to_use 9 --tiny --tiny_type 1M
 ```
 
-### Key differences in `src/LLM_fraction_experiment.py`
+### Features
 
-- **Best-model checkpointing**: saves backbone and classification_head state dicts separately at the best epoch, reloads before test evaluation. With 4-bit quantization a 70B model is ~35GB, which fits in RAM.
-- **Quantization guards**: skips `.to(device)` when `--use_quantization` is set, since `device_map='auto'` already places the model on GPU.
-- **Optimal threshold**: finds the F1-maximizing threshold on the validation set before evaluating on test.
+- Best-model checkpointing (saves at best epoch, reloads before test)
+- 4-bit quantization support for large models
+- Optimal F1 threshold selection on validation set
