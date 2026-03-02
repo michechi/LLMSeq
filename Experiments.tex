@@ -1,0 +1,158 @@
+\section{Experiments}
+\label{sec:experiments}
+
+We evaluate whether different architectures can exploit sequential structure beyond what simple $k$-gram baselines capture.
+
+% ============================================================================
+\subsection{Datasets}
+\label{subsec:datasets}
+
+We instantiate the framework from Section~\ref{sec:formulation} using the English alphabet ($\mathcal{A} = \{\texttt{A}, \ldots, \texttt{Z}\}$, $\ell = 26$) with sequences of length $n = 20$. Table~\ref{tab:datasets} summarizes the three datasets.
+
+\begin{table}[h]
+\centering
+\caption{Dataset characteristics for sequential classification tasks.}
+\label{tab:datasets}
+\begin{tabular}{lccccc}
+\toprule
+Dataset & $N$ & $n$ & $\rho$ & $\lambda$ & $\pi$ \\
+\midrule
+Tricky (deterministic) & 400K & 20 & 0.293 & 7 & 1.0 \\
+Tricky (stochastic) & 400K & 20 & 0.293 & 7 & 0.7 \\
+Parity (deterministic) & 400K & 20 & 0.499 & -- & 1.0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The \textbf{tricky deterministic} dataset tests whether models can learn the sequential pattern without noise. The \textbf{tricky stochastic} dataset ($\pi = 0.7$) introduces label noise, bounding optimal performance at $\text{AUC}^* = 0.70$ (Theorem~\ref{thm:optimal}) and revealing whether models plateau at $k$-gram levels or approach theoretical limits. The \textbf{parity} dataset tests pure global integration where no local pattern carries signal (Proposition~\ref{prop:parity_invisibility}).
+
+% ============================================================================
+\subsection{Models}
+\label{subsec:models}
+
+We compare three categories of models:
+
+\paragraph{Pretrained LLMs (fine-tuned).} 
+We evaluate Llama-3.2-1B and Llama-3.1-8B~\citep{touvron2023llama, grattafiori2024llama3}, fine-tuned for binary classification. We also include Qwen3-4B~\citep{bai2023qwen} and BERT-base (110M parameters)~\citep{devlin2019bert} with warm-start fine-tuning. These models assess whether large-scale pretraining provides advantages for sequential pattern recognition.
+
+\paragraph{Architectures trained from scratch.}
+To isolate architectural capabilities from pretrained knowledge, we train small-scale models from random initialization: Llama-style decoders (250K and 1M parameters), LSTM~\citep{hochreiter1997lstm}, BiLSTM~\citep{graves2005bilstm}, Transformer encoder~\citep{vaswani2017attention}, and a BiLSTM-Transformer hybrid (100K--400K parameters each). These models reveal whether the architectural biases of different designs affect sequential learning independently of scale.
+
+\paragraph{Traditional baselines.}
+XGBoost~\citep{chen2016xgboost} with two encoding strategies: positional encoding with integer-mapped characters (XGBoost-basic) and embeddings extracted from Llama-1B (XGBoost-LLM). These baselines represent the state-of-the-art for tabular classification and test whether sequential structure can be captured without recurrence or attention.
+
+Table~\ref{tab:models} summarizes model configurations.
+
+\begin{table}[h]
+\centering
+\caption{Model configurations.}
+\label{tab:models}
+\begin{tabular}{llr}
+\toprule
+Category & Model & Parameters \\
+\midrule
+\multirow{6}{*}{Pretrained} 
+  & BERT-base & 110M \\
+  & Llama-3.2-1B & 1.0B \\
+  & Qwen3-4B & 4.0B\\
+  & Llama-3.1-8B & 8.0B \\
+\midrule
+\multirow{4}{*}{From scratch}
+    & Llama-0.2M & 250K \\
+  & Llama-1M & 1M  \\
+  & LSTM & 198K--340K \\
+  & BiLSTM & 256K--395K \\
+  & Transformer & 103K--104K \\
+  & BiLSTM-Transformer & 319K--455K \\
+\midrule
+\multirow{2}{*}{Traditional}
+  & XGBoost (basic) & 20 features$^\dagger$ \\
+  & XGBoost (LLM) & 2048 features$^\dagger$ \\
+\bottomrule
+\end{tabular}
+\vspace{0.5em}
+\raggedright\footnotesize{$^\dagger$XGBoost does not have fixed parameters like neural networks; we report input dimensionality instead.}
+\end{table}
+
+% ============================================================================
+\subsection{Sequence Encoding}
+\label{subsec:encoding}
+
+We use three encoding strategies depending on the model family.
+
+\paragraph{Prompt-based encoding (LLMs and BERT).}
+For pretrained language models, we convert each sequence into a natural language prompt. Given a sequence $(x_1, \ldots, x_n)$, we construct:
+\begin{center}
+\texttt{Sequential events: $x_1$ $x_2$ $\cdots$ $x_n$}
+\end{center}
+For causal LLMs (Llama, Qwen), we append \texttt{Outcome (0 or 1):} to frame the task as next-token prediction with a classification head. The prompt is then tokenized using each model's native tokenizer. This same prompt format is used to extract embeddings from Llama-3.2-1B for the XGBoost-LLM baseline, where we apply mean pooling over the last hidden layer.
+
+\paragraph{Ordinal encoding with learned embeddings (models from scratch).}
+For LSTM, BiLSTM, Transformer, and hybrid architectures trained from scratch, we map each letter to an integer index ($\texttt{A} \mapsto 0, \texttt{B} \mapsto 1, \ldots, \texttt{Z} \mapsto 25$). A learned embedding layer maps each index to a dense vector $\mathbf{e}_i \in \mathbb{R}^{d_e}$, where $d_e \in \{32, 64, 128\}$ depending on model configuration. Within each mini-batch, sequences are zero-padded to uniform length, with padding tokens assigned a fixed zero embedding.
+
+For Transformer-based architectures, we add learnable positional encodings:
+\begin{equation}
+\mathbf{h}_i = \mathbf{e}_i + \mathbf{p}_i,
+\end{equation}
+where $\mathbf{p}_i \in \mathbb{R}^{d_e}$ is a learnable position embedding. The positional encoding matrix $\mathbf{P} \in \mathbb{R}^{L_{\max} \times d_e}$ is initialized from a standard normal distribution and updated during training.
+
+\paragraph{Positional ordinal encoding (XGBoost-basic).}
+For the XGBoost baseline without LLM embeddings, we use a simple positional representation: each sequence becomes a feature vector of length $n$, where feature $j$ contains the ordinal value of letter $x_j$ ($\texttt{A} \mapsto 1, \texttt{B} \mapsto 2, \ldots, \texttt{Z} \mapsto 26$). This encoding preserves position information but relies on the tree ensemble to learn any sequential dependencies.
+
+% ============================================================================
+\subsection{$k$-gram Baseline}
+\label{subsec:kgram}
+
+The $k$-gram classifier provides a reference for local pattern exploitation:
+
+\paragraph{Training.} For each $k$-gram $g$ in the training data, compute:
+\begin{equation}
+\hat{P}(Y=1 \mid g) = \frac{\#(g, Y=1)}{\#(g)}.
+\end{equation}
+
+\paragraph{Inference.} For test sequence $X$, extract all $k$-grams $\{g_1, \ldots, g_{n-k+1}\}$ and predict:
+\begin{equation}
+\hat{P}(Y=1 \mid X) = \frac{1}{n-k+1} \sum_{j=1}^{n-k+1} \hat{P}(Y=1 \mid g_j).
+\end{equation}
+
+Table~\ref{tab:kgram_coverage} (Appendix~\ref{appendix:kgram}) shows that $k$-gram coverage drops sharply for $k \geq 5$: at $k=5$, only 42\% of test $k$-grams appear in training; at $k=7$, coverage falls below 0.1\%. This sparsity bounds the discriminative power of local patterns at larger $k$.
+
+% ============================================================================
+\subsection{Training Procedure}
+\label{subsec:training}
+
+\paragraph{Optimization.}
+All neural models are trained using the AdamW optimizer~\citep{loshchilov2019adamw} with weight decay. For pretrained LLMs and BERT, we use a linear learning rate schedule with 6\% warmup steps. We employ cross-entropy loss for binary classification. Training uses early stopping based on validation loss with patience of 3 epochs for pretrained models and 5 epochs for models trained from scratch.
+
+\paragraph{Pretrained models.}
+LLMs (Llama, Qwen) and BERT are fine-tuned with learning rate $2 \times 10^{-5}$, batch size 16, and maximum sequence length 512 tokens. To enable efficient fine-tuning, we apply LoRA~\citep{hu2022lora} with rank $r=8$, $\alpha=16$, and dropout 0.1, targeting the attention projection matrices (\texttt{q\_proj}, \texttt{k\_proj}, \texttt{v\_proj}, \texttt{o\_proj} for LLMs; \texttt{query}, \texttt{key}, \texttt{value} for BERT). Large models employ gradient checkpointing and mixed-precision training (bfloat16) to fit within GPU memory constraints. We train for a maximum of 20 epochs.
+
+\paragraph{Models trained from scratch.}
+LSTM, BiLSTM, Transformer, and hybrid architectures are trained with batch size 64 for up to 30 epochs. Learning rates are tuned per architecture: $10^{-3}$ for recurrent models (LSTM, BiLSTM, GRU) and MLP, $5 \times 10^{-4}$ for Transformer-based models, and $10^{-4}$ for the BiLSTM-Transformer hybrid. Dropout rates range from 0.2 to 0.3 depending on model capacity. Early stopping monitors validation F1 score with patience of 5 epochs.
+
+\paragraph{XGBoost baselines.}
+XGBoost models use learning rate 0.05, maximum depth 6, subsample ratio 0.8, and column sampling ratio 0.8 per tree. We apply L1 regularization ($\alpha=0.5$) and L2 regularization ($\lambda=1.5$) with minimum child weight 2 and minimum split gain $\gamma=0.1$. Class imbalance is addressed via \texttt{scale\_pos\_weight}. Training runs for up to 200 boosting rounds with early stopping (patience 10) based on validation log-loss.
+
+\paragraph{Threshold optimization.}
+For all models, we optimize the classification threshold on the validation set by searching over $\{0.10, 0.11, \ldots, 0.89\}$ to maximize F1 score, rather than using the default 0.5 threshold.
+
+\paragraph{Reproducibility.}
+All experiments use a fixed random seed (9550) for data splitting, weight initialization, and stochastic optimization. Each configuration is run with three different seeds; we report means and standard deviations.
+
+\paragraph{Computational resources.}
+Experiments are conducted on a single NVIDIA A100 GPU (80GB). Fine-tuning Llama-8B requires approximately 128GB CPU memory with gradient checkpointing enabled. Training times range from minutes (small models, 1\% data) to several hours (Llama-8B, full data). Full hyperparameter configurations are provided in Appendix~\ref{appendix:training}.
+
+% ============================================================================
+\subsection{Evaluation Protocol}
+\label{subsec:evaluation}
+
+We report AUC, F1, Precision, and Recall on held-out test sets (20\% of data). For stochastic datasets, we compare against the theoretical optimum (Theorem~\ref{thm:optimal}). We vary training set size from 4K to 400K samples to assess data efficiency. Each configuration is run with three random seeds; we report means and standard deviations.
+
+Performance is interpreted relative to three reference points:
+\begin{itemize}
+    \item $\text{AUC} \approx 0.50$: model learns nothing about compliance
+    \item $0.50 < \text{AUC} < \text{AUC}^*$: partial recovery of sequential signal
+    \item $\text{AUC} \approx \text{AUC}^*$: full recovery, limited only by label noise
+\end{itemize}
+
+Methods relying solely on order-invariant features cannot reach the third regime.

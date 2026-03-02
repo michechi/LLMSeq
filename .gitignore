@@ -1,0 +1,56 @@
+# MIMIC-IV data (cannot be shared per PhysioNet agreement)
+data/raw/mimic-iv/
+data/processed/*
+!data/processed/mimic_training/
+!data/processed/mimic_training/*.csv
+!data/processed/mimic_training/*.json
+
+# Data files
+*.csv
+*.gz
+*.json
+*.pt
+*.joblib
+*.csv.gz
+
+# Allow specific data directories
+!data/simulation/tested/
+!data/simulation/tested/*.csv
+!data/processed/mimic_training/*.csv
+!data/processed/mimic_training/*.json
+
+# Large files
+data/simulation/holes/sequences_with_holes.jsonl
+Miniforge3-*.sh
+
+# Logs and outputs
+*.out
+*.err
+*.log
+src/logs/
+src/slurm_logs/
+src/slurm-*.out
+src/output_slurms_fox/
+src/results/
+src/results_rnn_baseline/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# IDE and environment
+.venv/
+.vscode/
+*.egg-info/
+.eggs/
+
+# Notebooks (specific)
+src/preprocessing_no_pyhealth.ipynb
+src/mimiciv_clinical_dataset.csv
+src/landmark_df.csv
+
+# Cache
+cache/
+.cache/
