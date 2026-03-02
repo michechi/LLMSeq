@@ -8,13 +8,13 @@ from torch.utils.data import Dataset
 from tqdm import tqdm
 import json
 
-from prompts import (
+from src.data.prompts import (
     no_narrative_prompt, naive_narrative_prompt, compact_narrative_prompt,
     full_narrative, full_narrative_no_time, full_narrative_no_time_rnd,
-    compact_no_time_prompt, compact_no_time_prompt_rnd, compact_narrative_humanstyle_prompt, 
+    compact_no_time_prompt, compact_no_time_prompt_rnd, compact_narrative_humanstyle_prompt,
     semi_full_narrative, reversed_naive_narrative_prompt, last_info_prompt, full_narrative_num2words
 )
-from Finetuning_DC import load_tokenizer, load_model
+from src.experiments.Finetuning_DC import load_tokenizer, load_model
 
 class BootstrapModelEvaluator:
     """

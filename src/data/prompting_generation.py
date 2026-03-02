@@ -19,7 +19,7 @@ from huggingface_hub import login
 from collections import Counter
 from itertools import product
 
-from prompts import (
+from src.data.prompts import (
     no_narrative_prompt, naive_narrative_prompt, compact_narrative_prompt,
     full_narrative, full_narrative_no_time, full_narrative_no_time_rnd,
     compact_no_time_prompt, compact_no_time_prompt_rnd, compact_narrative_humanstyle_prompt,
