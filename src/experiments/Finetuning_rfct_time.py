@@ -17,16 +17,16 @@ from transformers import (
     AutoModelForCausalLM
 )
 
-from prompts import (
+from src.data.prompts import (
     no_narrative_prompt, naive_narrative_prompt, compact_narrative_prompt,
     full_narrative, full_narrative_no_time, full_narrative_no_time_rnd,
-    compact_no_time_prompt, compact_no_time_prompt_rnd, compact_narrative_humanstyle_prompt, 
-    semi_full_narrative, reversed_naive_narrative_prompt, reversed_time_naive_narrative_prompt, 
+    compact_no_time_prompt, compact_no_time_prompt_rnd, compact_narrative_humanstyle_prompt,
+    semi_full_narrative, reversed_naive_narrative_prompt, reversed_time_naive_narrative_prompt,
     last_info_prompt, full_narrative_num2words, temporal_causal_prompt
 )
 
-from seed_parsing import set_seed, parse_args
-from models_training_time import load_tokenizer, load_model_causal, train_and_evaluate_causal
+from src.utils.seed_parsing import set_seed, parse_args
+from src.models.models_training_time import load_tokenizer, load_model_causal, train_and_evaluate_causal
 
 # Set the float32 matmul precision to 'high' for better performance
 torch.set_float32_matmul_precision('high')
