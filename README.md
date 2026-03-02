@@ -279,7 +279,7 @@ If you use this code in your research, please cite:
   author = {Michele Chini},
   title = {Do Large Language Models Detect and Exploit Decisive Sequential Information?},
   publisher = {GitHub},
-  url = {https://github.com/...}
+  url = {https://github.com/michechi/MIMICIV/tree/refactor/restructure-repo}
 }
 ```
 
