@@ -294,8 +294,7 @@ def main():
     # Set seed for reproducibility
     set_seed(args.seed)
 
-    # hf_token = os.getenv("HF_TOKEN")
-    hf_token = "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"
+    hf_token = os.getenv("HF_TOKEN")
     if args.model_type == "llm" and hf_token is None:
         raise ValueError("Set the HF_TOKEN environment variable for authentication.")
     if args.model_type == "llm":

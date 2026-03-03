@@ -123,7 +123,7 @@ def get_embeddings(texts,
                    tiny=False, # TO ADD
                    l2_normalize=False,
                    dtype=torch.bfloat16,
-                   hf_token="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"):
+                   hf_token=os.getenv("HF_TOKEN")):
 
     logger.info(f"Loading {model_name} on {device}...")
     logger.info(f"Batch size: {batch_size}, Max length: {max_length}")

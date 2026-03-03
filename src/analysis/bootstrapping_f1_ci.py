@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import gc
 import pandas as pd
@@ -393,7 +394,7 @@ if __name__ == "__main__":
     model_name = "meta-llama/Llama-3.1-8B" # To change
     model_type = "general" # To change
     cache_dir = "/root/MIMICIV/cache" # To change
-    hf_token = "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" # To change
+    hf_token = os.getenv("HF_TOKEN")
     use_peft = True # To change
     use_quantization = False # To change
     checkpoint_path = "best_model_meta-llama_Llama-3.1-8B_4550_landmark4_no_4_2048_last_visit_all_landmarks_False_20250906_190031_.pt" # To change 

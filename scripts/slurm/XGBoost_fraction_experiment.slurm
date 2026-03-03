@@ -18,7 +18,7 @@ mkdir -p "$SCRATCH_CACHE"
 export HF_HOME="$SCRATCH_CACHE"
 export HF_DATASETS_CACHE="$SCRATCH_CACHE"
 export XDG_CACHE_HOME="$SCRATCH_CACHE"
-export HUGGING_FACE_HUB_TOKEN="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"
+export HUGGING_FACE_HUB_TOKEN="${HF_TOKEN:?ERROR: Set HF_TOKEN environment variable before submitting}"
 
 echo "=== JOB CONFIGURATION ==="
 echo "Job ID: $SLURM_JOB_ID"

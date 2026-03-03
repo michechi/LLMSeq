@@ -9,11 +9,14 @@ from peft import LoraConfig, get_peft_model
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import roc_auc_score
 from huggingface_hub import login
+import os
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s: %(message)s")
 logger = logging.getLogger(__name__)
 
-YOUR_HF_TOKEN = "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"
+YOUR_HF_TOKEN = os.getenv("HF_TOKEN")
+if YOUR_HF_TOKEN is None:
+    raise ValueError("Set the HF_TOKEN environment variable for authentication.")
 login(YOUR_HF_TOKEN)
 
 MODEL_NAME = 'meta-llama/Llama-3.1-8B'
