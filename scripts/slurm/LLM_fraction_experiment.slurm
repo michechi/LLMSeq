@@ -21,6 +21,12 @@ export HF_DATASETS_CACHE="$SCRATCH_CACHE"
 export XDG_CACHE_HOME="$SCRATCH_CACHE"
 export HUGGING_FACE_HUB_TOKEN="${HF_TOKEN:?ERROR: Set HF_TOKEN environment variable before submitting}"
 
+# ============== PARTE 1.5: PROXY PER INTERNET ==============
+export http_proxy=http://10.63.2.48:3128/
+export https_proxy=http://10.63.2.48:3128/
+export HTTP_PROXY=http://10.63.2.48:3128/
+export HTTPS_PROXY=http://10.63.2.48:3128/
+
 echo "=== JOB CONFIGURATION ==="
 echo "Job ID: $SLURM_JOB_ID"
 echo "Node: $(hostname)"
@@ -45,7 +51,10 @@ CONTAINER_ENV="$CONTAINER_ENV,HF_HOME=$SCRATCH_CACHE"
 CONTAINER_ENV="$CONTAINER_ENV,HF_DATASETS_CACHE=$SCRATCH_CACHE"
 CONTAINER_ENV="$CONTAINER_ENV,XDG_CACHE_HOME=$SCRATCH_CACHE"
 CONTAINER_ENV="$CONTAINER_ENV,PYTHONUNBUFFERED=1"
-
+CONTAINER_ENV="$CONTAINER_ENV,http_proxy=http://10.63.2.48:3128/"
+CONTAINER_ENV="$CONTAINER_ENV,https_proxy=http://10.63.2.48:3128/"
+CONTAINER_ENV="$CONTAINER_ENV,HTTP_PROXY=http://10.63.2.48:3128/"
+CONTAINER_ENV="$CONTAINER_ENV,HTTPS_PROXY=http://10.63.2.48:3128/"
 
 echo "=== STARTING CONTAINER ==="
 echo "Container: /cluster/work/support/container/pytorch_nvidia_24.12_extended.sif"
@@ -58,7 +67,7 @@ srun apptainer exec --nv \
 --bind /cluster/home/michechi:/cluster/home/michechi \
 --env "$CONTAINER_ENV" \
 /cluster/work/support/container/pytorch_nvidia_24.12_extended.sif \
-python3 -u ./src/experiments/LLM_fraction_experiment_quant.py \
+python3 -u ./src/experiments/LLM_fraction_experiment.py \
 --number_to_use "9" \
 --path_csv /cluster/home/michechi/MIMICIV/data/simulation/tested/ \
 --cache_dir "/cluster/work/projects/nn12048k/michechi/cache/" \
