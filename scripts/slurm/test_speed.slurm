@@ -52,7 +52,7 @@ srun apptainer exec --nv \
 --bind /cluster/work/projects/nn12048k:/cluster/work/projects/nn12048k:rw \
 --env "$CONTAINER_ENV" \
 /cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif \
-python3 -u ./Finetuning_FOX_time_simulation_tiny.py \
+python3 -u ./src/experiments/Finetuning_FOX_time_simulation_tiny.py \
 --cache_dir "$PERMANENT_CACHE" \
         ${@}
 

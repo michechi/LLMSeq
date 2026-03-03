@@ -58,7 +58,7 @@ srun apptainer exec --nv \
 --bind /cluster/home/michechi:/cluster/home/michechi \
 --env "$CONTAINER_ENV" \
 /cluster/work/support/container/pytorch_nvidia_24.12_extended.sif \
-python3 -u ./LLM_fraction_experiment_quant.py \
+python3 -u ./src/experiments/LLM_fraction_experiment_quant.py \
 --number_to_use "9" \
 --path_csv /cluster/home/michechi/MIMICIV/data/simulation/tested/ \
 --cache_dir "/cluster/work/projects/nn12048k/michechi/cache/" \

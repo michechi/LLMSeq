@@ -57,7 +57,7 @@ srun apptainer exec --nv \
 --bind /cluster/work/projects/nn12048k:/cluster/work/projects/nn12048k \
 --env "$CONTAINER_ENV" \
 /cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif \
-python3 -u ./BERT_fraction_experiment.py \
+python3 -u ./src/experiments/BERT_fraction_experiment.py \
 --number_to_use '9' \
 --path_csv /cluster/home/michechi/MIMICIV/data/simulation/tested/ \
 --cache_dir "/cluster/work/projects/nn12048k/michechi/cache/" \
