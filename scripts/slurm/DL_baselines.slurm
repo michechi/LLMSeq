@@ -52,7 +52,7 @@ srun apptainer exec --nv \
     --bind /cluster/work/projects/nn12048k:/cluster/work/projects/nn12048k:rw \
     --env "$CONTAINER_ENV" \
     /cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif \
-    python3 -u DL_TR_baselines.py \
+    python3 -u src/experiments/DL_TR_baselines.py \
         ${@}  # Pass all arguments from command line
 
 # ============== PARTE 4: NESSUNA PULIZIA ==============

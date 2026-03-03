@@ -58,7 +58,7 @@ srun apptainer exec --nv \
     --bind "$SCRATCH_CACHE:$SCRATCH_CACHE" \
     --env "$CONTAINER_ENV" \
     /cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif \
-    python3 -u ./Finetuning_FOX_time_simulation_tiny.py \
+    python3 -u ./src/experiments/Finetuning_FOX_time_simulation_tiny.py \
         --cache_dir "$SCRATCH_CACHE" \
         ${@}  # Passa altri argomenti dalla riga di comando
 
