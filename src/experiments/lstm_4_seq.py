@@ -122,15 +122,15 @@ def get_embeddings(texts, model_name, batch_size, max_length, device, cache_dir)
     
     tokenizer = AutoTokenizer.from_pretrained(
         model_name,
-        token="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",
+        token=os.getenv("HF_TOKEN"),
         cache_dir=cache_dir,
-        force_download=True, 
+        force_download=True,
         local_files_only=False
     )
-    
+
     model = AutoModel.from_pretrained(
         model_name,
-        token="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",
+        token=os.getenv("HF_TOKEN"),
         torch_dtype=torch.bfloat16,
         device_map='auto',
         cache_dir=cache_dir,

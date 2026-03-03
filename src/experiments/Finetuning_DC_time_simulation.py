@@ -504,8 +504,7 @@ args = parse_args()
 # Set seed for reproducibility
 set_seed(args.seed)
 
-#hf_token = os.getenv("HF_TOKEN")
-hf_token = "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"
+hf_token = os.getenv("HF_TOKEN")
 
 tokenizer = load_tokenizer(args.model_name, args.model_type, hf_token, args.cache_dir)
 model = load_model_causal(args.model_name, args.model_type, tokenizer, args.cache_dir, hf_token, args.peft, args.use_quantization).to(device="cpu")

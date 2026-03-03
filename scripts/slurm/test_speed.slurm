@@ -20,7 +20,7 @@ export HF_DATASETS_CACHE="$PERMANENT_CACHE"
 export XDG_CACHE_HOME="$PERMANENT_CACHE"
 
 # 3. TOKEN DI AUTENTICAZIONE
-export HUGGING_FACE_HUB_TOKEN="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"
+export HUGGING_FACE_HUB_TOKEN="${HF_TOKEN:?ERROR: Set HF_TOKEN environment variable before submitting}"
 
 # 4. Log per debugging
 echo "=== JOB CONFIGURATION ==="
