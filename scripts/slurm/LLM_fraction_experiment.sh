@@ -12,7 +12,33 @@ set -o nounset
 
 echo "=== RUN: ${RUN_NAME:?ERROR: RUN_NAME not set} ==="
 
-# ============== PARTE 1: SETUP CACHE E TOKEN ==============
+# ============== EXPERIMENT PARAMETERS (from wrapper or defaults) ==============
+MODEL_NAME="${EXP_MODEL:-meta-llama/Llama-3.2-1B}"
+SEED="${EXP_SEED:-8888}"
+BATCH_SIZE="${EXP_BATCH_SIZE:-64}"
+MAX_LENGTH="${EXP_MAX_LENGTH:-50}"
+NUMBER_TO_USE="${EXP_NUMBER:-9}"
+FRACTIONS="${EXP_FRACTIONS:-1.0}"
+PEFT="${EXP_PEFT:-true}"
+QUANTIZATION="${EXP_QUANTIZATION:-false}"
+LR="${EXP_LR:-2e-5}"
+EPOCHS="${EXP_EPOCHS:-20}"
+PATIENCE="${EXP_PATIENCE:-3}"
+
+echo "=== EXPERIMENT PARAMETERS ==="
+echo "Model: $MODEL_NAME"
+echo "Seed: $SEED"
+echo "Batch size: $BATCH_SIZE"
+echo "Max length: $MAX_LENGTH"
+echo "Dataset: $NUMBER_TO_USE"
+echo "Fractions: $FRACTIONS"
+echo "PEFT: $PEFT"
+echo "Quantization: $QUANTIZATION"
+echo "LR: $LR"
+echo "Epochs: $EPOCHS"
+echo "Patience: $PATIENCE"
+
+# ============== SETUP CACHE E TOKEN ==============
 export SCRATCH_CACHE="$SCRATCH/hf_cache_$SLURM_JOB_ID"
 mkdir -p "$SCRATCH_CACHE"
 
@@ -21,7 +47,7 @@ export HF_DATASETS_CACHE="$SCRATCH_CACHE"
 export XDG_CACHE_HOME="$SCRATCH_CACHE"
 export HUGGING_FACE_HUB_TOKEN="${HF_TOKEN:?ERROR: Set HF_TOKEN environment variable before submitting}"
 
-# ============== PARTE 1.5: PROXY PER INTERNET ==============
+# ============== PROXY PER INTERNET ==============
 export http_proxy=http://10.63.2.48:3128/
 export https_proxy=http://10.63.2.48:3128/
 export HTTP_PROXY=http://10.63.2.48:3128/
@@ -33,7 +59,7 @@ echo "Node: $(hostname)"
 echo "Scratch Cache: $SCRATCH_CACHE"
 echo "Free space in SCRATCH: $(df -h $SCRATCH | tail -1 | awk '{print $4}')"
 
-# ============== PARTE 2: CARICA MODULI ==============
+# ============== CARICA MODULI ==============
 module purge
 module load NRIS/GPU
 
@@ -42,10 +68,10 @@ if ! command -v apptainer &> /dev/null && ! command -v singularity &> /dev/null;
     module load Apptainer
 fi
 
-# ============== PARTE 3: PREPARA DIRECTORY ==============
+# ============== PREPARA DIRECTORY ==============
 mkdir -p /cluster/work/projects/nn12048k/michechi/results/llm_fraction/
 
-# ============== PARTE 4: COMANDO DI ESECUZIONE ==============
+# ============== BUILD PYTHON COMMAND ==============
 CONTAINER_ENV="HUGGING_FACE_HUB_TOKEN=$HUGGING_FACE_HUB_TOKEN"
 CONTAINER_ENV="$CONTAINER_ENV,HF_HOME=$SCRATCH_CACHE"
 CONTAINER_ENV="$CONTAINER_ENV,HF_DATASETS_CACHE=$SCRATCH_CACHE"
@@ -56,9 +82,18 @@ CONTAINER_ENV="$CONTAINER_ENV,https_proxy=http://10.63.2.48:3128/"
 CONTAINER_ENV="$CONTAINER_ENV,HTTP_PROXY=http://10.63.2.48:3128/"
 CONTAINER_ENV="$CONTAINER_ENV,HTTPS_PROXY=http://10.63.2.48:3128/"
 
+# Build optional flags
+OPTIONAL_FLAGS=""
+if [ "$PEFT" = "true" ]; then
+    OPTIONAL_FLAGS="$OPTIONAL_FLAGS --peft"
+fi
+if [ "$QUANTIZATION" = "true" ]; then
+    OPTIONAL_FLAGS="$OPTIONAL_FLAGS --use_quantization"
+fi
+
 echo "=== STARTING CONTAINER ==="
 echo "Container: /cluster/work/support/container/pytorch_nvidia_24.12_extended.sif"
-echo "Environment: $CONTAINER_ENV"
+echo "Optional flags: $OPTIONAL_FLAGS"
 
 # Run the LLM fraction experiment
 srun apptainer exec --nv \
@@ -68,16 +103,16 @@ srun apptainer exec --nv \
 --env "$CONTAINER_ENV" \
 /cluster/work/support/container/pytorch_nvidia_24.12_extended.sif \
 python3 -u ./src/experiments/LLM_fraction_experiment.py \
---number_to_use "9" \
+--number_to_use "$NUMBER_TO_USE" \
 --path_csv /cluster/home/michechi/MIMICIV/data/simulation/tested/ \
 --cache_dir "/cluster/work/projects/nn12048k/michechi/cache/" \
 --output_dir /cluster/work/projects/nn12048k/michechi/results/llm_fraction/ \
---model_name meta-llama/Llama-3.2-1B \
---peft \
---batch_size 64 \
---max_length 50 \
---epochs 20 \
---patience 3 \
---lr 2e-5 \
---seed 8888 \
---fractions "1.0"
+--model_name "$MODEL_NAME" \
+--batch_size "$BATCH_SIZE" \
+--max_length "$MAX_LENGTH" \
+--epochs "$EPOCHS" \
+--patience "$PATIENCE" \
+--lr "$LR" \
+--seed "$SEED" \
+--fractions "$FRACTIONS" \
+$OPTIONAL_FLAGS
