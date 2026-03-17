@@ -1,6 +1,4 @@
 #!/bin/bash
-#SBATCH --job-name=LLM_fraction_30B_9_8888_1
-#SBATCH --output=./logs/LLM_fraction_30B_9_8888_1_%j.out
 #SBATCH --account=NN12048K
 #SBATCH --time=1-24:00:00
 #SBATCH --partition=accel
@@ -11,6 +9,8 @@
 
 set -o errexit
 set -o nounset
+
+echo "=== RUN: ${RUN_NAME:?ERROR: RUN_NAME not set} ==="
 
 # ============== PARTE 1: SETUP CACHE E TOKEN ==============
 export SCRATCH_CACHE="$SCRATCH/hf_cache_$SLURM_JOB_ID"
@@ -72,9 +72,9 @@ python3 -u ./src/experiments/LLM_fraction_experiment.py \
 --path_csv /cluster/home/michechi/MIMICIV/data/simulation/tested/ \
 --cache_dir "/cluster/work/projects/nn12048k/michechi/cache/" \
 --output_dir /cluster/work/projects/nn12048k/michechi/results/llm_fraction/ \
---model_name Qwen/Qwen3-30B-A3B \
+--model_name meta-llama/Llama-3.2-1B \
 --peft \
---batch_size 128 \
+--batch_size 64 \
 --max_length 50 \
 --epochs 20 \
 --patience 3 \
