@@ -41,6 +41,21 @@ done
 
 mkdir -p ./logs
 
+# Export env vars BEFORE sbatch (avoids comma conflict with --export
+# when FRACTIONS contains commas like "0.01,0.10,0.30,0.50,0.75,1.0")
+export RUN_NAME="${NAME}"
+export EXP_MODEL="${MODEL_NAME}"
+export EXP_SEED="${SEED}"
+export EXP_BATCH_SIZE="${BATCH_SIZE}"
+export EXP_MAX_LENGTH="${MAX_LENGTH}"
+export EXP_NUMBER="${NUMBER_TO_USE}"
+export EXP_FRACTIONS="${FRACTIONS}"
+export EXP_PEFT="${PEFT}"
+export EXP_QUANTIZATION="${QUANTIZATION}"
+export EXP_LR="${LR}"
+export EXP_EPOCHS="${EPOCHS}"
+export EXP_PATIENCE="${PATIENCE}"
+
 sbatch \
     --job-name="LLM_${NAME}" \
     --output="./logs/LLM_${NAME}_%j.out" \
@@ -51,7 +66,7 @@ sbatch \
     --ntasks=1 \
     --nodes=1 \
     --gpus="${GPUS}" \
-    --export="ALL,RUN_NAME=${NAME},EXP_MODEL=${MODEL_NAME},EXP_SEED=${SEED},EXP_BATCH_SIZE=${BATCH_SIZE},EXP_MAX_LENGTH=${MAX_LENGTH},EXP_NUMBER=${NUMBER_TO_USE},EXP_FRACTIONS=${FRACTIONS},EXP_PEFT=${PEFT},EXP_QUANTIZATION=${QUANTIZATION},EXP_LR=${LR},EXP_EPOCHS=${EPOCHS},EXP_PATIENCE=${PATIENCE}" \
+    --export=ALL \
     scripts/slurm/LLM_fraction_experiment.sh
 
 echo "Submitted: LLM_${NAME} (model=${MODEL_NAME}, seed=${SEED}, gpus=${GPUS})"
