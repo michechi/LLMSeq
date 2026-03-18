@@ -128,6 +128,8 @@ class CausalLMWithClassificationHead(nn.Module):
         self.backbone = backbone_model
         self.config = backbone_model.config
         self.num_classes = num_classes
+        # Mamba doesn't accept attention_mask in forward()
+        self.is_mamba = getattr(self.config, 'model_type', '') == 'mamba'
 
         self.classification_head = nn.Sequential(
             nn.Linear(self.config.hidden_size, self.config.hidden_size // 2),
@@ -142,13 +144,16 @@ class CausalLMWithClassificationHead(nn.Module):
         )
 
     def forward(self, input_ids, attention_mask=None, labels=None, outcome_labels=None):
-        causal_outputs = self.backbone(
+        backbone_kwargs = dict(
             input_ids=input_ids,
-            attention_mask=attention_mask,
             labels=labels,
             output_hidden_states=True,
             return_dict=True
         )
+        if not self.is_mamba:
+            backbone_kwargs['attention_mask'] = attention_mask
+
+        causal_outputs = self.backbone(**backbone_kwargs)
 
         hidden_states = causal_outputs.hidden_states[-1]
 
@@ -252,10 +257,16 @@ def load_model_causal(args, tokenizer, hf_token):
             model = CausalLMWithClassificationHead(base_model, num_classes=2)
 
             if args.peft:
+                # Mamba uses different projection modules than attention-based models
+                if "mamba" in args.model_name.lower():
+                    target_modules = ['in_proj', 'out_proj']
+                else:
+                    target_modules = ['q_proj', 'k_proj', 'v_proj', 'o_proj']
+
                 lora_config = LoraConfig(
                     r=8,
                     lora_alpha=16,
-                    target_modules=['q_proj', 'k_proj', 'v_proj', 'o_proj'],
+                    target_modules=target_modules,
                     lora_dropout=0.1,
                     bias='none',
                     task_type="CAUSAL_LM"
@@ -490,9 +501,10 @@ def train_and_evaluate_causal(model, train_loader, val_loader, args, device, use
                 logger.info(f"Early stopping at epoch {epoch+1}")
                 break
 
-    # Load best model
+    # Load best model (strict=False needed for quantized models where BitsAndBytes
+    # metadata keys like .absmax/.quant_map are in the saved state but not expected by PeftModel)
     if best_model_state is not None:
-        model.backbone.load_state_dict(best_model_state['backbone'])
+        model.backbone.load_state_dict(best_model_state['backbone'], strict=False)
         model.classification_head.load_state_dict(best_model_state['classification_head'])
 
     # Get final validation predictions for threshold optimization
