@@ -54,16 +54,22 @@ ABLATION_CONFIGS = [
     (131, 20, 3, 3, "m=3, lambda=3"),
     (132, 20, 3, 5, "m=3, lambda=5"),
     (110, 20, 3, 7, "m=3, lambda=7"),
+    (133, 20, 3, 9, "m=3, lambda=9"),
+    (134, 20, 3, 10, "m=3, lambda=10 (pairs only)"),
     # m=6 row
     (120, 20, 6, 1, "m=6, lambda=1"),
     (121, 20, 6, 3, "m=6, lambda=3"),
     (122, 20, 6, 5, "m=6, lambda=5"),
     # m=6, λ=7 is already 102
+    (123, 20, 6, 9, "m=6, lambda=9"),
+    (124, 20, 6, 10, "m=6, lambda=10 (pairs only)"),
     # m=10 row
     (140, 20, 10, 1, "m=10, lambda=1"),
     (141, 20, 10, 3, "m=10, lambda=3"),
     (142, 20, 10, 5, "m=10, lambda=5"),
     (112, 20, 10, 7, "m=10, lambda=7"),
+    (143, 20, 10, 9, "m=10, lambda=9"),
+    (144, 20, 10, 10, "m=10, lambda=10 (pairs only)"),
 ]
 
 
@@ -215,6 +221,8 @@ def main():
                         help="List all planned ablation configurations and exit")
     parser.add_argument("--all", action="store_true",
                         help="Generate all ablation configurations")
+    parser.add_argument("--only", type=str, default=None,
+                        help="Generate only these IDs from the config table (comma-separated, e.g. '133,134,123')")
 
     args = parser.parse_args()
 
@@ -233,9 +241,18 @@ def main():
         print(f"{'m=10':>8} {'140':<8} {'141':<8} {'142':<8} {'112':<8}")
         return
 
-    if args.all:
-        # Generate all configurations
-        for did, n, m, lag, desc in ABLATION_CONFIGS:
+    if args.all or args.only:
+        # Filter configs if --only is specified
+        if args.only:
+            only_ids = set(int(x) for x in args.only.split(','))
+            configs = [c for c in ABLATION_CONFIGS if c[0] in only_ids]
+            if not configs:
+                parser.error(f"No configs found for IDs: {only_ids}")
+        else:
+            configs = ABLATION_CONFIGS
+
+        # Generate configurations
+        for did, n, m, lag, desc in configs:
             logger.info(f"\n{'='*60}")
             logger.info(f"Config {did}: {desc}")
             logger.info(f"{'='*60}")
