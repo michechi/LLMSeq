@@ -2,9 +2,11 @@
 #SBATCH --job-name=gen_sensitivity
 #SBATCH --account=NN12048K
 #SBATCH --time=02:00:00
+#SBATCH --partition=accel
 #SBATCH --mem=32G
 #SBATCH --ntasks=1
 #SBATCH --nodes=1
+#SBATCH --gpus=1
 #SBATCH --cpus-per-task=16
 #SBATCH --output=logs/gen_sensitivity_%j.out
 #SBATCH --error=logs/gen_sensitivity_%j.err
