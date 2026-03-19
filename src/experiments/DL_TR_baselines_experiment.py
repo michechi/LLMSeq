@@ -332,6 +332,51 @@ class GRUClassifier(nn.Module):
         return logits
 
 
+class MambaClassifier(nn.Module):
+    """
+    Mamba (Selective State Space Model) classifier.
+    Uses selective state-space layers instead of attention or recurrence.
+    Requires: pip install mamba-ssm causal-conv1d
+    """
+    def __init__(self, vocab_size=26, embedding_dim=64, d_state=16,
+                 d_conv=4, expand=2, num_layers=2, num_classes=2,
+                 dropout=0.3, max_seq_length=30):
+        super(MambaClassifier, self).__init__()
+
+        from mamba_ssm import Mamba
+
+        self.embedding = nn.Embedding(vocab_size, embedding_dim, padding_idx=0)
+
+        self.mamba_layers = nn.ModuleList([
+            Mamba(d_model=embedding_dim, d_state=d_state,
+                  d_conv=d_conv, expand=expand)
+            for _ in range(num_layers)
+        ])
+        self.norms = nn.ModuleList([
+            nn.LayerNorm(embedding_dim) for _ in range(num_layers)
+        ])
+
+        self.final_norm = nn.LayerNorm(embedding_dim)
+        self.dropout = nn.Dropout(dropout)
+        self.fc = nn.Linear(embedding_dim, num_classes)
+
+    def forward(self, x):
+        embedded = self.embedding(x)
+
+        h = embedded
+        for mamba, norm in zip(self.mamba_layers, self.norms):
+            h = h + mamba(norm(h))  # pre-norm + residual
+
+        h = self.final_norm(h)
+
+        # Mean pooling excluding padding
+        padding_mask = (x != 0).unsqueeze(-1).float()
+        pooled = (h * padding_mask).sum(dim=1) / (padding_mask.sum(dim=1) + 1e-9)
+
+        pooled = self.dropout(pooled)
+        return self.fc(pooled)
+
+
 class RNNTransformerClassifier(nn.Module):
     """Hybrid model: BiLSTM + Transformer."""
     def __init__(self, vocab_size=26, embedding_dim=64, rnn_hidden_dim=64,
@@ -408,7 +453,8 @@ MODEL_CLASSES = {
     'LSTM': LSTMClassifier,
     'BiLSTM': BiLSTMClassifier,
     'GRU': GRUClassifier,
-    'RNNTransformer': RNNTransformerClassifier
+    'RNNTransformer': RNNTransformerClassifier,
+    'Mamba': MambaClassifier
 }
 
 
@@ -482,6 +528,17 @@ DEFAULT_CONFIGS = {
         'num_classes': 2,
         'dropout': 0.3,
         'max_seq_length': 30
+    },
+    'Mamba': {
+        'vocab_size': 26,
+        'embedding_dim': 64,
+        'd_state': 16,
+        'd_conv': 4,
+        'expand': 2,
+        'num_layers': 2,
+        'num_classes': 2,
+        'dropout': 0.3,
+        'max_seq_length': 30
     }
 }
 
@@ -492,7 +549,8 @@ DEFAULT_LR = {
     'LSTM': 0.001,
     'BiLSTM': 0.001,
     'GRU': 0.001,
-    'RNNTransformer': 0.0005
+    'RNNTransformer': 0.0005,
+    'Mamba': 0.001
 }
 
 # ============================================
@@ -558,6 +616,17 @@ OPTIMAL_CONFIGS = {
         'num_classes': 2,
         'dropout': 0.1,
         'max_seq_length': 30
+    },
+    'Mamba': {
+        'vocab_size': 26,
+        'embedding_dim': 64,
+        'd_state': 16,
+        'd_conv': 4,
+        'expand': 2,
+        'num_layers': 4,
+        'num_classes': 2,
+        'dropout': 0.2,
+        'max_seq_length': 30
     }
 }
 
@@ -568,7 +637,8 @@ OPTIMAL_LR = {
     'LSTM': 0.0005,
     'BiLSTM': 0.001,
     'GRU': 0.001,
-    'RNNTransformer': 0.001
+    'RNNTransformer': 0.001,
+    'Mamba': 0.001
 }
 
 
@@ -944,7 +1014,7 @@ def run_fraction_experiment(args):
     logger.info(f"Maximum sequence length: {max_seq_length}")
 
     # Update configs with max_seq_length
-    for model_name in ['MLP', 'Transformer', 'RNNTransformer']:
+    for model_name in ['MLP', 'Transformer', 'RNNTransformer', 'Mamba']:
         if model_name in DEFAULT_CONFIGS:
             DEFAULT_CONFIGS[model_name]['max_seq_length'] = max_seq_length
         if model_name in OPTIMAL_CONFIGS:
@@ -964,7 +1034,7 @@ def run_fraction_experiment(args):
     logger.info(f"Testing fractions: {fractions}")
 
     if args.models == 'all':
-        models_to_train = ['MLP', 'CNN1D', 'Transformer', 'LSTM', 'BiLSTM', 'GRU', 'RNNTransformer']
+        models_to_train = ['MLP', 'CNN1D', 'Transformer', 'LSTM', 'BiLSTM', 'GRU', 'RNNTransformer', 'Mamba']
     else:
         models_to_train = args.models.split(',')
     logger.info(f"Models to train: {models_to_train}")
