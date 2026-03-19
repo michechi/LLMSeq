@@ -28,7 +28,7 @@ if ! command -v apptainer &> /dev/null; then module load Apptainer; fi
 # ============== CONFIG ==============
 DATA_DIR="/cluster/home/michechi/MIMICIV/data/simulation/sensitivity/"
 OUTPUT_DIR="/cluster/work/projects/nn12048k/michechi/results/sensitivity/"
-CONTAINER="/cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif"
+CONTAINER="/cluster/work/support/container/pytorch_nvidia_24.12_extended.sif"
 
 CONTAINER_ENV="HUGGING_FACE_HUB_TOKEN=$HUGGING_FACE_HUB_TOKEN"
 CONTAINER_ENV="$CONTAINER_ENV,HF_HOME=$PERMANENT_CACHE"

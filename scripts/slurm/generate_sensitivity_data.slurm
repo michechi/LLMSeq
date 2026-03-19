@@ -1,8 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=gen_sensitivity
 #SBATCH --account=NN12048K
-#SBATCH --time=06:00:00
-#SBATCH --partition=normal
+#SBATCH --time=02:00:00
 #SBATCH --mem=32G
 #SBATCH --ntasks=1
 #SBATCH --nodes=1
@@ -23,7 +22,7 @@ module load NRIS/GPU
 
 if ! command -v apptainer &> /dev/null; then module load Apptainer; fi
 
-CONTAINER="/cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif"
+CONTAINER="/cluster/work/support/container/pytorch_nvidia_24.12_extended.sif"
 OUTPUT_DIR="/cluster/home/michechi/MIMICIV/data/simulation/sensitivity/"
 
 srun apptainer exec \
