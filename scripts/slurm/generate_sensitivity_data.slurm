@@ -31,7 +31,7 @@ srun apptainer exec \
     --bind /cluster/home/michechi:/cluster/home/michechi \
     "$CONTAINER" \
     python3 -u -m simulation.generate_sensitivity_datasets \
-        --only 133,134,123,124,143,144 \
+        --all \
         --output_dir "$OUTPUT_DIR"
 
 echo "=== DONE ==="
