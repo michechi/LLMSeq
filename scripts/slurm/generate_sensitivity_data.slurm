@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --job-name=gen_sensitivity
 #SBATCH --account=NN12048K
-#SBATCH --time=02:00:00
+#SBATCH --time=00:30:00
 #SBATCH --partition=accel
-#SBATCH --mem=32G
+#SBATCH --mem=90G
 #SBATCH --ntasks=1
 #SBATCH --nodes=1
 #SBATCH --gpus=1
@@ -32,7 +32,7 @@ srun apptainer exec \
     --bind /cluster/home/michechi:/cluster/home/michechi \
     "$CONTAINER" \
     python3 -u -m simulation.generate_sensitivity_datasets \
-        --all \
+        --only 120,140    \
         --output_dir "$OUTPUT_DIR"
 
 echo "=== DONE ==="

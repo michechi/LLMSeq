@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=sensitivity_DL
 #SBATCH --account=NN12048K
-#SBATCH --time=06:00:00
+#SBATCH --time=2-24:00:00
 #SBATCH --partition=accel
 #SBATCH --mem=40G
 #SBATCH --ntasks=1
@@ -53,15 +53,15 @@ for ID in "${DATASETS[@]}"; do
         --bind /cluster/home/michechi:/cluster/home/michechi:rw \
         --env "$CONTAINER_ENV" \
         "$CONTAINER" \
-        python3 -u src/experiments/DL_TR_baselines_experiment.py \
+        python3 -u ../../src/experiments/DL_TR_baselines_experiment.py \
             --number_to_use "$ID" \
             --path_csv "$DATA_DIR" \
             --output_dir "$OUTPUT_DIR" \
-            --models Transformer,LSTM \
+            --models Transformer,LSTM,RNNTransformer \
             --label_column Outcome \
             --optimal \
             --fractions "1.0" \
-            --seed 42
+            --seed 9550
 done
 
 echo "=== ALL DONE ==="

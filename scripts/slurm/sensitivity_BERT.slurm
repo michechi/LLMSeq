@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=sensitivity_BERT
 #SBATCH --account=NN12048K
-#SBATCH --time=2-00:00:00
+#SBATCH --time=3-00:00:00
 #SBATCH --partition=accel
 #SBATCH --mem=90G
 #SBATCH --ntasks=1
@@ -64,7 +64,7 @@ for ID in "${DATASETS[@]}"; do
         --bind /cluster/home/michechi:/cluster/home/michechi \
         --env "$CONTAINER_ENV" \
         "$CONTAINER" \
-        python3 -u src/experiments/BERT_fraction_experiment.py \
+        python3 -u ../../src/experiments/BERT_fraction_experiment.py \
             --number_to_use "$ID" \
             --path_csv "$DATA_DIR" \
             --cache_dir "$SCRATCH_CACHE" \
@@ -75,7 +75,7 @@ for ID in "${DATASETS[@]}"; do
             --epochs 20 \
             --patience 3 \
             --lr 2e-5 \
-            --seed 42 \
+            --seed 9550 \
             --fractions "1.0"
 done
 

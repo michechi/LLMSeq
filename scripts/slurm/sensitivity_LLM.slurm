@@ -64,7 +64,7 @@ for ID in "${DATASETS[@]}"; do
         --bind /cluster/home/michechi:/cluster/home/michechi \
         --env "$CONTAINER_ENV" \
         "$CONTAINER" \
-        python3 -u src/experiments/LLM_fraction_experiment.py \
+        python3 -u ../../src/experiments/LLM_fraction_experiment.py \
             --number_to_use "$ID" \
             --path_csv "$DATA_DIR" \
             --cache_dir "/cluster/work/projects/nn12048k/michechi/cache/" \
@@ -72,11 +72,11 @@ for ID in "${DATASETS[@]}"; do
             --model_name meta-llama/Llama-3.2-1B \
             --peft \
             --batch_size 64 \
-            --max_length 50 \
+            --max_length 100 \
             --epochs 20 \
             --patience 3 \
             --lr 2e-5 \
-            --seed 42 \
+            --seed 9550 \
             --fractions "1.0"
 done
 
