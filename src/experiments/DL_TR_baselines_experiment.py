@@ -738,7 +738,7 @@ Examples:
     parser.add_argument('--epochs', type=int, default=30,
                        help='Number of epochs for training')
 
-    parser.add_argument('--patience', type=int, default=5,
+    parser.add_argument('--patience', type=int, default=3,
                        help='Early stopping patience')
 
     parser.add_argument('--seed', type=int, default=42,
