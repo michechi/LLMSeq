@@ -259,7 +259,8 @@ def load_llama_model(model_name, tokenizer, peft=True, cache_dir=None):
     """Load Llama with LoRA and classification head."""
     base_model = AutoModelForCausalLM.from_pretrained(
         model_name, torch_dtype=torch.bfloat16,
-        device_map=None, cache_dir=cache_dir, tie_word_embeddings=True
+        device_map=None, cache_dir=cache_dir, tie_word_embeddings=True,
+        attn_implementation="eager"  # needed for output_attentions=True
     )
     base_model.config.pad_token_id = tokenizer.pad_token_id
     model = CausalLMWithClassificationHead(base_model, num_classes=2)
