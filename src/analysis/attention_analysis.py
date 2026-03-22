@@ -392,30 +392,40 @@ def is_truly_compliant(seq_str, key_letters, lag, sep=SEP):
 
 def get_letter_token_positions(text, tokenizer):
     """
-    Map each letter in the sequence to its token position in the BERT tokenization.
+    Map each letter in the sequence to its token position in the tokenization.
+    Works for both BERT (WordPiece) and Llama (SentencePiece) tokenizers.
     Returns: list of (letter, token_position) for the 20 sequence letters.
     """
     # Extract letters from prompt
-    # Prompt format: "Sequential events: A B C D E F G H I J K L M N O P Q R S T"
+    # BERT format: "Sequential events: A B C D ... T"
+    # Llama format: "Sequential events: A B C D ... T\nOutcome (0 or 1):"
     parts = text.split("Sequential events: ")
     if len(parts) < 2:
         return []
-    letters = parts[1].strip().split()
+    after_prefix = parts[1]
+    # Remove Llama suffix if present
+    if "\nOutcome" in after_prefix:
+        after_prefix = after_prefix.split("\nOutcome")[0]
+    letters = after_prefix.strip().split()
 
-    # Tokenize and find letter positions
-    tokens = tokenizer.tokenize(text)
+    # Tokenize the full text
+    token_ids = tokenizer.encode(text, add_special_tokens=True)
+    tokens = tokenizer.convert_ids_to_tokens(token_ids)
 
     letter_positions = []
-    token_idx = 0
     letter_idx = 0
 
     for i, token in enumerate(tokens):
-        # Skip prefix tokens (sequential, events, :)
-        # BERT tokens for single letters are just the letter (lowercase for uncased)
-        clean_token = token.replace('##', '').upper()
-        if letter_idx < len(letters) and clean_token == letters[letter_idx].upper():
-            # +1 for [CLS] token
-            letter_positions.append((letters[letter_idx], i + 1))
+        if letter_idx >= len(letters):
+            break
+
+        # Clean token: remove subword markers for both tokenizer types
+        # BERT: '##' prefix for subwords
+        # Llama/SentencePiece: '▁' (U+2581) prefix for word starts
+        clean = token.replace('##', '').replace('▁', '').replace('Ġ', '').upper().strip()
+
+        if clean == letters[letter_idx].upper():
+            letter_positions.append((letters[letter_idx], i))
             letter_idx += 1
 
     return letter_positions
