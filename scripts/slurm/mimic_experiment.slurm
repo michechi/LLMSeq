@@ -55,7 +55,7 @@ fi
 
 # ============== PREPARE DIRECTORIES ==============
 PROJECT_DIR="/cluster/home/michechi/MIMICIV"
-CONTAINER="/cluster/work/projects/nn12048k/michechi/extended-pytorch/extended-pytorch.sif"
+CONTAINER="/cluster/work/support/container/pytorch_nvidia_24.12_extended.sif"
 
 mkdir -p "${PROJECT_DIR}/results/mimic"
 mkdir -p "${PROJECT_DIR}/logs"
@@ -66,9 +66,11 @@ CONTAINER_ENV="$CONTAINER_ENV,HF_HOME=$SCRATCH_CACHE"
 CONTAINER_ENV="$CONTAINER_ENV,HF_DATASETS_CACHE=$SCRATCH_CACHE"
 CONTAINER_ENV="$CONTAINER_ENV,XDG_CACHE_HOME=$SCRATCH_CACHE"
 CONTAINER_ENV="$CONTAINER_ENV,PYTHONUNBUFFERED=1"
+CONTAINER_ENV="$CONTAINER_ENV,http_proxy=http://10.63.2.48:3128/"
+CONTAINER_ENV="$CONTAINER_ENV,https_proxy=http://10.63.2.48:3128/"
+CONTAINER_ENV="$CONTAINER_ENV,HTTP_PROXY=http://10.63.2.48:3128/"
+CONTAINER_ENV="$CONTAINER_ENV,HTTPS_PROXY=http://10.63.2.48:3128/"
 
-echo "=== STARTING CONTAINER ==="
-echo "Container: ${CONTAINER}"
 
 # ============== RUN EXPERIMENT ==============
 srun apptainer exec --nv \
