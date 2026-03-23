@@ -1,0 +1,70 @@
+Starting job 194014 on gpu-1-107 on Olivia at Mon Mar 2 11:35:38 CET 2026
+
+=== JOB CONFIGURATION ===
+Job ID: 194014
+Node: gpu-1-107
+Model: transformer
+Data: shuffled
+Extra args: 
+Scratch Cache: /cluster/software/gpujobscratch/jobs/194014/hf_cache_194014
+Free space in SCRATCH: 472T
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) init-NRIS
+=== STARTING CONTAINER ===
+Container: /cluster/work/support/container/pytorch_nvidia_24.12_extended.sif
+Environment: HUGGING_FACE_HUB_TOKEN=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,HF_HOME=/cluster/software/gpujobscratch/jobs/194014/hf_cache_194014,HF_DATASETS_CACHE=/cluster/software/gpujobscratch/jobs/194014/hf_cache_194014,XDG_CACHE_HOME=/cluster/software/gpujobscratch/jobs/194014/hf_cache_194014,PYTHONUNBUFFERED=1,http_proxy=http://10.63.2.48:3128/,https_proxy=http://10.63.2.48:3128/,HTTP_PROXY=http://10.63.2.48:3128/,HTTPS_PROXY=http://10.63.2.48:3128/
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+2026-03-02 11:35:48,285: Model: transformer, Data: shuffled
+2026-03-02 11:35:49,181: Device: cuda
+2026-03-02 11:35:49,182: Vocab size: 294
+2026-03-02 11:35:49,393: Class weights: [1.0, 11.91715145111084]
+2026-03-02 11:35:49,956: Model parameters: 184,578
+/cluster/home/michechi/MIMICIV/src/mimic/train_mimic.py:414: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /opt/pytorch/pytorch/aten/src/ATen/native/Scalar.cpp:22.)
+  train_loss += loss.item()
+/usr/local/lib/python3.12/dist-packages/torch/nn/modules/transformer.py:505: UserWarning: The PyTorch API of nested tensors is in prototype stage and will change in the near future. We recommend specifying layout=torch.jagged when constructing a nested tensor, as this layout receives active development, has better operator coverage, and works with torch.compile. (Triggered internally at /opt/pytorch/pytorch/aten/src/ATen/NestedTensorImpl.cpp:178.)
+  output = torch._nested_tensor_from_mask(
+2026-03-02 11:35:56,000: Epoch 1/30 | Train Loss: 0.5825 | Val Loss: 0.5030 | Val AUC: 0.8452
+2026-03-02 11:35:59,724: Epoch 2/30 | Train Loss: 0.4918 | Val Loss: 0.5111 | Val AUC: 0.8505
+2026-03-02 11:36:03,533: Epoch 3/30 | Train Loss: 0.4646 | Val Loss: 0.5076 | Val AUC: 0.8517
+2026-03-02 11:36:07,257: Epoch 4/30 | Train Loss: 0.4115 | Val Loss: 0.4944 | Val AUC: 0.8519
+2026-03-02 11:36:10,984: Epoch 5/30 | Train Loss: 0.3857 | Val Loss: 0.5295 | Val AUC: 0.8507
+2026-03-02 11:36:14,706: Epoch 6/30 | Train Loss: 0.3373 | Val Loss: 0.6489 | Val AUC: 0.8399
+2026-03-02 11:36:18,429: Epoch 7/30 | Train Loss: 0.3016 | Val Loss: 0.5950 | Val AUC: 0.8392
+2026-03-02 11:36:22,152: Epoch 8/30 | Train Loss: 0.2743 | Val Loss: 0.8104 | Val AUC: 0.8283
+2026-03-02 11:36:25,875: Epoch 9/30 | Train Loss: 0.2510 | Val Loss: 0.7770 | Val AUC: 0.8352
+2026-03-02 11:36:25,875: Early stopping at epoch 9
+2026-03-02 11:36:26,239: Optimal threshold: 0.81 (Val F1: 0.4435)
+2026-03-02 11:36:26,501: Test AUC: 0.8436 | Test F1: 0.4170 | Precision: 0.3887 | Recall: 0.4498
+2026-03-02 11:36:26,503: Results appended to results/mimic/model_results.csv
+=== JOB COMPLETE ===
+
+Job 194014 consumed 0.0 billing hours and 0.0 GPU hours from project nn12048k.
+
+Submitted 2026-03-02T11:35:15; waited 23.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 4.0 hours
+Elapsed wallclock time:   49.0 seconds
+
+Job exited normally.
+
+Task and CPU statistics:
+ID                CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+194014               1            0.0 %  2026-03-02T11:35:38   49.0 s  0
+194014.batch         1      1     0.5 %  2026-03-02T11:35:38   49.0 s  0
+194014.apptainer     1      1     0.0 %  2026-03-02T11:35:40   47.0 s  0
+
+Used CPU time:   0.3 CPU seconds
+Unused CPU time: 48.7 CPU seconds
+
+Memory statistics, in GiB:
+ID                 Alloc   Usage
+194014              32.0        
+194014.batch        32.0     0.0
+194014.apptainer    32.0     4.9
+
+Job 194014 completed at Mon Mar 2 11:36:27 CET 2026

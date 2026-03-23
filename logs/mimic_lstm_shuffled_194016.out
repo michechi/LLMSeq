@@ -1,0 +1,74 @@
+Starting job 194016 on gpu-1-106 on Olivia at Mon Mar 2 11:35:38 CET 2026
+
+=== JOB CONFIGURATION ===
+Job ID: 194016
+Node: gpu-1-106
+Model: lstm
+Data: shuffled
+Extra args: 
+Scratch Cache: /cluster/software/gpujobscratch/jobs/194016/hf_cache_194016
+Free space in SCRATCH: 472T
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) init-NRIS
+=== STARTING CONTAINER ===
+Container: /cluster/work/support/container/pytorch_nvidia_24.12_extended.sif
+Environment: HUGGING_FACE_HUB_TOKEN=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,HF_HOME=/cluster/software/gpujobscratch/jobs/194016/hf_cache_194016,HF_DATASETS_CACHE=/cluster/software/gpujobscratch/jobs/194016/hf_cache_194016,XDG_CACHE_HOME=/cluster/software/gpujobscratch/jobs/194016/hf_cache_194016,PYTHONUNBUFFERED=1,http_proxy=http://10.63.2.48:3128/,https_proxy=http://10.63.2.48:3128/,HTTP_PROXY=http://10.63.2.48:3128/,HTTPS_PROXY=http://10.63.2.48:3128/
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+2026-03-02 11:35:46,712: Model: lstm, Data: shuffled
+2026-03-02 11:35:47,554: Device: cuda
+2026-03-02 11:35:47,555: Vocab size: 294
+2026-03-02 11:35:47,860: Class weights: [1.0, 11.91715145111084]
+2026-03-02 11:35:48,356: Model parameters: 67,906
+/cluster/home/michechi/MIMICIV/src/mimic/train_mimic.py:414: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /opt/pytorch/pytorch/aten/src/ATen/native/Scalar.cpp:22.)
+  train_loss += loss.item()
+2026-03-02 11:35:51,810: Epoch 1/30 | Train Loss: 0.6935 | Val Loss: 0.6901 | Val AUC: 0.4996
+2026-03-02 11:35:53,133: Epoch 2/30 | Train Loss: 0.6927 | Val Loss: 0.6907 | Val AUC: 0.5000
+2026-03-02 11:35:54,455: Epoch 3/30 | Train Loss: 0.6934 | Val Loss: 0.6905 | Val AUC: 0.4996
+2026-03-02 11:35:55,778: Epoch 4/30 | Train Loss: 0.6927 | Val Loss: 0.6939 | Val AUC: 0.5123
+2026-03-02 11:35:57,102: Epoch 5/30 | Train Loss: 0.6931 | Val Loss: 0.6899 | Val AUC: 0.4996
+2026-03-02 11:35:58,427: Epoch 6/30 | Train Loss: 0.6930 | Val Loss: 0.6906 | Val AUC: 0.4996
+2026-03-02 11:35:59,752: Epoch 7/30 | Train Loss: 0.6915 | Val Loss: 0.6913 | Val AUC: 0.4996
+2026-03-02 11:36:01,079: Epoch 8/30 | Train Loss: 0.6925 | Val Loss: 0.6902 | Val AUC: 0.4996
+2026-03-02 11:36:02,404: Epoch 9/30 | Train Loss: 0.6922 | Val Loss: 0.6902 | Val AUC: 0.4996
+2026-03-02 11:36:03,729: Epoch 10/30 | Train Loss: 0.6922 | Val Loss: 0.6898 | Val AUC: 0.5143
+2026-03-02 11:36:05,053: Epoch 11/30 | Train Loss: 0.6921 | Val Loss: 0.6900 | Val AUC: 0.4996
+2026-03-02 11:36:06,379: Epoch 12/30 | Train Loss: 0.6925 | Val Loss: 0.6907 | Val AUC: 0.4996
+2026-03-02 11:36:07,703: Epoch 13/30 | Train Loss: 0.6918 | Val Loss: 0.6900 | Val AUC: 0.4996
+2026-03-02 11:36:09,028: Epoch 14/30 | Train Loss: 0.6927 | Val Loss: 0.6900 | Val AUC: 0.4996
+2026-03-02 11:36:10,357: Epoch 15/30 | Train Loss: 0.6923 | Val Loss: 0.6909 | Val AUC: 0.4996
+2026-03-02 11:36:10,357: Early stopping at epoch 15
+2026-03-02 11:36:10,696: Optimal threshold: 0.10 (Val F1: 0.1435)
+2026-03-02 11:36:10,931: Test AUC: 0.4672 | Test F1: 0.1435 | Precision: 0.0773 | Recall: 1.0000
+2026-03-02 11:36:10,933: Results appended to results/mimic/model_results.csv
+=== JOB COMPLETE ===
+
+Job 194016 consumed 0.0 billing hours and 0.0 GPU hours from project nn12048k.
+
+Submitted 2026-03-02T11:35:15; waited 23.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 4.0 hours
+Elapsed wallclock time:   33.0 seconds
+
+Job exited normally.
+
+Task and CPU statistics:
+ID                CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+194016               1            0.0 %  2026-03-02T11:35:38   33.0 s  0
+194016.batch         1      1     0.7 %  2026-03-02T11:35:38   33.0 s  0
+194016.apptainer     1      1     0.0 %  2026-03-02T11:35:40   31.0 s  0
+
+Used CPU time:   0.2 CPU seconds
+Unused CPU time: 32.8 CPU seconds
+
+Memory statistics, in GiB:
+ID                 Alloc   Usage
+194016              32.0        
+194016.batch        32.0     0.0
+194016.apptainer    32.0     2.3
+
+Job 194016 completed at Mon Mar 2 11:36:12 CET 2026

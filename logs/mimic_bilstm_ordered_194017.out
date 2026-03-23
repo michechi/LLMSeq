@@ -1,0 +1,70 @@
+Starting job 194017 on gpu-1-106 on Olivia at Mon Mar 2 11:35:38 CET 2026
+
+=== JOB CONFIGURATION ===
+Job ID: 194017
+Node: gpu-1-106
+Model: bilstm
+Data: ordered
+Extra args: 
+Scratch Cache: /cluster/software/gpujobscratch/jobs/194017/hf_cache_194017
+Free space in SCRATCH: 472T
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) init-NRIS
+=== STARTING CONTAINER ===
+Container: /cluster/work/support/container/pytorch_nvidia_24.12_extended.sif
+Environment: HUGGING_FACE_HUB_TOKEN=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,HF_HOME=/cluster/software/gpujobscratch/jobs/194017/hf_cache_194017,HF_DATASETS_CACHE=/cluster/software/gpujobscratch/jobs/194017/hf_cache_194017,XDG_CACHE_HOME=/cluster/software/gpujobscratch/jobs/194017/hf_cache_194017,PYTHONUNBUFFERED=1,http_proxy=http://10.63.2.48:3128/,https_proxy=http://10.63.2.48:3128/,HTTP_PROXY=http://10.63.2.48:3128/,HTTPS_PROXY=http://10.63.2.48:3128/
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+2026-03-02 11:35:44,426: Model: bilstm, Data: ordered
+2026-03-02 11:35:44,596: Device: cuda
+2026-03-02 11:35:44,604: Vocab size: 294
+2026-03-02 11:35:44,977: Class weights: [1.0, 11.91715145111084]
+2026-03-02 11:35:45,449: Model parameters: 159,170
+/cluster/home/michechi/MIMICIV/src/mimic/train_mimic.py:414: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /opt/pytorch/pytorch/aten/src/ATen/native/Scalar.cpp:22.)
+  train_loss += loss.item()
+2026-03-02 11:35:49,901: Epoch 1/30 | Train Loss: 0.6372 | Val Loss: 0.5621 | Val AUC: 0.7883
+2026-03-02 11:35:51,660: Epoch 2/30 | Train Loss: 0.5664 | Val Loss: 0.5409 | Val AUC: 0.8143
+2026-03-02 11:35:53,421: Epoch 3/30 | Train Loss: 0.5387 | Val Loss: 0.5446 | Val AUC: 0.8173
+2026-03-02 11:35:55,182: Epoch 4/30 | Train Loss: 0.5284 | Val Loss: 0.5282 | Val AUC: 0.8229
+2026-03-02 11:35:56,944: Epoch 5/30 | Train Loss: 0.4942 | Val Loss: 0.5467 | Val AUC: 0.8253
+2026-03-02 11:35:58,706: Epoch 6/30 | Train Loss: 0.4669 | Val Loss: 0.5021 | Val AUC: 0.8309
+2026-03-02 11:36:00,474: Epoch 7/30 | Train Loss: 0.4588 | Val Loss: 0.5315 | Val AUC: 0.8128
+2026-03-02 11:36:02,245: Epoch 8/30 | Train Loss: 0.4630 | Val Loss: 0.5208 | Val AUC: 0.8272
+2026-03-02 11:36:04,013: Epoch 9/30 | Train Loss: 0.4465 | Val Loss: 0.5216 | Val AUC: 0.8241
+2026-03-02 11:36:05,783: Epoch 10/30 | Train Loss: 0.4132 | Val Loss: 0.5570 | Val AUC: 0.8088
+2026-03-02 11:36:07,551: Epoch 11/30 | Train Loss: 0.3920 | Val Loss: 0.6080 | Val AUC: 0.8224
+2026-03-02 11:36:07,551: Early stopping at epoch 11
+2026-03-02 11:36:07,935: Optimal threshold: 0.73 (Val F1: 0.3960)
+2026-03-02 11:36:08,214: Test AUC: 0.8203 | Test F1: 0.3534 | Precision: 0.3102 | Recall: 0.4105
+2026-03-02 11:36:08,235: Results appended to results/mimic/model_results.csv
+=== JOB COMPLETE ===
+
+Job 194017 consumed 0.0 billing hours and 0.0 GPU hours from project nn12048k.
+
+Submitted 2026-03-02T11:35:15; waited 23.0 seconds in the queue after becoming eligible to run.
+
+Requested wallclock time: 4.0 hours
+Elapsed wallclock time:   31.0 seconds
+
+Job exited normally.
+
+Task and CPU statistics:
+ID                CPUs  Tasks  CPU util                Start  Elapsed  Exit status
+194017               1            0.0 %  2026-03-02T11:35:38   31.0 s  0
+194017.batch         1      1     0.6 %  2026-03-02T11:35:38   31.0 s  0
+194017.apptainer     1      1     0.0 %  2026-03-02T11:35:39   30.0 s  0
+
+Used CPU time:   0.2 CPU seconds
+Unused CPU time: 30.8 CPU seconds
+
+Memory statistics, in GiB:
+ID                 Alloc   Usage
+194017              32.0        
+194017.batch        32.0     0.0
+194017.apptainer    32.0     3.5
+
+Job 194017 completed at Mon Mar 2 11:36:09 CET 2026
