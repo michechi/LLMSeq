@@ -21,6 +21,10 @@ fi
 # ---------- Experiment matrix ----------
 # Format: MODEL|DATA|TIME|MEM|EXTRA_ARGS
 EXPERIMENTS=(
+    "xgboost|ordered|00:30:00|16GB|"
+    "xgboost|shuffled|00:30:00|16GB|"
+    "logreg|ordered|00:30:00|16GB|"
+    "logreg|shuffled|00:30:00|16GB|"
     "transformer|ordered|04:00:00|32GB|"
     "transformer|shuffled|04:00:00|32GB|"
     "lstm|ordered|04:00:00|32GB|"

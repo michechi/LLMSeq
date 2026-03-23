@@ -11,7 +11,6 @@ Usage:
     python src/mimic/train_mimic.py --model llama --data ordered --tiny --tiny_type 1M
     python src/mimic/train_mimic.py --model llama --data ordered --peft
 """
-
 import os
 import gc
 import json
@@ -22,12 +21,29 @@ import argparse
 
 import numpy as np
 import pandas as pd
-import torch
-import torch.nn as nn
-from torch.utils.data import Dataset, DataLoader
 from sklearn.metrics import (
     roc_auc_score, f1_score, accuracy_score, precision_score, recall_score
 )
+
+try:
+    import torch
+    import torch.nn as nn
+    from torch.utils.data import Dataset, DataLoader
+    from transformers import (
+        AutoTokenizer, AutoModelForCausalLM, AutoConfig,
+        LlamaConfig, get_linear_schedule_with_warmup,
+        BitsAndBytesConfig,
+    )
+    from torch.amp import autocast
+    HAS_TORCH = True
+except ImportError:
+    HAS_TORCH = False
+    # Dummy bases so class definitions don't fail at import time
+    class _Dummy:
+        pass
+    Dataset = _Dummy
+    class nn:
+        Module = _Dummy
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s: %(message)s")
 logger = logging.getLogger(__name__)
@@ -42,8 +58,9 @@ RESULTS_CSV = "results/mimic/model_results.csv"
 def set_seed(seed=42):
     random.seed(seed)
     np.random.seed(seed)
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
+    if HAS_TORCH:
+        torch.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
     os.environ["PYTHONHASHSEED"] = str(seed)
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
@@ -53,7 +70,8 @@ def set_seed(seed=42):
 def parse_args():
     p = argparse.ArgumentParser(description="MIMIC ordered vs shuffled training")
     p.add_argument("--model", type=str, required=True,
-                   choices=["transformer", "lstm", "bilstm", "bert", "llama"])
+                   choices=["transformer", "lstm", "bilstm", "bert", "llama",
+                            "xgboost", "logreg"])
     p.add_argument("--data", type=str, required=True, choices=["ordered", "shuffled"])
 
     # DL hyper-parameters
@@ -675,12 +693,6 @@ def train_bert(args):
 # LLaMA training
 # ---------------------------------------------------------------------------
 def train_llama(args):
-    from transformers import (
-        AutoTokenizer, AutoModelForCausalLM, AutoConfig,
-        LlamaConfig, get_linear_schedule_with_warmup,
-        BitsAndBytesConfig,
-    )
-    from torch.amp import autocast
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     logger.info(f"Device: {device}")
@@ -884,6 +896,89 @@ def train_llama(args):
     logger.info(f"Results appended to {RESULTS_CSV}")
 
 # ---------------------------------------------------------------------------
+# Bag-of-codes sklearn models (XGBoost / LogReg) — no GPU required
+# ---------------------------------------------------------------------------
+def train_sklearn(args):
+    from collections import Counter
+    import time as _time
+
+    data = load_data(args.data)
+    X_train, y_train = data["train"]
+    X_val, y_val = data["val"]
+    X_test, y_test = data["test"]
+
+    y_tr = y_train["Outcome"].values
+    y_va = y_val["Outcome"].values
+    y_te = y_test["Outcome"].values
+
+    # Build vocab from train
+    vocab = sorted({
+        tok for seq in X_train["Sequences"].tolist()
+        for tok in seq.split(DELIMITER)
+    })
+    vocab_idx = {v: i for i, v in enumerate(vocab)}
+    logger.info(f"BoC vocabulary: {len(vocab)} codes")
+
+    def to_boc(x_df):
+        X = np.zeros((len(x_df), len(vocab)), dtype=np.float32)
+        for i, seq in enumerate(x_df["Sequences"].tolist()):
+            for tok in seq.split(DELIMITER):
+                if tok in vocab_idx:
+                    X[i, vocab_idx[tok]] = 1
+        return X
+
+    X_tr = to_boc(X_train)
+    X_va = to_boc(X_val)
+    X_te = to_boc(X_test)
+
+    t0 = _time.time()
+
+    if args.model == "xgboost":
+        from xgboost import XGBClassifier
+        scale_pw = (y_tr == 0).sum() / max((y_tr == 1).sum(), 1)
+        model = XGBClassifier(
+            n_estimators=200, max_depth=6, learning_rate=0.1,
+            scale_pos_weight=scale_pw, random_state=args.seed,
+            eval_metric="logloss", verbosity=0,
+        )
+        model.fit(X_tr, y_tr,
+                  eval_set=[(X_va, y_va)],
+                  verbose=False)
+    elif args.model == "logreg":
+        from sklearn.linear_model import LogisticRegression
+        model = LogisticRegression(
+            max_iter=1000, C=1.0, random_state=args.seed,
+            class_weight="balanced",
+        )
+        model.fit(X_tr, y_tr)
+
+    elapsed = _time.time() - t0
+
+    # Predict probabilities
+    preds_va = model.predict_proba(X_va)[:, 1]
+    preds_te = model.predict_proba(X_te)[:, 1]
+
+    # Optimal threshold on val
+    threshold, val_f1 = find_optimal_threshold(y_va, preds_va)
+    logger.info(f"Optimal threshold: {threshold:.2f} (Val F1: {val_f1:.4f})")
+
+    metrics = evaluate_test(y_te, preds_te, threshold)
+    logger.info(f"Test AUC: {metrics['auc']:.4f} | Test F1: {metrics['f1']:.4f} | "
+                f"Precision: {metrics['precision']:.4f} | Recall: {metrics['recall']:.4f}")
+
+    row = {
+        "model": f"{args.model}_BoC", "data_type": args.data,
+        "auc": f"{metrics['auc']:.4f}", "f1": f"{metrics['f1']:.4f}",
+        "precision": f"{metrics['precision']:.4f}", "recall": f"{metrics['recall']:.4f}",
+        "threshold": f"{threshold:.2f}",
+        "train_samples": len(X_tr), "epochs": "-",
+        "time_s": f"{elapsed:.1f}",
+    }
+    append_results(row)
+    logger.info(f"Results appended to {RESULTS_CSV}")
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 def main():
@@ -892,11 +987,16 @@ def main():
 
     logger.info(f"Model: {args.model}, Data: {args.data}")
 
-    if args.model in ("transformer", "lstm", "bilstm"):
+    if args.model in ("xgboost", "logreg"):
+        train_sklearn(args)
+    elif args.model in ("transformer", "lstm", "bilstm"):
+        assert HAS_TORCH, "PyTorch is required for DL models"
         train_dl(args)
     elif args.model == "bert":
+        assert HAS_TORCH, "PyTorch is required for BERT"
         train_bert(args)
     elif args.model == "llama":
+        assert HAS_TORCH, "PyTorch is required for LLaMA"
         train_llama(args)
 
 
