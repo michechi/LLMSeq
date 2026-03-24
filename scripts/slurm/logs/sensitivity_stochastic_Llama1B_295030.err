@@ -1,0 +1,779 @@
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) init-NRIS
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+INFO:__main__:Argument batch_size: 64
+INFO:__main__:Argument cache_dir: '/cluster/work/projects/nn12048k/michechi/cache/'
+INFO:__main__:Argument cold_start: False
+INFO:__main__:Argument early: 'loss'
+INFO:__main__:Argument epochs: 20
+INFO:__main__:Argument fractions: '1.0'
+INFO:__main__:Argument gradient_accumulation_steps: 1
+INFO:__main__:Argument lr: 2e-05
+INFO:__main__:Argument max_length: 100
+INFO:__main__:Argument model_name: 'meta-llama/Llama-3.2-1B'
+INFO:__main__:Argument model_type: 'general'
+INFO:__main__:Argument number_to_use: '100'
+INFO:__main__:Argument output_dir: '/cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/'
+INFO:__main__:Argument path_csv: '/cluster/home/michechi/MIMICIV/data/simulation/sensitivity_stochastic/'
+INFO:__main__:Argument patience: 3
+INFO:__main__:Argument peft: True
+INFO:__main__:Argument seed: 9550
+INFO:__main__:Argument tiny: False
+INFO:__main__:Argument tiny_type: '1M'
+INFO:__main__:Argument use_quantization: False
+INFO:__main__:Using device: cuda
+INFO:__main__:Output directory: /cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/
+WARNING:__main__:Tokenizer has no pad_token. Adding [PAD].
+INFO:__main__:Loading datasets...
+INFO:__main__:Dataset sizes - Train: 320000, Val: 40000, Test: 40000
+INFO:__main__:Testing fractions: [1.0]
+INFO:__main__:======================================================================
+INFO:__main__:Training with 100% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 320000
+INFO:__main__:Loading pre-trained CausalLM model (WARM START)
+INFO:accelerate.utils.modeling:We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+INFO:__main__:Epoch 1/20 | Train Loss: 3.3151 | Val Loss: 2.7779 | Val AUC: 0.5307 | Val F1: 0.0000
+INFO:__main__:New best model (AUC: 0.5307)
+INFO:__main__:Epoch 2/20 | Train Loss: 2.7720 | Val Loss: 2.7627 | Val AUC: 0.5401 | Val F1: 0.0016
+INFO:__main__:New best model (AUC: 0.5401)
+INFO:__main__:Epoch 3/20 | Train Loss: 2.7646 | Val Loss: 2.7586 | Val AUC: 0.5432 | Val F1: 0.0019
+INFO:__main__:New best model (AUC: 0.5432)
+INFO:__main__:Epoch 4/20 | Train Loss: 2.7620 | Val Loss: 2.7583 | Val AUC: 0.5456 | Val F1: 0.0003
+INFO:__main__:New best model (AUC: 0.5456)
+INFO:__main__:Epoch 5/20 | Train Loss: 2.7606 | Val Loss: 2.7575 | Val AUC: 0.5457 | Val F1: 0.0046
+INFO:__main__:New best model (AUC: 0.5457)
+INFO:__main__:Epoch 6/20 | Train Loss: 2.7600 | Val Loss: 2.7576 | Val AUC: 0.5471 | Val F1: 0.0082
+INFO:__main__:Epoch 7/20 | Train Loss: 2.7596 | Val Loss: 2.7584 | Val AUC: 0.5473 | Val F1: 0.0010
+INFO:__main__:Epoch 8/20 | Train Loss: 2.7595 | Val Loss: 2.7573 | Val AUC: 0.5474 | Val F1: 0.0034
+INFO:__main__:New best model (AUC: 0.5474)
+INFO:__main__:Epoch 9/20 | Train Loss: 2.7594 | Val Loss: 2.7576 | Val AUC: 0.5478 | Val F1: 0.0025
+INFO:__main__:Epoch 10/20 | Train Loss: 2.7590 | Val Loss: 2.7571 | Val AUC: 0.5479 | Val F1: 0.0060
+INFO:__main__:New best model (AUC: 0.5479)
+INFO:__main__:Epoch 11/20 | Train Loss: 2.7592 | Val Loss: 2.7572 | Val AUC: 0.5479 | Val F1: 0.0033
+INFO:__main__:Epoch 12/20 | Train Loss: 2.7590 | Val Loss: 2.7572 | Val AUC: 0.5481 | Val F1: 0.0033
+INFO:__main__:Epoch 13/20 | Train Loss: 2.7592 | Val Loss: 2.7572 | Val AUC: 0.5481 | Val F1: 0.0033
+INFO:__main__:Early stopping at epoch 13
+INFO:__main__:Optimal threshold: 0.10 (Val F1: 0.5012)
+INFO:__main__:Fraction 100% - Test AUC: 0.5431, Test F1: 0.5012, Time: 13634.5s
+INFO:__main__:Results saved to: /cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/llm_fraction_experiment_meta-llama_Llama-3.2-1B_lora_100_20260322_150641.csv
+INFO:__main__:
+======================================================================
+INFO:__main__:EXPERIMENT SUMMARY
+INFO:__main__:======================================================================
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+INFO:__main__:Argument batch_size: 64
+INFO:__main__:Argument cache_dir: '/cluster/work/projects/nn12048k/michechi/cache/'
+INFO:__main__:Argument cold_start: False
+INFO:__main__:Argument early: 'loss'
+INFO:__main__:Argument epochs: 20
+INFO:__main__:Argument fractions: '1.0'
+INFO:__main__:Argument gradient_accumulation_steps: 1
+INFO:__main__:Argument lr: 2e-05
+INFO:__main__:Argument max_length: 100
+INFO:__main__:Argument model_name: 'meta-llama/Llama-3.2-1B'
+INFO:__main__:Argument model_type: 'general'
+INFO:__main__:Argument number_to_use: '101'
+INFO:__main__:Argument output_dir: '/cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/'
+INFO:__main__:Argument path_csv: '/cluster/home/michechi/MIMICIV/data/simulation/sensitivity_stochastic/'
+INFO:__main__:Argument patience: 3
+INFO:__main__:Argument peft: True
+INFO:__main__:Argument seed: 9550
+INFO:__main__:Argument tiny: False
+INFO:__main__:Argument tiny_type: '1M'
+INFO:__main__:Argument use_quantization: False
+INFO:__main__:Using device: cuda
+INFO:__main__:Output directory: /cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/
+WARNING:__main__:Tokenizer has no pad_token. Adding [PAD].
+INFO:__main__:Loading datasets...
+INFO:__main__:Dataset sizes - Train: 320000, Val: 40000, Test: 40000
+INFO:__main__:Testing fractions: [1.0]
+INFO:__main__:======================================================================
+INFO:__main__:Training with 100% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 320000
+INFO:__main__:Loading pre-trained CausalLM model (WARM START)
+INFO:accelerate.utils.modeling:We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+INFO:__main__:Epoch 1/20 | Train Loss: 3.4716 | Val Loss: 3.0190 | Val AUC: 0.5466 | Val F1: 0.7629
+INFO:__main__:New best model (AUC: 0.5466)
+INFO:__main__:Epoch 2/20 | Train Loss: 3.0141 | Val Loss: 3.0009 | Val AUC: 0.5765 | Val F1: 0.7623
+INFO:__main__:New best model (AUC: 0.5765)
+INFO:__main__:Epoch 3/20 | Train Loss: 3.0037 | Val Loss: 2.9979 | Val AUC: 0.5804 | Val F1: 0.7558
+INFO:__main__:New best model (AUC: 0.5804)
+INFO:__main__:Epoch 4/20 | Train Loss: 3.0006 | Val Loss: 2.9964 | Val AUC: 0.5815 | Val F1: 0.7553
+INFO:__main__:New best model (AUC: 0.5815)
+INFO:__main__:Epoch 5/20 | Train Loss: 2.9992 | Val Loss: 2.9954 | Val AUC: 0.5821 | Val F1: 0.7616
+INFO:__main__:New best model (AUC: 0.5821)
+INFO:__main__:Epoch 6/20 | Train Loss: 2.9984 | Val Loss: 2.9951 | Val AUC: 0.5828 | Val F1: 0.7624
+INFO:__main__:New best model (AUC: 0.5828)
+INFO:__main__:Epoch 7/20 | Train Loss: 2.9979 | Val Loss: 2.9944 | Val AUC: 0.5828 | Val F1: 0.7568
+INFO:__main__:New best model (AUC: 0.5828)
+INFO:__main__:Epoch 8/20 | Train Loss: 2.9976 | Val Loss: 2.9936 | Val AUC: 0.5831 | Val F1: 0.7612
+INFO:__main__:New best model (AUC: 0.5831)
+INFO:__main__:Epoch 9/20 | Train Loss: 2.9973 | Val Loss: 2.9938 | Val AUC: 0.5831 | Val F1: 0.7613
+INFO:__main__:Epoch 10/20 | Train Loss: 2.9974 | Val Loss: 2.9942 | Val AUC: 0.5833 | Val F1: 0.7612
+INFO:__main__:Epoch 11/20 | Train Loss: 2.9974 | Val Loss: 2.9931 | Val AUC: 0.5832 | Val F1: 0.7592
+INFO:__main__:New best model (AUC: 0.5832)
+INFO:__main__:Epoch 12/20 | Train Loss: 2.9973 | Val Loss: 2.9934 | Val AUC: 0.5832 | Val F1: 0.7582
+INFO:__main__:Epoch 13/20 | Train Loss: 2.9972 | Val Loss: 2.9938 | Val AUC: 0.5831 | Val F1: 0.7579
+INFO:__main__:Epoch 14/20 | Train Loss: 2.9967 | Val Loss: 2.9933 | Val AUC: 0.5832 | Val F1: 0.7588
+INFO:__main__:Early stopping at epoch 14
+INFO:__main__:Optimal threshold: 0.44 (Val F1: 0.7633)
+INFO:__main__:Fraction 100% - Test AUC: 0.5824, Test F1: 0.7623, Time: 14810.7s
+INFO:__main__:Results saved to: /cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/llm_fraction_experiment_meta-llama_Llama-3.2-1B_lora_101_20260322_191345.csv
+INFO:__main__:
+======================================================================
+INFO:__main__:EXPERIMENT SUMMARY
+INFO:__main__:======================================================================
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+INFO:__main__:Argument batch_size: 64
+INFO:__main__:Argument cache_dir: '/cluster/work/projects/nn12048k/michechi/cache/'
+INFO:__main__:Argument cold_start: False
+INFO:__main__:Argument early: 'loss'
+INFO:__main__:Argument epochs: 20
+INFO:__main__:Argument fractions: '1.0'
+INFO:__main__:Argument gradient_accumulation_steps: 1
+INFO:__main__:Argument lr: 2e-05
+INFO:__main__:Argument max_length: 100
+INFO:__main__:Argument model_name: 'meta-llama/Llama-3.2-1B'
+INFO:__main__:Argument model_type: 'general'
+INFO:__main__:Argument number_to_use: '102'
+INFO:__main__:Argument output_dir: '/cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/'
+INFO:__main__:Argument path_csv: '/cluster/home/michechi/MIMICIV/data/simulation/sensitivity_stochastic/'
+INFO:__main__:Argument patience: 3
+INFO:__main__:Argument peft: True
+INFO:__main__:Argument seed: 9550
+INFO:__main__:Argument tiny: False
+INFO:__main__:Argument tiny_type: '1M'
+INFO:__main__:Argument use_quantization: False
+INFO:__main__:Using device: cuda
+INFO:__main__:Output directory: /cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/
+WARNING:__main__:Tokenizer has no pad_token. Adding [PAD].
+INFO:__main__:Loading datasets...
+INFO:__main__:Dataset sizes - Train: 320000, Val: 40000, Test: 40000
+INFO:__main__:Testing fractions: [1.0]
+INFO:__main__:======================================================================
+INFO:__main__:Training with 100% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 320000
+INFO:__main__:Loading pre-trained CausalLM model (WARM START)
+INFO:accelerate.utils.modeling:We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+INFO:__main__:Epoch 1/20 | Train Loss: 3.5820 | Val Loss: 3.1802 | Val AUC: 0.5439 | Val F1: 0.0007
+INFO:__main__:New best model (AUC: 0.5439)
+INFO:__main__:Epoch 2/20 | Train Loss: 3.1744 | Val Loss: 3.1614 | Val AUC: 0.5785 | Val F1: 0.2385
+INFO:__main__:New best model (AUC: 0.5785)
+INFO:__main__:Epoch 3/20 | Train Loss: 3.1644 | Val Loss: 3.1584 | Val AUC: 0.5832 | Val F1: 0.2033
+INFO:__main__:New best model (AUC: 0.5832)
+INFO:__main__:Epoch 4/20 | Train Loss: 3.1622 | Val Loss: 3.1575 | Val AUC: 0.5855 | Val F1: 0.2036
+INFO:__main__:New best model (AUC: 0.5855)
+INFO:__main__:Epoch 5/20 | Train Loss: 3.1607 | Val Loss: 3.1565 | Val AUC: 0.5858 | Val F1: 0.2031
+INFO:__main__:New best model (AUC: 0.5858)
+INFO:__main__:Epoch 6/20 | Train Loss: 3.1600 | Val Loss: 3.1568 | Val AUC: 0.5868 | Val F1: 0.2182
+INFO:__main__:Epoch 7/20 | Train Loss: 3.1593 | Val Loss: 3.1559 | Val AUC: 0.5870 | Val F1: 0.2401
+INFO:__main__:New best model (AUC: 0.5870)
+INFO:__main__:Epoch 8/20 | Train Loss: 3.1594 | Val Loss: 3.1561 | Val AUC: 0.5872 | Val F1: 0.2874
+INFO:__main__:Epoch 9/20 | Train Loss: 3.1589 | Val Loss: 3.1560 | Val AUC: 0.5875 | Val F1: 0.2280
+INFO:__main__:Epoch 10/20 | Train Loss: 3.1587 | Val Loss: 3.1557 | Val AUC: 0.5876 | Val F1: 0.2768
+INFO:__main__:New best model (AUC: 0.5876)
+INFO:__main__:Epoch 11/20 | Train Loss: 3.1583 | Val Loss: 3.1558 | Val AUC: 0.5876 | Val F1: 0.2206
+INFO:__main__:Epoch 12/20 | Train Loss: 3.1586 | Val Loss: 3.1556 | Val AUC: 0.5877 | Val F1: 0.2474
+INFO:__main__:New best model (AUC: 0.5877)
+INFO:__main__:Epoch 13/20 | Train Loss: 3.1587 | Val Loss: 3.1555 | Val AUC: 0.5878 | Val F1: 0.2824
+INFO:__main__:New best model (AUC: 0.5878)
+INFO:__main__:Epoch 14/20 | Train Loss: 3.1585 | Val Loss: 3.1558 | Val AUC: 0.5878 | Val F1: 0.2216
+INFO:__main__:Epoch 15/20 | Train Loss: 3.1585 | Val Loss: 3.1554 | Val AUC: 0.5879 | Val F1: 0.2625
+INFO:__main__:New best model (AUC: 0.5879)
+INFO:__main__:Epoch 16/20 | Train Loss: 3.1583 | Val Loss: 3.1554 | Val AUC: 0.5879 | Val F1: 0.2684
+INFO:__main__:Epoch 17/20 | Train Loss: 3.1584 | Val Loss: 3.1554 | Val AUC: 0.5877 | Val F1: 0.2590
+INFO:__main__:Epoch 18/20 | Train Loss: 3.1584 | Val Loss: 3.1554 | Val AUC: 0.5879 | Val F1: 0.2527
+INFO:__main__:New best model (AUC: 0.5879)
+INFO:__main__:Epoch 19/20 | Train Loss: 3.1585 | Val Loss: 3.1554 | Val AUC: 0.5878 | Val F1: 0.2468
+INFO:__main__:Epoch 20/20 | Train Loss: 3.1586 | Val Loss: 3.1553 | Val AUC: 0.5879 | Val F1: 0.2589
+INFO:__main__:New best model (AUC: 0.5879)
+INFO:__main__:Optimal threshold: 0.27 (Val F1: 0.5888)
+INFO:__main__:Fraction 100% - Test AUC: 0.5865, Test F1: 0.5883, Time: 20981.8s
+INFO:__main__:Results saved to: /cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/llm_fraction_experiment_meta-llama_Llama-3.2-1B_lora_102_20260323_010341.csv
+INFO:__main__:
+======================================================================
+INFO:__main__:EXPERIMENT SUMMARY
+INFO:__main__:======================================================================
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+INFO:__main__:Argument batch_size: 64
+INFO:__main__:Argument cache_dir: '/cluster/work/projects/nn12048k/michechi/cache/'
+INFO:__main__:Argument cold_start: False
+INFO:__main__:Argument early: 'loss'
+INFO:__main__:Argument epochs: 20
+INFO:__main__:Argument fractions: '1.0'
+INFO:__main__:Argument gradient_accumulation_steps: 1
+INFO:__main__:Argument lr: 2e-05
+INFO:__main__:Argument max_length: 100
+INFO:__main__:Argument model_name: 'meta-llama/Llama-3.2-1B'
+INFO:__main__:Argument model_type: 'general'
+INFO:__main__:Argument number_to_use: '103'
+INFO:__main__:Argument output_dir: '/cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/'
+INFO:__main__:Argument path_csv: '/cluster/home/michechi/MIMICIV/data/simulation/sensitivity_stochastic/'
+INFO:__main__:Argument patience: 3
+INFO:__main__:Argument peft: True
+INFO:__main__:Argument seed: 9550
+INFO:__main__:Argument tiny: False
+INFO:__main__:Argument tiny_type: '1M'
+INFO:__main__:Argument use_quantization: False
+INFO:__main__:Using device: cuda
+INFO:__main__:Output directory: /cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/
+WARNING:__main__:Tokenizer has no pad_token. Adding [PAD].
+INFO:__main__:Loading datasets...
+INFO:__main__:Dataset sizes - Train: 320000, Val: 40000, Test: 40000
+INFO:__main__:Testing fractions: [1.0]
+INFO:__main__:======================================================================
+INFO:__main__:Training with 100% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 320000
+INFO:__main__:Loading pre-trained CausalLM model (WARM START)
+INFO:accelerate.utils.modeling:We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+INFO:__main__:Epoch 1/20 | Train Loss: 3.7066 | Val Loss: 3.3759 | Val AUC: 0.5419 | Val F1: 0.4124
+INFO:__main__:New best model (AUC: 0.5419)
+INFO:__main__:Epoch 2/20 | Train Loss: 3.3736 | Val Loss: 3.3624 | Val AUC: 0.5731 | Val F1: 0.4524
+INFO:__main__:New best model (AUC: 0.5731)
+INFO:__main__:Epoch 3/20 | Train Loss: 3.3646 | Val Loss: 3.3591 | Val AUC: 0.5799 | Val F1: 0.4834
+INFO:__main__:New best model (AUC: 0.5799)
+INFO:__main__:Epoch 4/20 | Train Loss: 3.3615 | Val Loss: 3.3590 | Val AUC: 0.5822 | Val F1: 0.5439
+INFO:__main__:New best model (AUC: 0.5822)
+INFO:__main__:Epoch 5/20 | Train Loss: 3.3603 | Val Loss: 3.3576 | Val AUC: 0.5832 | Val F1: 0.5296
+INFO:__main__:New best model (AUC: 0.5832)
+INFO:__main__:Epoch 6/20 | Train Loss: 3.3591 | Val Loss: 3.3562 | Val AUC: 0.5841 | Val F1: 0.4514
+INFO:__main__:New best model (AUC: 0.5841)
+INFO:__main__:Epoch 7/20 | Train Loss: 3.3590 | Val Loss: 3.3565 | Val AUC: 0.5845 | Val F1: 0.5125
+INFO:__main__:Epoch 8/20 | Train Loss: 3.3589 | Val Loss: 3.3565 | Val AUC: 0.5846 | Val F1: 0.4828
+INFO:__main__:Epoch 9/20 | Train Loss: 3.3587 | Val Loss: 3.3564 | Val AUC: 0.5848 | Val F1: 0.4653
+INFO:__main__:Early stopping at epoch 9
+INFO:__main__:Optimal threshold: 0.23 (Val F1: 0.6402)
+INFO:__main__:Fraction 100% - Test AUC: 0.5821, Test F1: 0.6402, Time: 9527.4s
+INFO:__main__:Results saved to: /cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/llm_fraction_experiment_meta-llama_Llama-3.2-1B_lora_103_20260323_034242.csv
+INFO:__main__:
+======================================================================
+INFO:__main__:EXPERIMENT SUMMARY
+INFO:__main__:======================================================================
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+INFO:__main__:Argument batch_size: 64
+INFO:__main__:Argument cache_dir: '/cluster/work/projects/nn12048k/michechi/cache/'
+INFO:__main__:Argument cold_start: False
+INFO:__main__:Argument early: 'loss'
+INFO:__main__:Argument epochs: 20
+INFO:__main__:Argument fractions: '1.0'
+INFO:__main__:Argument gradient_accumulation_steps: 1
+INFO:__main__:Argument lr: 2e-05
+INFO:__main__:Argument max_length: 100
+INFO:__main__:Argument model_name: 'meta-llama/Llama-3.2-1B'
+INFO:__main__:Argument model_type: 'general'
+INFO:__main__:Argument number_to_use: '110'
+INFO:__main__:Argument output_dir: '/cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/'
+INFO:__main__:Argument path_csv: '/cluster/home/michechi/MIMICIV/data/simulation/sensitivity_stochastic/'
+INFO:__main__:Argument patience: 3
+INFO:__main__:Argument peft: True
+INFO:__main__:Argument seed: 9550
+INFO:__main__:Argument tiny: False
+INFO:__main__:Argument tiny_type: '1M'
+INFO:__main__:Argument use_quantization: False
+INFO:__main__:Using device: cuda
+INFO:__main__:Output directory: /cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/
+WARNING:__main__:Tokenizer has no pad_token. Adding [PAD].
+INFO:__main__:Loading datasets...
+INFO:__main__:Dataset sizes - Train: 320000, Val: 40000, Test: 40000
+INFO:__main__:Testing fractions: [1.0]
+INFO:__main__:======================================================================
+INFO:__main__:Training with 100% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 320000
+INFO:__main__:Loading pre-trained CausalLM model (WARM START)
+INFO:accelerate.utils.modeling:We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+INFO:__main__:Epoch 1/20 | Train Loss: 3.5516 | Val Loss: 3.1548 | Val AUC: 0.5349 | Val F1: 0.0000
+INFO:__main__:New best model (AUC: 0.5349)
+INFO:__main__:Epoch 2/20 | Train Loss: 3.1400 | Val Loss: 3.1306 | Val AUC: 0.5450 | Val F1: 0.0000
+INFO:__main__:New best model (AUC: 0.5450)
+INFO:__main__:Epoch 3/20 | Train Loss: 3.1333 | Val Loss: 3.1283 | Val AUC: 0.5492 | Val F1: 0.0003
+INFO:__main__:New best model (AUC: 0.5492)
+INFO:__main__:Epoch 4/20 | Train Loss: 3.1308 | Val Loss: 3.1274 | Val AUC: 0.5519 | Val F1: 0.0000
+INFO:__main__:New best model (AUC: 0.5519)
+INFO:__main__:Epoch 5/20 | Train Loss: 3.1295 | Val Loss: 3.1246 | Val AUC: 0.5533 | Val F1: 0.0006
+INFO:__main__:New best model (AUC: 0.5533)
+INFO:__main__:Epoch 6/20 | Train Loss: 3.1288 | Val Loss: 3.1248 | Val AUC: 0.5533 | Val F1: 0.0003
+INFO:__main__:Epoch 7/20 | Train Loss: 3.1283 | Val Loss: 3.1247 | Val AUC: 0.5537 | Val F1: 0.0057
+INFO:__main__:Epoch 8/20 | Train Loss: 3.1280 | Val Loss: 3.1236 | Val AUC: 0.5534 | Val F1: 0.0013
+INFO:__main__:New best model (AUC: 0.5534)
+INFO:__main__:Epoch 9/20 | Train Loss: 3.1279 | Val Loss: 3.1244 | Val AUC: 0.5534 | Val F1: 0.0028
+INFO:__main__:Epoch 10/20 | Train Loss: 3.1276 | Val Loss: 3.1243 | Val AUC: 0.5536 | Val F1: 0.0021
+INFO:__main__:Epoch 11/20 | Train Loss: 3.1276 | Val Loss: 3.1244 | Val AUC: 0.5537 | Val F1: 0.0024
+INFO:__main__:Early stopping at epoch 11
+INFO:__main__:Optimal threshold: 0.25 (Val F1: 0.5057)
+INFO:__main__:Fraction 100% - Test AUC: 0.5498, Test F1: 0.5052, Time: 11578.1s
+INFO:__main__:Results saved to: /cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/llm_fraction_experiment_meta-llama_Llama-3.2-1B_lora_110_20260323_065554.csv
+INFO:__main__:
+======================================================================
+INFO:__main__:EXPERIMENT SUMMARY
+INFO:__main__:======================================================================
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+INFO:__main__:Argument batch_size: 64
+INFO:__main__:Argument cache_dir: '/cluster/work/projects/nn12048k/michechi/cache/'
+INFO:__main__:Argument cold_start: False
+INFO:__main__:Argument early: 'loss'
+INFO:__main__:Argument epochs: 20
+INFO:__main__:Argument fractions: '1.0'
+INFO:__main__:Argument gradient_accumulation_steps: 1
+INFO:__main__:Argument lr: 2e-05
+INFO:__main__:Argument max_length: 100
+INFO:__main__:Argument model_name: 'meta-llama/Llama-3.2-1B'
+INFO:__main__:Argument model_type: 'general'
+INFO:__main__:Argument number_to_use: '112'
+INFO:__main__:Argument output_dir: '/cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/'
+INFO:__main__:Argument path_csv: '/cluster/home/michechi/MIMICIV/data/simulation/sensitivity_stochastic/'
+INFO:__main__:Argument patience: 3
+INFO:__main__:Argument peft: True
+INFO:__main__:Argument seed: 9550
+INFO:__main__:Argument tiny: False
+INFO:__main__:Argument tiny_type: '1M'
+INFO:__main__:Argument use_quantization: False
+INFO:__main__:Using device: cuda
+INFO:__main__:Output directory: /cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/
+WARNING:__main__:Tokenizer has no pad_token. Adding [PAD].
+INFO:__main__:Loading datasets...
+INFO:__main__:Dataset sizes - Train: 320000, Val: 40000, Test: 40000
+INFO:__main__:Testing fractions: [1.0]
+INFO:__main__:======================================================================
+INFO:__main__:Training with 100% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 320000
+INFO:__main__:Loading pre-trained CausalLM model (WARM START)
+INFO:accelerate.utils.modeling:We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+INFO:__main__:Epoch 1/20 | Train Loss: 3.5912 | Val Loss: 3.1946 | Val AUC: 0.5441 | Val F1: 0.6799
+INFO:__main__:New best model (AUC: 0.5441)
+INFO:__main__:Epoch 2/20 | Train Loss: 3.1871 | Val Loss: 3.1766 | Val AUC: 0.5734 | Val F1: 0.6283
+INFO:__main__:New best model (AUC: 0.5734)
+INFO:__main__:Epoch 3/20 | Train Loss: 3.1779 | Val Loss: 3.1722 | Val AUC: 0.5780 | Val F1: 0.6245
+INFO:__main__:New best model (AUC: 0.5780)
+INFO:__main__:Epoch 4/20 | Train Loss: 3.1752 | Val Loss: 3.1703 | Val AUC: 0.5806 | Val F1: 0.6055
+INFO:__main__:New best model (AUC: 0.5806)
+INFO:__main__:Epoch 5/20 | Train Loss: 3.1737 | Val Loss: 3.1699 | Val AUC: 0.5817 | Val F1: 0.6040
+INFO:__main__:New best model (AUC: 0.5817)
+INFO:__main__:Epoch 6/20 | Train Loss: 3.1732 | Val Loss: 3.1697 | Val AUC: 0.5816 | Val F1: 0.6193
+INFO:__main__:New best model (AUC: 0.5816)
+INFO:__main__:Epoch 7/20 | Train Loss: 3.1725 | Val Loss: 3.1695 | Val AUC: 0.5826 | Val F1: 0.6279
+INFO:__main__:New best model (AUC: 0.5826)
+INFO:__main__:Epoch 8/20 | Train Loss: 3.1723 | Val Loss: 3.1704 | Val AUC: 0.5828 | Val F1: 0.6334
+INFO:__main__:Epoch 9/20 | Train Loss: 3.1719 | Val Loss: 3.1709 | Val AUC: 0.5826 | Val F1: 0.5893
+INFO:__main__:Epoch 10/20 | Train Loss: 3.1717 | Val Loss: 3.1702 | Val AUC: 0.5830 | Val F1: 0.6217
+INFO:__main__:Early stopping at epoch 10
+INFO:__main__:Optimal threshold: 0.36 (Val F1: 0.6862)
+INFO:__main__:Fraction 100% - Test AUC: 0.5900, Test F1: 0.6859, Time: 10553.2s
+INFO:__main__:Results saved to: /cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/llm_fraction_experiment_meta-llama_Llama-3.2-1B_lora_112_20260323_095200.csv
+INFO:__main__:
+======================================================================
+INFO:__main__:EXPERIMENT SUMMARY
+INFO:__main__:======================================================================
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+INFO:__main__:Argument batch_size: 64
+INFO:__main__:Argument cache_dir: '/cluster/work/projects/nn12048k/michechi/cache/'
+INFO:__main__:Argument cold_start: False
+INFO:__main__:Argument early: 'loss'
+INFO:__main__:Argument epochs: 20
+INFO:__main__:Argument fractions: '1.0'
+INFO:__main__:Argument gradient_accumulation_steps: 1
+INFO:__main__:Argument lr: 2e-05
+INFO:__main__:Argument max_length: 100
+INFO:__main__:Argument model_name: 'meta-llama/Llama-3.2-1B'
+INFO:__main__:Argument model_type: 'general'
+INFO:__main__:Argument number_to_use: '120'
+INFO:__main__:Argument output_dir: '/cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/'
+INFO:__main__:Argument path_csv: '/cluster/home/michechi/MIMICIV/data/simulation/sensitivity_stochastic/'
+INFO:__main__:Argument patience: 3
+INFO:__main__:Argument peft: True
+INFO:__main__:Argument seed: 9550
+INFO:__main__:Argument tiny: False
+INFO:__main__:Argument tiny_type: '1M'
+INFO:__main__:Argument use_quantization: False
+INFO:__main__:Using device: cuda
+INFO:__main__:Output directory: /cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/
+WARNING:__main__:Tokenizer has no pad_token. Adding [PAD].
+INFO:__main__:Loading datasets...
+INFO:__main__:Dataset sizes - Train: 320000, Val: 40000, Test: 40000
+INFO:__main__:Testing fractions: [1.0]
+INFO:__main__:======================================================================
+INFO:__main__:Training with 100% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 320000
+INFO:__main__:Loading pre-trained CausalLM model (WARM START)
+INFO:accelerate.utils.modeling:We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+INFO:__main__:Epoch 1/20 | Train Loss: 3.5866 | Val Loss: 3.1861 | Val AUC: 0.5465 | Val F1: 0.2439
+INFO:__main__:New best model (AUC: 0.5465)
+INFO:__main__:Epoch 2/20 | Train Loss: 3.1807 | Val Loss: 3.1691 | Val AUC: 0.5756 | Val F1: 0.3521
+INFO:__main__:New best model (AUC: 0.5756)
+INFO:__main__:Epoch 3/20 | Train Loss: 3.1702 | Val Loss: 3.1735 | Val AUC: 0.5853 | Val F1: 0.5403
+INFO:__main__:Epoch 4/20 | Train Loss: 3.1669 | Val Loss: 3.1612 | Val AUC: 0.5912 | Val F1: 0.2899
+INFO:__main__:New best model (AUC: 0.5912)
+INFO:__main__:Epoch 5/20 | Train Loss: 3.1649 | Val Loss: 3.1612 | Val AUC: 0.5952 | Val F1: 0.4425
+INFO:__main__:New best model (AUC: 0.5952)
+INFO:__main__:Epoch 6/20 | Train Loss: 3.1634 | Val Loss: 3.1583 | Val AUC: 0.5981 | Val F1: 0.3569
+INFO:__main__:New best model (AUC: 0.5981)
+INFO:__main__:Epoch 7/20 | Train Loss: 3.1625 | Val Loss: 3.1586 | Val AUC: 0.6004 | Val F1: 0.3469
+INFO:__main__:Epoch 8/20 | Train Loss: 3.1621 | Val Loss: 3.1580 | Val AUC: 0.6017 | Val F1: 0.3528
+INFO:__main__:New best model (AUC: 0.6017)
+INFO:__main__:Epoch 9/20 | Train Loss: 3.1615 | Val Loss: 3.1580 | Val AUC: 0.6024 | Val F1: 0.3651
+INFO:__main__:Epoch 10/20 | Train Loss: 3.1614 | Val Loss: 3.1577 | Val AUC: 0.6034 | Val F1: 0.3724
+INFO:__main__:New best model (AUC: 0.6034)
+INFO:__main__:Epoch 11/20 | Train Loss: 3.1613 | Val Loss: 3.1576 | Val AUC: 0.6036 | Val F1: 0.3553
+INFO:__main__:New best model (AUC: 0.6036)
+INFO:__main__:Epoch 12/20 | Train Loss: 3.1607 | Val Loss: 3.1577 | Val AUC: 0.6039 | Val F1: 0.3362
+INFO:__main__:Epoch 13/20 | Train Loss: 3.1610 | Val Loss: 3.1576 | Val AUC: 0.6037 | Val F1: 0.3646
+INFO:__main__:New best model (AUC: 0.6037)
+INFO:__main__:Epoch 14/20 | Train Loss: 3.1609 | Val Loss: 3.1577 | Val AUC: 0.6038 | Val F1: 0.3567
+INFO:__main__:Epoch 15/20 | Train Loss: 3.1609 | Val Loss: 3.1576 | Val AUC: 0.6039 | Val F1: 0.3598
+INFO:__main__:New best model (AUC: 0.6039)
+INFO:__main__:Epoch 16/20 | Train Loss: 3.1610 | Val Loss: 3.1576 | Val AUC: 0.6038 | Val F1: 0.3489
+INFO:__main__:Epoch 17/20 | Train Loss: 3.1609 | Val Loss: 3.1575 | Val AUC: 0.6037 | Val F1: 0.3780
+INFO:__main__:New best model (AUC: 0.6037)
+INFO:__main__:Epoch 18/20 | Train Loss: 3.1608 | Val Loss: 3.1575 | Val AUC: 0.6040 | Val F1: 0.3558
+INFO:__main__:Epoch 19/20 | Train Loss: 3.1610 | Val Loss: 3.1575 | Val AUC: 0.6040 | Val F1: 0.3622
+INFO:__main__:Epoch 20/20 | Train Loss: 3.1610 | Val Loss: 3.1574 | Val AUC: 0.6041 | Val F1: 0.3622
+INFO:__main__:New best model (AUC: 0.6041)
+INFO:__main__:Optimal threshold: 0.32 (Val F1: 0.6076)
+INFO:__main__:Fraction 100% - Test AUC: 0.6003, Test F1: 0.6070, Time: 20991.0s
+INFO:__main__:Results saved to: /cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/llm_fraction_experiment_meta-llama_Llama-3.2-1B_lora_120_20260323_154206.csv
+INFO:__main__:
+======================================================================
+INFO:__main__:EXPERIMENT SUMMARY
+INFO:__main__:======================================================================
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+INFO:__main__:Argument batch_size: 64
+INFO:__main__:Argument cache_dir: '/cluster/work/projects/nn12048k/michechi/cache/'
+INFO:__main__:Argument cold_start: False
+INFO:__main__:Argument early: 'loss'
+INFO:__main__:Argument epochs: 20
+INFO:__main__:Argument fractions: '1.0'
+INFO:__main__:Argument gradient_accumulation_steps: 1
+INFO:__main__:Argument lr: 2e-05
+INFO:__main__:Argument max_length: 100
+INFO:__main__:Argument model_name: 'meta-llama/Llama-3.2-1B'
+INFO:__main__:Argument model_type: 'general'
+INFO:__main__:Argument number_to_use: '121'
+INFO:__main__:Argument output_dir: '/cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/'
+INFO:__main__:Argument path_csv: '/cluster/home/michechi/MIMICIV/data/simulation/sensitivity_stochastic/'
+INFO:__main__:Argument patience: 3
+INFO:__main__:Argument peft: True
+INFO:__main__:Argument seed: 9550
+INFO:__main__:Argument tiny: False
+INFO:__main__:Argument tiny_type: '1M'
+INFO:__main__:Argument use_quantization: False
+INFO:__main__:Using device: cuda
+INFO:__main__:Output directory: /cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/
+WARNING:__main__:Tokenizer has no pad_token. Adding [PAD].
+INFO:__main__:Loading datasets...
+INFO:__main__:Dataset sizes - Train: 320000, Val: 40000, Test: 40000
+INFO:__main__:Testing fractions: [1.0]
+INFO:__main__:======================================================================
+INFO:__main__:Training with 100% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 320000
+INFO:__main__:Loading pre-trained CausalLM model (WARM START)
+INFO:accelerate.utils.modeling:We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+INFO:__main__:Epoch 1/20 | Train Loss: 3.5850 | Val Loss: 3.1831 | Val AUC: 0.5485 | Val F1: 0.0398
+INFO:__main__:New best model (AUC: 0.5485)
+INFO:__main__:Epoch 2/20 | Train Loss: 3.1789 | Val Loss: 3.1664 | Val AUC: 0.5815 | Val F1: 0.1164
+INFO:__main__:New best model (AUC: 0.5815)
+INFO:__main__:Epoch 3/20 | Train Loss: 3.1694 | Val Loss: 3.1628 | Val AUC: 0.5851 | Val F1: 0.2582
+INFO:__main__:New best model (AUC: 0.5851)
+INFO:__main__:Epoch 4/20 | Train Loss: 3.1670 | Val Loss: 3.1620 | Val AUC: 0.5868 | Val F1: 0.2520
+INFO:__main__:New best model (AUC: 0.5868)
+INFO:__main__:Epoch 5/20 | Train Loss: 3.1661 | Val Loss: 3.1617 | Val AUC: 0.5875 | Val F1: 0.1874
+INFO:__main__:New best model (AUC: 0.5875)
+INFO:__main__:Epoch 6/20 | Train Loss: 3.1651 | Val Loss: 3.1597 | Val AUC: 0.5881 | Val F1: 0.2440
+INFO:__main__:New best model (AUC: 0.5881)
+INFO:__main__:Epoch 7/20 | Train Loss: 3.1652 | Val Loss: 3.1598 | Val AUC: 0.5883 | Val F1: 0.2433
+INFO:__main__:Epoch 8/20 | Train Loss: 3.1647 | Val Loss: 3.1594 | Val AUC: 0.5888 | Val F1: 0.3169
+INFO:__main__:New best model (AUC: 0.5888)
+INFO:__main__:Epoch 9/20 | Train Loss: 3.1645 | Val Loss: 3.1592 | Val AUC: 0.5888 | Val F1: 0.2996
+INFO:__main__:New best model (AUC: 0.5888)
+INFO:__main__:Epoch 10/20 | Train Loss: 3.1644 | Val Loss: 3.1591 | Val AUC: 0.5892 | Val F1: 0.2956
+INFO:__main__:New best model (AUC: 0.5892)
+INFO:__main__:Epoch 11/20 | Train Loss: 3.1642 | Val Loss: 3.1593 | Val AUC: 0.5893 | Val F1: 0.3176
+INFO:__main__:Epoch 12/20 | Train Loss: 3.1644 | Val Loss: 3.1597 | Val AUC: 0.5889 | Val F1: 0.2214
+INFO:__main__:Epoch 13/20 | Train Loss: 3.1643 | Val Loss: 3.1591 | Val AUC: 0.5890 | Val F1: 0.3009
+INFO:__main__:Early stopping at epoch 13
+INFO:__main__:Optimal threshold: 0.33 (Val F1: 0.6009)
+INFO:__main__:Fraction 100% - Test AUC: 0.5809, Test F1: 0.5998, Time: 13637.4s
+INFO:__main__:Results saved to: /cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/llm_fraction_experiment_meta-llama_Llama-3.2-1B_lora_121_20260323_192937.csv
+INFO:__main__:
+======================================================================
+INFO:__main__:EXPERIMENT SUMMARY
+INFO:__main__:======================================================================
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+INFO:__main__:Argument batch_size: 64
+INFO:__main__:Argument cache_dir: '/cluster/work/projects/nn12048k/michechi/cache/'
+INFO:__main__:Argument cold_start: False
+INFO:__main__:Argument early: 'loss'
+INFO:__main__:Argument epochs: 20
+INFO:__main__:Argument fractions: '1.0'
+INFO:__main__:Argument gradient_accumulation_steps: 1
+INFO:__main__:Argument lr: 2e-05
+INFO:__main__:Argument max_length: 100
+INFO:__main__:Argument model_name: 'meta-llama/Llama-3.2-1B'
+INFO:__main__:Argument model_type: 'general'
+INFO:__main__:Argument number_to_use: '122'
+INFO:__main__:Argument output_dir: '/cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/'
+INFO:__main__:Argument path_csv: '/cluster/home/michechi/MIMICIV/data/simulation/sensitivity_stochastic/'
+INFO:__main__:Argument patience: 3
+INFO:__main__:Argument peft: True
+INFO:__main__:Argument seed: 9550
+INFO:__main__:Argument tiny: False
+INFO:__main__:Argument tiny_type: '1M'
+INFO:__main__:Argument use_quantization: False
+INFO:__main__:Using device: cuda
+INFO:__main__:Output directory: /cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/
+WARNING:__main__:Tokenizer has no pad_token. Adding [PAD].
+INFO:__main__:Loading datasets...
+INFO:__main__:Dataset sizes - Train: 320000, Val: 40000, Test: 40000
+INFO:__main__:Testing fractions: [1.0]
+INFO:__main__:======================================================================
+INFO:__main__:Training with 100% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 320000
+INFO:__main__:Loading pre-trained CausalLM model (WARM START)
+INFO:accelerate.utils.modeling:We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+INFO:__main__:Epoch 1/20 | Train Loss: 3.5838 | Val Loss: 3.1823 | Val AUC: 0.5467 | Val F1: 0.0574
+INFO:__main__:New best model (AUC: 0.5467)
+INFO:__main__:Epoch 2/20 | Train Loss: 3.1762 | Val Loss: 3.1673 | Val AUC: 0.5786 | Val F1: 0.3960
+INFO:__main__:New best model (AUC: 0.5786)
+INFO:__main__:Epoch 3/20 | Train Loss: 3.1672 | Val Loss: 3.1612 | Val AUC: 0.5819 | Val F1: 0.2500
+INFO:__main__:New best model (AUC: 0.5819)
+INFO:__main__:Epoch 4/20 | Train Loss: 3.1644 | Val Loss: 3.1600 | Val AUC: 0.5831 | Val F1: 0.2168
+INFO:__main__:New best model (AUC: 0.5831)
+INFO:__main__:Epoch 5/20 | Train Loss: 3.1629 | Val Loss: 3.1588 | Val AUC: 0.5847 | Val F1: 0.2185
+INFO:__main__:New best model (AUC: 0.5847)
+INFO:__main__:Epoch 6/20 | Train Loss: 3.1621 | Val Loss: 3.1588 | Val AUC: 0.5854 | Val F1: 0.2822
+INFO:__main__:Epoch 7/20 | Train Loss: 3.1620 | Val Loss: 3.1589 | Val AUC: 0.5856 | Val F1: 0.3166
+INFO:__main__:Epoch 8/20 | Train Loss: 3.1615 | Val Loss: 3.1588 | Val AUC: 0.5853 | Val F1: 0.2455
+INFO:__main__:Early stopping at epoch 8
+INFO:__main__:Optimal threshold: 0.24 (Val F1: 0.5950)
+INFO:__main__:Fraction 100% - Test AUC: 0.5819, Test F1: 0.5950, Time: 8471.8s
+INFO:__main__:Results saved to: /cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/llm_fraction_experiment_meta-llama_Llama-3.2-1B_lora_122_20260323_215102.csv
+INFO:__main__:
+======================================================================
+INFO:__main__:EXPERIMENT SUMMARY
+INFO:__main__:======================================================================
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+INFO:__main__:Argument batch_size: 64
+INFO:__main__:Argument cache_dir: '/cluster/work/projects/nn12048k/michechi/cache/'
+INFO:__main__:Argument cold_start: False
+INFO:__main__:Argument early: 'loss'
+INFO:__main__:Argument epochs: 20
+INFO:__main__:Argument fractions: '1.0'
+INFO:__main__:Argument gradient_accumulation_steps: 1
+INFO:__main__:Argument lr: 2e-05
+INFO:__main__:Argument max_length: 100
+INFO:__main__:Argument model_name: 'meta-llama/Llama-3.2-1B'
+INFO:__main__:Argument model_type: 'general'
+INFO:__main__:Argument number_to_use: '123'
+INFO:__main__:Argument output_dir: '/cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/'
+INFO:__main__:Argument path_csv: '/cluster/home/michechi/MIMICIV/data/simulation/sensitivity_stochastic/'
+INFO:__main__:Argument patience: 3
+INFO:__main__:Argument peft: True
+INFO:__main__:Argument seed: 9550
+INFO:__main__:Argument tiny: False
+INFO:__main__:Argument tiny_type: '1M'
+INFO:__main__:Argument use_quantization: False
+INFO:__main__:Using device: cuda
+INFO:__main__:Output directory: /cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/
+WARNING:__main__:Tokenizer has no pad_token. Adding [PAD].
+INFO:__main__:Loading datasets...
+INFO:__main__:Dataset sizes - Train: 320000, Val: 40000, Test: 40000
+INFO:__main__:Testing fractions: [1.0]
+INFO:__main__:======================================================================
+INFO:__main__:Training with 100% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 320000
+INFO:__main__:Loading pre-trained CausalLM model (WARM START)
+INFO:accelerate.utils.modeling:We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+INFO:__main__:Epoch 1/20 | Train Loss: 3.5804 | Val Loss: 3.1774 | Val AUC: 0.5491 | Val F1: 0.0042
+INFO:__main__:New best model (AUC: 0.5491)
+INFO:__main__:Epoch 2/20 | Train Loss: 3.1717 | Val Loss: 3.1592 | Val AUC: 0.5803 | Val F1: 0.2090
+INFO:__main__:New best model (AUC: 0.5803)
+INFO:__main__:Epoch 3/20 | Train Loss: 3.1620 | Val Loss: 3.1556 | Val AUC: 0.5845 | Val F1: 0.2486
+INFO:__main__:New best model (AUC: 0.5845)
+INFO:__main__:Epoch 4/20 | Train Loss: 3.1594 | Val Loss: 3.1551 | Val AUC: 0.5862 | Val F1: 0.1925
+INFO:__main__:New best model (AUC: 0.5862)
+INFO:__main__:Epoch 5/20 | Train Loss: 3.1584 | Val Loss: 3.1537 | Val AUC: 0.5868 | Val F1: 0.1947
+INFO:__main__:New best model (AUC: 0.5868)
+INFO:__main__:Epoch 6/20 | Train Loss: 3.1579 | Val Loss: 3.1536 | Val AUC: 0.5878 | Val F1: 0.2484
+INFO:__main__:New best model (AUC: 0.5878)
+INFO:__main__:Epoch 7/20 | Train Loss: 3.1569 | Val Loss: 3.1533 | Val AUC: 0.5875 | Val F1: 0.2048
+INFO:__main__:New best model (AUC: 0.5875)
+INFO:__main__:Epoch 8/20 | Train Loss: 3.1570 | Val Loss: 3.1533 | Val AUC: 0.5880 | Val F1: 0.2017
+INFO:__main__:Epoch 9/20 | Train Loss: 3.1567 | Val Loss: 3.1537 | Val AUC: 0.5883 | Val F1: 0.2336
+INFO:__main__:Epoch 10/20 | Train Loss: 3.1564 | Val Loss: 3.1531 | Val AUC: 0.5881 | Val F1: 0.2128
+INFO:__main__:New best model (AUC: 0.5881)
+INFO:__main__:Epoch 11/20 | Train Loss: 3.1561 | Val Loss: 3.1526 | Val AUC: 0.5881 | Val F1: 0.2612
+INFO:__main__:New best model (AUC: 0.5881)
+INFO:__main__:Epoch 12/20 | Train Loss: 3.1561 | Val Loss: 3.1525 | Val AUC: 0.5882 | Val F1: 0.2460
+INFO:__main__:New best model (AUC: 0.5882)
+INFO:__main__:Epoch 13/20 | Train Loss: 3.1562 | Val Loss: 3.1526 | Val AUC: 0.5883 | Val F1: 0.2294
+INFO:__main__:Epoch 14/20 | Train Loss: 3.1559 | Val Loss: 3.1533 | Val AUC: 0.5883 | Val F1: 0.2549
+INFO:__main__:Epoch 15/20 | Train Loss: 3.1565 | Val Loss: 3.1536 | Val AUC: 0.5882 | Val F1: 0.2340
+INFO:__main__:Early stopping at epoch 15
+INFO:__main__:Optimal threshold: 0.30 (Val F1: 0.5824)
+INFO:__main__:Fraction 100% - Test AUC: 0.5891, Test F1: 0.5824, Time: 15772.2s
+INFO:__main__:Results saved to: /cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/llm_fraction_experiment_meta-llama_Llama-3.2-1B_lora_123_20260324_021410.csv
+INFO:__main__:
+======================================================================
+INFO:__main__:EXPERIMENT SUMMARY
+INFO:__main__:======================================================================
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+INFO:__main__:Argument batch_size: 64
+INFO:__main__:Argument cache_dir: '/cluster/work/projects/nn12048k/michechi/cache/'
+INFO:__main__:Argument cold_start: False
+INFO:__main__:Argument early: 'loss'
+INFO:__main__:Argument epochs: 20
+INFO:__main__:Argument fractions: '1.0'
+INFO:__main__:Argument gradient_accumulation_steps: 1
+INFO:__main__:Argument lr: 2e-05
+INFO:__main__:Argument max_length: 100
+INFO:__main__:Argument model_name: 'meta-llama/Llama-3.2-1B'
+INFO:__main__:Argument model_type: 'general'
+INFO:__main__:Argument number_to_use: '124'
+INFO:__main__:Argument output_dir: '/cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/'
+INFO:__main__:Argument path_csv: '/cluster/home/michechi/MIMICIV/data/simulation/sensitivity_stochastic/'
+INFO:__main__:Argument patience: 3
+INFO:__main__:Argument peft: True
+INFO:__main__:Argument seed: 9550
+INFO:__main__:Argument tiny: False
+INFO:__main__:Argument tiny_type: '1M'
+INFO:__main__:Argument use_quantization: False
+INFO:__main__:Using device: cuda
+INFO:__main__:Output directory: /cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/
+WARNING:__main__:Tokenizer has no pad_token. Adding [PAD].
+INFO:__main__:Loading datasets...
+INFO:__main__:Dataset sizes - Train: 320000, Val: 40000, Test: 40000
+INFO:__main__:Testing fractions: [1.0]
+INFO:__main__:======================================================================
+INFO:__main__:Training with 100% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 320000
+INFO:__main__:Loading pre-trained CausalLM model (WARM START)
+INFO:accelerate.utils.modeling:We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+INFO:__main__:Epoch 1/20 | Train Loss: 3.5787 | Val Loss: 3.1780 | Val AUC: 0.5448 | Val F1: 0.0407
+INFO:__main__:New best model (AUC: 0.5448)
+INFO:__main__:Epoch 2/20 | Train Loss: 3.1698 | Val Loss: 3.1585 | Val AUC: 0.5785 | Val F1: 0.1521
+INFO:__main__:New best model (AUC: 0.5785)
+INFO:__main__:Epoch 3/20 | Train Loss: 3.1606 | Val Loss: 3.1558 | Val AUC: 0.5834 | Val F1: 0.3103
+INFO:__main__:New best model (AUC: 0.5834)
+INFO:__main__:Epoch 4/20 | Train Loss: 3.1581 | Val Loss: 3.1533 | Val AUC: 0.5853 | Val F1: 0.1571
+INFO:__main__:New best model (AUC: 0.5853)
+INFO:__main__:Epoch 5/20 | Train Loss: 3.1567 | Val Loss: 3.1525 | Val AUC: 0.5858 | Val F1: 0.2030
+INFO:__main__:New best model (AUC: 0.5858)
+INFO:__main__:Epoch 6/20 | Train Loss: 3.1561 | Val Loss: 3.1526 | Val AUC: 0.5864 | Val F1: 0.2685
+INFO:__main__:Epoch 7/20 | Train Loss: 3.1554 | Val Loss: 3.1530 | Val AUC: 0.5867 | Val F1: 0.2234
+INFO:__main__:Epoch 8/20 | Train Loss: 3.1552 | Val Loss: 3.1522 | Val AUC: 0.5869 | Val F1: 0.2346
+INFO:__main__:New best model (AUC: 0.5869)
+INFO:__main__:Epoch 9/20 | Train Loss: 3.1552 | Val Loss: 3.1520 | Val AUC: 0.5871 | Val F1: 0.2164
+INFO:__main__:New best model (AUC: 0.5871)
+INFO:__main__:Epoch 10/20 | Train Loss: 3.1548 | Val Loss: 3.1522 | Val AUC: 0.5872 | Val F1: 0.2009
+INFO:__main__:Epoch 11/20 | Train Loss: 3.1550 | Val Loss: 3.1533 | Val AUC: 0.5871 | Val F1: 0.1605
+INFO:__main__:Epoch 12/20 | Train Loss: 3.1544 | Val Loss: 3.1527 | Val AUC: 0.5870 | Val F1: 0.2538
+INFO:__main__:Early stopping at epoch 12
+INFO:__main__:Optimal threshold: 0.22 (Val F1: 0.5784)
+INFO:__main__:Fraction 100% - Test AUC: 0.5897, Test F1: 0.5783, Time: 12702.4s
+INFO:__main__:Results saved to: /cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/llm_fraction_experiment_meta-llama_Llama-3.2-1B_lora_124_20260324_054606.csv
+INFO:__main__:
+======================================================================
+INFO:__main__:EXPERIMENT SUMMARY
+INFO:__main__:======================================================================
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+INFO:__main__:Argument batch_size: 64
+INFO:__main__:Argument cache_dir: '/cluster/work/projects/nn12048k/michechi/cache/'
+INFO:__main__:Argument cold_start: False
+INFO:__main__:Argument early: 'loss'
+INFO:__main__:Argument epochs: 20
+INFO:__main__:Argument fractions: '1.0'
+INFO:__main__:Argument gradient_accumulation_steps: 1
+INFO:__main__:Argument lr: 2e-05
+INFO:__main__:Argument max_length: 100
+INFO:__main__:Argument model_name: 'meta-llama/Llama-3.2-1B'
+INFO:__main__:Argument model_type: 'general'
+INFO:__main__:Argument number_to_use: '130'
+INFO:__main__:Argument output_dir: '/cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/'
+INFO:__main__:Argument path_csv: '/cluster/home/michechi/MIMICIV/data/simulation/sensitivity_stochastic/'
+INFO:__main__:Argument patience: 3
+INFO:__main__:Argument peft: True
+INFO:__main__:Argument seed: 9550
+INFO:__main__:Argument tiny: False
+INFO:__main__:Argument tiny_type: '1M'
+INFO:__main__:Argument use_quantization: False
+INFO:__main__:Using device: cuda
+INFO:__main__:Output directory: /cluster/work/projects/nn12048k/michechi/results/sensitivity_stochastic/
+WARNING:__main__:Tokenizer has no pad_token. Adding [PAD].
+INFO:__main__:Loading datasets...
+INFO:__main__:Dataset sizes - Train: 320000, Val: 40000, Test: 40000
+INFO:__main__:Testing fractions: [1.0]
+INFO:__main__:======================================================================
+INFO:__main__:Training with 100% of training data
+INFO:__main__:======================================================================
+INFO:__main__:Training subset size: 320000
+INFO:__main__:Loading pre-trained CausalLM model (WARM START)
+INFO:accelerate.utils.modeling:We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+INFO:__main__:Epoch 1/20 | Train Loss: 3.5588 | Val Loss: 3.1497 | Val AUC: 0.5452 | Val F1: 0.0001
+INFO:__main__:New best model (AUC: 0.5452)
+INFO:__main__:Epoch 2/20 | Train Loss: 3.1462 | Val Loss: 3.1363 | Val AUC: 0.5597 | Val F1: 0.0102
+INFO:__main__:New best model (AUC: 0.5597)
+INFO:__main__:Epoch 3/20 | Train Loss: 3.1384 | Val Loss: 3.1330 | Val AUC: 0.5653 | Val F1: 0.0515
+INFO:__main__:New best model (AUC: 0.5653)
+INFO:__main__:Epoch 4/20 | Train Loss: 3.1352 | Val Loss: 3.1297 | Val AUC: 0.5691 | Val F1: 0.0342
+INFO:__main__:New best model (AUC: 0.5691)
+INFO:__main__:Epoch 5/20 | Train Loss: 3.1325 | Val Loss: 3.1281 | Val AUC: 0.5718 | Val F1: 0.0677
+INFO:__main__:New best model (AUC: 0.5718)
+INFO:__main__:Epoch 6/20 | Train Loss: 3.1309 | Val Loss: 3.1272 | Val AUC: 0.5735 | Val F1: 0.0465
+INFO:__main__:New best model (AUC: 0.5735)
+INFO:__main__:Epoch 7/20 | Train Loss: 3.1297 | Val Loss: 3.1262 | Val AUC: 0.5749 | Val F1: 0.0776
+INFO:__main__:New best model (AUC: 0.5749)
+INFO:__main__:Epoch 8/20 | Train Loss: 3.1292 | Val Loss: 3.1257 | Val AUC: 0.5758 | Val F1: 0.0736
+INFO:__main__:New best model (AUC: 0.5758)
+INFO:__main__:Epoch 9/20 | Train Loss: 3.1283 | Val Loss: 3.1255 | Val AUC: 0.5765 | Val F1: 0.1473
+INFO:__main__:New best model (AUC: 0.5765)
+INFO:__main__:Epoch 10/20 | Train Loss: 3.1278 | Val Loss: 3.1251 | Val AUC: 0.5758 | Val F1: 0.0865
+INFO:__main__:New best model (AUC: 0.5758)
+INFO:__main__:Epoch 11/20 | Train Loss: 3.1279 | Val Loss: 3.1246 | Val AUC: 0.5773 | Val F1: 0.1190
+INFO:__main__:New best model (AUC: 0.5773)
