@@ -67,7 +67,7 @@ This directly addresses the reviewer's concern: the result is not limited to uni
 
 **Response:** We appreciate this thoughtful example. However, we believe it reflects a terminological ambiguity rather than a mathematical contradiction.
 
-**Induction heads are not compliance tasks.** Our impossibility theorem (Theorem 3.3) applies to a precisely defined class: **compliance tasks** (Definition 3.1), where the label is $$Y^* = \mathbf{1}\{key symbols appear in prescribed order $\kappa$ at lag $\lambda$ \}$$. This has a specific structure:
+**Induction heads are not compliance tasks.** Our impossibility theorem (Theorem 3.3) applies to a precisely defined class: **compliance tasks** (Definition 3.1), where the label is $Y^* = \mathbf{1}\{\text{key symbols appear in prescribed order } \kappa \text{ at lag } \lambda\}$. This has a specific structure:
 
 | Property | Compliance (our framework) | Induction heads |
 |---|---|---|
