@@ -118,7 +118,7 @@ Moreover, our task requires solving **three interleaved problems simultaneously*
 **Changes to the paper:**
 - We revise line 458 (*"This is not a matter of scale or training data"*) which is directly contradicted by the reviewer's experiment. The revised text will read:
 
-  > *"In our experimental regime ($\ell = 26$, $m = 6$, $n = 20$), every model performs at chance. While simpler instances such as binary parity ($\ell = 2$, $n = 10$) are learnable by small transformers [as demonstrated by the reviewer], task difficulty scales rapidly with alphabet size and key set complexity. The failure reflects the practical challenge of simultaneously discovering hidden key symbols, counting their occurrences, and computing parity — a combinatorial burden that overwhelms current architectures at realistic parameter scales."*
+  > *"In our experimental regime ($\ell = 26$, $m = 6$, $n = 20$), every model performs at chance. While simpler instances such as binary parity ($\ell = 2$, $n = 10$) are learnable by small transformers [as demonstrated by the reviewer], task difficulty scales rapidly with alphabet size and key set complexity. The failure reflects the practical challenge of simultaneously discovering hidden key symbols, counting their occurrences, and computing parity; a combinatorial burden that overwhelms current architectures at realistic parameter scales."*
 
 - We revise line 488 to remove the claim that parity failure is not about scale/data.
 - We add a **sensitivity analysis** sweeping $\ell$ from 2 to 26 (holding other parameters proportional) to show the performance degradation curve. This will precisely characterize where the transition from learnable to unlearnable occurs, turning the reviewer's concern into a new empirical contribution.
