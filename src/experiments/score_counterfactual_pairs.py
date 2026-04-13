@@ -226,13 +226,18 @@ def run_llm(args):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # Build args compatible with LLM_fraction_experiment
+    llm_extra = []
+    if args.peft:
+        llm_extra.append("--peft")
+    if args.use_quantization:
+        llm_extra.append("--use_quantization")
     llm_args = parse_args([
         "--model_name", args.model_name,
         "--number_to_use", args.number_to_use,
         "--seed", str(args.seed),
         "--fractions", "1.0",
-        "--path_csv", str(DATA_DIR) + "/",
-    ])
+        "--path_csv", args.path_csv,
+    ] + llm_extra)
 
     hf_token = os.environ.get("HF_TOKEN", None)
     tokenizer = load_tokenizer(llm_args.model_name, llm_args.model_type,
@@ -266,14 +271,16 @@ def run_llm(args):
     model = load_model_causal(llm_args, tokenizer, hf_token)
     if tokenizer.pad_token is not None:
         model.resize_token_embeddings(len(tokenizer))
-    model = model.to(device, dtype=torch.bfloat16)
+    if not args.use_quantization:
+        model = model.to(device, dtype=torch.bfloat16)
 
     import gc
     torch.cuda.empty_cache()
     gc.collect()
 
     best_auc, best_f1, _, _, _, _ = train_and_evaluate_causal(
-        model, train_loader, val_loader, llm_args, device
+        model, train_loader, val_loader, llm_args, device,
+        use_quantization=args.use_quantization
     )
     logger.info(f"Training done — Val AUC: {best_auc:.4f}, Val F1: {best_f1:.4f}")
 
@@ -330,10 +337,21 @@ def main():
                         help="HuggingFace model name (for LLM mode)")
     parser.add_argument("--number_to_use", type=str, default="9")
     parser.add_argument("--seed", type=int, default=9950)
+    parser.add_argument("--peft", action="store_true", help="Use LoRA")
+    parser.add_argument("--use_quantization", action="store_true", help="Use 4-bit quantization")
+    parser.add_argument("--path_csv", type=str, default=str(DATA_DIR) + "/",
+                        help="Path to data CSVs")
+    parser.add_argument("--pairs_path", type=str, default=str(PAIRS_PATH),
+                        help="Path to counterfactual pairs CSV")
+    parser.add_argument("--output_dir", type=str, default=str(OUTPUT_DIR))
     args = parser.parse_args()
 
+    # Override paths if provided
+    pairs_path = Path(args.pairs_path)
+    data_dir = Path(args.path_csv)
+
     # Always compute k-gram baseline first (no GPU needed)
-    pairs_df = pd.read_csv(PAIRS_PATH)
+    pairs_df = pd.read_csv(pairs_path)
     logger.info(f"Loaded {len(pairs_df):,} counterfactual pairs")
 
     print("\n" + "=" * 60)
