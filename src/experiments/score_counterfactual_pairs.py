@@ -33,6 +33,7 @@ import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
+from sklearn.metrics import roc_auc_score
 from torch.utils.data import DataLoader, Dataset
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s: %(message)s")
@@ -92,32 +93,24 @@ def kgram_score_pairs(pairs_df, k=2):
 # ──────────────────────────────────────────────────────────────────────
 # DL BASELINE SCORING
 # ──────────────────────────────────────────────────────────────────────
-class LetterSequenceDataset(Dataset):
-    def __init__(self, sequences):
-        self.sequences = sequences
-
-    def __len__(self):
-        return len(self.sequences)
-
-    def __getitem__(self, idx):
-        seq = self.sequences[idx]
-        # Strip separator, encode A=0 .. Z=25
-        letters = seq.replace(SEP, "")
-        encoded = torch.tensor([ord(c) - ord('A') for c in letters], dtype=torch.long)
-        return encoded
-
-
 def score_dl_model(model, sequences, device, batch_size=512):
-    """Score sequences with a DL model. Returns array of P(Y=1)."""
-    dataset = LetterSequenceDataset(sequences)
-    loader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
+    """Score preprocessed sequences with a DL model. Returns array of P(Y=1)."""
+    # Reuse DLDataset with dummy labels
+    sys.path.insert(0, str(Path(__file__).parent))
+    from DL_TR_baselines_experiment import LetterSequenceDataset as DLDataset, collate_fn
+
+    dummy_labels = [0] * len(sequences)
+    dataset = DLDataset(sequences, dummy_labels)
+    loader = DataLoader(dataset, batch_size=batch_size, shuffle=False,
+                        collate_fn=collate_fn)
     model.eval()
     all_probs = []
     with torch.no_grad():
-        for batch in loader:
-            batch = batch.to(device)
-            logits = model(batch)
-            probs = torch.sigmoid(logits).squeeze(-1).cpu().numpy()
+        for batch_seqs, _ in loader:
+            batch_seqs = batch_seqs.to(device)
+            logits = model(batch_seqs)
+            # logits shape: (batch, num_classes=2)
+            probs = torch.softmax(logits, dim=-1)[:, 1].cpu().numpy()
             all_probs.extend(probs)
     return np.array(all_probs)
 
@@ -148,25 +141,27 @@ def run_dl(args):
     sys.path.insert(0, str(Path(__file__).parent))
     from DL_TR_baselines_experiment import (
         LetterSequenceDataset as DLDataset,
-        build_model, train_model, set_seed
+        create_model, train_model_with_early_stopping, set_seed,
+        DEFAULT_CONFIGS, collate_fn, preprocess_sequence
     )
 
     set_seed(args.seed)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # Load training data
-    X_train = pd.read_csv(DATA_DIR / f"X_train_{args.number_to_use}.csv").fillna("")
-    y_train = pd.read_csv(DATA_DIR / f"y_train_{args.number_to_use}.csv").fillna("")
-    X_val = pd.read_csv(DATA_DIR / f"X_val_{args.number_to_use}.csv").fillna("")
-    y_val = pd.read_csv(DATA_DIR / f"y_val_{args.number_to_use}.csv").fillna("")
+    data_dir = Path(args.path_csv)
+    X_train = pd.read_csv(data_dir / f"X_train_{args.number_to_use}.csv").fillna("")
+    y_train = pd.read_csv(data_dir / f"y_train_{args.number_to_use}.csv").fillna("")
+    X_val = pd.read_csv(data_dir / f"X_val_{args.number_to_use}.csv").fillna("")
+    y_val = pd.read_csv(data_dir / f"y_val_{args.number_to_use}.csv").fillna("")
 
     # Load pairs
-    pairs_df = pd.read_csv(PAIRS_PATH)
+    pairs_df = pd.read_csv(Path(args.pairs_path))
     logger.info(f"Loaded {len(pairs_df):,} counterfactual pairs")
 
-    # Prepare pair sequences (strip separator for DL models)
-    all_pair_seqs = list(pairs_df.seq_pos) + list(pairs_df.seq_neg)
-    all_pair_letters = [s.replace(SEP, "") for s in all_pair_seqs]
+    # Preprocess: strip separator
+    train_seqs = [preprocess_sequence(s) for s in X_train.Sequences]
+    val_seqs = [preprocess_sequence(s) for s in X_val.Sequences]
 
     models_to_run = [m.strip() for m in args.models.split(",")]
     results = []
@@ -175,28 +170,30 @@ def run_dl(args):
         logger.info(f"\n{'='*50}")
         logger.info(f"Training {model_name}...")
 
-        # Build and train
-        model = build_model(model_name, vocab_size=26, seq_length=20).to(device)
+        # Build and train using default config
+        config = DEFAULT_CONFIGS[model_name].copy()
+        model = create_model(model_name, config)
 
-        train_dataset = DLDataset(
-            X_train.Sequences.apply(lambda s: s.replace(SEP, "")).values,
-            y_train.Outcome.values
+        train_dataset = DLDataset(train_seqs, y_train.Outcome.values.astype(int))
+        val_dataset = DLDataset(val_seqs, y_val.Outcome.values.astype(int))
+
+        train_loader = DataLoader(train_dataset, batch_size=256, shuffle=True,
+                                  collate_fn=collate_fn)
+        val_loader = DataLoader(val_dataset, batch_size=512, shuffle=False,
+                                collate_fn=collate_fn)
+
+        model, best_f1, best_auc, _, _, best_epoch, _ = train_model_with_early_stopping(
+            model, train_loader, val_loader,
+            num_epochs=50, lr=1e-3, patience=5, device=str(device)
         )
-        val_dataset = DLDataset(
-            X_val.Sequences.apply(lambda s: s.replace(SEP, "")).values,
-            y_val.Outcome.values
-        )
-
-        train_loader = DataLoader(train_dataset, batch_size=256, shuffle=True)
-        val_loader = DataLoader(val_dataset, batch_size=512, shuffle=False)
-
-        model = train_model(model, train_loader, val_loader, device,
-                            epochs=50, lr=1e-3, patience=5)
+        logger.info(f"  Best Val AUC: {best_auc:.4f}, F1: {best_f1:.4f} (epoch {best_epoch})")
 
         # Score pairs
         logger.info(f"Scoring {len(pairs_df):,} pairs...")
-        scores_pos = score_dl_model(model, list(pairs_df.seq_pos), device)
-        scores_neg = score_dl_model(model, list(pairs_df.seq_neg), device)
+        pair_seqs_pos = [preprocess_sequence(s) for s in pairs_df.seq_pos]
+        pair_seqs_neg = [preprocess_sequence(s) for s in pairs_df.seq_neg]
+        scores_pos = score_dl_model(model, pair_seqs_pos, device)
+        scores_neg = score_dl_model(model, pair_seqs_neg, device)
 
         metrics = compute_pair_metrics(scores_pos, scores_neg)
         metrics["model"] = model_name
@@ -213,8 +210,137 @@ def run_dl(args):
 # ──────────────────────────────────────────────────────────────────────
 # MAIN: LLM models
 # ──────────────────────────────────────────────────────────────────────
+def _is_encoder_model(model_name):
+    """Check if model is an encoder (BERT/RoBERTa) vs decoder (Llama/Qwen)."""
+    name_lower = model_name.lower()
+    return any(k in name_lower for k in ["bert", "roberta", "electra", "deberta"])
+
+
+def run_llm_encoder(args):
+    """Train BERT/RoBERTa via AutoModelForSequenceClassification and score pairs."""
+    from transformers import AutoTokenizer, AutoModelForSequenceClassification
+
+    set_seed = __import__("random").seed
+    set_seed(args.seed)
+    np.random.seed(args.seed)
+    torch.manual_seed(args.seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(args.seed)
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    logger.info(f"Using device: {device}")
+
+    tokenizer = AutoTokenizer.from_pretrained(args.model_name)
+    model = AutoModelForSequenceClassification.from_pretrained(
+        args.model_name, num_labels=2
+    ).to(device)
+
+    # Load data
+    data_dir = Path(args.path_csv)
+    X_train = pd.read_csv(data_dir / f"X_train_{args.number_to_use}.csv").fillna("")
+    y_train = pd.read_csv(data_dir / f"y_train_{args.number_to_use}.csv").fillna("")
+    X_val = pd.read_csv(data_dir / f"X_val_{args.number_to_use}.csv").fillna("")
+    y_val = pd.read_csv(data_dir / f"y_val_{args.number_to_use}.csv").fillna("")
+
+    SEP = "\x1f"
+    def make_text(seq):
+        return "Sequential events: " + " ".join(seq.split(SEP)) + "\nOutcome (0 or 1):"
+
+    train_texts = [make_text(s) for s in X_train.Sequences]
+    val_texts = [make_text(s) for s in X_val.Sequences]
+    train_labels = y_train.Outcome.values.astype(int)
+    val_labels = y_val.Outcome.values.astype(int)
+
+    # Simple training loop
+    from torch.optim import AdamW
+    optimizer = AdamW(model.parameters(), lr=2e-5, weight_decay=0.01)
+    batch_size = 64
+    epochs = 10
+    patience = 3
+    best_auc = 0
+    no_improve = 0
+    best_state = None
+
+    logger.info(f"Training {args.model_name} for {epochs} epochs...")
+    for epoch in range(epochs):
+        model.train()
+        indices = np.random.permutation(len(train_texts))
+        total_loss = 0
+        n_batches = 0
+        for i in range(0, len(indices), batch_size):
+            batch_idx = indices[i:i + batch_size]
+            batch_texts = [train_texts[j] for j in batch_idx]
+            batch_labels = torch.tensor(train_labels[batch_idx], dtype=torch.long).to(device)
+            inputs = tokenizer(batch_texts, return_tensors="pt", padding=True,
+                               truncation=True, max_length=128).to(device)
+            outputs = model(**inputs, labels=batch_labels)
+            loss = outputs.loss
+            loss.backward()
+            optimizer.step()
+            optimizer.zero_grad()
+            total_loss += loss.item()
+            n_batches += 1
+
+        # Validation
+        model.eval()
+        val_probs = []
+        with torch.no_grad():
+            for i in range(0, len(val_texts), batch_size):
+                batch = val_texts[i:i + batch_size]
+                inputs = tokenizer(batch, return_tensors="pt", padding=True,
+                                   truncation=True, max_length=128).to(device)
+                logits = model(**inputs).logits
+                probs = torch.softmax(logits, dim=-1)[:, 1].cpu().numpy()
+                val_probs.extend(probs)
+        val_auc = roc_auc_score(val_labels, val_probs)
+        logger.info(f"  Epoch {epoch+1}/{epochs}: loss={total_loss/n_batches:.4f} val_auc={val_auc:.4f}")
+
+        if val_auc > best_auc:
+            best_auc = val_auc
+            best_state = {k: v.clone() for k, v in model.state_dict().items()}
+            no_improve = 0
+        else:
+            no_improve += 1
+            if no_improve >= patience:
+                logger.info(f"  Early stopping at epoch {epoch+1}")
+                break
+
+    if best_state is not None:
+        model.load_state_dict(best_state)
+    logger.info(f"Training done — Best Val AUC: {best_auc:.4f}")
+
+    # Score pairs
+    pairs_df = pd.read_csv(Path(args.pairs_path))
+    logger.info(f"Scoring {len(pairs_df):,} counterfactual pairs...")
+
+    def score_sequences(seqs, batch_size=128):
+        texts = [make_text(s) for s in seqs]
+        all_probs = []
+        model.eval()
+        with torch.no_grad():
+            for i in range(0, len(texts), batch_size):
+                batch = texts[i:i + batch_size]
+                inputs = tokenizer(batch, return_tensors="pt", padding=True,
+                                   truncation=True, max_length=128).to(device)
+                logits = model(**inputs).logits
+                probs = torch.softmax(logits, dim=-1)[:, 1].cpu().numpy()
+                all_probs.extend(probs)
+        return np.array(all_probs)
+
+    scores_pos = score_sequences(list(pairs_df.seq_pos))
+    scores_neg = score_sequences(list(pairs_df.seq_neg))
+
+    metrics = compute_pair_metrics(scores_pos, scores_neg)
+    metrics["model"] = args.model_name
+    logger.info(f"  Pairwise accuracy: {metrics['pairwise_accuracy']:.4f}")
+    logger.info(f"  Mean margin:       {metrics['mean_margin']:.4f}")
+    del model
+    torch.cuda.empty_cache()
+    return [metrics]
+
+
 def run_llm(args):
-    """Train LLM from scratch and score counterfactual pairs."""
+    """Train decoder-only LLM from scratch and score counterfactual pairs."""
     sys.path.insert(0, str(Path(__file__).parent))
     from LLM_fraction_experiment import (
         CausalLMWithClassificationHead, set_seed, standard_narrative_prompt,
@@ -246,10 +372,11 @@ def run_llm(args):
         tokenizer.add_special_tokens({'pad_token': '[PAD]'})
 
     # Load data
-    X_train = pd.read_csv(DATA_DIR / f"X_train_{args.number_to_use}.csv").fillna("")
-    y_train = pd.read_csv(DATA_DIR / f"y_train_{args.number_to_use}.csv").fillna("")
-    X_val = pd.read_csv(DATA_DIR / f"X_val_{args.number_to_use}.csv").fillna("")
-    y_val = pd.read_csv(DATA_DIR / f"y_val_{args.number_to_use}.csv").fillna("")
+    data_dir = Path(args.path_csv)
+    X_train = pd.read_csv(data_dir / f"X_train_{args.number_to_use}.csv").fillna("")
+    y_train = pd.read_csv(data_dir / f"y_train_{args.number_to_use}.csv").fillna("")
+    X_val = pd.read_csv(data_dir / f"X_val_{args.number_to_use}.csv").fillna("")
+    y_val = pd.read_csv(data_dir / f"y_val_{args.number_to_use}.csv").fillna("")
 
     # Prepare dataloaders
     train_texts = X_train.apply(standard_narrative_prompt, axis=1).tolist()
@@ -285,7 +412,7 @@ def run_llm(args):
     logger.info(f"Training done — Val AUC: {best_auc:.4f}, Val F1: {best_f1:.4f}")
 
     # Load pairs and score
-    pairs_df = pd.read_csv(PAIRS_PATH)
+    pairs_df = pd.read_csv(Path(args.pairs_path))
     logger.info(f"Scoring {len(pairs_df):,} counterfactual pairs...")
 
     def make_prompt(seq):
@@ -371,7 +498,10 @@ def main():
         model_results = run_dl(args)
         all_results.extend(model_results)
     elif args.model_type == "LLM":
-        model_results = run_llm(args)
+        if _is_encoder_model(args.model_name):
+            model_results = run_llm_encoder(args)
+        else:
+            model_results = run_llm(args)
         all_results.extend(model_results)
 
     # Print summary table
