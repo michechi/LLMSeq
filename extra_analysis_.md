@@ -6,7 +6,7 @@
 
 ### Experiments
 
-**Design**: 3×3×3 structural grid (n × m × λ) + ρ ablation, all resampled to fixed ρ=0.293 to isolate structural effects from class-imbalance effects.
+**Design**: Structural grid (n × m × λ). Note: ρ (class balance) is not an independent parameter — it is determined by the combination of n, m, and λ. Each configuration therefore has its own ρ and corresponding theoretical AUC\*. Results are compared against per-config AUC\* to account for this variation.
 
 | Parameter | Values tested |
 |-----------|--------------|
@@ -19,7 +19,7 @@
 
 | Experiment | Status | Notes |
 |------------|--------|-------|
-| Dataset generation (deterministic, fixed ρ) | **Done** | Resampled from 10M raw pool to 400K at ρ=0.293 |
+| Dataset generation (deterministic) | **Done** | 400K samples per config; ρ varies by (n, m, λ) |
 | Dataset generation (stochastic, π=0.3) | **Done** | Label noise applied post-resampling |
 | K-gram baselines (deterministic) | **Done** | 1-gram through 7-gram on all configs |
 | K-gram baselines (stochastic) | **Done** | |
@@ -29,7 +29,7 @@
 | Llama-1B (deterministic) | **Done** | |
 | DL models (stochastic) | **Done** | |
 | BERT (stochastic) | **Done** | |
-| Llama-1B (stochastic) | **Partial** (11/21) | Datasets 100-124 done, 130-144 still running |
+| Llama-1B (stochastic) | **Done** | All 21 datasets complete |
 
 ### Results: Deterministic Setting
 
@@ -71,21 +71,15 @@ All models except Llama-1B achieve near-perfect performance. BERT = 1.000 everyw
 | **m=6** | **.480** | .681 | .680 | .670 | .671 | .662 |
 | **m=10** | .700 | .705 | .697 | .702 | .697 | .701 |
 
-**Llama-1B stochastic AUC (partial — 11/21 datasets):**
+**Llama-1B stochastic AUC (m × λ grid, n=20) — AUC\* in parentheses:**
 
-| ID | Config | AUC |
-|----|--------|-----|
-| 100 | n=10, m=6, λ=7 | 0.543 |
-| 101 | n=15, m=6, λ=7 | 0.582 |
-| 102 | n=20, m=6, λ=7 | 0.587 |
-| 103 | n=30, m=6, λ=7 | 0.582 |
-| 110 | n=20, m=3, λ=7 | 0.550 |
-| 112 | n=20, m=10, λ=7 | 0.590 |
-| 120 | n=20, m=6, λ=1 | 0.600 |
-| 121 | n=20, m=6, λ=3 | 0.581 |
-| 122 | n=20, m=6, λ=5 | 0.582 |
-| 123 | n=20, m=6, λ=9 | 0.589 |
-| 124 | n=20, m=6, λ=10 | 0.590 |
+| | λ=1 | λ=3 | λ=5 | λ=7 | λ=9 | λ=10 |
+|---|---|---|---|---|---|---|
+| **m=3** | .580 (.602) | .556 (.595) | .557 (.589) | .550 (.581) | .549 (.574) | .542 (.570) |
+| **m=6** | .600 (.683) | .581 (.679) | .582 (.675) | **.587 (.670)** | .589 (.666) | .590 (.664) |
+| **m=10** | .542 (.699) | .552 (.699) | .567 (.698) | .590 (.698) | .594 (.697) | .603 (.696) |
+
+**n variation (m=6, λ=7):** n=10: .543, n=15: .582, n=20: .587, n=30: .582
 
 ### Key findings
 
@@ -117,7 +111,7 @@ BERT stochastic on dataset 120 (m=6, λ=1): AUC=0.480 (below chance). Likely a t
 
 3. The **interaction between m and λ** confirms that both key-subset identification and lag tracking contribute to difficulty, with compounding effects at extreme values.
 
-All results are presented normalized by the per-config theoretical AUC* to account for varying class balance (ρ was fixed at 0.293 via resampling)."
+All results are compared against the per-config theoretical AUC\* to account for the fact that ρ (and thus AUC\*) varies across configurations as a function of (n, m, λ)."
 
 ---
 
@@ -272,14 +266,86 @@ All three diagnostic tools converge: CKD→ESRD progression is predictable from 
 
 ---
 
+## Q6: Signal Decomposition — Content vs. Order (Reviewer rUwY)
+
+**Reviewer concern**: "The paper needs a more quantitative gap between 'semantic/content-like' and 'sequential' understanding."
+
+### Experiments
+
+| Experiment | Status | Notes |
+|------------|--------|-------|
+| Bag-of-Events baseline (BoE) — LogReg & XGBoost on 26-dim count vector | **Done** | Tricky Det, Tricky Rnd, Parity |
+| BoE-key (6-dim key-letter counts only) | **Done** | Isolates key-subset frequency signal |
+| k-gram baselines (1-7) for all tasks | **Done** | Reconfirms prior results |
+| Matched-histogram counterfactual (key-letter stratification) | **Done** | 94-96% of sequences in ambiguous groups |
+| Signal decomposition table | **Done** | LaTeX in paper_tables/signal_decomposition.tex |
+
+### Results: Signal Decomposition (AUC on test set)
+
+| Method | Tricky Det. | Tricky Rnd. | Parity |
+|--------|------------|------------|--------|
+| Chance | 0.500 | 0.500 | 0.500 |
+| BoE-key (6d) | 0.774 | 0.574 | 0.503 |
+| BoE-linear (26d) | 0.815 | 0.584 | 0.501 |
+| BoE-XGB (26d) | 0.816 | 0.584 | 0.503 |
+| 2-gram | 0.821 | 0.585 | 0.499 |
+| Best model | 0.999 | 0.671 | 0.503 |
+| AUC* | 1.000 | 0.670 | — |
+
+**Signal gaps (ΔAUC):**
+
+| Layer | Tricky Det. | Tricky Rnd. | Parity |
+|-------|------------|------------|--------|
+| Δ content (XGB − 0.5) | +0.316 | +0.084 | +0.003 |
+| Δ local order (2-gram − XGB) | +0.005 | +0.000 | +0.000 |
+| Δ sequential (model − ceiling) | +0.178 | +0.086 | +0.000 |
+
+### Results: Matched-Histogram Counterfactual
+
+Sequences grouped by 6-dim key-letter count vector (W,D,Q,J,X,N). "Ambiguous" = group contains both labels.
+
+| Metric | Tricky Det. | Tricky Rnd. | Parity |
+|--------|------------|------------|--------|
+| Key-letter groups | 3,196 | 3,189 | 3,995 |
+| Ambiguous groups | 1,592 (49.8%) | 1,807 (56.7%) | 0 (0.0%) |
+| Seqs in ambiguous groups | 47,078 (94.2%) | 48,150 (96.3%) | 0 (0.0%) |
+| BoE-full AUC (ambiguous) | 0.799 | 0.578 | — |
+
+**Key-count strata (Tricky Deterministic):** ρ ranges from 0.04 (0 key letters) to 0.88 (12 key letters), confirming a strong monotonic content-to-label correlation. But within each stratum, models must use order to discriminate.
+
+**Parity has zero ambiguous groups** — every key-letter count vector maps to a single label (even count → 1, odd count → 0). Parity is fully determined by content, but requires modular arithmetic that neither BoE nor any tested model can learn.
+
+### Key findings
+
+1. **Content is substantial but bounded.** On Tricky Deterministic, letter frequencies alone (BoE) achieve AUC 0.816 — 63% of the full signal. On Tricky Random, BoE reaches 0.584 — 49% of the achievable signal (ceiling 0.670).
+
+2. **Local order adds nearly nothing.** The 2-gram gains only +0.005 (Det) and +0.001 (Rnd) over the BoE. The k-gram "advantage" is almost entirely a frequency/content effect.
+
+3. **Sequential modeling is decisive.** The gap from content ceiling to best model is +0.178 (Det) and +0.086 (Rnd). For Tricky Random, this gap brings the model from barely above chance (0.585) to the theoretical ceiling (0.671).
+
+4. **94-96% of sequences are content-ambiguous.** When matched by key-letter counts, the vast majority of sequences share counts with sequences of the opposite label. Within these matched groups, only order-sensitive models can discriminate.
+
+5. **Parity is a content task that's computationally hard.** The label depends purely on key-letter counts (no ambiguous groups), but the parity function defeats all classifiers. This supports the complementary explanation from Q4: both local-pattern reliance AND computational hardness contribute to model failures.
+
+### Rebuttal argument
+
+"We quantify the signal sources in Tricky tasks using a bag-of-events (BoE) baseline — a classifier trained on the order-invariant 26-dimensional letter-count vector. On Tricky Deterministic, content accounts for 63% of the total signal (BoE AUC = 0.816 vs. best model AUC = 0.999), while sequential order contributes the remaining 37% (ΔAUC = +0.178). On Tricky Random, the split is approximately 50/50: content yields AUC 0.584, and sequential modeling adds +0.086 to reach the theoretical ceiling of 0.670. Crucially, local k-grams add negligible signal beyond content (Δ ≤ 0.005), confirming that the models' advantage over bag-of-events comes from richer sequential structure, not merely from capturing local bigram patterns.
+
+A matched-histogram analysis reinforces this: when we group sequences by their key-letter count vector, 94–96% fall into ambiguous groups where both labels are present. Within these groups, the BoE achieves AUC 0.799 (Det) and 0.578 (Rnd) from residual non-key-letter correlations, but the gap to the full models can only be closed by exploiting the ordering of key letters — exactly the sequential signal our framework predicts.
+
+Parity provides an instructive contrast: zero ambiguous groups exist (the label is entirely determined by key-letter counts — specifically their parity), yet all models fail (AUC ≈ 0.50). This confirms that parity failure reflects computational hardness of modular arithmetic, not missing sequential information, supporting the complementary interpretation discussed in Q4."
+
+---
+
 ## Summary Table
 
 | Question | Status | Strength |
 |----------|--------|----------|
-| Q1: Parameter sensitivity | **Done** (det), **Done** (stoch DL+BERT), Llama-1B stoch partial | Strong — 29 configs, 5 models, normalized by AUC* |
+| Q1: Parameter sensitivity | **Complete** (all models, det + stoch) | Strong — 29 configs, 5 models, normalized by AUC* |
 | Q2: Mamba | Code ready, blocked on container | Weak — acknowledge in limitations |
 | Q3: Qwen-14B robustness | **Complete** | Very strong — AUC 0.670 ± 0.001 |
 | Q4: Parity explanation | Conceptual argument + attention evidence | Moderate-Strong |
 | Q5: Difficulty decomposition | **Complete** (grid + attention maps) | Strong — mechanistic evidence |
 | Q5b: Attention analysis | **Complete** (BERT + Llama) | Strong — shows how models solve the task |
+| Q6: Signal decomposition (rUwY) | **Complete** | Very strong — quantitative content/order split with counterfactual |
 | Bonus: MIMIC-IV | **Complete** | Strong — validates on real clinical data |

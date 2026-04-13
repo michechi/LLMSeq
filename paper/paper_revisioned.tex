@@ -186,119 +186,242 @@ This structure, a subset of events in a specific order with temporal lag constra
 
 In our clinical example: diabetes $\to$ D, hypertension $\to$ H, atrial fibrillation $\to$ A, with non-predictive diagnoses mapping to other letters. A patient's history becomes a sequence like ``\texttt{BXDCAQZHELMPTKDWSANJ}'' (length $n=20$, alphabet size $\ell=26$). The \emph{key subset} $\mathcal{S} = \{$D, H, A$\}$ contains the predictive letters (size $m=3$), with a ordering rule $\kappa$: D $<$ H $<$ A. The \emph{lag} parameter $\lambda$ captures temporal spacing, with $\lambda = 3$, we examine positions $(1, 4, 7, \ldots)$, then $(2, 5, 8, \ldots)$, etc. More generally, $\lambda$ can be a vector $(\lambda_1, \lambda_2, \ldots)$ to model phenomena where temporal constraints evolve, for instance, requiring events to occur progressively closer together as a condition worsens. A sequence is \emph{compliant} if key letters appear in the prescribed order at positions separated by the specified lag(s). The model must discover: (i) which letters matter, (ii) the decisive ordering, and (iii) the lag structure, none of which are provided explicitly.
 
-
 \subsection{Setup and Notation}
 \label{sec:setup}
 
-Let $\mathcal{A}$ be an alphabet of size $\ell = |\mathcal{A}|$, and let $\mathcal{S} \subseteq \mathcal{A}$ be a key subset of size $m = |\mathcal{S}|$ sampled uniformly. A sequence $X = (X_1, \ldots, X_n)$ is generated with $X_t \stackrel{\mathrm{iid}}{\sim} \mathrm{Uniform}(\mathcal{A})$. Let $\kappa: \mathcal{S} \to \{1, \ldots, m\}$ be a random bijection defining a total order on $\mathcal{S}$. Symbols in $\mathcal{A} \setminus \mathcal{S}$ act as distractors and play no role in determining the label.
+Let $\mathcal{A}$ be an alphabet of size $\ell = |\mathcal{A}|$.
+To instantiate one task, we first sample a hidden key subset
+$\mathcal{S} \subseteq \mathcal{A}$ of size $m = |\mathcal{S}|$
+uniformly among all $m$-subsets of $\mathcal{A}$, and then sample a
+bijection
+$\kappa : \mathcal{S} \to \{1,\ldots,m\}$
+uniformly among all such bijections. The realized pair $(\mathcal{S},\kappa)$
+is fixed for the task and for the entire dataset; all probabilities below are
+conditional on this realized pair unless stated otherwise. Symbols in
+$\mathcal{A}\setminus\mathcal{S}$ act as distractors and play no role in
+determining compliance.
+
+Let $P_0$ denote the proposal distribution over candidate sequences:
+$X_t \stackrel{\mathrm{iid}}{\sim} \mathrm{Uniform}(\mathcal{A}), t=1,\ldots,n.$
+
+This i.i.d.\ uniform law is the base synthetic generation mechanism.
+
 \begin{definition}
 \label{def:compliance}
-    For lag parameter $\lambda \geq 1$, we say $X$ is \emph{compliant} if there exists a chain of positions $(t_1, \ldots, t_k)$ with $k \geq 2$ such that: 
-    \setlength{\itemsep}{0pt}
-        \setlength{\parskip}{0pt}
-        \setlength{\parsep}{0pt}
-    \begin{description}
-        \setlength{\itemsep}{0pt}
-        \setlength{\parskip}{0pt}
-        \setlength{\parsep}{0pt}
-        \item[(i)] $t_{j+1} - t_j = \lambda$ for all $j$,
-        \item[(ii)] $X_{t_j} \in \mathcal{S}$ for all $j$, and 
-        \item[(iii)] $\kappa(X_{t_1}) \leq \cdots \leq \kappa(X_{t_k})$.
-    \end{description}
+For lag parameter $\lambda \geq 1$, we say that $X$ is \emph{compliant}
+if there exists a chain of positions $(t_1,\ldots,t_k)$ with $k\geq 2$
+such that:
+\textbf{(i)} $t_{j+1}-t_j=\lambda$ for all $j$,
+\textbf{(ii)} $X_{t_j}\in\mathcal{S}$ for all $j$,
+\textbf{(iii)} $\kappa(X_{t_1}) \leq \cdots \leq \kappa(X_{t_k})$.
+
 \end{definition}
 
-Compliance thus depends solely on the existence of an ordered subsequence with respect to the hidden key $\kappa$.
-
-
-Labels are assigned probabilistically. Let $Y^{*} \in \{0,1\}$ denote the compliance indicator, so that $Y^{*}=1$ if and only if $X$ is compliant. Let $Y$ denote the observed outcome in the data. Then we have:
+Let $Y^*=\mathbf{1}\{X \text{ is compliant}\}$, let $\pi\in[0,1/2)$ and let $Y$ denote the
+observed label, generated from $Y^*$ according to
 \begin{equation}
-    P(Y=1 \mid Y^*) = 
-        \begin{cases} 
-        1 - \pi & \text{if } Y^* = 1 \\
-        \pi & \text{if } Y^* = 0 
-        \end{cases}
+\label{eq:label_noise}
+P(Y=1\mid Y^*=y^*)=
+\begin{cases}
+1-\pi, & y^*=1,\\
+\pi, & y^*=0,
+\end{cases}
 \end{equation}
-for $\pi \in [0, 0.5)$. 
-The deterministic setting corresponds to $\pi = 0$; values $\pi > 0$ introduce symmetric label noise.
+
+In the experimental datasets of Sections~\ref{sec:experiments}
+and~\ref{sec:results}, we subsample the draws from $P_0$ after labeling
+to obtain a controlled class balance. Thus the final benchmark distribution
+is a label-stratified subsample of $P_0$, rather than $P_0$ itself. In
+general, after this balancing step, the coordinates of $X$ need not remain
+independent and their marginals need not remain uniform.
+Theorem~\ref{thm:impossibility} below concerns the proposal law $P_0$
+and, more generally, only requires independence and full support.
 
 
 \subsection{Pure Sequential Dependence}
 \label{sec:pure_sequential_def}
 
-We formalize when a task should be considered ``purely sequential.''
+We use \emph{pure sequential dependence} to refer to tasks whose outcome
+is determined exclusively by temporal ordering rather than by order-invariant
+statistics.
 
 \begin{definition}[Pure Sequential Dependence]
 \label{def:pure_sequential}
-A binary classification problem exhibits \emph{pure sequential dependence} if and only if the outcome depends exclusively on the temporal ordering of sequence elements, with no dependence on:
-\setlength{\itemsep}{0pt}
-        \setlength{\parskip}{0pt}
-        \setlength{\parsep}{0pt}
- \begin{description}
-        \setlength{\itemsep}{0pt}
-        \setlength{\parskip}{0pt}
-        \setlength{\parsep}{0pt}
-        \item[(a)] individual element frequencies,
-        \item[(b)] element co-occurrence patterns (order-independent),
-        \item[(c)] aggregate sequence statistics, or
-        \item[(d)] any order-invariant sequence properties
-    \end{description}
+A binary classification task exhibits \emph{pure sequential dependence}
+if its outcome is determined exclusively by the temporal ordering of
+sequence elements and not by
+(a)~individual element frequencies,
+(b)~order-independent co-occurrence patterns,
+(c)~aggregate sequence statistics, or
+(d)~any other order-invariant sequence property.
 \end{definition}
 
-A necessary condition for pure sequential dependence is that individual symbols should carry no information about the label. Under uniform sampling, $P(X_t = a) = 1/|\mathcal{A}|$ for all $a$ and $t$, so one might expect $I(Y; X_t) = 0$, where
-\begin{equation}
+A necessary, though not sufficient, single-position condition for pure
+sequential dependence is that individual symbols carry no information about
+the observed label. This can be quantified by the mutual information
+\begin{align}
 \label{eq:mutual_info}
-    I(Y; X_t) =\sum_{y, a} P(Y{=}y, X_t{=}a) \log \frac{P(Y{=}y, X_t{=}a)}{P(Y{=}y)\,P(X_t{=}a)}
-\end{equation}
-
-denotes the mutual information between $Y$ and $X_t$. We show that even this necessary condition fails for the compliance family in Definition~\ref{def:compliance}.
+I(Y;X_t)
+&= \sum_{y\in\{0,1\}}\;\sum_{a\in\mathcal{A}}
+P(Y\!=\!y,X_t\!=\!a) \notag\\
+&\qquad\times\log
+\frac{P(Y\!=\!y,X_t\!=\!a)}{P(Y\!=\!y)\,P(X_t\!=\!a)}.
+\end{align}
+We show that compliance tasks violate even this weakest necessary condition.
 
 \begin{theorem}[Compliance Tasks Induce Local Information]
 \label{thm:impossibility}
-Let $\mathcal{A}$ be a finite alphabet, let $\mathcal{S} \subseteq \mathcal{A}$ with $|\mathcal{S}| = m \geq 2$, let $\kappa: \mathcal{S} \to \{1, \ldots, m\}$ be a bijection, let $\lambda \geq 1$, and let $n \geq \lambda + 1$. Let $X = (X_1, \ldots, X_n)$ have independent coordinates with full support on $\mathcal{A}$, i.e.\ $P(X_t = a) > 0$ for all $t$ and $a$. Define the label $Y^{*} = \mathbf{1}\{X \text{ is compliant in the sense of Definition~\ref{def:compliance}}\}$, and let $\rho := P(Y^{*}=1)$. If $\rho \in (0,1)$, then there exist $a,b \in \mathcal{A}$ such that
-\[
-P(Y^{*}=1 \mid X_1 = a) \neq P(Y^{*}=1 \mid X_1 = b),
-\]
-and consequently $I(Y^{*}; X_1) > 0$.
+Fix a realized pair $(\mathcal{S},\kappa)$ as in Section~\ref{sec:setup}.
+Let $\lambda \ge 1$ and $n \ge \lambda+1$.
+Let $X=(X_1,\ldots,X_n)$ have independent coordinates with full support on
+$\mathcal{A}$, i.e.\ $P(X_t=a)>0$ for all $t$ and all $a\in\mathcal{A}$.
+Define
+$Y^* = \mathbf{1}\{X \text{ is compliant}\}$
+and let $Y$ be the observed label generated from $Y^*$ according to
+\eqref{eq:label_noise}. Let $\rho := P(Y^*=1)$.
+If $\rho\in(0,1)$, then there exist $a,b\in\mathcal{A}$ such that
+$P(Y^*=1\mid X_1=a)\neq P(Y^*=1\mid X_1=b)$.
+Consequently, $I(Y^*;X_1)>0$.
+Moreover, $P(Y=1\mid X_1=a)\neq P(Y=1\mid X_1=b)$
+and therefore $I(Y;X_1)>0$.
 \end{theorem}
 
 \begin{proof}[Proof outline]
-Let $s_{\min} \in \mathcal{S}$ satisfy $\kappa(s_{\min}) = 1$. If $\mathcal{S} \subsetneq \mathcal{A}$, choose $a_0 \in \mathcal{A} \setminus \mathcal{S}$ and couple two sequences $X$ and $X'$ that share the same values in positions $2,\ldots,n$, with $X_1 = s_{\min}$ and $X'_1 = a_0$. Any compliant chain in $X'$ must avoid position $1$, hence it is also a compliant chain in $X$. On the positive-probability event that $X_{1+\lambda} \in \mathcal{S}$ and every other position in $\{2,\ldots,n\}\setminus\{1+\lambda\}$ lies outside $\mathcal{S}$, the sequence $X$ is compliant via the chain $(1,1+\lambda)$, while $X'$ is not compliant. Therefore
-\[
-P(Y^{*}=1 \mid X_1=s_{\min}) > P(Y^{*}=1 \mid X_1=a_0).
-\]
-If instead $\mathcal{S} = \mathcal{A}$, then weak ordering implies that whenever $X_1=s_{\min}$ the pair $(1,1+\lambda)$ is always compliant, so $P(Y^{*}=1 \mid X_1=s_{\min}) = 1$. Since $\rho < 1$, there must exist $a^{*} \in \mathcal{A}$ with $P(Y^{*}=1 \mid X_1=a^{*}) < 1$. In both cases the conditional law of $Y^{*}$ depends on $X_1$, so $I(Y^{*};X_1)>0$. See Appendix~\ref{appendix:proof_impossibility} for the complete proof.
+Let $s_{\min}\in\mathcal{S}$ satisfy $\kappa(s_{\min})=1$.
+
+If $\mathcal{S}\subsetneq\mathcal{A}$, choose $a_0\in\mathcal{A}\setminus\mathcal{S}$.
+Let $Z_2,\ldots,Z_n$ be independent with
+$Z_t\sim\mathcal{L}(X_t)$, and define
+$\widetilde X=(s_{\min},Z_2,\ldots,Z_n)$ and
+$\widetilde X'=(a_0,Z_2,\ldots,Z_n)$.
+Then
+$\widetilde X \stackrel{d}{=} (X\mid X_1=s_{\min})$ and
+$\widetilde X' \stackrel{d}{=} (X\mid X_1=a_0)$.
+Any compliant chain in $\widetilde X'$ must avoid position~$1$, hence it is
+also compliant in $\widetilde X$. On the positive-probability event
+that $Z_{1+\lambda}\in\mathcal{S}$ and
+$Z_t\notin\mathcal{S}$ for all
+$t\in\{2,\ldots,n\}\setminus\{1+\lambda\}$,
+the sequence $\widetilde X$ is compliant via $(1,1+\lambda)$,
+while $\widetilde X'$ is not. Therefore
+$P(Y^*\!=\!1\mid X_1\!=\!s_{\min}) > P(Y^*\!=\!1\mid X_1\!=\!a_0)$.
+
+If instead $\mathcal{S}=\mathcal{A}$, then whenever $X_1=s_{\min}$ the pair
+$(1,1+\lambda)$ is automatically compliant, giving
+$P(Y^*=1\mid X_1=s_{\min})=1$.
+Since $\rho<1$, there exists $a^*$ with
+$P(Y^*=1\mid X_1=a^*)<1$,
+so $P(Y^*=1\mid X_1=\cdot)$ is non-constant in both cases.
+
+Finally, by \eqref{eq:label_noise},
+$P(Y\!=\!1\mid X_1\!=\!a)
+= \pi + (1-2\pi)\,P(Y^*\!=\!1\mid X_1\!=\!a)$.
+Because $\pi<1/2$, the map
+$u\mapsto \pi+(1-2\pi)u$ is strictly increasing, so
+$P(Y\!=\!1\mid X_1\!=\!\cdot)$ is non-constant as well, giving
+$I(Y^*;X_1)>0$ and $I(Y;X_1)>0$.
+See Appendix~\ref{appendix:proof_impossibility} for the full proof.
 \end{proof}
+The implication is therefore scoped: non-degenerate compliance tasks under
+independent full-support sampling cannot satisfy pure sequential dependence
+even in this single-position sense. This does not cover arbitrary
+order-sensitive binary labels. For example, if
+$\mathcal{A}=\{0,1,2,3,4\}$,
+$X_t \overset{\mathrm{iid}}{\sim} \mathrm{Uniform}(\mathcal{A})$, and
+$Y=\mathbf{1}\{(X_2+2X_3)\bmod 5 \in \{0,1\}\}$,
+then $I(Y;X_t)=0$ for every $t$, even though $Y$ depends on the ordered pair
+$(X_2,X_3)$. Theorem~\ref{thm:impossibility} is therefore specific to the
+compliance family defined in Definition~\ref{def:compliance}.
 
-The implication is therefore scoped: non-degenerate compliance tasks under independent full-support sampling \emph{cannot} satisfy pure sequential dependence in the single-position sense. This does not cover arbitrary order-sensitive labels. For example, if $\mathcal{A}=\{0,\ldots,\ell-1\}$, $X_t \overset{\mathrm{iid}}{\sim} \mathrm{Uniform}(\mathcal{A})$, and $Y=(X_2+X_3)\bmod \ell$, then $I(Y;X_t)=0$ for every $t$ even though $Y$ depends on ordered positions. The intuition behind Theorem~\ref{thm:impossibility} is clearest in the naive full-order setting: if the first symbol is `a', many completions remain compliant; if it is `z', only `z' can follow. Local observations therefore change compliance probabilities, and the theorem shows that this phenomenon survives in the full compliance family.
+\subsection{A Quantitative Uniform Lower Bound}
+\label{sec:uniform_witness_bound}
+
+Theorem~\ref{thm:impossibility} is qualitative and holds under independent
+full-support sampling. Under the uniform proposal law used in our synthetic
+benchmark, the witness event in its proof yields an explicit lower bound on the
+amount of local leakage.
+
+\begin{corollary}[Uniform witness lower bound]
+\label{cor:uniform_witness_bound}
+Assume the setting of Theorem~\ref{thm:impossibility} with
+$\mathcal{S}\subsetneq\mathcal{A}$ and
+$X_t \overset{\mathrm{iid}}{\sim} \mathrm{Uniform}(\mathcal{A})$.
+Let $s_{\min}\in\mathcal{S}$ satisfy $\kappa(s_{\min})=1$ and
+$a_0\in\mathcal{A}\setminus\mathcal{S}$. Define
+$\delta(a,b) := P(Y^*\!=\!1\mid X_1\!=\!a)
+              - P(Y^*\!=\!1\mid X_1\!=\!b)$.
+Then
+\begin{equation}
+\label{eq:witness_clean}
+\delta(s_{\min},a_0)
+\;\ge\;
+\frac{m}{\ell}
+\!\left(\frac{\ell-m}{\ell}\right)^{\!n-2}.
+\end{equation}
+If $Y$ is generated from $Y^*$ via \eqref{eq:label_noise}, then
+\begin{equation}
+\label{eq:witness_noisy}
+\delta_Y(s_{\min},a_0)
+\;\ge\;
+(1-2\pi)\,\frac{m}{\ell}
+\!\left(\frac{\ell-m}{\ell}\right)^{\!n-2},
+\end{equation}
+where
+$\delta_Y(a,b) := P(Y\!=\!1\mid X_1\!=\!a)
+                 - P(Y\!=\!1\mid X_1\!=\!b)$.
+\end{corollary}
+
+See \ref{appendix:proof_uniform_witness_bound} for full proof and remarks.
 
 
-\subsection{Operation-Based Sequentiality via Parity}
+\subsection{A Stronger Global-Integration Benchmark via Parity}
 \label{sec:parity}
 
-Theorem~\ref{thm:impossibility} establishes that compliance tasks inevitably leak local information under its assumptions. To test whether models can perform global integration beyond these compliance-specific shortcuts, we introduce an alternative task based on algebraic operations rather than ordered chains.
-
-The intuition is simple: designate a subset of letters as ``key'' and count how many times each key letter appears in the entire sequence. For each key letter, determine whether its count is even or odd. The label depends on the parity of how many key letters have an even count. Crucially, changing any single letter in the sequence can flip the label, so the model cannot rely on local patterns it must track counts across the entire sequence.
-
+Theorem~\ref{thm:impossibility} shows that compliance tasks inevitably leak
+local information. To study a task family with much stronger bounded-local
+invisibility, we introduce a parity-based construction.
 
 \begin{definition}[Parity Task]
-\label{def:set-theoretic-parity}
-Let $\mathcal{A}$ be a finite alphabet and $K \subset \mathcal{A}$ a non-empty proper subset. For $X = (X_1, \ldots, X_n)$ with $X_t \overset{\text{i.i.d.}}{\sim} \text{Uniform}(\mathcal{A})$, let $N_k = \sum_{t=1}^{n} \mathbf{1}_{\{X_t = k\}}$ for each $k \in K$, and define
-\[
-Y^{*} := \left| \{ k \in K : N_k \text{ is even} \} \right| \mod 2.
-\]
+\label{def:parity}
+Fix a realized subset $K\subsetneq \mathcal{A}$ with
+$K\neq\varnothing$. For $X=(X_1,\ldots,X_n)$ with
+$X_t \overset{\mathrm{iid}}{\sim} \mathrm{Uniform}(\mathcal{A})$,
+let $N_k := \sum_{t=1}^n \mathbf{1}\{X_t = k\}$ for each $k\in K$
+and define
+$Y^* := |\{k\in K : N_k \text{ is even}\}| \bmod 2$.
 \end{definition}
 
-\begin{theorem}[Single-Position Local Information of Parity Task]
-    \label{prop:local-info-parity}
-    Let $p = |K|/|\mathcal{A}|$. If $p = 1/2$, then $I(Y^{*}; X_t) = 0$ for all $t$ and $n$. If $p \neq 1/2$, then $I(Y^{*}; X_t) > 0$ for finite $n$, but $I(Y^{*}; X_t) \to 0$ as $n \to \infty$.
+The quantity $Y^*$ depends on the full sequence through a global parity
+computation over a hidden subset. Unlike the compliance family, this
+construction is not defined through ordered lagged chains.
+
+\begin{theorem}[$k$-local purity of the parity task]
+\label{thm:parity_local_purity}
+Assume the setting of Definition~\ref{def:parity} with
+$p := |K|/|\mathcal{A}|$.
+Fix $n\ge 1$ and let
+$J \subseteq \{1,\ldots,n\}$ with $1 \le |J| < n$.
+Then $I(Y^*;X_J)=0$ if $p = 1/2$, and $I(Y^*;X_J)>0$ if
+$p \neq 1/2$.
+Moreover, if $p\neq 1/2$ and $J\subset \mathbb{N}$ is any fixed
+finite index set, interpreted as a subset of $\{1,\ldots,n\}$ for
+all sufficiently large~$n$, then $I(Y^*;X_J)\to 0$ as
+$n\to\infty$.
+If the observed label $Y$ is generated from $Y^*$ via
+\eqref{eq:label_noise} with $\pi<1/2$, the same qualitative
+statements hold with $Y$ in place of $Y^*$. In particular, when
+$p=1/2$, the parity task is $k$-locally pure for every $k<n$.
 \end{theorem}
 
-\begin{proof}[Proof outline]
-The core intuition is that the variable $Y^{*}$, despite being defined via individual counts $N_k$, is algebraically equivalent (modulo 2) to the parity of the \textit{total} count of elements falling in $K$. Specifically, we show in the full proof (Appendix~\ref{app:proof_prop_local_info}) that $Y^{*}$ is a bijective transformation of the standard parity variable $T := (\sum_{t=1}^n \mathbf{1}_{\{X_t \in K\}}) \mod 2$. 
-Since mutual information is invariant under bijection, the result for $Y^{*}$ follows from the corresponding statement for $T$: exact single-position invisibility holds in the balanced case $p=1/2$, while for $p \neq 1/2$ the leakage is positive for finite $n$ but vanishes as $n$ grows.
-\end{proof}
+See Appendix~\ref{appendix:proof_parity_local_purity} for detailed proof.
 
-Unlike compliance tasks, parity is not defined through ordered chains. In the balanced case $p=1/2$, it eliminates single-position leakage exactly; for $p \neq 1/2$, the leakage decays to zero with sequence length. This makes parity a useful global-integration stress test, but only the balanced case is exactly ``pure'' in the single-position sense of Definition~\ref{def:pure_sequential}.
+Theorem~\ref{thm:parity_local_purity} should be read as a bounded-local
+statement. In the balanced case $p=1/2$, parity removes all local shortcuts
+supported on fewer than $n$ positions. Outside the balanced case, finite-$n$
+leakage is positive, although it vanishes for every fixed local view as $n$
+grows. Parity is therefore a useful global-integration stress test, but
+exact $k$-local purity is confined to the balanced regime.
+
 
 \section{Experiments}
 \label{sec:experiments}
@@ -319,11 +442,19 @@ Compliance requires the entire sequence to be non-decreasing in alphabetical ord
 For $n=20$, $\ell=26$: $\rho_{\mathrm{naive}} \approx 10^{-16}$ (see Appendix~\ref{proof:naive_setting}), making the task degenerate without probabilistic labeling. Due to this extremely low compliance probability, uniform random sampling would yield virtually no compliant sequences. Therefore, we construct the naive dataset through a targeted generation procedure: we first generate alphabetically ordered (compliant) sequences, then create non-compliant counterparts by permuting selected elements within these sequences. Full details of this dataset are provided in Table~\ref{tab:ngram_naive} in Appendix~\ref{appendix:tables}.
 
 
-\paragraph{Tricky setting} ($m \ll \ell$, $\lambda > 1$, $\kappa = \mathrm{random but fixed}$).
+\paragraph{Tricky setting} ($m \ll \ell$, $\lambda > 1$, $\kappa = \text{random but fixed}$).
 Only a small subset of letters matters, relevant letters must appear at specific lag intervals, and the ordering key is randomized. For $m=6$, $\lambda=7$, $n=20$, $\ell=26$, we obtain $\rho \approx 0.31$ via simulation. This creates a non-degenerate class balance while requiring models to: identify which letters matter, learn the hidden ordering, and track positions modulo the lag.
 
 \paragraph{Parity setting}
-Labels depend on hidden-subset parity. Exact single-position local information vanishes only when $|K|/|\mathcal{A}| = 1/2$; otherwise it is positive for finite $n$ but small in long sequences (Proposition~\ref{prop:local-info-parity}). Our experimental parity regime uses $m=6$, $n=20$, and $\ell=26$, so it should be interpreted as a demanding hidden-subset global-integration task rather than an exactly pure one. We obtain $\rho \approx 0.5$ via simulation.
+Exact $k$-local purity holds only in the balanced case
+$|K|/|\mathcal{A}| = 1/2$
+(Theorem~\ref{thm:parity_local_purity});
+otherwise local leakage is positive for finite $n$, although it vanishes for
+every fixed local view as $n$ grows. Our experimental parity regime uses
+$m=6$, $n=20$, and $\ell=26$, so it should be interpreted as a demanding
+hidden-subset global-integration task rather than an exactly pure benchmark.
+Empirically, the tested $k$-gram baselines carry no useful signal in this
+regime. We obtain $\rho \approx 0.5$ via simulation.
 
 Figures~\ref{fig:naive_example},~\ref{fig:tricky_example} and~\ref{fig:parity_example} in Appendix~\ref{appendix:Figures} illustrate the naive, tricky and parity mechanisms.
 
@@ -348,7 +479,8 @@ Parity (deterministic) & 400K & 20 & 0.499 & -- & 0.0 \\
 \end{tabular}
 \end{table}
 
-The \textbf{tricky deterministic} dataset tests whether models can learn the sequential pattern without noise. The \textbf{tricky stochastic} dataset  introduces label noise ($\pi = 0.3$) as discussed in Section \ref{sec:formulation}, bounding optimal performance at $\text{AUC}^* = 0.67$ (Theorem~\ref{thm:optimal_performance}) and revealing whether models plateau at $k$-gram levels or approach theoretical limits. The \textbf{parity} dataset tests pure global integration where no local pattern carries signal (Proposition~\ref{prop:local-info-parity}).
+The \textbf{tricky deterministic} dataset tests whether models can learn the sequential pattern without noise. The \textbf{tricky stochastic} dataset  introduces label noise ($\pi = 0.3$) as discussed in Section \ref{sec:formulation}, bounding optimal performance at $\text{AUC}^* = 0.67$ (Theorem~\ref{thm:optimal_performance}) and revealing whether models plateau at $k$-gram levels or approach theoretical limits. The \textbf{parity} dataset tests a hard hidden-subset global-integration regime.
+Although our $(m,\ell,n)=(6,26,20)$ setting is not exactly $k$-locally pure, the tested $k$-gram baselines remain at chance, so any success would have to come from beyond the local statistics captured by those baselines.
 
 % ============================================================================
 \subsection{Models}
@@ -458,8 +590,23 @@ When the task requires detecting ordered subsequences with specific positional c
 \paragraph{Tricky random: theoretical ceiling approached.}
 The stochastic variant ($\pi=0.3$) has a theoretical AUC upper bound of $.670$ due to inherent label noise. Our custom Transformer and RNN-Transformer hybrid both reach this ceiling (AUC $.671$), demonstrating that the architectures can extract maximal signal when trained appropriately. BERT approaches the optimum ($.669$), while LSTM achieves $.665$. Smaller decoder-only models (Llama-1B, Llama-8B) plateau around $.58$; only marginally above the 2-gram baseline ($.585$). However, at sufficient scale (Qwen-14B), decoder-only architectures also approach the theoretical ceiling, suggesting that autoregressive models can learn global sequential dependencies when provided with enough capacity.
 
-\paragraph{Parity: universal failure under standard training.}
-The parity task presents a stark empirical result: \textit{every} model performs at chance level (AUC $\approx .50$), regardless of architecture or scale. This includes 70B-parameter LLMs, bidirectional transformers, and recurrent networks. In our hidden-subset parity regime, the label depends on global counting structure and the tested $k$-gram baselines also fail. Under the standard supervised training pipeline used throughout the paper, none of the architectures recover useful signal. We therefore treat parity as an unsolved benchmark in this regime rather than as a universal impossibility result.
+\paragraph{Parity: failure under standard supervised training.}
+The parity task presents a stark empirical result: every model performs at chance level (AUC $\approx .50$), regardless of architecture or scale. This
+includes 70B-parameter LLMs, bidirectional transformers, and recurrent networks. In our hidden-subset parity regime, success requires jointly identifying the hidden subset, filtering distractors, and computing parity over the relevant counts. The tested $k$-gram baselines also fail. We therefore interpret this as a failure of the standard supervised training
+pipeline in this regime rather than as a universal impossibility result for transformers or for parity-like tasks more broadly.
+
+\paragraph{Signal decomposition: content vs.\ order.}
+To quantify how much predictive signal arises from order-invariant letter frequencies versus sequential structure, we introduce a hierarchy of baselines (Table~\ref{tab:signal_decomposition}).
+\emph{BoE-key} trains a logistic regression on only the counts of the six key letters $\mathcal{S}$ (a 6-dimensional feature vector), capturing content signal from the task-relevant subset alone.
+\emph{BoE-XGB} trains a gradient-boosted tree (XGBoost) on the full 26-dimensional letter-count vector, serving as a nonlinear content-only ceiling that exploits all letter-frequency information while remaining completely order-invariant.
+The \emph{best $k$-gram} row takes the strongest position-aware $k$-gram classifier from Table~\ref{tab:ngram_appendix} ($k{=}2$ for both tricky variants), which can capture short-range local order beyond mere letter counts.
+\emph{Best model} is the highest AUC achieved by any neural architecture (from Table~\ref{tab:results_full}).
+
+On Tricky Deterministic, content alone accounts for 63\% of the total signal ($\Delta_{\text{content}} = +0.316$), while sequential modeling contributes the remaining 37\% ($\Delta_{\text{seq}} = +0.178$).
+On Tricky Random, the split is approximately 50/50: content yields AUC $0.584$, and sequential modeling adds $+0.086$ to reach the theoretical ceiling.
+Crucially, even the best $k$-gram adds negligible signal beyond content ($\Delta_{\text{local}} \leq 0.005$), confirming that the models' advantage over BoE comes from richer sequential structure, not local $k$-gram patterns.
+A matched-histogram counterfactual reinforces this (Table~\ref{tab:matched_histogram}): when sequences are grouped by their key-letter count vector, 94--96\% fall into ambiguous groups where both labels are present, and BoE achieves only AUC $0.799$ (Det.)\ and $0.578$ (Rnd.)\ on this subset.
+Parity provides an instructive contrast: zero ambiguous groups exist because the label is fully determined by whether the total count of key letters is even or odd---every key-letter count vector maps to a single label, so parity is not a sequential task at all. Yet all models, including a nonlinear BoE (XGBoost) with direct access to the relevant counts, fail (AUC $\approx 0.50$). This confirms that parity failure reflects the computational hardness of modular arithmetic over a hidden subset, not missing sequential information---a complementary explanation to local-pattern reliance.
 
 \begin{table}[t]
 \centering
@@ -489,7 +636,9 @@ LSTM / Transformer & $\cmark$ & $\cmark$ & $\cmark$ & $\xmark$ \\
 Our experiments reveal a clear hierarchy of sequential exploitation capabilities across architectures, with implications for both theoretical understanding and practical applications.
 
 \paragraph{The parity barrier.}
-The most striking result is the complete failure of all models on the parity task. Despite varying architectures from small LSTMs to 70B-parameter LLMs, no model exceeded chance performance in our hidden-subset parity regime. This should not be read as a universal statement that parity-type tasks are unlearnable: simpler settings, such as binary-vocabulary parity, are known to be learnable. Rather, our result shows that standard fine-tuning fails when subset identification, distractor filtering, and parity computation must all be learned jointly. Since this task consists in counting letters, this is in line with the work of \citet{countingLLMs}.
+The strongest negative result in the paper is the complete failure of all tested models on hidden-subset parity under standard supervised training. Theorem in Section~\ref{sec:parity} clarifies the theoretical role of this family: exact $k$-local purity holds only in the balanced case $|K|/|\mathcal{A}|=1/2$, whereas our experimental regime lies outside that exact purity regime but still defeats the tested $k$-gram baselines. This should not be read as a universal statement that parity-type tasks are unlearnable or that transformers cannot implement parity in simpler settings. Binary-vocabulary parity is known to be learnable. Rather, our result isolates a harder compositional regime in which subset identification, distractor filtering, and parity computation must be learned jointly from end-to-end supervision.
+
+More broadly, failure of fixed $k$-gram baselines does not imply failure of transformers in general. Associative-recall mechanisms of induction-head type provide one important counterexample. Our empirical claim is narrower: on the specific hidden-subset parity benchmark studied here, neither the tested $k$-gram baselines nor the tested neural architectures recover useful signal under standard supervised training.
 
 \paragraph{Scale unlocks sequential learning in decoder-only models.}
 A key finding is that decoder-only models \emph{can} approach the theoretical optimum on the tricky randomic task, but only at sufficient scale. While Llama-1B and Llama-8B plateau around AUC $\approx 0.58$ (comparable to the $k$-gram baseline), Qwen-14B approaches the theoretical ceiling of $0.67$. This suggests that autoregressive architectures are not fundamentally limited in their ability to capture global sequential dependencies, but require substantially more parameters to do so. Notably, while Qwen-14B achieves near-optimal discrimination (AUC), its F1 score is still increasing at 400K training samples (see Figure~\ref{fig:tricky_random}), indicating that the model has learned to correctly rank positive and negative examples but has not yet fully calibrated its predictions. This suggests that even larger training sets may be needed to translate discriminative capacity into optimal predictive performance.
@@ -909,6 +1058,54 @@ $n$ & AUC & Unique Train & Unique Test & Coverage \\
 \end{tabular}
 \end{table}
 
+\begin{table}[h!]
+\centering
+\small
+\caption{Signal decomposition (test-set AUC). \emph{BoE-key}: logistic regression on counts of the 6 key letters only (order-invariant). \emph{BoE-XGB}: XGBoost on the full 26-dim letter-count vector (nonlinear, order-invariant). \emph{Best $k$-gram}: highest-AUC position-aware $k$-gram classifier from Table~\ref{tab:ngram_appendix} ($k{=}2$ for both tricky variants). \emph{Best model}: highest AUC among all neural architectures (Table~\ref{tab:results_full}). $\Delta$ rows: marginal AUC gain per signal layer.}
+\label{tab:signal_decomposition}
+\begin{tabular}{l c c c}
+\toprule
+Method & Tricky Det.\ & Tricky Rnd.\ & Parity \\
+\midrule
+Chance & 0.500 & 0.500 & 0.500 \\
+BoE-key (6\,dim) & 0.774 & 0.574 & 0.503 \\
+BoE-XGB (26\,dim) & 0.816 & 0.584 & 0.503 \\
+Best $k$-gram & 0.821 & 0.585 & 0.502 \\
+Best model & 0.999 & 0.671 & 0.503 \\
+\midrule
+AUC$^*$ & 1.000 & 0.670 & --- \\
+\midrule
+$\Delta_{\text{content}}$ & $+$0.316 & $+$0.084 & $+$0.003 \\
+$\Delta_{\text{local}}$ & $+$0.005 & $+$0.000 & $+$0.000 \\
+$\Delta_{\text{seq}}$ & $+$0.178 & $+$0.086 & $+$0.000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\small
+\caption{Matched-histogram counterfactual. Test sequences are grouped by the count vector of the six key letters $\mathcal{S}=\{W,D,Q,J,X,N\}$, i.e.\ two sequences belong to the same group iff they contain the same number of each key letter.
+\emph{Key-letter groups}: number of distinct count vectors observed.
+\emph{Ambiguous groups}: groups that contain both positive and negative sequences---within these, letter counts alone cannot determine the label, so any discrimination must come from letter \emph{order}.
+\emph{Ambiguous seqs}: fraction of all test sequences that fall into ambiguous groups.
+\emph{$\rho$}: base rate (fraction of positives) in the ambiguous subset.
+\emph{BoE-key / BoE-full AUC}: AUC of the bag-of-events classifiers (6-dim key-letter counts / full 26-dim counts) evaluated only on the ambiguous subset---these measure the residual content signal available from non-key-letter frequencies.}
+\label{tab:matched_histogram}
+\begin{tabular}{l c c c}
+\toprule
+ & Tricky Det.\ & Tricky Rnd.\ & Parity \\
+\midrule
+Key-letter groups & 3{,}196 & 3{,}189 & 3{,}995 \\
+Ambiguous groups & 1{,}592 & 1{,}807 & 0 \\
+Ambiguous seqs (\%) & 94.2 & 96.3 & 0.0 \\
+$\rho$ (ambig.\ subset) & 0.341 & 0.415 & --- \\
+BoE-key AUC (ambig.) & 0.751 & 0.567 & --- \\
+BoE-full AUC (ambig.) & 0.799 & 0.578 & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \newpage
 
 \section{Proofs}
@@ -1085,111 +1282,604 @@ F_1 = \frac{2(1-\pi) \cdot 0.5}{\pi + 2 \cdot 0.5 \cdot (1-\pi)} = \frac{1-\pi}{
 \label{appendix:proof_impossibility}
 
 \begin{proof}
-Let $s_{\min} \in \mathcal{S}$ satisfy $\kappa(s_{\min}) = 1$. We show that $P(Y^{*}=1 \mid X_1=a)$ is not constant in $a$.
+Let $s_{\min}\in\mathcal{S}$ satisfy $\kappa(s_{\min})=1$.
+We first show that the map
+\[
+a \longmapsto P(Y^*=1\mid X_1=a)
+\]
+is not constant on $\mathcal{A}$.
 
-\paragraph{Case 1: $\mathcal{S} \subsetneq \mathcal{A}$.}
-Choose $a_0 \in \mathcal{A}\setminus \mathcal{S}$. Couple two sequences $X$ and $X'$ so that
-\[
-X_1 = s_{\min}, \qquad X'_1 = a_0, \qquad X_t = X'_t \ \text{for all } t \geq 2.
-\]
-Because the coordinates are independent and have full support, this coupling is consistent with the conditional laws of $(X_2,\ldots,X_n)$ given $X_1=s_{\min}$ and of $(X'_2,\ldots,X'_n)$ given $X'_1=a_0$.
+\paragraph{Case 1: $\mathcal{S}\subsetneq\mathcal{A}$.}
+Choose $a_0\in\mathcal{A}\setminus\mathcal{S}$.
+Because the coordinates of $X$ are independent and have full support,
+both events $\{X_1=s_{\min}\}$ and $\{X_1=a_0\}$ have positive probability,
+and conditioning on $X_1$ does not change the joint law of
+$(X_2,\ldots,X_n)$.
 
-Any compliant chain in $X'$ must avoid position $1$, since $X'_1=a_0 \notin \mathcal{S}$. The same positions and symbols are present in $X$, so every compliant chain in $X'$ is also a compliant chain in $X$. Hence
+Let $Z_2,\ldots,Z_n$ be independent random variables with
+$Z_t\sim\mathcal{L}(X_t)$, and define
 \[
-\{X' \text{ is compliant}\} \subseteq \{X \text{ is compliant}\}.
+\widetilde X := (s_{\min},Z_2,\ldots,Z_n),
+\qquad
+\widetilde X' := (a_0,Z_2,\ldots,Z_n).
 \]
-
-Now consider the event
+Then
 \[
-E := \{X_{1+\lambda} \in \mathcal{S}\} \cap \bigcap_{t \in \{2,\ldots,n\}\setminus\{1+\lambda\}} \{X_t \notin \mathcal{S}\}.
-\]
-Since $n \geq \lambda+1$, since $\mathcal{S}\subsetneq\mathcal{A}$, and since every symbol has positive probability at every position, we have $P(E)>0$.
-On $E$, the sequence $X$ is compliant via the chain $(1,1+\lambda)$, because $X_1=s_{\min}\in \mathcal{S}$, $X_{1+\lambda}\in \mathcal{S}$, and
-\[
-\kappa(X_1)=\kappa(s_{\min})=1 \leq \kappa(X_{1+\lambda}).
-\]
-On the same event, $X'$ is not compliant: among positions $2,\ldots,n$, only position $1+\lambda$ belongs to $\mathcal{S}$, so no chain of length at least $2$ exists. Therefore
-\[
-P(Y^{*}=1 \mid X_1=s_{\min}) > P(Y^{*}=1 \mid X_1=a_0).
+\widetilde X \stackrel{d}{=} (X\mid X_1=s_{\min}),
+\qquad
+\widetilde X' \stackrel{d}{=} (X\mid X_1=a_0).
 \]
 
-\paragraph{Case 2: $\mathcal{S} = \mathcal{A}$.}
-If $X_1=s_{\min}$, then for every realization of $X_{1+\lambda}$ the pair $(1,1+\lambda)$ is compliant, because both positions lie in $\mathcal{S}=\mathcal{A}$ and
+Let
 \[
-\kappa(X_1)=1 \leq \kappa(X_{1+\lambda}).
+C := \{\widetilde X \text{ is compliant}\},
+\qquad
+C' := \{\widetilde X' \text{ is compliant}\}.
+\]
+Since $\widetilde X'_1=a_0\notin\mathcal{S}$, any compliant chain in
+$\widetilde X'$ must avoid position $1$. But
+$\widetilde X_t=\widetilde X'_t$ for every $t\ge 2$, so the same chain is
+also compliant in $\widetilde X$. Hence
+\[
+C' \subseteq C.
+\]
+
+Now define the event
+\[
+E
+:=
+\{Z_{1+\lambda}\in\mathcal{S}\}
+\cap
+\bigcap_{t\in\{2,\ldots,n\}\setminus\{1+\lambda\}}
+\{Z_t\notin\mathcal{S}\}.
+\]
+Because $n\ge \lambda+1$, because $\mathcal{S}\subsetneq\mathcal{A}$,
+and because every symbol has positive probability at every position,
+we have $P(E)>0$.
+
+On $E$, the sequence $\widetilde X$ is compliant via the chain
+$(1,1+\lambda)$:
+both symbols belong to $\mathcal{S}$, their gap is $\lambda$, and
+\[
+\kappa(\widetilde X_1)=\kappa(s_{\min})=1
+\le
+\kappa(\widetilde X_{1+\lambda}).
 \]
 Hence
 \[
-P(Y^{*}=1 \mid X_1=s_{\min}) = 1.
+E \subseteq C.
 \]
-Since $\rho=P(Y^{*}=1)\in(0,1)$, we also have $P(Y^{*}=1)<1$. By the law of total probability, there must exist some $a^{*}\in\mathcal{A}$ such that
+
+On the same event $E$, the sequence $\widetilde X'$ is not compliant.
+Indeed, among positions $2,\ldots,n$, the only key position is $1+\lambda$,
+so no compliant chain of length at least $2$ can exist. Therefore
 \[
-P(Y^{*}=1 \mid X_1=a^{*}) < 1.
+E \subseteq C\setminus C'.
+\]
+
+Since \(C' \subseteq C\), we have
+\[
+P(C)-P(C') = P(C\setminus C').
+\]
+Moreover, \(E \subseteq C\setminus C'\) and \(P(E)>0\). Therefore
+\[
+P(C)-P(C') \ge P(E) > 0,
+\]
+which implies
+\[
+P(C) > P(C').
+\]
+Hence
+\[
+P(Y^*=1 \mid X_1=s_{\min})
+=
+P(C)
+>
+P(C')
+=
+P(Y^*=1 \mid X_1=a_0).
+\]
+
+\paragraph{Case 2: $\mathcal{S}=\mathcal{A}$.}
+Since $n\ge \lambda+1$, the position $1+\lambda$ exists.
+If $X_1=s_{\min}$, then for every realization of the rest of the sequence
+the pair $(1,1+\lambda)$ is compliant: both positions lie in
+$\mathcal{S}=\mathcal{A}$, their gap is $\lambda$, and
+\[
+\kappa(X_1)=\kappa(s_{\min})=1
+\le
+\kappa(X_{1+\lambda}).
+\]
+Therefore
+\[
+P(Y^*=1\mid X_1=s_{\min})=1.
+\]
+
+Since $\rho=P(Y^*=1)\in(0,1)$, we have $\rho<1$.
+If
+\[
+P(Y^*=1\mid X_1=a)=1
+\qquad
+\text{for all } a\in\mathcal{A},
+\]
+then by the law of total probability,
+\[
+P(Y^*=1)
+=
+\sum_{a\in\mathcal{A}}
+P(Y^*=1\mid X_1=a)\,P(X_1=a)
+=
+1,
+\]
+contradicting $\rho<1$. Hence there exists $a^*\in\mathcal{A}$ such that
+\[
+P(Y^*=1\mid X_1=a^*)<1.
 \]
 Thus
 \[
-P(Y^{*}=1 \mid X_1=s_{\min}) \neq P(Y^{*}=1 \mid X_1=a^{*}).
+P(Y^*=1\mid X_1=s_{\min})
+\neq
+P(Y^*=1\mid X_1=a^*).
 \]
 
-In both cases, the conditional distribution of $Y^{*}$ depends on $X_1$, so $X_1$ and $Y^{*}$ are not independent. Therefore $I(Y^{*};X_1)>0$.
-\end{proof}
+In both cases, there exist $a,b\in\mathcal{A}$ such that
+\[
+P(Y^*=1\mid X_1=a)\neq P(Y^*=1\mid X_1=b).
+\]
+Therefore $Y^*$ is not independent of $X_1$. Since mutual information
+between discrete variables is zero if and only if the variables are
+independent, it follows that
+\[
+I(Y^*;X_1)>0.
+\]
 
-
-
-\subsection{Proof of Proposition \ref{prop:local-info-parity}}
-\label{app:proof_prop_local_info}
-
-To prove Proposition \ref{prop:local-info-parity}, we first introduce an auxiliary variable representing the standard parity of the sequence with respect to the subset $K$, and establish its local information properties.
-
-\begin{lemma}[Auxiliary Parity Variable]
-\label{lemma:standard_parity}
-Define the variable $T := \left(\sum_{t=1}^n \mathbf{1}_{\{X_t \in K\}}\right) \mod 2$. 
-Let $p = |K|/|\mathcal{A}|$. Then:
-\begin{itemize}
-    \item If $p = 1/2$, $I(T; X_t) = 0$ for all $t$.
-    \item If $p \neq 1/2$, then $I(T; X_t) > 0$ for every finite $n$, and $I(T; X_t) \to 0$ as $n \to \infty$.
-\end{itemize}
-\end{lemma}
-
-\begin{proof}[Proof of Lemma \ref{lemma:standard_parity}]
-    Fix $t$ and write $S := \sum_{i=1}^n \mathbf{1}_{\{X_i \in K\}} = \mathbf{1}_{\{X_t \in K\}} + S_{-t}$, where $S_{-t} := \sum_{i \neq t} \mathbf{1}_{\{X_i \in K\}}$. 
-    
-    If $p=1/2$, $S_{-t} \pmod 2$ is uniform on $\{0,1\}$ (parity of $n-1$ fair coin flips). Thus, $P(T=1 | X_t = a) = 1/2 = P(T=1)$, implying $I(T; X_t) = 0$.
-    
-    If $p \neq 1/2$, let $q_n = P(S_{-t} \text{ is odd})$. Then
-    \[
-    q_n = \frac{1 - (1-2p)^{n-1}}{2},
-    \]
-    so $q_n \neq 1/2$ for every finite $n$. If $a \in K$, then
-    \[
-    P(T=1 \mid X_t=a)=P(S_{-t}\text{ is even})=1-q_n,
-    \]
-    while if $a \notin K$, then
-    \[
-    P(T=1 \mid X_t=a)=P(S_{-t}\text{ is odd})=q_n.
-    \]
-    Since $q_n \neq 1/2$, these conditional probabilities differ, so $T$ is not independent of $X_t$ and therefore $I(T;X_t)>0$.
-    Finally, because $(1-2p)^{n-1} \to 0$, we have $q_n \to 1/2$ as $n \to \infty$. Consequently, the conditional distribution of $T$ given $X_t$ approaches its marginal distribution, and $I(T; X_t) \to 0$.
-\end{proof}
-
-\medskip
-\noindent \textbf{Completing the Proof of Proposition \ref{prop:local-info-parity}:}
-
-Recall $Y = (\sum_{k \in K} \mathbf{1}_{\{N_k \text{ even}\}}) \mod 2$. Using the identity $\mathbf{1}_{\{n \text{ even}\}} = 1 \oplus (n \pmod 2)$ where $\oplus$ is addition modulo 2:
+Finally, by the symmetric noise model \eqref{eq:label_noise},
 \begin{align*}
-    Y &= \bigoplus_{k \in K} (1 \oplus (N_k \pmod 2)) \\
-      &= \left(\bigoplus_{k \in K} 1\right) \oplus \left(\bigoplus_{k \in K} (N_k \pmod 2)\right).
+P(Y=1\mid X_1=a)
+&=
+P(Y=1\mid Y^*=1)\,P(Y^*=1\mid X_1=a)
+\\
+&\quad
++
+P(Y=1\mid Y^*=0)\,P(Y^*=0\mid X_1=a)
+\\
+&=
+(1-\pi)\,P(Y^*=1\mid X_1=a)
++
+\pi\,\bigl(1-P(Y^*=1\mid X_1=a)\bigr)
+\\
+&=
+\pi + (1-2\pi)\,P(Y^*=1\mid X_1=a).
 \end{align*}
-The first term is $|K| \pmod 2$. The second term is $(\sum_{k \in K} N_k) \pmod 2$, which is exactly $\sum_{t=1}^n \mathbf{1}_{\{X_t \in K\}} \pmod 2 = T$.
-Thus:
+Because $\pi<1/2$, the map
 \[
-    Y = (|K| \pmod 2) \oplus T.
+u \longmapsto \pi + (1-2\pi)u
 \]
-For a fixed set $K$, the term $(|K| \pmod 2)$ is a constant. The mapping $T \mapsto Y$ is therefore a bijection (identity or bit-flip). Since mutual information is invariant under bijective transformations:
+is strictly increasing. Hence the map
 \[
-    I(Y; X_t) = I(T; X_t).
+a \longmapsto P(Y=1\mid X_1=a)
 \]
-Applying Lemma \ref{lemma:standard_parity}, the statement follows. \qed
+is also non-constant on $\mathcal{A}$. Thus $Y$ is not independent of $X_1$,
+and again
+\[
+I(Y;X_1)>0.
+\]
+\end{proof}
+
+
+\subsection{Proof of Corollary~\ref{cor:uniform_witness_bound} with remarks}
+\label{appendix:proof_uniform_witness_bound}
+\begin{proof}
+As in the proof of Theorem~\ref{thm:impossibility}, let
+$Z_2,\ldots,Z_n$ be independent random variables with
+$Z_t\sim \mathrm{Uniform}(\mathcal{A})$, and define
+\[
+\widetilde X=(s_{\min},Z_2,\ldots,Z_n),
+\qquad
+\widetilde X'=(a_0,Z_2,\ldots,Z_n).
+\]
+Then
+\[
+\widetilde X \stackrel{d}{=} (X\mid X_1=s_{\min}),
+\qquad
+\widetilde X' \stackrel{d}{=} (X\mid X_1=a_0).
+\]
+
+Let
+\[
+C:=\{\widetilde X \text{ is compliant}\},
+\qquad
+C':=\{\widetilde X' \text{ is compliant}\}.
+\]
+As in Theorem~\ref{thm:impossibility}, one has $C'\subseteq C$.
+
+Now define the witness event
+\[
+E
+:=
+\{Z_{1+\lambda}\in\mathcal{S}\}
+\cap
+\bigcap_{t\in\{2,\ldots,n\}\setminus\{1+\lambda\}}
+\{Z_t\notin\mathcal{S}\}.
+\]
+On $E$, the sequence $\widetilde X$ is compliant via the chain
+$(1,1+\lambda)$, while $\widetilde X'$ is not compliant. Hence
+\[
+E \subseteq C\setminus C'.
+\]
+Therefore
+\[
+P(C)-P(C') = P(C\setminus C') \ge P(E).
+\]
+
+By independence and uniformity,
+\[
+P(Z_{1+\lambda}\in\mathcal{S})=\frac{m}{\ell},
+\qquad
+P(Z_t\notin\mathcal{S})=\frac{\ell-m}{\ell}
+\quad
+\text{for each } t\in\{2,\ldots,n\}\setminus\{1+\lambda\}.
+\]
+There are exactly $n-2$ such latter positions, so
+\[
+P(E)
+=
+\frac{m}{\ell}\left(\frac{\ell-m}{\ell}\right)^{n-2}.
+\]
+Since
+\[
+P(C)=P(Y^*=1\mid X_1=s_{\min}),
+\qquad
+P(C')=P(Y^*=1\mid X_1=a_0),
+\]
+the first claim follows.
+
+For the observed label, by \eqref{eq:label_noise},
+\[
+P(Y=1\mid X_1=a)
+=
+\pi + (1-2\pi)\,P(Y^*=1\mid X_1=a).
+\]
+Subtracting the expressions for $a=s_{\min}$ and $a=a_0$ yields
+\[
+P(Y=1\mid X_1=s_{\min})
+-
+P(Y=1\mid X_1=a_0)
+=
+(1-2\pi)\Bigl(
+P(Y^*=1\mid X_1=s_{\min})
+-
+P(Y^*=1\mid X_1=a_0)
+\Bigr),
+\]
+and the result follows from the first part.
+\end{proof}
+
+\begin{remark}[Scope of the explicit bound]
+\label{rem:scope_uniform_bound}
+The closed-form expression in Corollary~\ref{cor:uniform_witness_bound} is
+specific to the uniform proposal law. Under the more general assumptions of
+Theorem~\ref{thm:impossibility}, if we write
+\[
+\alpha_t := P(X_t\in\mathcal{S}),
+\]
+then the same witness-event argument gives
+\[
+P(Y^*=1\mid X_1=s_{\min})
+-
+P(Y^*=1\mid X_1=a_0)
+\;\ge\;
+\alpha_{1+\lambda}
+\prod_{t\in\{2,\ldots,n\}\setminus\{1+\lambda\}}(1-\alpha_t)
+\]
+whenever $\mathcal{S}\subsetneq\mathcal{A}$.
+In the i.i.d.\ but non-uniform case with common law $q$, this becomes
+\[
+q(\mathcal{S})\bigl(1-q(\mathcal{S})\bigr)^{n-2}.
+\]
+No nontrivial positive lower bound depending only on $(m,\ell,n)$ can hold under
+mere full support, since $q(\mathcal{S})$ can be arbitrarily small while
+remaining positive.
+\end{remark}
+
+\begin{remark}[Effect of label balancing]
+\label{rem:label_balancing}
+Suppose the final experimental sample is obtained from a proposal law $P$ by
+retaining examples with probability depending only on the observed label $Y$.
+Equivalently,
+\[
+Q(x,y)=\frac{r_y P(x,y)}{Z},
+\qquad r_0,r_1>0.
+\]
+Then
+\[
+Q(X\mid Y=y)=P(X\mid Y=y),
+\]
+so class-conditional sequence structure, and hence AUC, are unchanged by this
+reweighting. However, posterior quantities are transformed. Writing
+$\beta:=r_1/r_0$ and
+\[
+h_\beta(u):=\frac{\beta u}{1+(\beta-1)u},
+\]
+one has
+\[
+Q(Y=1\mid X_1=a)
+=
+h_\beta\!\bigl(P(Y=1\mid X_1=a)\bigr).
+\]
+Since $h_\beta$ is strictly increasing, label balancing preserves the presence of
+local information, but because $h_\beta$ is nonlinear it can either enlarge or
+shrink posterior gaps. Consequently,
+Corollary~\ref{cor:uniform_witness_bound} should be interpreted as a statement
+about the proposal law, not automatically about the retained balanced sample.
+
+More generally, if
+\[
+\Delta_P
+:=
+P(Y=1\mid X_1=s_{\min})-P(Y=1\mid X_1=a_0),
+\qquad
+\Delta_Q
+:=
+Q(Y=1\mid X_1=s_{\min})-Q(Y=1\mid X_1=a_0),
+\]
+then by the mean value theorem,
+\[
+\Delta_Q
+\ge
+\min\{\beta,\beta^{-1}\}\,\Delta_P.
+\]
+The same remark applies with $Y^*$ in place of $Y$ if balancing is performed
+using the latent label rather than the observed one.
+\end{remark}
+
+
+
+\subsection{Proof of Theorem~\ref{thm:parity_local_purity}}
+\label{appendix:proof_parity_local_purity}
+
+\begin{proof}
+For each \(t\in\{1,\ldots,n\}\), define
+\[
+B_t := \mathbf{1}\{X_t\in K\}.
+\]
+Since \(X_t \overset{\mathrm{iid}}{\sim} \mathrm{Uniform}(\mathcal A)\) and
+\[
+p = \frac{|K|}{|\mathcal A|},
+\]
+we have
+\[
+B_t \overset{\mathrm{iid}}{\sim} \mathrm{Bernoulli}(p).
+\]
+Let
+\[
+T := \Bigl(\sum_{t=1}^n B_t\Bigr)\bmod 2.
+\]
+
+We first show that \(Y^*\) is a fixed bit-flip of \(T\). Using addition modulo \(2\),
+\[
+\mathbf{1}\{N_k \text{ is even}\} = 1 \oplus (N_k \bmod 2),
+\]
+where \(\oplus\) denotes XOR. Hence
+\begin{align*}
+Y^*
+&=
+\bigoplus_{k\in K} \mathbf{1}\{N_k \text{ is even}\} \\
+&=
+\bigoplus_{k\in K} \bigl(1 \oplus (N_k \bmod 2)\bigr) \\
+&=
+\bigl(|K|\bmod 2\bigr)\oplus \bigoplus_{k\in K}(N_k \bmod 2).
+\end{align*}
+But
+\[
+\bigoplus_{k\in K}(N_k \bmod 2)
+=
+\Bigl(\sum_{k\in K} N_k\Bigr)\bmod 2
+=
+\Bigl(\sum_{t=1}^n \mathbf{1}\{X_t\in K\}\Bigr)\bmod 2
+=
+T.
+\]
+Therefore
+\[
+Y^* = \bigl(|K|\bmod 2\bigr)\oplus T.
+\]
+The map \(T\mapsto Y^*\) is thus a bijection on \(\{0,1\}\), so for every index set \(J\),
+\[
+I(Y^*;X_J)=I(T;X_J).
+\]
+It is therefore enough to study \(I(T;X_J)\).
+
+Fix an index set
+\[
+J\subseteq \{1,\ldots,n\},
+\qquad 1\le |J|<n.
+\]
+Write
+\[
+r := |J|,
+\qquad
+s := n-r = |J^c| \ge 1.
+\]
+Define
+\[
+U_J := \Bigl(\sum_{j\in J} B_j\Bigr)\bmod 2,
+\qquad
+V_J := \Bigl(\sum_{j\in J^c} B_j\Bigr)\bmod 2.
+\]
+Then
+\[
+T = U_J \oplus V_J.
+\]
+
+Since \(\{B_j : j\in J\}\) and \(\{B_j : j\in J^c\}\) are independent,
+\(V_J\) is independent of \(X_J\). Moreover, \(U_J\) is a deterministic function of
+\(X_J\).
+
+Let
+\[
+q_s := P(V_J=1).
+\]
+Because \(V_J\) is the parity of \(s\) i.i.d.\ Bernoulli\((p)\) random variables,
+\[
+q_s = \frac{1-(1-2p)^s}{2}.
+\]
+Therefore, for every realization \(x_J\) of \(X_J\),
+\[
+P(T=1\mid X_J=x_J)
+=
+\begin{cases}
+q_s, & U_J(x_J)=0,\\
+1-q_s, & U_J(x_J)=1.
+\end{cases}
+\]
+
+\paragraph{Balanced case: \(p=1/2\).}
+If \(p=1/2\), then
+\[
+q_s = \frac{1-(1-2p)^s}{2} = \frac{1}{2}.
+\]
+Hence, for every realization \(x_J\),
+\[
+P(T=1\mid X_J=x_J)=\frac12,
+\qquad
+P(T=0\mid X_J=x_J)=\frac12.
+\]
+Thus the conditional law of \(T\) does not depend on \(x_J\), so \(T\) is independent
+of \(X_J\). Therefore
+\[
+I(T;X_J)=0,
+\]
+and hence
+\[
+I(Y^*;X_J)=0.
+\]
+
+\paragraph{Unbalanced case: \(p\neq 1/2\), finite \(n\).}
+Since \(K\) is nonempty and proper, \(p\in(0,1)\). If \(p\neq 1/2\), then
+\[
+|1-2p|<1
+\qquad\text{and}\qquad
+(1-2p)^s \neq 0
+\]
+for every finite \(s\ge 1\). Hence
+\[
+q_s \neq \frac12.
+\]
+
+Choose any \(j_0\in J\), any \(a_{\mathrm{in}}\in K\), and any
+\(a_{\mathrm{out}}\in \mathcal A\setminus K\). Define two realizations
+\(x_J,x'_J\in \mathcal A^J\) by
+\[
+x_j = a_{\mathrm{out}} \quad \text{for all } j\in J,
+\]
+and
+\[
+x'_{j_0}=a_{\mathrm{in}},
+\qquad
+x'_j=a_{\mathrm{out}} \quad \text{for all } j\in J\setminus\{j_0\}.
+\]
+Then
+\[
+U_J(x_J)=0,
+\qquad
+U_J(x'_J)=1.
+\]
+Therefore
+\[
+P(T=1\mid X_J=x_J)=q_s,
+\qquad
+P(T=1\mid X_J=x'_J)=1-q_s.
+\]
+Since \(q_s\neq 1/2\), these two conditional probabilities are different. Thus the
+conditional law of \(T\) depends on \(X_J\), so \(T\) and \(X_J\) are not independent.
+Hence
+\[
+I(T;X_J)>0,
+\]
+and therefore
+\[
+I(Y^*;X_J)>0.
+\]
+
+\paragraph{Asymptotic decay when \(p\neq 1/2\).}
+Now let \(J\subset\mathbb N\) be any fixed finite index set, and for all sufficiently large
+\(n\) identify it with a subset of \(\{1,\ldots,n\}\). Then \(r=|J|\) is fixed and
+\[
+s=n-r \to \infty.
+\]
+Since \(|1-2p|<1\),
+\[
+q_s = \frac{1-(1-2p)^s}{2} \to \frac12.
+\]
+Hence, uniformly over all realizations \(x_J\),
+\[
+P(T=1\mid X_J=x_J)\to \frac12.
+\]
+Because \(X_J\) takes values in the finite set \(\mathcal A^r\), this implies that the joint
+law of \((T,X_J)\) converges to the product law of \(T\) and \(X_J\). Therefore
+\[
+I(T;X_J)\to 0.
+\]
+Since \(Y^*\) is a bijective function of \(T\),
+\[
+I(Y^*;X_J)=I(T;X_J)\to 0.
+\]
+
+\paragraph{Observed noisy label \(Y\).}
+Assume now that \(Y\) is generated from \(Y^*\) according to \eqref{eq:label_noise}
+with \(\pi<1/2\).
+
+If \(p=1/2\), then \(Y^*\) is independent of \(X_J\). Since \(Y\) depends on \(X_J\)
+only through \(Y^*\), it follows that \(Y\) is also independent of \(X_J\). Hence
+\[
+I(Y;X_J)=0.
+\]
+
+If \(p\neq 1/2\), then
+\begin{align*}
+P(Y=1\mid X_J)
+&=
+P(Y=1\mid Y^*=1)\,P(Y^*=1\mid X_J) \\
+&\quad +
+P(Y=1\mid Y^*=0)\,P(Y^*=0\mid X_J) \\
+&=
+(1-\pi)P(Y^*=1\mid X_J)
++
+\pi\bigl(1-P(Y^*=1\mid X_J)\bigr) \\
+&=
+\pi + (1-2\pi)P(Y^*=1\mid X_J).
+\end{align*}
+Because \(\pi<1/2\), the map
+\[
+u \mapsto \pi + (1-2\pi)u
+\]
+is strictly increasing. Thus whenever \(P(Y^*=1\mid X_J)\) is non-constant as a
+function of \(X_J\), so is \(P(Y=1\mid X_J)\). Therefore, for every finite \(n\),
+\[
+I(Y;X_J)>0.
+\]
+
+Finally, since \(Y\) is obtained from \(Y^*\) through a channel independent of \(X_J\),
+the data processing inequality gives
+\[
+I(Y;X_J)\le I(Y^*;X_J).
+\]
+Hence, for every fixed finite \(J\subset\mathbb N\),
+\[
+I(Y;X_J)\to 0
+\qquad\text{as } n\to\infty.
+\]
+
+This proves all claims. In particular, when \(p=1/2\), we have
+\[
+I(Y^*;X_J)=0
+\qquad
+\text{for every } J\subseteq \{1,\ldots,n\}\text{ with } |J|<n.
+\]
+Therefore the task is \(k\)-locally pure for every \(k<n\).
+\end{proof}
+
 % ==================================================
 % HYPERPARAMETER CONFIGURATION
 % ==================================================

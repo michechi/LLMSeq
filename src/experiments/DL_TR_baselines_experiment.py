@@ -35,8 +35,8 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 # Training data fractions to test
-# DEFAULT_FRACTIONS = [0.01, 0.10, 0.30, 0.50, 0.75, 1.0] 
-DEFAULT_FRACTIONS = [0.005, 0.05, 0.15, 0.25, 0.375, 0.5] # for test pair
+DEFAULT_FRACTIONS = [0.01, 0.10, 0.30, 0.50, 0.75, 1.0] 
+
 
 # ============================================
 # DATASET CLASS
