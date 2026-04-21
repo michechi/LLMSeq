@@ -1,0 +1,2349 @@
+\documentclass{article}
+
+% if you need to pass options to natbib, use, e.g.:
+%     \PassOptionsToPackage{numbers, compress}{natbib}
+% before loading neurips_2026
+
+% The authors should use one of these tracks.
+% Before accepting by the NeurIPS conference, select one of the options below.
+% 0. "default" for submission
+\usepackage{neurips_2026}
+% the "default" option is equal to the "main" option, which is used for the Main Track with double-blind reviewing.
+% 1. "main" option is used for the Main Track
+%  \usepackage[main]{neurips_2026}
+% 2. "position" option is used for the Position Paper Track
+%  \usepackage[position]{neurips_2026}
+% 3. "eandd" option is used for the Evaluations & Datasets Track
+ % \usepackage[eandd]{neurips_2026}
+ % if you want to opt-in for a de-anomymized submission (not recommended, but OK):
+ %\usepackage[eandd, nonanonymous]{neurips_2026}
+% 4. "creativeai" option is used for the Creative AI Track
+%  \usepackage[creativeai]{neurips_2026}
+% 5. "sglblindworkshop" option is used for the Workshop with single-blind reviewing
+ % \usepackage[sglblindworkshop]{neurips_2026}
+% 6. "dblblindworkshop" option is used for the Workshop with double-blind reviewing
+%  \usepackage[dblblindworkshop]{neurips_2026}
+
+% After being accepted, the authors should add "final" behind the track to compile a camera-ready version.
+% 1. Main Track
+ % \usepackage[main, final]{neurips_2026}
+% 2. Position Paper Track
+%  \usepackage[position, final]{neurips_2026}
+% 3. Evaluations & Datasets Track
+ % \usepackage[eandd, final]{neurips_2026}
+% 4. Creative AI Track
+%  \usepackage[creativeai, final]{neurips_2026}
+% 5. Workshop with single-blind reviewing
+%  \usepackage[sglblindworkshop, final]{neurips_2026}
+% 6. Workshop with double-blind reviewing
+%  \usepackage[dblblindworkshop, final]{neurips_2026}
+
+% "preprint" option is used for arXiv or other preprint submissions
+ % \usepackage[preprint]{neurips_2026}
+
+% to avoid loading the natbib package, add option nonatbib:
+%    \usepackage[nonatbib]{neurips_2026}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{xcolor}         % colors
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usepackage{placeins}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{amsthm}
+\newcommand{\cmark}{\checkmark}
+\newcommand{\xmark}{\times}
+
+% if you use cleveref..
+\usepackage[capitalize,noabbrev]{cleveref}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% THEOREMS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}[theorem]{Assumption}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+% Todonotes is useful during development; simply uncomment the next line
+%    and comment out the line below the next line to turn off comments
+%\usepackage[disable,textsize=tiny]{todonotes}
+\usepackage[textsize=tiny]{todonotes}
+
+\title{Do Large Language Models Detect and Exploit Decisive Sequential Information?}
+
+
+% The \author macro works with any number of authors. There are two commands
+% used to separate the names and addresses of multiple authors: \And and \AND.
+%
+% Using \And between authors leaves it to LaTeX to determine where to break the
+% lines. Using \AND forces a line break at that point. So, if LaTeX puts 3 of 4
+% authors names on the first line, and the last on the second line, try using
+% \AND instead of \And before the third author name.
+
+
+\author{%
+  David S.~Hippocampus\thanks{Use footnote for providing further information
+    about author (webpage, alternative address)---\emph{not} for acknowledging
+    funding agencies.} \\
+  Department of Computer Science\\
+  Cranberry-Lemon University\\
+  Pittsburgh, PA 15213 \\
+  \texttt{hippo@cs.cranberry-lemon.edu} \\
+  % examples of more authors
+  % \And
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+  % \AND
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+  % \And
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+  % \And
+  % Coauthor \\
+  % Affiliation \\
+  % Address \\
+  % \texttt{email} \\
+}
+
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Sequential prediction mixes event identity with temporal order, making it difficult to tell whether models exploit genuine order-sensitive structure or local statistical shortcuts. We study this question with a synthetic benchmark over letter sequences that removes semantics while varying hidden key subsets, ordering complexity, and lag. For compliance tasks defined by hidden ordered key subsequences, we prove that under independent full-support sampling local information leakage is unavoidable, so this family cannot be purely sequential even in the single-position mutual-information sense. We also analyze a hidden-subset parity family and show that, in the balanced case, it is $k$-locally pure for every window shorter than the full sequence, motivating a stricter global-integration test. We therefore compare models against $k$-gram baselines and theoretical AUC ceilings under label noise. Across autoregressive LLMs, encoder-based transformers, and recurrent models, we find that: (i) both large decoders and small encoders can approach the optimum in deterministic compliance settings, but encoders are orders of magnitude more parameter- and data-efficient; (ii) under label noise, decoders up to 8B remain near $k$-gram level while encoders stay close to the optimum; and (iii) in our hidden-subset parity regime, where the tested $k$-gram baselines remain at chance, all tested models stay at chance under standard supervised training. The benchmark thus serves as a diagnostic for order-sensitive prediction beyond local shortcuts.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:introduction}
+
+Predicting from event histories can depend on more than which events occurred; it can also depend on when and in what order they occurred. In longitudinal health data, the same diagnoses can imply different risk depending on their temporal trajectory, and in recommendation the same consumed items can reflect different user states when encountered in different orders. This paper studies exactly this regime: tasks in which temporal order contributes predictive signal beyond event identity alone.
+
+This regime is not merely theoretical. Recent work on longitudinal EHRs suggests that ordered trajectories can add predictive value beyond unordered summaries \citep{edelman2026order_specific_ehr,beaney2024coded_disease_representations,placido2023pancreatic_trajectories,pollington2026trajectory_review}. For example, in primary-care EHRs from 6.29 million patients, \citet{beaney2024coded_disease_representations} report that sequence-based disease representations consistently outperform bag-of-words alternatives, though the absolute gains are modest. The gains are heterogeneous across tasks, but they establish that clinically relevant order-sensitive settings exist.
+
+At the same time, large language models (LLMs) and related transformer-based sequence models are increasingly used in domains where such order-sensitive signal may matter, including clinical event prediction \citep{savcisens2024using,delphi2025transformer,li2020behrt,rasmy2021medbert}, sequential recommendation \citep{kimLostSequenceLarge2025b}, and temporal reasoning \citep{fatemiTESTTIMEBENCHMARK2025}. The key question is therefore not whether order ever matters, but whether current architectures actually learn to use it when it is present. Strong performance on sequential tasks is often taken as evidence of sequential understanding, yet in principle the same performance could arise from unordered content or from local statistics.
+
+Recent evidence motivates that concern. Shuffling item order causes only small degradation in LLM-based recommendation \citep{kimLostSequenceLarge2025b}; clinical analyses report reliance on statistical pattern matching rather than genuine temporal reasoning \citep{bediFidelityMedicalReasoning2025}; and transformer predictions can often be approximated by simple $k$-gram rules \citep{nguyen2024understanding}. Together, these findings suggest that apparent sequential competence may often arise from local statistical shortcuts rather than global sequence integration \citep{mccoy2019right,geirhos2020shortcut,mirzadeh2024gsm}.
+
+Testing this on real data is difficult because semantic content and temporal structure are entangled. A diagnosis can be predictive because of what it is, because of where it appears in a trajectory, or because of both. Strong performance on real-world sequential tasks therefore does not reveal what signal the model used. Moreover, many benchmarks that aim to evaluate sequential ability do not actually require much sequential understanding \citep{klenitskiyDoesItLook2024}. We address this by constructing a controlled benchmark based on letter sequences, where semantic reasoning is effectively out of scope. Random letter sequences do not form meaningful linguistic units, and the task bears no relation to natural-language semantics. This removes confounders such as world knowledge and content-based inference, allowing us to isolate what models learn from order-sensitive structure itself. Our aim is therefore not to evaluate instruction following or in-context reasoning, but to test what these architectures can learn from labeled order-sensitive data once semantic cues are removed.
+
+Our theoretical analysis then identifies an important limitation of the most natural compliance-style ordering tasks: under independent sampling with full support, they inevitably leak local information. Thus this benchmark family cannot be made completely free of local cues, because order constraints induce statistical regularities that remain visible from limited views of the sequence. We formalize this as an impossibility result in the single-position mutual-information sense $I(Y;X_t)=0$ (Theorem~\ref{thm:impossibility}). This result is specific to the compliance family and does not extend to arbitrary order-sensitive labels. It therefore shifts the question from a binary one, whether models use sequential structure at all, to a quantitative one: how much of a task is recoverable from local patterns such as $k$-grams, and when is genuine global integration required?
+
+To study that question, we compare autoregressive LLMs, encoder-based transformers, and recurrent architectures against $k$-gram baselines and theoretical performance bounds. Three findings emerge:
+\begin{enumerate}
+    \item \textbf{Scale and architecture matter.} In deterministic compliance settings, both sufficiently large decoder-only models and small encoder-based architectures can approach the theoretical optimum, but encoders do so with orders of magnitude fewer parameters and less data.
+    \item \textbf{Noise raises the scale requirements.} Under label noise, decoder-only models that succeed in the deterministic regime remain near the $k$-gram level up to 8B parameters, whereas encoders stay near the theoretical ceiling.
+    \item \textbf{Hidden-subset parity stays hard.} On a hidden-subset parity task designed to stress global integration, and on which the tested $k$-gram baselines remain at chance, none of the tested models exceeds chance under standard supervised training.
+\end{enumerate}
+
+We view our benchmark as a diagnostic tool. It isolates the order-sensitive component that realistic domains such as clinical trajectories and recommendation mix with semantics, without claiming to reproduce their full richness. In that sense, it is designed to ask what models are exploiting when they appear to succeed on sequential prediction problems, rather than to serve as a substitute for real-world data.
+
+\paragraph{Contributions.}
+\begin{itemize}
+    \item We introduce a synthetic benchmark with tunable parameters that separates order-sensitive structure from semantic content, enabling controlled evaluation of whether models exploit sequential signal beyond local shortcuts.
+    \item For compliance tasks, we prove that under independent sampling with full support local information leakage is unavoidable in the single-position mutual-information sense, and under the uniform proposal law we derive an explicit lower bound on that leakage.
+    \item For the balanced parity family, we prove $k$-local purity for every window shorter than the full sequence, giving a complementary construction in which bounded local views carry no signal by design.
+    \item We derive theoretical performance bounds under label noise and empirically show a sharp architecture-efficiency gap: encoder-based models reach theoretical limits with far fewer parameters than decoder-only models, while the hidden-subset parity regime remains unsolved by all tested models under standard supervised training.
+\end{itemize}
+
+\section{Related Work}
+\label{sec:related_work}
+
+A growing body of work suggests that temporal order can add predictive value beyond unordered event identity in EHRs. \citet{edelman2026order_specific_ehr} identify ordered clinical trajectories that provide interpretable signal beyond unordered features for adverse-outcome risk estimation. \citet{beaney2024coded_disease_representations} show that sequence-based disease representations outperform bag-of-words alternatives in primary-care EHRs, and \citet{placido2023pancreatic_trajectories} report stronger pancreatic-cancer risk prediction from time-sequential disease trajectories than from non-sequential baselines. \citet{pollington2026trajectory_review} summarize this broader literature and report moderate but heterogeneous gains from temporal over static models. These settings motivate our question but cannot answer it directly, because they are semantically rich and do not isolate whether the gains come from temporal order, event semantics, or their interaction. Transformer-based models are now routinely applied to longitudinal health and behavior data. In healthcare, BEHRT, Med-BERT, life-event models, and Delphi-style architectures all use event histories to predict downstream outcomes \citep{li2020behrt,rasmy2021medbert,savcisens2024using,delphi2025transformer}. In recommendation, LLM-based systems are increasingly used to model user sequences \citep{kimLostSequenceLarge2025b}. These works establish that sequence models can be useful in practice, but they are typically evaluated in semantically rich environments where content and order are intertwined.
+
+Several recent benchmarks directly probe temporal or sequential ability. Test of Time controls temporal structure in synthetic graphs and shows that performance declines as temporal complexity increases \citep{fatemiTESTTIMEBENCHMARK2025}. TIMER-Bench studies longitudinal clinical timelines and reports a lost-in-the-middle effect \citep{cui2025timertemporalinstructionmodeling}. \citet{klenitskiyDoesItLook2024} argue that many evaluation datasets marketed as sequential do not in fact require strong sequential modeling, which complicates the interpretation of strong performance on such benchmarks. Complementary analyses suggest that transformer behavior is often explainable by local statistics rather than global sequence computation. \citet{nguyen2024understanding} show that transformer predictions can frequently be approximated by $k$-gram rules, and similar patterns have been reported in recommendation and clinical reasoning \citep{kimLostSequenceLarge2025b,bediFidelityMedicalReasoning2025}. These findings connect to the broader shortcut-learning literature \citep{mccoy2019right,geirhos2020shortcut,mirzadeh2024gsm}. At the same time, induction-head-style associative recall shows that transformers can realize dependencies beyond fixed $k$-gram rules \citep{olsson2022induction, guMambaLinearTimeSequence2024}, so the relevant question is not whether such mechanisms exist in principle, but when they are learned on a given task family. To this end, synthetic benchmarks are useful when the goal is not only to measure performance but to identify the signal a model is using. Recent work has introduced tunable synthetic benchmarks for reasoning and sequence processing \citep{kaiserCogniLoadSyntheticNatural2025,ramezanaliSeqBenchTunableBenchmark2025}. Our benchmark differs in that it is designed to strip away semantics while supporting theoretical analysis of the remaining information structure, including unavoidable local leakage in compliance tasks and a parity-based family that stresses global integration.
+\section{Methods and theory}
+\label{sec:formulation}
+
+In this section, we formalize the notion of sequential dependence, prove fundamental limits on what such tasks can test, and describe our experimental framework.
+
+\paragraph{Illustrative example.} Consider predicting adverse cardiac outcomes from a patient's medical history. A clinician knows that certain diagnostic events in a specific order signal elevated risk: for instance, \emph{diabetes} followed by \emph{hypertension} followed by \emph{atrial fibrillation}; with sufficient time between events, they may indicate progressive cardiovascular deterioration. Other diagnoses (respiratory infections, minor injuries) appear in the record but are not predictive. The challenge is that neither the relevant diagnoses, their critical ordering, nor the required temporal spacing are known a priori, they must be learned from data.
+
+This structure, a subset of events in a specific order with temporal lag constraints, embedded among irrelevant events, arises across domains: clinical trajectories, user behavior sequences, financial transactions, and more. We abstract it into a controlled framework using letter sequences, where each event type maps to a letter. This abstraction intentionally strips away semantic content: ``diabetes'' becomes simply \texttt{D}, losing its medical meaning. This is by design, we aim to isolate and study the purely sequential nature of these phenomena, separate from domain knowledge. Consequently, we do not expect models to leverage prior knowledge about the events themselves, which motivates our fine-tuning approach. We also randomize the ordering rule $\kappa$ to avoid coincidental alignment with alphabetical order (except in our ``naive'' baseline setting), ensuring that success requires learning the hidden structure rather than exploiting pre-existing associations.
+
+In our clinical example: diabetes $\to$ \texttt{D}, hypertension $\to$ \texttt{H}, atrial fibrillation $\to$ \texttt{A}, with non-predictive diagnoses mapping to other letters. A patient's history becomes a sequence like \texttt{BXDCAQZHELMPTKDWSANJ} (length $n=20$, alphabet size $\ell=26$). The \emph{key subset} $\mathcal{S} = \{$\texttt{D}, \texttt{H}, \texttt{A}$\}$ contains the predictive letters (size $m=3$), with a ordering rule $\kappa$: $\kappa(\texttt{D})< \kappa(\texttt{H})< \kappa(\texttt{A})$. The \emph{lag} parameter $\lambda$ captures temporal spacing, with $\lambda = 3$, we examine positions $(1, 4, 7, \ldots)$, then $(2, 5, 8, \ldots)$, etc. More generally, $\lambda$ can be a vector $(\lambda_1, \lambda_2, \ldots)$ to model phenomena where temporal constraints evolve, for instance, requiring events to occur progressively closer together as a condition worsens. We say that a sequence is \emph{compliant} if key letters appear in the prescribed order at positions separated by the specified lag(s). Hence, the model must discover: (i) which letters matter, (ii) the decisive ordering, and (iii) the lag structure, none of which are provided explicitly.
+
+\subsection{Setup and Notation}
+\label{sec:setup}
+
+Let $\mathcal{A}$ be an alphabet of size $\ell = |\mathcal{A}|$. To instantiate one task, we first sample a hidden key subset $\mathcal{S} \subseteq \mathcal{A}$ of size $m = |\mathcal{S}|$ uniformly among all $m$-subsets of $\mathcal{A}$, and then sample a bijection $\kappa : \mathcal{S} \to \{1,\ldots,m\}$ uniformly among all such bijections. The realized pair $(\mathcal{S},\kappa)$ is fixed for the task and for the entire dataset; all probabilities below are conditional on this realized pair unless stated otherwise. Symbols in $\mathcal{A}\setminus\mathcal{S}$ act as distractors and play no role in determining compliance. Let $P_0$ denote the proposal distribution over candidate sequences: $X_t \stackrel{\mathrm{iid}}{\sim} \mathrm{Uniform}(\mathcal{A}), t=1,\ldots,n.$ This i.i.d. uniform law is the base synthetic generation mechanism.
+
+\begin{definition}
+\label{def:compliance}
+For lag parameter $\lambda \geq 1$, we say that $X$ is \emph{compliant} if there exists a chain of positions $(t_1,\ldots,t_k)$ with $k\geq 2$ such that:
+\textbf{(i)} $t_{j+1}-t_j=\lambda$ for all $j$,
+\textbf{(ii)} $X_{t_j}\in\mathcal{S}$ for all $j$,
+\textbf{(iii)} $\kappa(X_{t_1}) \leq \cdots \leq \kappa(X_{t_k})$.
+
+\end{definition}
+
+Let $Y^*=\mathbf{1}\{X \text{ is compliant}\}$, let $\pi\in[0,1/2)$ and let $Y$ denote the observed label, generated from $Y^*$ according to
+\begin{equation}
+\label{eq:label_noise}
+P(Y=1\mid Y^*=y^*)=
+\begin{cases}
+1-\pi, & y^*=1,\\ \pi, & y^*=0,
+\end{cases}
+\end{equation}
+
+In the experimental datasets of Sections~\ref{sec:experiments} and~\ref{sec:results}, we subsample the draws from $P_0$ after labeling to obtain a controlled class balance. Thus the final benchmark distribution is a label-stratified subsample of $P_0$, rather than $P_0$ itself. In general, after this balancing step, the coordinates of $X$ need not remain independent and their marginals need not remain uniform. Theorem~\ref{thm:impossibility} below concerns the proposal law $P_0$ and, more generally, only requires independence and full support.
+
+\subsection{Pure Sequential Dependence}
+\label{sec:pure_sequential_def}
+
+We use \emph{pure sequential dependence} to refer to tasks whose outcome is determined exclusively by temporal ordering rather than by order-invariant statistics.
+
+\begin{definition}[Pure Sequential Dependence]
+\label{def:pure_sequential}
+A binary classification task exhibits \emph{pure sequential dependence}
+if its outcome is determined exclusively by the temporal ordering of
+sequence elements and not by
+\textbf{(a)} individual element frequencies,
+\textbf{(b)} order-independent co-occurrence patterns,
+\textbf{(c)} aggregate sequence statistics, or
+\textbf{(d)} any other order-invariant sequence property.
+\end{definition}
+
+A necessary, though not sufficient, single-position condition for pure sequential dependence is that individual symbols carry no information about the observed label. This can be quantified by the mutual information
+\begin{align}
+\label{eq:mutual_info}
+I(Y;X_t)
+&= \sum_{y\in\{0,1\}}\;\sum_{a\in\mathcal{A}}
+P(Y\!=\!y,X_t\!=\!a) \notag\\
+&\qquad\times\log
+\frac{P(Y\!=\!y,X_t\!=\!a)}{P(Y\!=\!y)\,P(X_t\!=\!a)}.
+\end{align}
+We show that compliance tasks defined as \ref{def:compliance} violate even this weakest necessary condition.
+
+\begin{theorem}[Compliance Tasks Induce Local Information]
+\label{thm:impossibility}
+Fix a realized pair $(\mathcal{S},\kappa)$ as in Section~\ref{sec:setup}.
+Let $\lambda \ge 1$ and $n \ge \lambda+1$.
+Let $X=(X_1,\ldots,X_n)$ have independent coordinates with full support on
+$\mathcal{A}$, i.e.\ $P(X_t=a)>0$ for all $t$ and all $a\in\mathcal{A}$.
+Define
+$Y^* = \mathbf{1}\{X \text{ is compliant}\}$ and let $Y$ be the observed label generated from $Y^*$ according to
+\eqref{eq:label_noise}. Let $\rho := P(Y^*=1)$.
+If $\rho\in(0,1)$, then there exist $a,b\in\mathcal{A}$ such that $P(Y^*=1\mid X_1=a)\neq P(Y^*=1\mid X_1=b)$.
+Consequently, $I(Y^*;X_1)>0$. Moreover, $P(Y=1\mid X_1=a)\neq P(Y=1\mid X_1=b)$ and therefore $I(Y;X_1)>0$.
+\end{theorem}
+
+\begin{proof}[Proof outline]
+Let $s_{\min}\in\mathcal{S}$ satisfy $\kappa(s_{\min})=1$.
+
+If $\mathcal{S}\subsetneq\mathcal{A}$, choose $a_0\in\mathcal{A}\setminus\mathcal{S}$.
+Let $Z_2,\ldots,Z_n$ be independent with $Z_t\sim\mathcal{L}(X_t)$, and define $\widetilde X=(s_{\min},Z_2,\ldots,Z_n)$ and $\widetilde X'=(a_0,Z_2,\ldots,Z_n)$.
+Then $\widetilde X \stackrel{d}{=} (X\mid X_1=s_{\min})$ and $\widetilde X' \stackrel{d}{=} (X\mid X_1=a_0)$. Any compliant chain in $\widetilde X'$ must avoid position~$1$, hence it is also compliant in $\widetilde X$. On the positive-probability event that $Z_{1+\lambda}\in\mathcal{S}$ and $Z_t\notin\mathcal{S}$ for all
+$t\in\{2,\ldots,n\}\setminus\{1+\lambda\}$, the sequence $\widetilde X$ is compliant via $(1,1+\lambda)$,
+while $\widetilde X'$ is not. Therefore $P(Y^*\!=\!1\mid X_1\!=\!s_{\min}) > P(Y^*\!=\!1\mid X_1\!=\!a_0)$.
+
+If instead $\mathcal{S}=\mathcal{A}$, then whenever $X_1=s_{\min}$ the pair $(1,1+\lambda)$ is automatically compliant, giving $P(Y^*=1\mid X_1=s_{\min})=1$. Since $\rho<1$, there exists $a^*$ with $P(Y^*=1\mid X_1=a^*)<1$, so $P(Y^*=1\mid X_1=\cdot)$ is non-constant in both cases.
+
+Finally, by \eqref{eq:label_noise}, $P(Y\!=\!1\mid X_1\!=\!a) = \pi + (1-2\pi)\,P(Y^*\!=\!1\mid X_1\!=\!a)$. Because $\pi<1/2$, the map $u\mapsto \pi+(1-2\pi)u$ is strictly increasing, so $P(Y\!=\!1\mid X_1\!=\!\cdot)$ is non-constant as well, giving $I(Y^*;X_1)>0$ and $I(Y;X_1)>0$. See Appendix~\ref{appendix:proof_impossibility} for the full proof.
+\end{proof}
+
+Hence, non-degenerate compliance tasks under independent full-support sampling cannot satisfy pure sequential dependence, even in this single-position sense. This does not cover arbitrary order-sensitive binary labels. For example, if $\mathcal{A}=\{0,1,2,3,4\}$, $X_t \overset{\mathrm{iid}}{\sim} \mathrm{Uniform}(\mathcal{A})$, and $Y=\mathbf{1}\{(X_2+2X_3)\bmod 5 \in \{0,1\}\}$, then $I(Y;X_t)=0$ for every $t$, even though $Y$ depends on the ordered pair $(X_2,X_3)$.
+
+% \subsection{A Quantitative Uniform Lower Bound}
+% \label{sec:uniform_witness_bound}
+
+% Theorem~\ref{thm:impossibility} is qualitative and holds under independent full-support sampling. Under the uniform proposal law used in our synthetic benchmark, the witness event in its proof yields an explicit lower bound on the amount of local leakage.
+
+% \begin{corollary}[Uniform witness lower bound]
+% \label{cor:uniform_witness_bound}
+% Assume the setting of Theorem~\ref{thm:impossibility} with
+% $\mathcal{S}\subsetneq\mathcal{A}$ and
+% $X_t \overset{\mathrm{iid}}{\sim} \mathrm{Uniform}(\mathcal{A})$.
+% Let $s_{\min}\in\mathcal{S}$ satisfy $\kappa(s_{\min})=1$ and
+% $a_0\in\mathcal{A}\setminus\mathcal{S}$. Define
+% $\delta(a,b) := P(Y^*\!=\!1\mid X_1\!=\!a)
+%               - P(Y^*\!=\!1\mid X_1\!=\!b)$.
+% Then
+% \begin{equation}
+% \label{eq:witness_clean}
+% \delta(s_{\min},a_0)
+% \;\ge\;
+% \frac{m}{\ell}
+% \!\left(\frac{\ell-m}{\ell}\right)^{\!n-2}.
+% \end{equation}
+% If $Y$ is generated from $Y^*$ via \eqref{eq:label_noise}, then
+% \begin{equation}
+% \label{eq:witness_noisy}
+% \delta_Y(s_{\min},a_0)
+% \;\ge\;
+% (1-2\pi)\,\frac{m}{\ell}
+% \!\left(\frac{\ell-m}{\ell}\right)^{\!n-2},
+% \end{equation}
+% where
+% $\delta_Y(a,b) := P(Y\!=\!1\mid X_1\!=\!a)
+%                  - P(Y\!=\!1\mid X_1\!=\!b)$.
+% \end{corollary}
+
+% See \ref{appendix:proof_uniform_witness_bound} for full proof and remarks.
+
+
+\subsection{A Complementary Order-Invariant Global-Integration Benchmark}
+\label{sec:parity}
+
+Theorem~\ref{thm:impossibility} shows that compliance tasks defined as in \ref{def:compliance} inevitably leak local information. To study a task family with much stronger bounded-local invisibility, we introduce a parity-based construction.
+
+\begin{definition}[Parity Task]
+\label{def:parity}
+Fix a realized subset $K\subsetneq \mathcal{A}$ with $K\neq\varnothing$. For $X=(X_1,\ldots,X_n)$ with $X_t \overset{\mathrm{iid}}{\sim} \mathrm{Uniform}(\mathcal{A})$, let $N_k := \sum_{t=1}^n \mathbf{1}\{X_t = k\}$ for each $k\in K$ and define $Y^* := |\{k\in K : N_k \text{ is even}\}| \bmod 2$.
+\end{definition}
+
+The quantity $Y^*$ depends on the full sequence through a global parity computation over a hidden subset. Unlike the compliance family, this construction is not defined through ordered lagged chains.
+
+\begin{theorem}[$k$-local purity of the parity task]
+\label{thm:parity_local_purity}
+Assume the setting of Definition~\ref{def:parity} with
+$p := |K|/|\mathcal{A}|$.
+Fix $n\ge 1$ and let
+$J \subseteq \{1,\ldots,n\}$ with $1 \le |J| < n$.
+Then $I(Y^*;X_J)=0$ if $p = 1/2$, and $I(Y^*;X_J)>0$ if
+$p \neq 1/2$.
+Moreover, if $p\neq 1/2$ and $J\subset \mathbb{N}$ is any fixed finite index set, interpreted as a subset of $\{1,\ldots,n\}$ for all sufficiently large~$n$, then $I(Y^*;X_J)\to 0$ as
+$n\to\infty$. If the observed label $Y$ is generated from $Y^*$ via
+\eqref{eq:label_noise} with $\pi<1/2$, the same qualitative statements hold with $Y$ in place of $Y^*$. In particular, when $p=1/2$, the parity task is $k$-locally pure for every $k<n$.
+\end{theorem}
+
+See Appendix~\ref{appendix:proof_parity_local_purity} for detailed proof.
+
+Theorem~\ref{thm:parity_local_purity} should be read as a bounded-local statement. In the balanced case $p=1/2$, parity removes all local shortcuts supported on fewer than $n$ positions. Outside the balanced case, finite-$n$
+leakage is positive, although it vanishes for every fixed local view as $n$ grows. Parity is therefore a useful global-integration stress test, but exact $k$-local purity is confined to the balanced regime.
+
+\section{Experiments}
+\label{sec:experiments}
+
+We evaluate whether different architectures can exploit sequential structure beyond what simple $k$-gram baselines capture.
+
+\subsection{Task Variants}
+\label{sec:task_variants}
+
+We instantiate three task variants with different properties, see Appendix~\ref{appendix:Figures} for an example of each different mechanisms.
+
+\paragraph{Naive setting} ($m = \ell$, $\lambda = 1$, $\kappa = \text{natural order}$).
+\label{paragraph:naive_setting}
+Compliance requires the entire sequence to be non-decreasing in alphabetical order. The compliance probability is
+\[
+\rho_{\mathrm{naive}} = \binom{n+\ell-1}{n} \big/ \ell^n.
+\]
+For $n=20$, $\ell=26$: $\rho_{\mathrm{naive}} \approx 10^{-16}$ (see Appendix~\ref{proof:naive_setting}), making the task degenerate without probabilistic labeling. Due to this extremely low compliance probability, we construct the naive dataset first generating alphabetically ordered (compliant) sequences and then creating non compliant counterparts by permuting selected elements within these sequences.
+
+\paragraph{Tricky setting} ($m \ll \ell$, $\lambda > 1$, $\kappa = \text{random but fixed}$).
+Only a small subset of letters matters, relevant letters must appear at specific lag intervals, and the ordering key is randomized. For $m=6$, $\lambda=7$, $n=20$, $\ell=26$, we obtain $\rho \approx 0.31$ via generation. This creates balanced classes while requiring models to: identify which letters matter, learn the hidden ordering, and track positions modulo the lag.
+
+\paragraph{Parity setting}
+Labels depend on the parity of key-letter occurrences. No local pattern carries information ($I(Y^{*}; X_t) = 0$ for all $t$), providing a test of pure global integration (see Theorem~\ref{thm:parity_local_purity}). For $m=6$, $\lambda=7$, $n=20$, $\ell=26$, we obtain $\rho \approx 0.5$ via generation.
+
+\subsection{Datasets}
+\label{subsec:datasets}
+
+We instantiate the framework from Section~\ref{sec:formulation} using the English alphabet ($\mathcal{A} = \{\texttt{A}, \ldots, \texttt{Z}\}$, $\ell = 26$) with sequences of length $n = 20$. For both Tricky and Parity we used $\mathcal{S} = \{\texttt{W}, \texttt{D}, \texttt{Q}, \texttt{J}, \texttt{X}, \texttt{U}\}$ with $\kappa(\texttt{W})<\kappa(\texttt{D})<\kappa(\texttt{Q})<\kappa(\texttt{J})<\kappa(\texttt{X})<\kappa(\texttt{U})$. Table~\ref{tab:datasets} summarizes the three datasets. Each dataset is designed with a specific diagnostic purpose.
+
+\begin{table}[h]
+\centering
+\caption{Dataset characteristics for sequential classification tasks.}
+\label{tab:datasets}
+\begin{tabular}{lcccccc}
+\toprule
+Dataset & $N$ & $n$ & $\rho$ & $\lambda$ & $\pi$ & $m$ \\
+\midrule
+Naive & 400K  & 20 & 0.51 & -- & 0 & 26\\
+Tricky det. & 400K & 20 & 0.293 & 7 & 0 & 6\\
+Tricky random & 400K & 20 & 0.293 & 7 & 0.3 & 6 \\
+Parity & 400K & 20 & 0.499 & -- & 0.0 & 6\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The \textbf{tricky deterministic} dataset tests whether models can learn the sequential pattern without noise. The \textbf{tricky random} dataset introduces label noise ($\pi = 0.3$) and tests whether models plateau at $k$-gram levels or approach theoretical limits. The \textbf{parity} dataset tests a hard hidden-subset global-integration regime (Theorem~\ref{thm:parity_local_purity}).
+Although our $(m,\ell,n)=(6,26,20)$ setting is not exactly $k$-locally pure, the tested $k$-gram baselines remain at chance, so any success would have to come from beyond the local statistics captured by those baselines.
+
+% ============================================================================
+\subsection{Models}
+\label{subsec:models}
+
+We compare three categories of models, see Table~\ref{tab:models} in Appendix~\ref{appendix:training} with a summary for all model configurations.
+
+\paragraph{Pretrained LLMs (fine-tuned).}
+We evaluate Llama-3.2-1B, Llama-3.1-8B and Llama-3-70B~\citep{touvron2023llama, grattafiori2024llama3}, fine-tuned for binary classification. We also include Qwen3-4B-Think~\citep{bai2023qwen} and Qwen2.5-14B~\citep{qwen2.5, qwen2} and BERT-base (110M parameters)~\citep{devlin2019bert} with warm-start fine-tuning. These models assess whether large-scale pretraining provides advantages for sequential pattern recognition. 
+
+\paragraph{Architectures randomly initialized.}
+To isolate architectural capabilities from pretrained knowledge, we train small-scale models from random initialization: Llama-style decoders (1M parameters), LSTM~\citep{hochreiter1997lstm}, Transformer encoder~\citep{vaswani2017attention}, and a hybrid BiLSTM-Transformer~\citep{graves2005bilstm}, referred to as RNN-Transformer throughout for conciseness, (100K--400K parameters each). These models disentangle architectural effects from scale effects on sequential learning.
+
+\paragraph{Traditional baselines.}
+XGBoost~\citep{chen2016xgboost} with two encoding strategies: positional encoding with integer-mapped characters (XGBoost-basic) and inspired by the works of  \citet{XGBoost_LLMs, XGBoost_LLMs_HF} embeddings extracted from Llama-1B (XGBoost-LLM). These baselines represent the state-of-the-art for tabular classification and test whether sequential structure can be captured without recurrence or attention.
+
+
+% ============================================================================
+\subsection{Sequence Encoding}
+\label{subsec:encoding}
+
+We use three encoding strategies depending on the model family.
+
+\paragraph{Prompt-based encoding (LLMs and BERT).}
+For pretrained language models, we convert each sequence into a natural language prompt. Given a sequence $(x_1, \ldots, x_n)$, we construct:
+\begin{center}
+\texttt{Sequential events: $x_1$ $x_2$ $\cdots$ $x_n$}
+\end{center}
+For causal LLMs (Llama, Qwen), we append \texttt{Outcome (0 or 1)} to frame the task as next-token prediction with a classification head on top. The prompt is then tokenized using each model's native tokenizer. This same prompt format is used to extract embeddings from Llama-3.2-1B for the XGBoost-LLM baseline, where we apply mean pooling over the last hidden layer.
+
+\paragraph{Learned and ordinal embeddings.}
+For all non-pretrained models, we map each letter to an integer index ($\texttt{A} \mapsto 1, \texttt{B} \mapsto 2, \ldots, \texttt{Z} \mapsto 26$). For XGBoost-basic, this ordinal encoding is used directly as features, relying on the tree ensemble to learn sequential dependencies. For neural architectures (LSTM, Transformer, and hybrids), a learned embedding layer maps each index to a dense vector $\mathbf{e}_i \in \mathbb{R}^{d_e}$ with $d_e \in \{32, 64, 128\}$. Transformer-based models additionally incorporate learnable positional encodings $\mathbf{h}_i = \mathbf{e}_i + \mathbf{p}_i$, where $\mathbf{P} \in \mathbb{R}^{L_{\max} \times d_e}$ is initialized from a standard normal distribution. Sequences are zero-padded within each mini-batch.
+
+% ============================================================================
+\subsection{$k$-gram Baseline}
+\label{subsec:kgram}
+A $k$-gram is a contiguous subsequence of $k$ consecutive symbols within a sequence: given $X = (X_1, \ldots, X_n)$, the $k$-grams are $(X_t, X_{t+1}, \ldots, X_{t+k-1})$ for $t = 1, \ldots, n-k+1$. For instance, the sequence \texttt{ABCD} contains the 2-grams \texttt{AB}, \texttt{BC}, \texttt{CD}. The $k$-gram classifier provides a reference for local pattern exploitation:
+
+\paragraph{Training.} For each $k$-gram $g$ in the training data, compute:
+\begin{equation}
+\hat{\mathbb{P}}(Y=1 \mid g) = \frac{\#(g, Y=1)}{\#(g)}.
+\end{equation}
+
+\paragraph{Inference.} For test sequence $X$, extract all $k$-grams $\{g_1, \ldots, g_{n-k+1}\}$ and predict the average probability:
+\begin{equation}
+\hat{\mathbb{P}}(Y=1 \mid X) = \frac{1}{n-k+1} \sum_{j=1}^{n-k+1} \hat{\mathbb{P}}(Y=1 \mid g_j).
+\end{equation}
+
+The four datasets differ in their $k$-gram distributions due to distinct generation procedures. For the tricky and parity tasks, sequences were generated via brute-force sampling (uniform $1/26$ probability per letter), and then classified by the correspondent ordering criteria. For the Naive task, we followed the approach described in~\ref{paragraph:naive_setting}. This results in higher $k$-gram informativeness on the outcome across train/validation/test splits for naive compared to other datasets. In fact, in the naive setting, bigrams alone ($k=2$) carry strong signal (e.g., certain bigrams are ``forbidden'' in ordered sequences) enabling immediate classification (AUC$\sim$0.999 just with a bigram counting model). As task complexity increases, this local signal diminishes  (seeAppendix~\ref{appendix:k_gram_analysis} for detailed analysis).
+
+% ============================================================================
+\subsection{Training Procedure}
+\label{subsec:training}
+
+All neural models are trained with AdamW~\citep{AdamW}, cross-entropy loss, and early stopping on validation performance. Pretrained LLMs (Llama, Qwen) and BERT are fine-tuned using LoRA~\citep{LoRA} for parameter efficiency, with gradient checkpointing and mixed-precision training for larger models. Randomly initialized models (LSTM, BiLSTM, Transformer) use architecture-specific learning rates and dropout. XGBoost baselines use regularized gradient boosting with class-weighted sampling. For all models, we optimize the classification threshold on the validation set to maximize F1 score. Experiments run on a single NVIDIA A100 GPU with three random seeds; we report means and standard deviations. Full hyperparameter configurations are provided in Appendix~\ref{appendix:training}. Code will be made publicly available upon acceptance.
+
+\subsection{Theoretical Performance Bounds}
+\label{sec:theoretical_bounds}
+
+We establish the optimal achievable performance, which serves as a ceiling for model evaluation.
+
+\begin{theorem}[Optimal Performance under Label Noise]
+\label{thm:optimal_performance}
+Under symmetric label noise with parameter $\pi \in [0, 0.5)$ and compliance probability $\rho$ (i.e., $\mathbb{P}(Y^{*}=1)=\rho, \text{ and } \mathbb{P}(Y=1|Y^{*}=1)=1-\pi)$, a classifier with perfect access to compliance status achieves:
+\[
+\mathrm{AUC}^* = \frac{1}{2} + \frac{1}{2}(A - C) \overset{\rho=0.5}{=} 1 - \pi
+\]
+where
+\[
+A = \frac{(1-\pi)\rho}{\rho(1-\pi) + (1-\rho)\pi}, \quad C = \frac{\pi\rho}{\rho\pi + (1-\rho)(1-\pi)}.
+\]
+Similarly, $F_1^* = 2(1-\pi)\rho / (\pi + 2\rho(1-\pi)) \overset{\rho=0.5}{=} 1-\pi$.
+\end{theorem}
+
+For $\pi = 0.3$ (30\% label noise) and $\rho = 0.5$, this gives an optimal $\mathrm{AUC}^* = F_1^* = 0.70$. See Appendix~\ref{appendix:proof_theorems} for the full proof. In Table~\ref{tab:optimal_performance} are shown for each dataset the optimal performance metrics.
+
+% PUT TABLE HERE
+% as discussed in Section \ref{sec:formulation}, bounding optimal performance at $\text{AUC}^* = 0.67$ (Theorem~\ref{thm:optimal_performance})
+
+\begin{table}[h]
+\centering
+\caption{Optimal performance achievable by a perfect classifier for each dataset.}
+\label{tab:optimal_performance}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Dataset & AUC$^{*}$ & F1$^{*}$ & Prec$^{*}$ & Rec$^{*}$ \\
+\midrule
+Naive & 1.000 & 1.000 & 1.000 & 1.000\\
+Tricky Det. & 1.000 &1.000 &1.000 & 1.000\\
+Tricky Random & 0.670 &0.577 & 0.700 &0.491 \\
+Parity &1.000 &1.000 & 1.000& 1.000\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+% ============================================================================
+\subsection{Evaluation Protocol}
+\label{subsec:evaluation}
+
+We report AUC, F1, Precision, and Recall on held-out test sets (20\% of data). For all datasets, we compare against the theoretical optimum (Theorem~\ref{thm:optimal_performance}, indicated by symbol $^{*}$). We vary training set size from 4K to 400K samples to assess data efficiency. If (1) $\text{AUC} \approx 0.50$ that means the model learns nothing about compliance (2) $0.55 < \text{AUC} < \text{AUC}^*$: partial recovery of the sequential signal (3) $\text{AUC} \approx \text{AUC}^*$: full recovery, limited only by label noise. We adopt AUC as our primary metric since it captures a model's discriminative capacity without relying on arbitrary threshold selection.
+
+
+\section{Results}
+\label{sec:results}
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{comparison_AUC_all.png}
+        \caption{Test AUC across four synthetic datasets. \textbf{Naive}: all models except XGBoost solve the task. \textbf{Tricky Deterministic}: bidirectional encoders, recurrent models, and larger causal decoders (8B) reach optimality, while smaller decoders (1B) plateau at $\sim$0.85. \textbf{Tricky Random}: bidirectional models approach the optimal bound (0.67) with modest parameter counts, while decoder-only models require substantially more parameters (14B) to reach similar performance. \textbf{Parity}: no model exceeds chance, including Llama-70B. Shaded regions indicate variability across runs.}
+    \label{fig:comparison_AUC_all}
+\end{figure}
+We evaluate all models across the four synthetic datasets described in Table \ref{tab:datasets}. For a summary see
+Table~\ref{tab:results_summary} and Figure~\ref{fig:comparison_AUC_all} which present an overview of our findings.
+Full results are reported and shown in Appendix~\ref{appendix:results}.
+
+\paragraph{Naive setting: (almost) all methods succeed.}
+When discriminative signal resides in simple local co-occurrences ($k$-grams), almost all approaches achieve near-perfect classification. The notable exception is XGBoost: despite preserving positional information through ordinal encoding, tree-based methods struggle because verifying sequential order requires \emph{pairwise comparisons} between adjacent positions. Gradient boosted trees make splits on individual features, making such relational dependences difficult to catch without explicit feature engineering or architectural modifications~\citep{XGBoostRemember}. Neural architectures, by contrast, naturally capture sequential dependencies through attention or recurrence.
+
+\paragraph{Tricky deterministic: encoders excel, decoders lag.}
+When the task requires detecting ordered subsequences with specific positional constraints ($\lambda=7$), a clear architectural segmentation emerges. Encoder-based models (BERT, RoBERTa) and bidirectional architectures (LSTM, Transformer) achieve near-perfect performance (AUC $\geq .997$). In contrast, decoder-only LLMs show variable results: Llama-3.1-8B reaches AUC $.995$, but Llama-3.2-1B plateaus at $.846$ which is comparable to the simple 2-gram baseline ($.821$). Notably, XGBoost with LLMs embeddings is the \textit{worse}, suggesting that frozen embeddings discard the sequential structure needed for this task.
+
+\paragraph{Tricky random: theoretical ceiling approached.}
+The stochastic variant ($\pi=0.3$) has a theoretical AUC upper bound of $.670$ due to inherent label noise. Our custom Transformer and RNN-Transformer hybrid both reach this ceiling (AUC $.671$), demonstrating that the architectures can extract maximal signal when trained appropriately. BERT approaches the optimum ($.669$), while LSTM achieves $.665$. Smaller decoder-only models (Llama-1B, Llama-8B) plateau around $.58$; only marginally above the 2-gram baseline ($.585$). However, at sufficient scale (Qwen-14B), decoder-only architectures also approach the theoretical ceiling, suggesting that autoregressive models can learn global sequential dependencies when provided with enough capacity (and data).
+
+\paragraph{Parity: failure under standard supervised training.}
+The parity task presents a stark empirical result: every model performs at chance level (AUC $\approx .50$), regardless of architecture or scale. This includes 70B-parameter LLMs, bidirectional transformers, and recurrent networks. In our hidden-subset parity regime, success requires jointly identifying the hidden subset, filtering distractors, and computing parity over the relevant counts. The tested $k$-gram baselines also fail. We therefore interpret this as a failure of the standard supervised training pipeline in this regime rather than as a universal impossibility result for transformers or for parity-like tasks more broadly.
+
+\paragraph{Signal decomposition: content vs.\ order.}
+To quantify how much predictive signal arises from order-invariant letter frequencies versus sequential structure, we introduce a hierarchy of baselines (Table~\ref{tab:signal_decomposition}). \emph{BoE-key} trains a logistic regression on only the counts of the six key letters $\mathcal{S}$ (a 6-dimensional feature vector), capturing content signal from the task-relevant subset alone. \emph{BoE-XGB} trains a gradient-boosted tree (XGBoost) on the full 26-dimensional letter-count vector, serving as a nonlinear content-only ceiling that exploits all letter-frequency information while remaining completely order-invariant. The \emph{best $k$-gram} row takes the strongest position-aware $k$-gram classifier from Table~\ref{tab:ngram_appendix} ($k{=}2$ for both tricky variants), which can capture short-range local order beyond mere letter counts. \emph{Best model} is the highest AUC achieved by any neural architecture (from Table~\ref{tab:results_full}).
+
+On Tricky Deterministic, content alone accounts for 63\% of the total signal ($\Delta_{\text{content}} = +0.316$), while sequential modeling contributes the remaining 37\% ($\Delta_{\text{seq}} = +0.178$).
+On Tricky Random, the split is approximately 50/50: content yields AUC $0.584$, and sequential modeling adds $+0.086$ to reach the theoretical ceiling.
+Crucially, even the best $k$-gram adds negligible signal beyond content ($\Delta_{\text{local}} \leq 0.005$), confirming that the models' advantage over BoE comes from richer sequential structure, not local $k$-gram patterns. A matched-histogram counterfactual reinforces this (Table~\ref{tab:matched_histogram}): when sequences are grouped by their key-letter count vector, 94--96\% fall into ambiguous groups where both labels are present, and BoE achieves only AUC $0.799$ (Det.)\ and $0.578$ (Rnd.)\ on this subset. Parity provides an instructive contrast: zero ambiguous groups exist because the label is fully determined by whether the total count of key letters is even or odd, every key-letter count vector maps to a single label, so parity is not a sequential task at all. Yet all models, including a nonlinear BoE (XGBoost) with direct access to the relevant counts, fail (AUC $\approx 0.50$). This confirms that parity failure reflects the computational hardness of modular arithmetic over a hidden subset, not missing sequential information, a complementary explanation to local-pattern reliance.
+
+\begin{table}[t]
+\centering
+\caption{Summary of model performance across tasks, using criteria from Section~\ref{subsec:evaluation}. $\cmark$: full recovery (AUC $\approx$ AUC$^*$); {\raise.17ex\hbox{$\scriptstyle\sim$}}: partial recovery ($0.55 <$ AUC $<$ AUC$^*$); $\xmark$: no learning (AUC $\approx 0.50$). \underline{Underlined}: most data-efficient models to reach the optimum. All evaluations based on 100\% training data.}
+\label{tab:results_summary}
+\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Model & Naive & Tr. Det. & Tr. Rnd. & Parity \\
+\midrule
+k-gram baseline & $\cmark$ & {\raise.17ex\hbox{$\scriptstyle\sim$}} & {\raise.17ex\hbox{$\scriptstyle\sim$}} & $\xmark$ \\
+XGBoost & {\raise.17ex\hbox{$\scriptstyle\sim$}} & {\raise.17ex\hbox{$\scriptstyle\sim$}} & $\xmark$ & $\xmark$ \\
+\underline{BERT} & $\cmark$ & $\cmark$ & $\cmark$ & $\xmark$ \\
+RoBERTa & $\cmark$ & $\cmark$ & $\cmark$ & $\xmark$ \\
+Llama-3.2-1B & $\cmark$ & {\raise.17ex\hbox{$\scriptstyle\sim$}} & {\raise.17ex\hbox{$\scriptstyle\sim$}} & $\xmark$ \\
+Qwen3-4B-Think & $\cmark$ & {\raise.17ex\hbox{$\scriptstyle\sim$}} & {\raise.17ex\hbox{$\scriptstyle\sim$}} & $\xmark$ \\
+Llama-3.1-8B & $\cmark$ & $\cmark$ & {\raise.17ex\hbox{$\scriptstyle\sim$}} & $\xmark$ \\
+Qwen2.5-14B & $\cmark$ & $\cmark$& $\cmark$ & $\xmark$ \\
+Llama-3.1-70B & $\cmark$ & $\cmark$ & $\cmark$ & $\xmark$ \\
+LSTM & $\cmark$ & $\cmark$ & $\cmark$ & $\xmark$ \\
+\underline{Transformer} & $\cmark$ & $\cmark$ & $\cmark$ & $\xmark$ \\
+RNN-Transformer$^{*}$ & $\cmark$ & $\cmark$ & $\cmark$ & $\xmark$ \\
+\bottomrule
+\multicolumn{5}{@{}l@{}}{\footnotesize $^{*}$We call RNN-Transformer a BiLSTM-Transformer.}
+\end{tabular}
+\end{table}
+
+\section{Discussion}
+\label{sec:discussion}
+
+Our experiments reveal a clear hierarchy of sequential exploitation capabilities across architectures, with implications for both theoretical understanding and practical applications.
+
+
+
+\paragraph{The parity barrier.}
+The strongest negative result in the paper is the complete failure of all tested models on hidden-subset parity under standard supervised training, in line with the work of \citet{countingLLMs}. Theorem in Section~\ref{sec:parity} clarifies the theoretical role of this family: exact $k$-local purity holds only in the balanced case $|K|/|\mathcal{A}|=1/2$, whereas our experimental regime lies outside that exact purity regime but still defeats the tested $k$-gram baselines. This should not be read as a universal statement that parity-type tasks are unlearnable or that transformers cannot implement parity in simpler settings. Binary-vocabulary parity is known to be learnable +++CITE?+++. Rather, our result isolates a harder compositional regime in which subset identification, distractor filtering, and parity computation must be learned jointly from end-to-end supervision.
+
+More broadly, failure of fixed $k$-gram baselines does not imply failure of transformers in general. Associative-recall mechanisms of induction-head type provide one important counterexample. Our empirical claim is narrower: on the specific hidden-subset parity benchmark studied here, neither the tested $k$-gram baselines nor the tested neural architectures recover useful signal under standard supervised training.
+
+\paragraph{Scale unlocks sequential learning in decoder-only models.}
+A key finding is that decoder-only models \emph{can} approach the theoretical optimum on the tricky random task, but only at sufficient scale. While Llama-1B and Llama-8B plateau around AUC $\approx 0.58$ (comparable to the $k$-gram baseline), Qwen-14B approaches the theoretical ceiling of $0.67$. This suggests that autoregressive architectures are not fundamentally limited in their ability to capture global sequential dependencies, but require substantially more parameters (and data) to do so. Notably, while Qwen-14B achieves near-optimal discrimination (AUC), its F1 score is still increasing at 400K training samples (see Figure~\ref{fig:tricky_random}), indicating that the model has learned to correctly rank positive and negative examples but has not yet fully calibrated its predictions. This suggests that even larger training sets may be needed to translate discriminative capacity into optimal predictive performance. The contrast with encoder-based architectures is instructive: a custom Transformer with $\sim$100K parameters achieves the same performance as a 14B-parameter decoder. Rather than a limitation of decoder-only models, this gap indicates that next-token prediction requires greater capacity to learn classification-relevant sequential patterns. This finding nuances recent observations by \citet{nguyen2024understanding} and \citet{kimLostSequenceLarge2025b} that LLMs often reduce to local pattern matching. Our results suggest this deficiency can be overcome with sufficient scale, though the computational cost may be prohibitive for many applications.
+
+\paragraph{Architecture and scale interact.}
+The architectural comparison reveals a nuanced picture. Encoder-based models (BERT, Transformers) and recurrent architectures (LSTM, RNN-Transformer) approach the theoretical optimum with relatively few parameters. Decoder-only models can also reach this ceiling, but require substantially more capacity and more data. This reflects a fundamental mismatch: the causal attention mask forces autoregressive models to encode sequential patterns through parameters rather than bidirectional integration.
+
+Despite these challenges, however, our results reveal substantial potential. On tasks deliberately designed to eliminate semantic content, encoder-based transformers and sufficiently scaled decoders still approach theoretical optima, suggesting these models develop internal representations capable of capturing sequential structure even without semantic scaffolding. The scaling trends we observe point toward a promising direction: leveraging the rich representations within LLMs for sequential tasks where not just order but also meaning \emph{does} matter, combining their pattern-learning capabilities with their vast pretrained knowledge.
+
+\paragraph{Limitations and future directions.} Our study has several limitations that suggest directions for future work. We tested sequences of fixed length ($n=20$) and alphabet size ($\ell=26$) and $\lambda=7$, when used; examining how performance scales with sequence length could reveal whether the encoder-decoder gap widens or narrows for longer contexts. While we tested models up to 14B parameters (Llama-70B only on parity), larger models might exhibit additional scaling effects. Our synthetic tasks, while controlled, may not capture all aspects of real-world sequential data extending our framework to clinical trajectories or other temporal data could validate whether these patterns transfer to practice. The efficiency gap between encoders and decoders may also narrow in settings where semantic understanding complements sequential structure. Finally, we focused on classification; generative tasks might engage different capabilities. Other promising directions include mechanistic interpretability analyses to clarify what features models actually learn, and architectural modifications such as auxiliary objectives or structural inductive biases that explicitly target global integration.
+
+
+%%
+% AI DISCLOSURE
+%%
+\section*{AI Disclosure}
+AI tools (LLMs) were used for code debugging, grammar improvement, and visualization scripts. They were \textbf{not} used for conducting research or generating scientific ideas. The authors take full responsibility for the content.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% IMPACT STATEMENT
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+% \section*{Impact Statement}
+
+% This paper advances Machine Learning by providing theoretical and empirical tools to evaluate whether large language models genuinely capture decisive sequential dependencies or rely on local pattern matching. Our methodological contribution may help practitioners make informed decisions when deploying LLMs in domains where sequential reasoning is critical.
+
+
+
+% \begin{table}[t]
+% \centering
+% \caption{Test set performance (AUC and F1) on the deterministic binary sequence classification task.}
+% \begin{tabular}{lcccc}
+% \toprule
+% Model & Train & Val & F1 & AUC \\
+% \midrule
+% XGBoost (base) & 800K & 100K & 0.4982 & 0.4979 \\
+% LLaMA 1B & 800K & 100K & 0.6677 & 0.4967 \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
+
+
+
+\bibliography{example_paper}
+\bibliographystyle{plainnat}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% APPENDIX
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+\appendix
+
+\section{Ordering Mechanisms}
+\begin{figure}[h!]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[scale=0.85]
+% Full sequence with key letters highlighted
+\foreach \i/\letter in {1/\texttt{A},2/\texttt{A},3/\texttt{C},4/\texttt{D},5/\texttt{E},6/\texttt{F},7/\texttt{G},8/\texttt{H},9/\texttt{I},10/\texttt{L},11/\texttt{M},12/\texttt{M},13/\texttt{M},14/\texttt{P},15/\texttt{Q},16/\texttt{R},17/\texttt{S},18/\texttt{T},19/\texttt{U},20/\texttt{V}} {
+    \node[draw,minimum size=0.65cm,text=black, fill=green!20] (n\i) at (\i*0.75,0) {\letter};
+}
+\node[anchor=east] at (-0.5,0) {Sequence $X_j$:};
+\node[right=12cm of n1] {$\in \mathcal{X}$};
+
+% Position numbers above key letters
+\node[above=0.05cm of n1,black,font=\tiny] {1};
+\node[above=0.05cm of n2,black,font=\tiny] {2};
+\node[above=0.05cm of n3,black,font=\tiny] {3};
+\node[above=0.05cm of n4,black,font=\tiny] {4};
+\node[above=0.05cm of n5,black,font=\tiny] {5};
+\node[above=0.05cm of n6,black,font=\tiny] {6};
+\node[above=0.05cm of n7,black,font=\tiny] {7};
+\node[above=0.05cm of n8,black,font=\tiny] {8};
+\node[above=0.05cm of n9,black,font=\tiny] {9};
+\node[above=0.05cm of n10,black,font=\tiny] {10};
+\node[above=0.05cm of n11,black,font=\tiny] {11};
+\node[above=0.05cm of n12,black,font=\tiny] {12};
+\node[above=0.05cm of n13,black,font=\tiny] {13};
+\node[above=0.05cm of n14,black,font=\tiny] {14};
+\node[above=0.05cm of n15,black,font=\tiny] {15};
+\node[above=0.05cm of n16,black,font=\tiny] {16};
+\node[above=0.05cm of n17,black,font=\tiny] {17};
+\node[above=0.05cm of n18,black,font=\tiny] {18};
+\node[above=0.05cm of n19,black,font=\tiny] {19};
+\node[above=0.05cm of n20,black,font=\tiny] {20};
+
+% Key information - moved down more
+\node at (7.5,-1) {Key: $\mathcal{S} = \mathcal{A}$, Ordering: $\kappa(\texttt{A})=1 < \kappa(\texttt{B})=2 < \kappa(\texttt{C})=3 < \cdots < \kappa(\texttt{Z})=26$, lag $\lambda=1$};
+
+% Arrows showing different paths - all starting lower and with better spacing
+
+\draw[->,thick,green,dotted] (n1.north) to[out=80,in=100] (n2.north);
+\draw[->,thick,green,dotted] (n2.north) to[out=80,in=100] (n3.north);
+\draw[->,thick,green,dotted] (n3.north) to[out=80,in=100] (n4.north);
+\draw[->,thick,green,dotted] (n4.north) to[out=80,in=100] (n5.north);
+\draw[->,thick,green,dotted] (n5.north) to[out=80,in=100] (n6.north);
+\draw[->,thick,green,dotted] (n6.north) to[out=80,in=100] (n7.north);
+\draw[->,thick,green,dotted] (n7.north) to[out=80,in=100] (n8.north);
+\draw[->,thick,green,dotted] (n8.north) to[out=80,in=100] (n9.north);
+\draw[->,thick,green,dotted] (n9.north) to[out=80,in=100] (n10.north);
+\draw[->,thick,green,dotted] (n10.north) to[out=80,in=100] (n11.north);
+\draw[->,thick,green,dotted] (n11.north) to[out=80,in=100] (n12.north);
+\draw[->,thick,green,dotted] (n12.north) to[out=80,in=100] (n13.north);
+\draw[->,thick,green,dotted] (n13.north) to[out=80,in=100] (n14.north);
+\draw[->,thick,green,dotted] (n14.north) to[out=80,in=100] (n15.north);
+\draw[->,thick,green,dotted] (n15.north) to[out=80,in=100] (n16.north);
+\draw[->,thick,green,dotted] (n16.north) to[out=80,in=100] (n17.north);
+\draw[->,thick,green,dotted] (n17.north) to[out=80,in=100] (n18.north);
+\draw[->,thick,green,dotted] (n18.north) to[out=80,in=100] (n19.north);
+\draw[->,thick,green,dotted] (n19.north) to[out=80,in=100] (n20.north);
+
+% Results - moved down even more
+\node[align=center] at (7.5,-2.5) {The subsequence consisting on the whole sequence satisfies both lag $\lambda$=1 and the ordering key $\kappa(\mathcal{S}) \equiv \mathcal{A}$.\\
+$\Rightarrow$ Ordered (i.e., $Y^{*}=1$)};
+\end{tikzpicture}%
+}
+\caption{Sequence classification example using the \textit{naive} method. Key letters $\mathcal{S} = \mathcal{A}$ (i.e., all letters). Arrows show gaps between key letters.
+In green letters (and gaps) that do have lag-connections with other key letters and that satisfy the ordering $\kappa(\mathcal{S}) \equiv \mathcal{A}$. Note: in this example $n=20$, $m=26$.}
+\label{fig:naive_example}
+\end{figure}
+
+\label{appendix:Figures}
+\begin{figure}[h!]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[scale=0.85, baseline=(current bounding box.center)]
+% Full sequence with key letters highlighted
+\foreach \i/\letter in {1/\texttt{M},2/\texttt{T},3/\texttt{W},4/\texttt{F},5/\texttt{K},6/\texttt{R},7/\texttt{T},8/\texttt{D},9/\texttt{X},10/\texttt{A},11/\texttt{Z},12/\texttt{C},13/\texttt{Q},14/\texttt{Z},15/\texttt{E},16/\texttt{T},17/\texttt{Q},18/\texttt{A},19/\texttt{M},20/\texttt{L}} {
+    % Check prima se è posizione 9 (rosso)
+    \ifnum\i=9
+        \node[draw,thick,red,minimum size=0.65cm,fill=red!20] (n\i) at (\i*0.75,0) {\textbf{\letter}};
+
+    \else
+        \ifnum\i=17
+            \node[draw,thick,red,minimum size=0.65cm,fill=red!20] (n\i) at (\i*0.75,0) {\textbf{\letter}};
+        \else
+            % Altrimenti check se è 3, 8 o 13 (arancione)
+            \pgfmathparse{\i==3 || \i==8 || \i==13 ? 1 : 0}
+            \ifnum\pgfmathresult=1
+                \node[draw,thick,black,minimum size=0.65cm,fill=green!20] (n\i) at (\i*0.75,0) {\textbf{\letter}};
+            \else
+                % Altrimenti grigio
+                \node[draw,minimum size=0.65cm,text=gray!40] (n\i) at (\i*0.75,0) {\letter};
+            \fi
+        \fi
+    \fi
+}
+\node[anchor=east] at (-0.5,0) {Sequence $X_i$:};
+\node[right=12cm of n1] {$\in \mathcal{X}$};
+
+% Position numbers above key letters
+\node[above=0.05cm of n1,gray!40,font=\tiny] {1};
+\node[above=0.05cm of n2,gray!40,font=\tiny] {2};
+\node[above=0.05cm of n3,black,font=\tiny] {3};
+\node[above=0.05cm of n4,gray!40,font=\tiny] {4};
+\node[above=0.05cm of n5,gray!40,font=\tiny] {5};
+\node[above=0.05cm of n6,gray!40,font=\tiny] {6};
+\node[above=0.05cm of n7,gray!40,font=\tiny] {7};
+\node[above=0.05cm of n8,black,font=\tiny] {8};
+\node[above=0.05cm of n9,red,font=\tiny] {9};
+\node[above=0.05cm of n10,gray!40,font=\tiny] {10};
+\node[above=0.05cm of n11,gray!40,font=\tiny] {11};
+\node[above=0.05cm of n12,gray!40,font=\tiny] {12};
+\node[above=0.05cm of n13,black,font=\tiny] {13};
+\node[above=0.05cm of n14,gray!40,font=\tiny] {14};
+\node[above=0.05cm of n15,gray!40,font=\tiny] {15};
+\node[above=0.05cm of n16,gray!40,font=\tiny] {16};
+\node[above=0.05cm of n17,red,font=\tiny] {17};
+\node[above=0.05cm of n18,gray!40,font=\tiny] {18};
+\node[above=0.05cm of n19,gray!40,font=\tiny] {19};
+\node[above=0.05cm of n20,gray!40,font=\tiny] {20};
+
+% Key information - moved down more
+\node at (7.5,-3) {Key: $\mathcal{S} = \{\texttt{D}, \texttt{Q}, \texttt{J}, \texttt{W}, \texttt{X}, \texttt{U}\}$,
+with $\kappa(\texttt{W}) < \kappa(\texttt{D}) < \kappa(\texttt{Q}) < \kappa(\texttt{J}) < \kappa(\texttt{X}) < \kappa(\texttt{U})$, $\lambda=5$};
+
+% Arrows showing different paths - all starting lower and with better spacing
+% Path 1: B to D (gap=5, red)
+\draw[<->,thick,green,dotted] (n3.south) to[out=-70,in=-110] node[below,yshift=0.5cm,font=\scriptsize,black] {gap=5} (n8.south);
+
+% Path 2: D to G (gap=4, green)
+\draw[<->,thick,green,dotted] (n8.south) to[out=-75,in=-105] node[below,yshift=0.5cm,font=\scriptsize,black] {gap=5} (n13.south);
+
+% Path 3: B to G (gap=10, purple)
+\draw[<->,thick,red,dotted] (n3.south) to[out=-60,in=-120] node[below,yshift=0cm,font=\scriptsize,red] {gap=10} (n13.south);
+
+\draw[<->,thick,red,dotted] (n8.north) to[out=80,in=100] node[above,yshift=0.25cm,font=\scriptsize,red] {gap=1} (n9.north);
+
+\draw[<->,thick,red,dotted] (n9.north) to[out=80,in=100] node[above,yshift=0.25cm,font=\scriptsize,red] {gap=4} (n13.north);
+
+\draw[<->,thick,red,dotted] (n13.north) to[out=80,in=100] node[above,yshift=0.25cm,font=\scriptsize,red] {gap=4} (n17.north);
+
+% Results - moved down even more
+\node[align=center] at (7.5,-4.5) {The subsequence W-D-Q satisfies both lag $\lambda$=5 and the ordering key $\kappa(\mathcal{S})$
+$\Rightarrow$ Ordered (i.e., $Y^{*}=1$)};
+
+\end{tikzpicture}%
+}
+\caption{Sequence classification with \textit{tricky} method. Key letters $\mathcal{S} = \{\texttt{D}, \texttt{Q}, \texttt{J}, \texttt{W}, \texttt{X}, \texttt{U}\}$ are extracted from the full sequence (non-key in gray). Arrows indicate gaps. Red: letters/gaps without lag-connections to other keys. Green: letters/gaps with lag-connections satisfying ordering $\kappa(\mathcal{S})$. Here $n=20$, $m=4$.}
+
+\label{fig:tricky_example}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[scale=0.85, baseline=(current bounding box.center)]
+\foreach \i/\letter in {1/\texttt{M},2/\texttt{T},3/\texttt{W},4/\texttt{F},5/\texttt{K},6/\texttt{R},7/\texttt{T},8/\texttt{D},9/\texttt{X},10/\texttt{A},11/\texttt{Z},12/\texttt{C},13/\texttt{Q},14/\texttt{Z},15/\texttt{E},16/\texttt{T},17/\texttt{Q},18/\texttt{A},19/\texttt{M},20/\texttt{L}} {
+    \ifnum\i=3
+        \node[draw,thick,red,minimum size=0.65cm,fill=red!20] (n\i) at (\i*0.75,0) {\textbf{\letter}};
+    \else
+        % D at position 8 (odd count -> red)
+        \ifnum\i=8
+            \node[draw,thick,red,minimum size=0.65cm,fill=red!20] (n\i) at (\i*0.75,0) {\textbf{\letter}};
+        \else
+            % U at position 9 (odd count -> red)
+            \ifnum\i=9
+                \node[draw,thick,red,minimum size=0.65cm,fill=red!20] (n\i) at (\i*0.75,0) {\textbf{\letter}};
+            \else
+                % Q at positions 13 and 17 (even count -> green)
+                \pgfmathparse{\i==13 || \i==17 ? 1 : 0}
+                \ifnum\pgfmathresult=1
+                    \node[draw,thick,black,minimum size=0.65cm,fill=green!20] (n\i) at (\i*0.75,0) {\textbf{\letter}};
+                \else
+                    % Non-key letters in gray
+                    \node[draw,minimum size=0.65cm,text=gray!40] (n\i) at (\i*0.75,0) {\letter};
+                \fi
+            \fi
+        \fi
+    \fi
+}
+\node[anchor=east] at (-0.5,0) {Sequence $X_i$:};
+\node[right=12cm of n1] {$\in \mathcal{X}$};
+
+% Position numbers above letters
+\foreach \i in {1,...,20} {
+    \pgfmathparse{\i==3 || \i==8 || \i==9 ? "red" : (\i==13 || \i==17 ? "black" : "gray!40")}
+    \edef\nodecolor{\pgfmathresult}
+    \node[above=0.05cm of n\i,\nodecolor,font=\tiny] {\i};
+}
+
+% Key information
+\node at (7.5,-1.5) {Key: $\mathcal{S} = \{\texttt{D}, \texttt{Q}, \texttt{J}, \texttt{W}, \texttt{X}, \texttt{U}\}$};
+
+
+% Result
+\node[align=center] at (7.5,-2.5) {An odd number of letters belonging to the Key appear in an even manner in the sequence \\
+$\Rightarrow$ Not Compliant (i.e., $Y^{*}=0$)};
+
+\end{tikzpicture}%
+}
+\caption{Sequence classification example using the \textit{parity} method. Key letters $\mathcal{S} = \{\texttt{D}, \texttt{Q}, \texttt{J}, \texttt{W}, \texttt{X}, \texttt{U}\}$ are extracted from the full sequence (non-key letters in gray).
+The parity criterion requires \emph{an even number of unique} key letter to appear an \textbf{even} number of times.
+In green: key letters with even count. In red: key letters with odd count.
+Since not all key letters have even counts, the sequence is labeled as non-compliant ($Y^{*}=1$).}
+\label{fig:parity_example}
+\end{figure}
+
+
+\newpage
+\section{K-grams Analysis}
+\label{appendix:k_gram_analysis}
+This appendix provides detailed $k$-gram statistics for our benchmark datasets. We report two complementary measures: \emph{coverage} and \emph{predictive capacity}.
+
+\textbf{Coverage} quantifies the proportion of $k$-grams in the test set that also appear in the training set. High coverage indicates that models can rely on patterns seen during training; low coverage suggests generalization to unseen local patterns is required.
+
+\textbf{Predictive capacity} measures how well $k$-gram presence alone predicts the outcome, quantifying the extent to which the task is exploitable through local shortcuts rather than global sequential processing.
+
+For the Tricky and Parity datasets, these statistics are identical, as both were generated through the same brute-force sampling procedure (see Section~\ref{sec:task_variants}). The Naive dataset, however, required a different simulation strategy due to the low probability of randomly generating ordered sequences. This resulted in a distinct $k$-gram distribution and, notably, higher predictive capacity at low $k$, reflecting the presence of ``forbidden'' bigrams that immediately reveal sequence ordering.
+
+Tables~\ref{tab:ngram_coverage},~\ref{tab:ngram_coverage} and ~\ref{tab:ngram_naive} report these measures for $k \in \{1, \ldots, 7\}$ (for the naive setting we show until $k=20$).
+\begin{table}[h!]
+\centering
+\caption{k-gram baseline predictive performance across datasets. Results shown for optimized classification thresholds. \textit{Tricky Deterministic}: Deterministic sequence with statistical shortcuts. \textit{Tricky Random}: Same structure with added noise ($\pi=0.3$). \textit{Parity}: Parity task requiring full sequence context.}
+\label{tab:ngram_appendix}
+\small
+\begin{tabular}{lccccc|cccc|cccc}
+\toprule
+&&   \multicolumn{4}{c}{\textbf{Tricky Deterministic}} & \multicolumn{4}{c}{\textbf{Tricky Random}} & \multicolumn{4}{c}{\textbf{Parity}} \\
+\cmidrule(lr){3-6} \cmidrule(lr){7-10} \cmidrule(lr){11-14}
+$k$ & Cov. Test  & AUC & F1 & Prec & Rec & AUC & F1 & Prec & Rec & AUC & F1 & Prec & Rec \\
+\midrule
+1 & 100.0\% & .813 & .645 & \textbf{.665} & \textbf{.626} & .585 & .593 & .422 & .996 & \textbf{.502} & \textbf{.668} & \textbf{.502} & \textbf{1.00} \\
+2 & 100.0\% &\textbf{.819} & \textbf{.669} & .587 & .777 & \textbf{.586} & \textbf{.593} & .422 & \textbf{.998} & .498 & .668 & .502 & 1.00 \\
+3 & 100.0\%  &.818 & .669 & .591 & .772 & .576 & .593 & \textbf{.423} & .993 & .497 & .668 & .502 & 1.00 \\
+4 & 100.0\%  &.781 & .639 & .531 & .801 & .534 & .593 & .421 & 1.00 & .499 & .668 & .502 & 1.00 \\
+5 & 41.67\% &.617 & .539 & .383 & .907 & .508 & .593 & .421 & 1.00 & .497 & .668 & .502 & 1.00 \\
+6 & 1.9\% &.524 & .528 & .359 & .999 & .499 & .593 & .421 & 1.00 & .501 & .668 & .502 & 1.00 \\
+7 & 0.1\% &.501 & .528 & .358 & 1.00 & .501 & .593 & .422 & 1.00 & .500 & .668 & .502 & 1.00 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{k-gram coverage between training and test sets. Analysis is common across tricky deterministic, tricky random and parity  datasets as they share identical sequences. For the naive, see table below.}
+\label{tab:ngram_coverage}
+\small
+\begin{tabular}{lrrr}
+\toprule
+$k$ & Unique Train & Unique Test & Coverage \\
+\midrule
+1 & 26 & 26 & 100.0\%\\
+2 & 676 & 676 & 100.0\% \\
+3 & 17,576 & 17,576 & 100.0\% \\
+4 & 456,976 & 385,868 & 100.0\%  \\
+5 & 4,948,910 & 773,862 & 41.7\% \\
+6 & 5,942,184 & 749,024 & 1.9\%  \\
+7 & 5,598,066 & 699,963 & 0.1\%  \\
+\bottomrule
+\end{tabular}
+\vspace{0.1cm}
+
+\footnotesize
+\textit{Note:} Coverage represents the percentage of test k-grams that appear in the training set. Sharp drop at $n \geq 5$ indicates severe data sparsity, explaining baseline model collapse in Table~\ref{tab:ngram_appendix}.
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{K-gram analysis for the \textit{naive} dataset demonstrating information leakage through local patterns. At $k=20$, coverage drops to 0\%: no identical sequences exist between train and test sets, ruling out traditional data leakage. Yet discriminative signal persists at small $k$: bigrams achieve near-perfect AUC (0.999), confirming that ordering-based tasks leak information through local statistics (Theorem~\ref{thm:impossibility}). The AUC decrease for $k \geq 7$ reflects coverage sparsity rather than absence of signal.}
+\label{tab:ngram_naive}
+\small
+\begin{tabular}{crrrr}
+\toprule
+$k$ & AUC & Unique Train & Unique Test & Coverage \\
+\midrule
+1 & 0.493 & 26 & 26 & 100.0\% \\
+2 & 0.999 & 676 & 676 & 100.0\% \\
+3 & 0.999 & 11,125 & 8,966 & 99.1\% \\
+4 & 0.998 & 66,032 & 34,478 & 94.9\% \\
+5 & 0.985 & 231,440 & 76,714 & 85.5\% \\
+6 & 0.906 & 526,836 & 135,307 & 72.2\% \\
+7 & 0.667 & 895,093 & 219,902 & 66.8\% \\
+8 & 0.383 & 1,344,547 & 316,809 & 66.5\% \\
+9 & 0.211 & 1,859,350 & 380,617 & 61.9\% \\
+10 & 0.131 & 2,258,579 & 390,513 & 51.5\% \\
+11 & 0.100 & 2,381,698 & 368,149 & 40.5\% \\
+12 & 0.097 & 2,288,794 & 335,030 & 32.8\% \\
+13 & 0.116 & 2,104,183 & 299,183 & 27.6\% \\
+14 & 0.150 & 1,886,753 & 262,590 & 23.3\% \\
+15 & 0.193 & 1,652,702 & 225,637 & 19.3\% \\
+16 & 0.241 & 1,406,145 & 188,474 & 15.5\% \\
+17 & 0.297 & 1,147,995 & 151,116 & 11.6\% \\
+18 & 0.358 & 878,291 & 113,586 & 7.8\% \\
+19 & 0.424 & 597,079 & 75,900 & 4.0\% \\
+20 & 0.500 & 304,384 & 38,047 & 0.0\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{naive_ngrams.png}
+        \caption{Naive}
+        \label{fig:ngram_naive}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{parity_deterministic_ngram.png}
+        \caption{Parity deterministic}
+        \label{fig:ngram_parity}
+    \end{subfigure}
+
+    \vspace{0.5cm}
+
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{csv_9_random-ngrams.png}
+        \caption{Tricky random}
+        \label{fig:ngram_tricky_random}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{tricky_deterministic_ngrams.png}
+        \caption{Tricky deterministic}
+        \label{fig:ngram_tricky_det}
+    \end{subfigure}
+    \caption{Frequency distribution of the top-100 most discriminative $k$-grams ($k \in \{1,2,3,4,5,6\}$) by class label across the four synthetic datasets (\textit{blue} is ordered (i.e. Label=1), \textit{orange} unordered (i.e. Label=0)). In the \textit{naive} setting (a), discriminative signal concentrates in bigrams, with large frequency differences between classes and high absolute counts. Notably, disordered pairs produce \emph{illegal bigrams} that never appear in ordered sequences, providing an extremely strong signal for $k$-gram classifiers. The \textit{parity} methods (b) show a qualitatively different pattern. While some $k$-grams (particularly for $k=6$) appear exclusively for one class, visible as bars present for only one label, two factors limit their utility. First, these discriminative $k$-grams occur with very low absolute frequencies (often $\leq 10$ occurrences across $>400,000$ training examples). Second, there is a coverage problem: higher-order $k$-grams observed in training may simply not appear in test sequences. Lower-order $k$-grams (unigrams, bigrams) have inherently higher frequencies and coverage, being shorter, they are more likely to recur across both training and test sets. This creates a form of inherent ``data leakage'': not leakage due to methodological error, but a structural property of $k$-gram statistics where shorter patterns naturally generalize better, regardless of whether they capture the true underlying sequential mechanism. In contrast, \textit{tricky} methods (c, d) exhibit strong discriminative signal already at the unigram level: Label=0 sequences contain substantially more letter occurrences overall due to the outcome-dependent generation process, with the deterministic variant (d) showing the most pronounced class separation ($\sim$100k difference in 1-gram frequencies).}
+    \label{fig:ngram_analysis}
+\end{figure}
+
+
+\newpage
+
+\section{Proofs}
+\label{appendix:proof_theorems}
+
+\begin{proof}[Proof of~\ref{paragraph:naive_setting}]
+\label{proof:naive_setting}
+In the naive setting, compliance requires $\mathcal{K}(X_1) \leq \mathcal{K}(X_2) \leq \cdots \leq \mathcal{K}(X_n)$. The number of such non-decreasing sequences equals the number of multisets of size $n$ from $\ell$ elements, which is $\binom{n+\ell-1}{n}$ by stars and bars formula \citep{Stars_Bars}. Dividing by the total $\ell^n$ sequences gives the result.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:optimal_performance}]
+\label{proof:optimal_performance}
+Under symmetric label noise,
+\[
+P(Y=1 \mid Y^{*}=1)=1-\pi, \qquad P(Y=1 \mid Y^{*}=0)=\pi.
+\]
+Because $\pi < 1/2$, the posterior $P(Y=1 \mid Y^{*})$ is strictly increasing in $Y^{*}$, so any Bayes-optimal ranking is equivalent to scoring by $s=Y^{*}$. We therefore compute the AUC of the binary oracle score $s \in \{0,1\}$.
+
+\begin{equation}
+AUC = P(s_+ > s_-) + \frac{1}{2} P(s_+ = s_-)
+\end{equation}
+where $s_+$ is the score for a random instance with $Y = 1$ and $s_-$ is the score for a random instance with $Y = 0$.
+
+The Joint Distribution is:
+
+\begin{align}
+P(Y = 1, Y^* = 1) &= (1-\pi)\rho \\
+P(Y = 1, Y^* = 0) &= \pi(1-\rho) \\
+P(Y = 0, Y^* = 1) &= \pi\rho \\
+P(Y = 0, Y^* = 0) &= (1-\pi)(1-\rho)
+\end{align}
+
+Marginal Distributions:
+
+\begin{align}
+P(Y = 1) &= \rho(1-\pi) + (1-\rho)\pi \\
+P(Y = 0) &= \rho \pi + (1-\rho)(1-\pi)
+\end{align}
+
+Note that $P(Y = 1) + P(Y = 0) = 1$.
+
+For the conditional score distributions, define:
+\begin{align}
+    A &= P(s = 1 \mid Y = 1) = \frac{(1-\pi)\rho}{\rho(1-\pi) + (1-\rho)\pi} \\
+    B &= P(s = 0 \mid Y = 1) = \frac{\pi(1-\rho)}{\rho(1-\pi) + (1-\rho)\pi} \\
+    C &= P(s = 1 \mid Y = 0) = \frac{\pi\rho}{\rho \pi + (1-\rho)(1-\pi)} \\
+    D &= P(s = 0 \mid Y = 0) = \frac{(1-\pi)(1-\rho)}{\rho \pi + (1-\rho)(1-\pi)}
+\end{align}
+
+
+    
+
+Note that $A + B = 1$ and $C + D = 1$.
+
+AUC Calculation:
+
+\begin{align}
+AUC &= A \cdot D + \frac{1}{2}(A \cdot C + B \cdot D) \\
+&= A(1-C) + \frac{1}{2}A \cdot C + \frac{1}{2}(1-A)(1-C) \\
+&= A - AC + \frac{1}{2}AC + \frac{1}{2} - \frac{1}{2}A - \frac{1}{2}C + \frac{1}{2}AC \\
+&= \frac{1}{2} + \frac{1}{2}(A - C)
+\end{align}
+
+Simplification for balanced classes:
+
+For $\rho = 0.5$:
+\begin{align}
+A &= \frac{0.5(1-\pi)}{0.5(1-\pi) + 0.5\pi} = \frac{0.5(1-\pi)}{0.5} = 1-\pi \\
+C &= \frac{0.5\pi}{0.5\pi + 0.5(1-\pi)} = \frac{0.5\pi}{0.5} = \pi
+\end{align}
+
+Therefore:
+\begin{equation}
+AUC = \frac{1}{2} + \frac{1}{2}[(1-\pi) - \pi] = \frac{1}{2} + \frac{1}{2}(1-2\pi) = 1 - \pi
+\end{equation}
+
+Alternatively, we can use the following expression.
+
+Define $X = \rho(1-\pi) + (1-\rho)\pi$ and $Y = \rho \pi + (1-\rho)(1-\pi)$.
+
+The numerator of $(A - C)$ can be computed as:
+\begin{align}
+(A - C) \cdot XY &= (1-\pi)\rho \cdot Y - \pi\rho \cdot X \\
+&= \rho[(1-\pi)Y - \pi X] \\
+&= \rho[(1-\pi)(\rho \pi + (1-\rho)(1-\pi)) - \pi(\rho(1-\pi) + (1-\rho)\pi)] \\
+&= \rho[(1-\pi)^2(1-\rho) - \pi^2(1-\rho)] \\
+&= \rho(1-\rho)[(1-\pi)^2 - \pi^2] \\
+&= \rho(1-\rho)(1-2\pi)
+\end{align}
+
+Note: $(1-\pi)^2 - \pi^2 = 1 - 2\pi + \pi^2 - \pi^2 = 1 - 2\pi$.
+
+Therefore:
+\begin{equation}
+A - C = \frac{\rho(1-\rho)(1-2\pi)}{XY}
+\end{equation}
+
+and
+\begin{equation}
+AUC = \frac{1}{2} + \frac{\rho(1-\rho)(1-2\pi)}{2XY}
+\end{equation}
+\qed
+
+For the thresholded oracle classifier $\widehat{Y}=Y^{*}$, we now compute the resulting F1 score with respect to the observed labels.
+
+Since we evaluate performance against the noisy observed labels $Y$, the confusion matrix elements are:
+
+\begin{align}
+\text{TP} &= P(\hat{Y} = 1 \cap Y = 1) = P(Y^* = 1 \cap Y = 1) \nonumber \\
+&= P(Y = 1 \mid Y^* = 1) \cdot P(Y^* = 1) = (1-\pi)\rho \\
+\text{FP} &= P(\hat{Y} = 1 \cap Y = 0) = P(Y^* = 1 \cap Y = 0) \nonumber \\
+&= P(Y = 0 \mid Y^* = 1) \cdot P(Y^* = 1) = \pi\rho \\
+\text{FN} &= P(\hat{Y} = 0 \cap Y = 1) = P(Y^* = 0 \cap Y = 1) \nonumber \\
+&= P(Y = 1 \mid Y^* = 0) \cdot P(Y^* = 0) = \pi(1-\rho) \\
+\text{TN} &= P(\hat{Y} = 0 \cap Y = 0) = P(Y^* = 0 \cap Y = 0) \nonumber \\
+&= P(Y = 0 \mid Y^* = 0) \cdot P(Y^* = 0) = (1-\pi)(1-\rho)
+\end{align}
+
+For the precision, by definition:
+\begin{align}
+\text{Precision} &= \frac{\text{TP}}{\text{TP} + \text{FP}} = \frac{(1-\pi)\rho}{(1-\pi)\rho + \pi\rho} \nonumber \\
+&= \frac{(1-\pi)\rho}{\rho[(1-\pi) + \pi]} = \frac{(1-\pi)\rho}{\rho} = 1 - \pi
+\end{align}
+
+\textbf{Observation:} Precision is independent of the class distribution $\rho$ and depends only on the noise rate $\pi$.
+
+For the recall, by definition:
+\begin{align}
+\text{Recall} &= \frac{\text{TP}}{\text{TP} + \text{FN}} = \frac{(1-\pi)\rho}{(1-\pi)\rho + \pi(1-\rho)} \nonumber \\
+&= \frac{(1-\pi)\rho}{\rho - \pi\rho + \pi - \pi\rho} = \frac{(1-\pi)\rho}{\rho(1-2\pi) + \pi}
+\end{align}
+
+\textbf{Verification for $\rho = 0.5$:}
+\begin{equation}
+\text{Recall} = \frac{(1-\pi) \cdot 0.5}{0.5(1-2\pi) + \pi} = \frac{0.5(1-\pi)}{0.5 - \pi + \pi} = \frac{0.5(1-\pi)}{0.5} = 1 - \pi
+\end{equation}
+
+Thus, for balanced classes, precision $=$ recall $= 1-\pi$.
+
+For F1, we use the harmonic mean of precision and recall:
+\begin{equation}
+F_1 = \frac{2 \cdot \text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
+\end{equation}
+
+Substituting our expressions:
+\begin{align}
+F_1 &= \frac{2(1-\pi) \cdot \frac{(1-\pi)\rho}{\rho(1-2\pi) + \pi}}{(1-\pi) + \frac{(1-\pi)\rho}{\rho(1-2\pi) + \pi}} \nonumber \\
+&= \frac{2(1-\pi)^2\rho}{(1-\pi)[\rho(1-2\pi) + \pi] + (1-\pi)\rho}
+\end{align}
+
+Simplifying the denominator:
+\begin{align}
+&(1-\pi)[\rho(1-2\pi) + \pi] + (1-\pi)\rho \nonumber \\
+&= (1-\pi)\rho(1-2\pi) + \pi(1-\pi) + (1-\pi)\rho \nonumber \\
+&= (1-\pi)\rho[(1-2\pi) + 1] + \pi(1-\pi) \nonumber \\
+&= (1-\pi)\rho(2-2\pi) + \pi(1-\pi) \nonumber \\
+&= (1-\pi)[2\rho(1-\pi) + \pi]
+\end{align}
+
+Therefore:
+\begin{align}
+F_1 &= \frac{2(1-\pi)^2\rho}{(1-\pi)[2\rho(1-\pi) + \pi]} = \frac{2(1-\pi)\rho}{2\rho(1-\pi) + \pi} \nonumber \\
+&= \frac{2(1-\pi)\rho}{\pi + 2\rho(1-\pi)}
+\end{align}
+
+\textbf{Verification for $\rho = 0.5$:}
+\begin{equation}
+F_1 = \frac{2(1-\pi) \cdot 0.5}{\pi + 2 \cdot 0.5 \cdot (1-\pi)} = \frac{1-\pi}{\pi + (1-\pi)} = \frac{1-\pi}{1} = 1 - \pi
+\end{equation}
+
+\end{proof}
+
+\subsection{Proof of Theorem~\ref{thm:impossibility}}
+\label{appendix:proof_impossibility}
+
+\begin{proof}
+Let $s_{\min}\in\mathcal{S}$ satisfy $\kappa(s_{\min})=1$.
+We first show that the map
+\[
+a \longmapsto P(Y^*=1\mid X_1=a)
+\]
+is not constant on $\mathcal{A}$.
+
+\paragraph{Case 1: $\mathcal{S}\subsetneq\mathcal{A}$.}
+Choose $a_0\in\mathcal{A}\setminus\mathcal{S}$.
+Because the coordinates of $X$ are independent and have full support,
+both events $\{X_1=s_{\min}\}$ and $\{X_1=a_0\}$ have positive probability,
+and conditioning on $X_1$ does not change the joint law of
+$(X_2,\ldots,X_n)$.
+
+Let $Z_2,\ldots,Z_n$ be independent random variables with
+$Z_t\sim\mathcal{L}(X_t)$, and define
+\[
+\widetilde X := (s_{\min},Z_2,\ldots,Z_n),
+\qquad
+\widetilde X' := (a_0,Z_2,\ldots,Z_n).
+\]
+Then
+\[
+\widetilde X \stackrel{d}{=} (X\mid X_1=s_{\min}),
+\qquad
+\widetilde X' \stackrel{d}{=} (X\mid X_1=a_0).
+\]
+
+Let
+\[
+C := \{\widetilde X \text{ is compliant}\},
+\qquad
+C' := \{\widetilde X' \text{ is compliant}\}.
+\]
+Since $\widetilde X'_1=a_0\notin\mathcal{S}$, any compliant chain in
+$\widetilde X'$ must avoid position $1$. But
+$\widetilde X_t=\widetilde X'_t$ for every $t\ge 2$, so the same chain is
+also compliant in $\widetilde X$. Hence
+\[
+C' \subseteq C.
+\]
+
+Now define the event
+\[
+E
+:=
+\{Z_{1+\lambda}\in\mathcal{S}\}
+\cap
+\bigcap_{t\in\{2,\ldots,n\}\setminus\{1+\lambda\}}
+\{Z_t\notin\mathcal{S}\}.
+\]
+Because $n\ge \lambda+1$, because $\mathcal{S}\subsetneq\mathcal{A}$,
+and because every symbol has positive probability at every position,
+we have $P(E)>0$.
+
+On $E$, the sequence $\widetilde X$ is compliant via the chain
+$(1,1+\lambda)$:
+both symbols belong to $\mathcal{S}$, their gap is $\lambda$, and
+\[
+\kappa(\widetilde X_1)=\kappa(s_{\min})=1
+\le
+\kappa(\widetilde X_{1+\lambda}).
+\]
+Hence
+\[
+E \subseteq C.
+\]
+
+On the same event $E$, the sequence $\widetilde X'$ is not compliant.
+Indeed, among positions $2,\ldots,n$, the only key position is $1+\lambda$,
+so no compliant chain of length at least $2$ can exist. Therefore
+\[
+E \subseteq C\setminus C'.
+\]
+
+Since \(C' \subseteq C\), we have
+\[
+P(C)-P(C') = P(C\setminus C').
+\]
+Moreover, \(E \subseteq C\setminus C'\) and \(P(E)>0\). Therefore
+\[
+P(C)-P(C') \ge P(E) > 0,
+\]
+which implies
+\[
+P(C) > P(C').
+\]
+Hence
+\[
+P(Y^*=1 \mid X_1=s_{\min})
+=
+P(C)
+>
+P(C')
+=
+P(Y^*=1 \mid X_1=a_0).
+\]
+
+\paragraph{Case 2: $\mathcal{S}=\mathcal{A}$.}
+Since $n\ge \lambda+1$, the position $1+\lambda$ exists.
+If $X_1=s_{\min}$, then for every realization of the rest of the sequence
+the pair $(1,1+\lambda)$ is compliant: both positions lie in
+$\mathcal{S}=\mathcal{A}$, their gap is $\lambda$, and
+\[
+\kappa(X_1)=\kappa(s_{\min})=1
+\le
+\kappa(X_{1+\lambda}).
+\]
+Therefore
+\[
+P(Y^*=1\mid X_1=s_{\min})=1.
+\]
+
+Since $\rho=P(Y^*=1)\in(0,1)$, we have $\rho<1$.
+If
+\[
+P(Y^*=1\mid X_1=a)=1
+\qquad
+\text{for all } a\in\mathcal{A},
+\]
+then by the law of total probability,
+\[
+P(Y^*=1)
+=
+\sum_{a\in\mathcal{A}}
+P(Y^*=1\mid X_1=a)\,P(X_1=a)
+=
+1,
+\]
+contradicting $\rho<1$. Hence there exists $a^*\in\mathcal{A}$ such that
+\[
+P(Y^*=1\mid X_1=a^*)<1.
+\]
+Thus
+\[
+P(Y^*=1\mid X_1=s_{\min})
+\neq
+P(Y^*=1\mid X_1=a^*).
+\]
+
+In both cases, there exist $a,b\in\mathcal{A}$ such that
+\[
+P(Y^*=1\mid X_1=a)\neq P(Y^*=1\mid X_1=b).
+\]
+Therefore $Y^*$ is not independent of $X_1$. Since mutual information
+between discrete variables is zero if and only if the variables are
+independent, it follows that
+\[
+I(Y^*;X_1)>0.
+\]
+
+Finally, by the symmetric noise model \eqref{eq:label_noise},
+\begin{align*}
+P(Y=1\mid X_1=a)
+&=
+P(Y=1\mid Y^*=1)\,P(Y^*=1\mid X_1=a)
+\\
+&\quad
++
+P(Y=1\mid Y^*=0)\,P(Y^*=0\mid X_1=a)
+\\
+&=
+(1-\pi)\,P(Y^*=1\mid X_1=a)
++
+\pi\,\bigl(1-P(Y^*=1\mid X_1=a)\bigr)
+\\
+&=
+\pi + (1-2\pi)\,P(Y^*=1\mid X_1=a).
+\end{align*}
+Because $\pi<1/2$, the map
+\[
+u \longmapsto \pi + (1-2\pi)u
+\]
+is strictly increasing. Hence the map
+\[
+a \longmapsto P(Y=1\mid X_1=a)
+\]
+is also non-constant on $\mathcal{A}$. Thus $Y$ is not independent of $X_1$,
+and again
+\[
+I(Y;X_1)>0.
+\]
+\end{proof}
+
+
+\subsection{Proof of Corollary~\ref{cor:uniform_witness_bound} with remarks}
+\label{appendix:proof_uniform_witness_bound}
+\begin{proof}
+As in the proof of Theorem~\ref{thm:impossibility}, let
+$Z_2,\ldots,Z_n$ be independent random variables with
+$Z_t\sim \mathrm{Uniform}(\mathcal{A})$, and define
+\[
+\widetilde X=(s_{\min},Z_2,\ldots,Z_n),
+\qquad
+\widetilde X'=(a_0,Z_2,\ldots,Z_n).
+\]
+Then
+\[
+\widetilde X \stackrel{d}{=} (X\mid X_1=s_{\min}),
+\qquad
+\widetilde X' \stackrel{d}{=} (X\mid X_1=a_0).
+\]
+
+Let
+\[
+C:=\{\widetilde X \text{ is compliant}\},
+\qquad
+C':=\{\widetilde X' \text{ is compliant}\}.
+\]
+As in Theorem~\ref{thm:impossibility}, one has $C'\subseteq C$.
+
+Now define the witness event
+\[
+E
+:=
+\{Z_{1+\lambda}\in\mathcal{S}\}
+\cap
+\bigcap_{t\in\{2,\ldots,n\}\setminus\{1+\lambda\}}
+\{Z_t\notin\mathcal{S}\}.
+\]
+On $E$, the sequence $\widetilde X$ is compliant via the chain
+$(1,1+\lambda)$, while $\widetilde X'$ is not compliant. Hence
+\[
+E \subseteq C\setminus C'.
+\]
+Therefore
+\[
+P(C)-P(C') = P(C\setminus C') \ge P(E).
+\]
+
+By independence and uniformity,
+\[
+P(Z_{1+\lambda}\in\mathcal{S})=\frac{m}{\ell},
+\qquad
+P(Z_t\notin\mathcal{S})=\frac{\ell-m}{\ell}
+\quad
+\text{for each } t\in\{2,\ldots,n\}\setminus\{1+\lambda\}.
+\]
+There are exactly $n-2$ such latter positions, so
+\[
+P(E)
+=
+\frac{m}{\ell}\left(\frac{\ell-m}{\ell}\right)^{n-2}.
+\]
+Since
+\[
+P(C)=P(Y^*=1\mid X_1=s_{\min}),
+\qquad
+P(C')=P(Y^*=1\mid X_1=a_0),
+\]
+the first claim follows.
+
+For the observed label, by \eqref{eq:label_noise},
+\[
+P(Y=1\mid X_1=a)
+=
+\pi + (1-2\pi)\,P(Y^*=1\mid X_1=a).
+\]
+Subtracting the expressions for $a=s_{\min}$ and $a=a_0$ yields
+\[
+P(Y=1\mid X_1=s_{\min})
+-
+P(Y=1\mid X_1=a_0)
+=
+(1-2\pi)\Bigl(
+P(Y^*=1\mid X_1=s_{\min})
+-
+P(Y^*=1\mid X_1=a_0)
+\Bigr),
+\]
+and the result follows from the first part.
+\end{proof}
+
+\begin{remark}[Scope of the explicit bound]
+\label{rem:scope_uniform_bound}
+The closed-form expression in Corollary~\ref{cor:uniform_witness_bound} is
+specific to the uniform proposal law. Under the more general assumptions of
+Theorem~\ref{thm:impossibility}, if we write
+\[
+\alpha_t := P(X_t\in\mathcal{S}),
+\]
+then the same witness-event argument gives
+\[
+P(Y^*=1\mid X_1=s_{\min})
+-
+P(Y^*=1\mid X_1=a_0)
+\;\ge\;
+\alpha_{1+\lambda}
+\prod_{t\in\{2,\ldots,n\}\setminus\{1+\lambda\}}(1-\alpha_t)
+\]
+whenever $\mathcal{S}\subsetneq\mathcal{A}$.
+In the i.i.d.\ but non-uniform case with common law $q$, this becomes
+\[
+q(\mathcal{S})\bigl(1-q(\mathcal{S})\bigr)^{n-2}.
+\]
+No nontrivial positive lower bound depending only on $(m,\ell,n)$ can hold under
+mere full support, since $q(\mathcal{S})$ can be arbitrarily small while
+remaining positive.
+\end{remark}
+
+\begin{remark}[Effect of label balancing]
+\label{rem:label_balancing}
+Suppose the final experimental sample is obtained from a proposal law $P$ by
+retaining examples with probability depending only on the observed label $Y$.
+Equivalently,
+\[
+Q(x,y)=\frac{r_y P(x,y)}{Z},
+\qquad r_0,r_1>0.
+\]
+Then
+\[
+Q(X\mid Y=y)=P(X\mid Y=y),
+\]
+so class-conditional sequence structure, and hence AUC, are unchanged by this
+reweighting. However, posterior quantities are transformed. Writing
+$\beta:=r_1/r_0$ and
+\[
+h_\beta(u):=\frac{\beta u}{1+(\beta-1)u},
+\]
+one has
+\[
+Q(Y=1\mid X_1=a)
+=
+h_\beta\!\bigl(P(Y=1\mid X_1=a)\bigr).
+\]
+Since $h_\beta$ is strictly increasing, label balancing preserves the presence of
+local information, but because $h_\beta$ is nonlinear it can either enlarge or
+shrink posterior gaps. Consequently,
+Corollary~\ref{cor:uniform_witness_bound} should be interpreted as a statement
+about the proposal law, not automatically about the retained balanced sample.
+
+More generally, if
+\[
+\Delta_P
+:=
+P(Y=1\mid X_1=s_{\min})-P(Y=1\mid X_1=a_0),
+\qquad
+\Delta_Q
+:=
+Q(Y=1\mid X_1=s_{\min})-Q(Y=1\mid X_1=a_0),
+\]
+then by the mean value theorem,
+\[
+\Delta_Q
+\ge
+\min\{\beta,\beta^{-1}\}\,\Delta_P.
+\]
+The same remark applies with $Y^*$ in place of $Y$ if balancing is performed
+using the latent label rather than the observed one.
+\end{remark}
+
+
+
+\subsection{Proof of Theorem~\ref{thm:parity_local_purity}}
+\label{appendix:proof_parity_local_purity}
+
+\begin{proof}
+For each \(t\in\{1,\ldots,n\}\), define
+\[
+B_t := \mathbf{1}\{X_t\in K\}.
+\]
+Since \(X_t \overset{\mathrm{iid}}{\sim} \mathrm{Uniform}(\mathcal A)\) and
+\[
+p = \frac{|K|}{|\mathcal A|},
+\]
+we have
+\[
+B_t \overset{\mathrm{iid}}{\sim} \mathrm{Bernoulli}(p).
+\]
+Let
+\[
+T := \Bigl(\sum_{t=1}^n B_t\Bigr)\bmod 2.
+\]
+
+We first show that \(Y^*\) is a fixed bit-flip of \(T\). Using addition modulo \(2\),
+\[
+\mathbf{1}\{N_k \text{ is even}\} = 1 \oplus (N_k \bmod 2),
+\]
+where \(\oplus\) denotes XOR. Hence
+\begin{align*}
+Y^*
+&=
+\bigoplus_{k\in K} \mathbf{1}\{N_k \text{ is even}\} \\
+&=
+\bigoplus_{k\in K} \bigl(1 \oplus (N_k \bmod 2)\bigr) \\
+&=
+\bigl(|K|\bmod 2\bigr)\oplus \bigoplus_{k\in K}(N_k \bmod 2).
+\end{align*}
+But
+\[
+\bigoplus_{k\in K}(N_k \bmod 2)
+=
+\Bigl(\sum_{k\in K} N_k\Bigr)\bmod 2
+=
+\Bigl(\sum_{t=1}^n \mathbf{1}\{X_t\in K\}\Bigr)\bmod 2
+=
+T.
+\]
+Therefore
+\[
+Y^* = \bigl(|K|\bmod 2\bigr)\oplus T.
+\]
+The map \(T\mapsto Y^*\) is thus a bijection on \(\{0,1\}\), so for every index set \(J\),
+\[
+I(Y^*;X_J)=I(T;X_J).
+\]
+It is therefore enough to study \(I(T;X_J)\).
+
+Fix an index set
+\[
+J\subseteq \{1,\ldots,n\},
+\qquad 1\le |J|<n.
+\]
+Write
+\[
+r := |J|,
+\qquad
+s := n-r = |J^c| \ge 1.
+\]
+Define
+\[
+U_J := \Bigl(\sum_{j\in J} B_j\Bigr)\bmod 2,
+\qquad
+V_J := \Bigl(\sum_{j\in J^c} B_j\Bigr)\bmod 2.
+\]
+Then
+\[
+T = U_J \oplus V_J.
+\]
+
+Since \(\{B_j : j\in J\}\) and \(\{B_j : j\in J^c\}\) are independent,
+\(V_J\) is independent of \(X_J\). Moreover, \(U_J\) is a deterministic function of
+\(X_J\).
+
+Let
+\[
+q_s := P(V_J=1).
+\]
+Because \(V_J\) is the parity of \(s\) i.i.d.\ Bernoulli\((p)\) random variables,
+\[
+q_s = \frac{1-(1-2p)^s}{2}.
+\]
+Therefore, for every realization \(x_J\) of \(X_J\),
+\[
+P(T=1\mid X_J=x_J)
+=
+\begin{cases}
+q_s, & U_J(x_J)=0,\\
+1-q_s, & U_J(x_J)=1.
+\end{cases}
+\]
+
+\paragraph{Balanced case: \(p=1/2\).}
+If \(p=1/2\), then
+\[
+q_s = \frac{1-(1-2p)^s}{2} = \frac{1}{2}.
+\]
+Hence, for every realization \(x_J\),
+\[
+P(T=1\mid X_J=x_J)=\frac12,
+\qquad
+P(T=0\mid X_J=x_J)=\frac12.
+\]
+Thus the conditional law of \(T\) does not depend on \(x_J\), so \(T\) is independent
+of \(X_J\). Therefore
+\[
+I(T;X_J)=0,
+\]
+and hence
+\[
+I(Y^*;X_J)=0.
+\]
+
+\paragraph{Unbalanced case: \(p\neq 1/2\), finite \(n\).}
+Since \(K\) is nonempty and proper, \(p\in(0,1)\). If \(p\neq 1/2\), then
+\[
+|1-2p|<1
+\qquad\text{and}\qquad
+(1-2p)^s \neq 0
+\]
+for every finite \(s\ge 1\). Hence
+\[
+q_s \neq \frac12.
+\]
+
+Choose any \(j_0\in J\), any \(a_{\mathrm{in}}\in K\), and any
+\(a_{\mathrm{out}}\in \mathcal A\setminus K\). Define two realizations
+\(x_J,x'_J\in \mathcal A^J\) by
+\[
+x_j = a_{\mathrm{out}} \quad \text{for all } j\in J,
+\]
+and
+\[
+x'_{j_0}=a_{\mathrm{in}},
+\qquad
+x'_j=a_{\mathrm{out}} \quad \text{for all } j\in J\setminus\{j_0\}.
+\]
+Then
+\[
+U_J(x_J)=0,
+\qquad
+U_J(x'_J)=1.
+\]
+Therefore
+\[
+P(T=1\mid X_J=x_J)=q_s,
+\qquad
+P(T=1\mid X_J=x'_J)=1-q_s.
+\]
+Since \(q_s\neq 1/2\), these two conditional probabilities are different. Thus the
+conditional law of \(T\) depends on \(X_J\), so \(T\) and \(X_J\) are not independent.
+Hence
+\[
+I(T;X_J)>0,
+\]
+and therefore
+\[
+I(Y^*;X_J)>0.
+\]
+
+\paragraph{Asymptotic decay when \(p\neq 1/2\).}
+Now let \(J\subset\mathbb N\) be any fixed finite index set, and for all sufficiently large
+\(n\) identify it with a subset of \(\{1,\ldots,n\}\). Then \(r=|J|\) is fixed and
+\[
+s=n-r \to \infty.
+\]
+Since \(|1-2p|<1\),
+\[
+q_s = \frac{1-(1-2p)^s}{2} \to \frac12.
+\]
+Hence, uniformly over all realizations \(x_J\),
+\[
+P(T=1\mid X_J=x_J)\to \frac12.
+\]
+Because \(X_J\) takes values in the finite set \(\mathcal A^r\), this implies that the joint
+law of \((T,X_J)\) converges to the product law of \(T\) and \(X_J\). Therefore
+\[
+I(T;X_J)\to 0.
+\]
+Since \(Y^*\) is a bijective function of \(T\),
+\[
+I(Y^*;X_J)=I(T;X_J)\to 0.
+\]
+
+\paragraph{Observed noisy label \(Y\).}
+Assume now that \(Y\) is generated from \(Y^*\) according to \eqref{eq:label_noise}
+with \(\pi<1/2\).
+
+If \(p=1/2\), then \(Y^*\) is independent of \(X_J\). Since \(Y\) depends on \(X_J\)
+only through \(Y^*\), it follows that \(Y\) is also independent of \(X_J\). Hence
+\[
+I(Y;X_J)=0.
+\]
+
+If \(p\neq 1/2\), then
+\begin{align*}
+P(Y=1\mid X_J)
+&=
+P(Y=1\mid Y^*=1)\,P(Y^*=1\mid X_J) \\
+&\quad +
+P(Y=1\mid Y^*=0)\,P(Y^*=0\mid X_J) \\
+&=
+(1-\pi)P(Y^*=1\mid X_J)
++
+\pi\bigl(1-P(Y^*=1\mid X_J)\bigr) \\
+&=
+\pi + (1-2\pi)P(Y^*=1\mid X_J).
+\end{align*}
+Because \(\pi<1/2\), the map
+\[
+u \mapsto \pi + (1-2\pi)u
+\]
+is strictly increasing. Thus whenever \(P(Y^*=1\mid X_J)\) is non-constant as a
+function of \(X_J\), so is \(P(Y=1\mid X_J)\). Therefore, for every finite \(n\),
+\[
+I(Y;X_J)>0.
+\]
+
+Finally, since \(Y\) is obtained from \(Y^*\) through a channel independent of \(X_J\),
+the data processing inequality gives
+\[
+I(Y;X_J)\le I(Y^*;X_J).
+\]
+Hence, for every fixed finite \(J\subset\mathbb N\),
+\[
+I(Y;X_J)\to 0
+\qquad\text{as } n\to\infty.
+\]
+
+This proves all claims. In particular, when \(p=1/2\), we have
+\[
+I(Y^*;X_J)=0
+\qquad
+\text{for every } J\subseteq \{1,\ldots,n\}\text{ with } |J|<n.
+\]
+Therefore the task is \(k\)-locally pure for every \(k<n\).
+\end{proof}
+
+% ==================================================
+% HYPERPARAMETER CONFIGURATION
+% ==================================================
+\section{Models and Hyperparameter Configurations}
+\label{appendix:training}
+
+This appendix provides complete hyperparameter configurations for all models evaluated in our experiments.
+
+\subsection{Training Procedure}
+\label{subsec:training_appendix}
+
+\paragraph{Optimization.}
+All neural models are trained using the AdamW optimizer~\citep{AdamW} with weight decay. For pretrained LLMs and BERT, we use a linear learning rate schedule with 6\% warmup steps. We employ cross-entropy loss for binary classification. Training uses early stopping based on validation loss with patience of 3 epochs for pretrained models and 5 epochs for models trained trained with randomly initialized parameters.
+
+\paragraph{Pretrained models.}
+LLMs (Llama, Qwen) and BERT are fine-tuned with learning rate $2 \times 10^{-5}$, batch size 16, and maximum sequence length 200 tokens. To enable efficient fine-tuning, we apply LoRA~\citep{LoRA} with rank $r=8$, $\alpha=16$, and dropout 0.1, targeting the attention projection matrices (\texttt{q\_proj}, \texttt{k\_proj}, \texttt{v\_proj}, \texttt{o\_proj} for LLMs; \texttt{query}, \texttt{key}, \texttt{value} for BERT). Large models employ gradient checkpointing and mixed-precision training (bfloat16) to fit within GPU memory constraints. We train for a maximum of 20 epochs with patience of 3 epochs.
+
+\paragraph{Randomly initialized Models.}
+LSTM, BiLSTM, Transformer, and hybrid architectures are trained with batch size 64 for up to 30 epochs. Learning rates are tuned per architecture: $10^{-3}$ for recurrent models (LSTM, BiLSTM), $5 \times 10^{-4}$ for Transformer-based models, and $10^{-4}$ for the RNN-Transformer. Dropout rates range from 0.2 to 0.3 depending on model capacity. Early stopping monitors validation F1 score with patience of 5 epochs.
+
+\paragraph{XGBoost baselines.}
+XGBoost models use learning rate 0.05, maximum depth 6, subsample ratio 0.8, and column sampling ratio 0.8 per tree. We apply L1 regularization ($\alpha=0.5$) and L2 regularization ($\lambda=1.5$) with minimum child weight 2 and minimum split gain $\gamma=0.1$. Class imbalance is addressed via \texttt{scale\_pos\_weight}. Training runs for up to 200 boosting rounds with early stopping (patience 10) based on validation log-loss.
+
+\paragraph{Threshold optimization.}
+For all models, we optimize the classification threshold on the validation set by searching over $\{0.10, 0.11, \ldots, 0.89\}$ to maximize F1 score, rather than using the default 0.5 threshold.
+
+\begin{table}[h]
+\centering
+\caption{Models tested and relative dimension. For XGBoost, we report hyperparameter configuration in Table~\ref{tab:xgboost_config}. As tree ensemble complexity is not directly comparable to neural network parameter counts, we omit this metric; the trained model typically comprised 80--120 trees with maximum depth 6.}
+\label{tab:models}
+\begin{tabular}{llr}
+\toprule
+Category & Model & Parameters \\
+\midrule
+\multirow{7}{*}{Pretrained}
+  & BERT-base & 110M \\
+  & RoBERTa & 355M\\
+  & Llama-3.2-1B & 1.0B \\
+  & Qwen3-4B-Think & 4.0B\\
+  & Llama-3.1-8B & 8.0B \\
+  & Qwen2.5-14B & 14B \\
+  & Llama-3.1-70B & 70B \\
+\midrule
+\multirow{5}{*}{Randomly initialized}
+  & Llama-1M & 1M  \\
+  & LSTM & 198K--340K \\
+  & BiLSTM & 256K--395K \\
+  & Transformer & 103K--104K \\
+  & RNN-Transformer$^{*}$ & 319K--455K \\
+\midrule
+Tree-based & XGBoost & -- \\
+\bottomrule
+\multicolumn{3}{@{}l@{}}{\footnotesize $^{*}$We call RNN-Transformer a BiLSTM-Transformer.}
+\end{tabular}
+\end{table}
+
+
+% ----------------------------------------------------------------------------
+\subsection{Pretrained Language Models}
+\label{appendix:pretrained}
+
+Table~\ref{tab:llm_config} summarizes the fine-tuning configuration for pretrained LLMs.
+
+\begin{table}[h]
+\centering
+\caption{Fine-tuning configuration for pretrained LLMs (Llama, Qwen families).}
+\label{tab:llm_config}
+\begin{tabular}{ll}
+\toprule
+Hyperparameter & Value \\
+\midrule
+\multicolumn{2}{l}{\textit{Training}} \\
+Learning rate & $2 \times 10^{-5}$ \\
+Optimizer & AdamW \\
+Batch size & 16 \\
+Max epochs & 20 \\
+Early stopping patience & 3 \\
+Early stopping criterion & Validation loss \\
+Warmup ratio & 6\% of total steps \\
+Scheduler & Linear decay \\
+\midrule
+\multicolumn{2}{l}{\textit{LoRA Configuration}} \\
+Rank ($r$) & 8 \\
+Alpha ($\alpha$) & 16 \\
+Dropout & 0.1 \\
+Target modules & \texttt{q\_proj}, \texttt{k\_proj}, \texttt{v\_proj}, \texttt{o\_proj} \\
+Bias & None \\
+Task type & \texttt{CAUSAL\_LM} \\
+\midrule
+\multicolumn{2}{l}{\textit{Input Processing}} \\
+Max sequence length & 512 tokens \\
+Padding & Max length \\
+Truncation & True \\
+\midrule
+\multicolumn{2}{l}{\textit{Memory Optimization}} \\
+Precision & bfloat16 \\
+Gradient checkpointing & Enabled \\
+Use cache & Disabled \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:tiny_llm_config} shows the architectural configurations for small-scale Llama models trained with randomly initialized parameters.
+
+\begin{table}[h]
+\centering
+\caption{Architecture configurations for Llama models trained with randomly initialized parameters.}
+\label{tab:tiny_llm_config}
+\begin{tabular}{lrrrrr}
+\toprule
+Model & Hidden size & Layers & Heads & KV Heads & Intermediate size \\
+\midrule
+Llama-1M & 128 & 4 & 4 & 2 & 512 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ----------------------------------------------------------------------------
+\subsection{BERT Models}
+\label{appendix:bert}
+
+Table~\ref{tab:bert_config} summarizes the fine-tuning configuration for BERT-based models.
+
+\begin{table}[h]
+\centering
+\caption{Fine-tuning configuration for BERT models.}
+\label{tab:bert_config}
+\begin{tabular}{ll}
+\toprule
+Hyperparameter & Value \\
+\midrule
+\multicolumn{2}{l}{\textit{Training}} \\
+Learning rate & $2 \times 10^{-5}$ \\
+Optimizer & AdamW \\
+Batch size & 16 \\
+Max epochs & 20 \\
+Early stopping patience & 3 \\
+Early stopping criterion & Validation loss \\
+Warmup ratio & 6\% of total steps \\
+Scheduler & Linear decay \\
+\midrule
+\multicolumn{2}{l}{\textit{LoRA Configuration (when used)}} \\
+Rank ($r$) & 8 \\
+Alpha ($\alpha$) & 16 \\
+Dropout & 0.1 \\
+Target modules & \texttt{query}, \texttt{key}, \texttt{value} \\
+Bias & None \\
+Task type & \texttt{SEQ\_CLS} \\
+\midrule
+\multicolumn{2}{l}{\textit{Input Processing}} \\
+Max sequence length & 512 tokens \\
+Padding & Max length \\
+Truncation & True \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+% ----------------------------------------------------------------------------
+\subsection{Recurrent and Transformer Architectures (Randomly Initialized)}
+\label{appendix:dl_scratch}
+
+Table~\ref{tab:dl_training} summarizes the training configuration shared across all models trained from scratch.
+
+\begin{table}[h]
+\centering
+\caption{Training configuration for models trained with randomly initialized parameters.}
+\label{tab:dl_training}
+\begin{tabular}{ll}
+\toprule
+Hyperparameter & Value \\
+\midrule
+Optimizer & Adam \\
+Batch size & 64 \\
+Max epochs & 30 \\
+Early stopping patience & 5 \\
+Early stopping criterion & Validation F1 \\
+Loss function & Cross-entropy \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:dl_default_config} and Table~\ref{tab:dl_optimal_config} present the default and optimized architecture configurations, respectively.
+
+\begin{table}[h]
+\centering
+\caption{Default architecture configurations for randomly initialized models.}
+\label{tab:dl_default_config}
+\begin{tabular}{llllll}
+\toprule
+Model & Embed. dim & Hidden dim & Layers & Dropout & Learning rate \\
+\midrule
+Transformer & 64 & 256 (FFN) & 2 & 0.3 & $5 \times 10^{-4}$ \\
+LSTM & 32 & 64 & 2 & 0.3 & $10^{-3}$ \\
+RNN-Transformer$^{*}$ & 64 & 64 (RNN) / 256 (FFN) & 1+2 & 0.3 & $5 \times 10^{-4}$ \\
+\bottomrule
+\multicolumn{6}{@{}l@{}}{\footnotesize $^{*}$We call RNN-Transformer a BiLSTM-Transformer.}
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Optimized architecture configurations for models randomly initialized.}
+\label{tab:dl_optimal_config}
+\begin{tabular}{llllll}
+\toprule
+Model & Embed. dim & Hidden dim & Layers & Dropout & Learning rate \\
+\midrule
+Transformer & 64 & 128 (FFN) & 3 & 0.3 & $5 \times 10^{-4}$ \\
+LSTM & 32 & 128 & 2 & 0.2 & $2 \times 10^{-3}$ \\
+BiLSTM & 64 & 64 & 3 & 0.2 & $10^{-3}$ \\
+RNN-Transformer$^{*}$ & 128 & 32 (RNN) / 256 (FFN) & 1+3 & 0.3 & $10^{-4}$ \\
+\bottomrule
+\multicolumn{6}{@{}l@{}}{\footnotesize $^{*}$We call RNN-Transformer a BiLSTM-Transformer.}
+\end{tabular}
+\end{table}
+
+Additional architecture details:
+\begin{itemize}
+    \item \textbf{Transformer}: 4 attention heads; GELU activation; learnable positional encodings; mean pooling with padding mask.
+    \item \textbf{LSTM}: Final hidden state used for classification.
+    \item \textbf{RNN-Transformer}: BiLSTM output projected to embedding dimension, then processed by Transformer encoder.
+\end{itemize}
+
+% ----------------------------------------------------------------------------
+\subsection{XGBoost Baselines}
+\label{appendix:xgboost}
+
+Table~\ref{tab:xgboost_config} presents the XGBoost configuration.
+
+\begin{table}[h]
+\centering
+\caption{XGBoost hyperparameter configuration.}
+\label{tab:xgboost_config}
+\begin{tabular}{ll}
+\toprule
+Hyperparameter & Value \\
+\midrule
+\multicolumn{2}{l}{\textit{Tree Parameters}} \\
+Max depth & 6 \\
+Min child weight & 1 \\
+Gamma (min split loss) & 0.1 \\
+Subsample & 0.8 \\
+Column sample by tree & 0.8 \\
+\midrule
+\multicolumn{2}{l}{\textit{Regularization}} \\
+L1 regularization ($\alpha$) & 0.5 \\
+L2 regularization ($\lambda$) & 1.5 \\
+\midrule
+\multicolumn{2}{l}{\textit{Training}} \\
+Learning rate ($\eta$) & 0.05 \\
+Max boosting rounds & 200 \\
+Early stopping patience & 10 \\
+Early stopping criterion & Validation log-loss \\
+Tree method & \texttt{hist} \\
+\midrule
+\multicolumn{2}{l}{\textit{Class Imbalance}} \\
+Scale pos weight & $N_{\text{negative}} / N_{\text{positive}}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+For XGBoost-LLM, embeddings are extracted from Llama-3.2-1B using the prompt format described in Section~\ref{subsec:encoding}, with mean pooling over the last hidden layer (dimension 2048).
+
+% ----------------------------------------------------------------------------
+\subsection{Data Fractions}
+\label{appendix:fractions}
+
+To assess data efficiency, we train each model on the following fractions of the training set: $\{1\%, 10\%, 30\%, 50\%, 75\%, 100\%\}$. Subsampling is performed using stratified sampling to maintain class balance across all fractions.
+
+\paragraph{Reproducibility.}
+All experiments use a fixed random seed (9550) for data splitting, weight initialization, and stochastic optimization. Each configuration is run with three different seeds; we report means and standard deviations (see ~\ref{tab:results_summary}).
+
+% ----------------------------------------------------------------------------
+\subsection{Hardware and Software}
+\label{appendix:hardware}
+
+Experiments are conducted on a single NVIDIA A100 GPU (80GB). Fine-tuning Llama-8B requires approximately 128GB CPU memory with gradient checkpointing enabled. Training times range from minutes (small models, 1\% data) to several hours (Llama-8B, full data).
+
+
+\newpage
+\section{Results}
+\label{appendix:results}
+
+\begin{table}[h!]
+\centering
+\caption{Full classification performance across models and datasets (100\% training data). Standard deviations in parentheses.}
+\label{tab:results_full}
+\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Model & AUC & F1 & Prec & Rec \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{Naive ($\pi=0.0$)}} \\
+\textit{Optimal} & 1.000 & 1.000 & 1.000 & 1.000 \\
+N-gram & .999 & .999 & .999 & .999 \\
+XGBoost (basic) & .603 (.004) & .714 (.005) & .556 (.004) & .995 (.003) \\
+XGBoost (LLM) & .502 (.004) & .536 (.008) & .501 (.004) & .577 (.010) \\
+BERT & .999 (.001) & .999 (.001) & .999 (.001) & .999 (.001) \\
+RoBERTa & .999 (.001) & .999 (.001) & .999 (.001) & .999 (.001) \\
+Llama-3.2-1B & .999 (.001) & .999 (.001) & .999 (.001) & .999 (.001) \\
+Llama-3.1-8B & .999 (.001) & .999 (.001) & .999 (.001) & .999 (.001) \\
+Llama-1M (cold) & .999 (.001) & .999 (.001) & .999 (.001) & .999 (.001) \\
+Qwen3-4B-Think & .999 (.001) & .999 (.001) & .999 (.001) & .999 (.001) \\
+LSTM & .999 (.001) & .999 (.001) & .999 (.001) & .999 (.001) \\
+Transformer & .999 (.001) & .999 (.001) & .999 (.001) & .999 (.001) \\
+RNN-Transformer$^{\dagger}$ & .999 (.001) & .999 (.001) & .999 (.001) & .999 (.001) \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{Tricky Deterministic ($\pi=0.0$)}} \\
+\textit{Optimal} & 1.000 & 1.000 & 1.000 & 1.000 \\
+2-gram & .821 & .672 & .593 & .775 \\
+XGBoost (basic) & .625 (.012) & .457 (.015) & .516 (.010) & .409 (.018) \\
+XGBoost (LLM) & .494 (.010) & .399 (.012) & .353 (.008) & .459 (.015) \\
+BERT & .999 (.001) & .999 (.001) & .999 (.001) & 1.000 (.001) \\
+RoBERTa & .999 (.001) & .999 (.001) & .999 (.001) & 1.000 (.001) \\
+Llama-3.2-1B & .846 (.015) & .695 (.018) & .623 (.020) & .785 (.022) \\
+Llama-3.1-8B & .995 (.003) & .984 (.008) & .976 (.010) & .993 (.007) \\
+Llama-1M (cold) & .832 (.012) & .686 (.015) & .605 (.018) & .791 (.020) \\
+Qwen3-4B-Think & .850 (.014) & .701 (.016) & .620 (.017) & .800 (.020) \\
+LSTM & .999 (.001) & .994 (.003) & .995 (.003) & .994 (.003) \\
+Transformer & .999 (.001) & .992 (.002) & .985 (.005) & 1.000 (.001) \\
+RNN-Transformer$^{\dagger}$ & .997 (.002) & .992 (.003) & .985 (.005) & 1.000 (.002) \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{Tricky Random ($\pi=0.3$)}} \\
+\textit{Optimal} & .670 & .577 & .700 & .491 \\
+2-gram & .585 & .592 & .420 & 1.000 \\
+XGBoost (basic) & .463 (.010) & .418 (.012) & .437 (.008) & .400 (.015) \\
+XGBoost (LLM) & .418 (.011) & .453 (.014) & .437 (.008) & .470 (.018) \\
+BERT & .669 (.006) & .592 (.004) & .420 (.005) & 1.000 (.002) \\
+RoBERTa & .652 (.008) & .592 (.003) & .420 (.005) & 1.000 (.002) \\
+Llama-3.2-1B & .587 (.008) & .592 (.005) & .420 (.006) & .999 (.005) \\
+Llama-3.1-8B & .575 (.008) & .591 (.005) & .425 (.006) & .968 (.010) \\
+Qwen3-4B-Think & .597 (.007) & .591 (.004) & .423 (.005) & .979 (.008) \\
+Qwen2.5-14B$^{*}$ & .670 (---) & .586 (---) & .476 (---) & .763 (---) \\
+LSTM & .665 (.003) & .562 (.020) & .660 (.002) & .489 (.031) \\
+Transformer & .671 (.001) & .579 (.003) & .701 (.015) & .492 (.012) \\
+RNN-Transformer$^{\dagger}$ & .671 (.005) & .578 (.005) & .683 (.010) & .501 (.005) \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{Parity Deterministic ($\pi=0.0$)}} \\
+\textit{Optimal} & 1.000 & 1.000 & 1.000 & 1.000 \\
+1-gram & .505 & .668 & .501 & 1.000 \\
+XGBoost (basic) & .495 (.004) & .490 (.005) & .497 (.003) & .484 (.006) \\
+XGBoost (LLM) & .501 (.003) & .639 (.005) & .502 (.002) & .881 (.008) \\
+BERT & .503 (.002) & .668 (.002) & .501 (.002) & 1.000 (.001) \\
+RoBERTa & .501 (.003) & .668 (.002) & .501 (.002) & 1.000 (.001) \\
+Llama-3.2-1B & .497 (.005) & .668 (.001) & .501 (.002) & 1.000 (.001) \\
+Llama-3.1-8B & .500 (.003) & .668 (.002) & .501 (.002) & 1.000 (.001) \\
+Llama-1M (cold) & .503 (.003) & .668 (.002) & .501 (.003) & 1.000 (.001) \\
+Llama-3.3-70B$^{*}$ & .502 (---) & .668 (---) & .501 (---) & 1.000 (---) \\
+Qwen3-4B-Think & .500 (.002) & .668 (.001) & .501 (.000) & 1.000 (.001) \\
+LSTM & .502 (.003) & .668 (.002) & .501 (.002) & 1.000 (.001) \\
+Transformer & .501 (.003) & .668 (.002) & .501 (.002) & 1.000 (.001) \\
+RNN-Transformer$^{\dagger}$ & .501 (.002) & .668 (.002) & .501 (.003) & 1.000 (.001) \\
+\bottomrule
+$^{*} \text{just one run for time constraint, no standard deviation.}$\\
+$^{\dagger}\text{We call RNN-Transformer a BiLSTM-Transformer.}$
+\end{tabular}
+\end{table}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{naive_comparison.png}
+        \caption{Model performance on the Naive dataset across four metrics. All models achieve near-perfect performance, with the exception of XGBoost. Shaded regions indicate variability across runs.}
+
+    \label{fig:naive_comparison}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{tricky_deterministic_comparison.png}
+       \caption{Model performance on the Tricky Deterministic dataset across four metrics. Despite the deterministic label function ($\pi=0.0$), a clear separation emerges between model families. Bidirectional encoders (BERT, RoBERTa), recurrent architectures (LSTM, RNN-Transformer), and larger causal decoders (Llama-8B) achieve near-perfect performance, demonstrating their ability to capture long-range dependencies when the relevant token can appear anywhere in the sequence. In contrast, smaller causal decoders (Llama-1B, Qwen-7B) plateau at $\sim$0.85 AUC, suggesting that autoregressive models require sufficient scale to compensate for the causal attention mask's limitation on integrating future context. Notably, the Llama-1M cold start model, trained from randomly-initialized weights, exhibits the same plateau, indicating that this capacity threshold is intrinsic to the architecture rather than an artifact of pretraining. The N-gram baseline saturates at $\sim$0.82, confirming that local patterns alone are insufficient. Shaded regions indicate variability across runs.}
+    \label{fig:tricky_deterministic_comparison}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{tricky_random_comparison.png}
+        \caption{Model performance on the Tricky Random dataset across four metrics. The introduction of stochastic labels ($\pi=0.3$) establishes a optimal AUC of 0.67, providing an upper bound against which all models can be evaluated. Bidirectional encoders (BERT, RoBERTa), recurrent architectures (LSTM, Transformer, RNN-Transformer), and larger causal decoders (Qwen-14B) approach this theoretical limit, confirming their capacity to extract the maximum learnable signal from the sequence. Smaller causal decoders (Llama-1B, Llama-8B, Qwen-4B) plateau at $\sim$0.58--0.60, near the N-gram baseline, suggesting that decoder-only models require substantially more parameters to overcome the autoregressive constraint under label noise. Interestingly, both XGBoost variants perform below chance ($<$0.50), indicating that their feature representations actively mislead the classifier, basic n-gram features fail to capture the relevant long-range dependency, while LLM embeddings appear to encode spurious correlations. This dataset highlights how label noise amplifies the parameter requirements for causal architectures to match bidirectional models. Shaded regions indicate variability across runs.}
+
+    \label{fig:tricky_random}
+\end{figure}
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{parity_deterministic.png}
+        \caption{Model performance on the Parity dataset across four metrics. Despite the deterministic label function ($\pi=0.0$), all models remain at chance level ($\sim$0.50 AUC), revealing a fundamental limitation shared across architectures. The parity task requires counting the occurrences of a target token modulo 2; a computation that demands precise tracking of state across the entire sequence. Neither bidirectional encoders (BERT, RoBERTa), recurrent architectures (LSTM, RNN-Transformer), nor causal decoders (Llama, Qwen) show any learning signal, suggesting that current neural architectures struggle with tasks requiring exact counting or discrete state maintenance over long contexts. This result aligns with theoretical work on the expressiveness limitations of transformers for inherently sequential computations. The N-gram baseline also fails, as expected, since parity is a global property that cannot be inferred from local patterns. This task thus serves as a challenging benchmark that remains unsolved by standard fine-tuning approaches, pointing toward the need for architectural innovations or alternative training strategies to handle such computations. Shaded regions indicate variability across runs.}
+
+    \label{fig:parity_task}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% CHECKLIST NEURIPS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\FloatBarrier
+\newpage
+\section*{NeurIPS Paper Checklist}
+
+\begin{enumerate}
+
+\item {\bf Claims}
+    \item[] Question: Do the main claims made in the abstract and introduction accurately reflect the paper's contributions and scope?
+    \item[] Answer: \answerTODO{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+    \item[] Justification: \justificationTODO{}
+    \item[] Guidelines:
+    \begin{itemize}
+        \item The answer \answerNA{} means that the abstract and introduction do not include the claims made in the paper.
+        \item The abstract and/or introduction should clearly state the claims made, including the contributions made in the paper and important assumptions and limitations. A \answerNo{} or \answerNA{} answer to this question will not be perceived well by the reviewers. 
+        \item The claims made should match theoretical and experimental results, and reflect how much the results can be expected to generalize to other settings. 
+        \item It is fine to include aspirational goals as motivation as long as it is clear that these goals are not attained by the paper. 
+    \end{itemize}
+
+\item {\bf Limitations}
+    \item[] Question: Does the paper discuss the limitations of the work performed by the authors?
+    \item[] Answer: \answerTODO{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+    \item[] Justification: \justificationTODO{}
+    \item[] Guidelines:
+    \begin{itemize}
+        \item The answer \answerNA{} means that the paper has no limitation while the answer \answerNo{} means that the paper has limitations, but those are not discussed in the paper. 
+        \item The authors are encouraged to create a separate ``Limitations'' section in their paper.
+        \item The paper should point out any strong assumptions and how robust the results are to violations of these assumptions (e.g., independence assumptions, noiseless settings, model well-specification, asymptotic approximations only holding locally). The authors should reflect on how these assumptions might be violated in practice and what the implications would be.
+        \item The authors should reflect on the scope of the claims made, e.g., if the approach was only tested on a few datasets or with a few runs. In general, empirical results often depend on implicit assumptions, which should be articulated.
+        \item The authors should reflect on the factors that influence the performance of the approach. For example, a facial recognition algorithm may perform poorly when image resolution is low or images are taken in low lighting. Or a speech-to-text system might not be used reliably to provide closed captions for online lectures because it fails to handle technical jargon.
+        \item The authors should discuss the computational efficiency of the proposed algorithms and how they scale with dataset size.
+        \item If applicable, the authors should discuss possible limitations of their approach to address problems of privacy and fairness.
+        \item While the authors might fear that complete honesty about limitations might be used by reviewers as grounds for rejection, a worse outcome might be that reviewers discover limitations that aren't acknowledged in the paper. The authors should use their best judgment and recognize that individual actions in favor of transparency play an important role in developing norms that preserve the integrity of the community. Reviewers will be specifically instructed to not penalize honesty concerning limitations.
+    \end{itemize}
+
+\item {\bf Theory assumptions and proofs}
+    \item[] Question: For each theoretical result, does the paper provide the full set of assumptions and a complete (and correct) proof?
+    \item[] Answer: \answerTODO{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+    \item[] Justification: \justificationTODO{}
+    \item[] Guidelines:
+    \begin{itemize}
+        \item The answer \answerNA{} means that the paper does not include theoretical results. 
+        \item All the theorems, formulas, and proofs in the paper should be numbered and cross-referenced.
+        \item All assumptions should be clearly stated or referenced in the statement of any theorems.
+        \item The proofs can either appear in the main paper or the supplemental material, but if they appear in the supplemental material, the authors are encouraged to provide a short proof sketch to provide intuition. 
+        \item Inversely, any informal proof provided in the core of the paper should be complemented by formal proofs provided in appendix or supplemental material.
+        \item Theorems and Lemmas that the proof relies upon should be properly referenced. 
+    \end{itemize}
+
+    \item {\bf Experimental result reproducibility}
+    \item[] Question: Does the paper fully disclose all the information needed to reproduce the main experimental results of the paper to the extent that it affects the main claims and/or conclusions of the paper (regardless of whether the code and data are provided or not)?
+    \item[] Answer: \answerTODO{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+    \item[] Justification: \justificationTODO{}
+    \item[] Guidelines:
+    \begin{itemize}
+        \item The answer \answerNA{} means that the paper does not include experiments.
+        \item If the paper includes experiments, a \answerNo{} answer to this question will not be perceived well by the reviewers: Making the paper reproducible is important, regardless of whether the code and data are provided or not.
+        \item If the contribution is a dataset and\slash or model, the authors should describe the steps taken to make their results reproducible or verifiable. 
+        \item Depending on the contribution, reproducibility can be accomplished in various ways. For example, if the contribution is a novel architecture, describing the architecture fully might suffice, or if the contribution is a specific model and empirical evaluation, it may be necessary to either make it possible for others to replicate the model with the same dataset, or provide access to the model. In general. releasing code and data is often one good way to accomplish this, but reproducibility can also be provided via detailed instructions for how to replicate the results, access to a hosted model (e.g., in the case of a large language model), releasing of a model checkpoint, or other means that are appropriate to the research performed.
+        \item While NeurIPS does not require releasing code, the conference does require all submissions to provide some reasonable avenue for reproducibility, which may depend on the nature of the contribution. For example
+        \begin{enumerate}
+            \item If the contribution is primarily a new algorithm, the paper should make it clear how to reproduce that algorithm.
+            \item If the contribution is primarily a new model architecture, the paper should describe the architecture clearly and fully.
+            \item If the contribution is a new model (e.g., a large language model), then there should either be a way to access this model for reproducing the results or a way to reproduce the model (e.g., with an open-source dataset or instructions for how to construct the dataset).
+            \item We recognize that reproducibility may be tricky in some cases, in which case authors are welcome to describe the particular way they provide for reproducibility. In the case of closed-source models, it may be that access to the model is limited in some way (e.g., to registered users), but it should be possible for other researchers to have some path to reproducing or verifying the results.
+        \end{enumerate}
+    \end{itemize}
+
+
+\item {\bf Open access to data and code}
+    \item[] Question: Does the paper provide open access to the data and code, with sufficient instructions to faithfully reproduce the main experimental results, as described in supplemental material?
+    \item[] Answer: \answerTODO{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+    \item[] Justification: \justificationTODO{}
+    \item[] Guidelines:
+    \begin{itemize}
+        \item The answer \answerNA{} means that paper does not include experiments requiring code.
+        \item Please see the NeurIPS code and data submission guidelines (\url{https://neurips.cc/public/guides/CodeSubmissionPolicy}) for more details.
+        \item While we encourage the release of code and data, we understand that this might not be possible, so \answerNo{} is an acceptable answer. Papers cannot be rejected simply for not including code, unless this is central to the contribution (e.g., for a new open-source benchmark).
+        \item The instructions should contain the exact command and environment needed to run to reproduce the results. See the NeurIPS code and data submission guidelines (\url{https://neurips.cc/public/guides/CodeSubmissionPolicy}) for more details.
+        \item The authors should provide instructions on data access and preparation, including how to access the raw data, preprocessed data, intermediate data, and generated data, etc.
+        \item The authors should provide scripts to reproduce all experimental results for the new proposed method and baselines. If only a subset of experiments are reproducible, they should state which ones are omitted from the script and why.
+        \item At submission time, to preserve anonymity, the authors should release anonymized versions (if applicable).
+        \item Providing as much information as possible in supplemental material (appended to the paper) is recommended, but including URLs to data and code is permitted.
+    \end{itemize}
+
+
+\item {\bf Experimental setting/details}
+    \item[] Question: Does the paper specify all the training and test details (e.g., data splits, hyperparameters, how they were chosen, type of optimizer) necessary to understand the results?
+    \item[] Answer: \answerTODO{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+    \item[] Justification: \justificationTODO{}
+    \item[] Guidelines:
+    \begin{itemize}
+        \item The answer \answerNA{} means that the paper does not include experiments.
+        \item The experimental setting should be presented in the core of the paper to a level of detail that is necessary to appreciate the results and make sense of them.
+        \item The full details can be provided either with the code, in appendix, or as supplemental material.
+    \end{itemize}
+
+\item {\bf Experiment statistical significance}
+    \item[] Question: Does the paper report error bars suitably and correctly defined or other appropriate information about the statistical significance of the experiments?
+    \item[] Answer: \answerTODO{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+    \item[] Justification: \justificationTODO{}
+    \item[] Guidelines:
+    \begin{itemize}
+        \item The answer \answerNA{} means that the paper does not include experiments.
+        \item The authors should answer \answerYes{} if the results are accompanied by error bars, confidence intervals, or statistical significance tests, at least for the experiments that support the main claims of the paper.
+        \item The factors of variability that the error bars are capturing should be clearly stated (for example, train/test split, initialization, random drawing of some parameter, or overall run with given experimental conditions).
+        \item The method for calculating the error bars should be explained (closed form formula, call to a library function, bootstrap, etc.)
+        \item The assumptions made should be given (e.g., Normally distributed errors).
+        \item It should be clear whether the error bar is the standard deviation or the standard error of the mean.
+        \item It is OK to report 1-sigma error bars, but one should state it. The authors should preferably report a 2-sigma error bar than state that they have a 96\% CI, if the hypothesis of Normality of errors is not verified.
+        \item For asymmetric distributions, the authors should be careful not to show in tables or figures symmetric error bars that would yield results that are out of range (e.g., negative error rates).
+        \item If error bars are reported in tables or plots, the authors should explain in the text how they were calculated and reference the corresponding figures or tables in the text.
+    \end{itemize}
+
+\item {\bf Experiments compute resources}
+    \item[] Question: For each experiment, does the paper provide sufficient information on the computer resources (type of compute workers, memory, time of execution) needed to reproduce the experiments?
+    \item[] Answer: \answerTODO{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+    \item[] Justification: \justificationTODO{}
+    \item[] Guidelines:
+    \begin{itemize}
+        \item The answer \answerNA{} means that the paper does not include experiments.
+        \item The paper should indicate the type of compute workers CPU or GPU, internal cluster, or cloud provider, including relevant memory and storage.
+        \item The paper should provide the amount of compute required for each of the individual experimental runs as well as estimate the total compute. 
+        \item The paper should disclose whether the full research project required more compute than the experiments reported in the paper (e.g., preliminary or failed experiments that didn't make it into the paper). 
+    \end{itemize}
+    
+\item {\bf Code of ethics}
+    \item[] Question: Does the research conducted in the paper conform, in every respect, with the NeurIPS Code of Ethics \url{https://neurips.cc/public/EthicsGuidelines}?
+    \item[] Answer: \answerTODO{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+    \item[] Justification: \justificationTODO{}
+    \item[] Guidelines:
+    \begin{itemize}
+        \item The answer \answerNA{} means that the authors have not reviewed the NeurIPS Code of Ethics.
+        \item If the authors answer \answerNo, they should explain the special circumstances that require a deviation from the Code of Ethics.
+        \item The authors should make sure to preserve anonymity (e.g., if there is a special consideration due to laws or regulations in their jurisdiction).
+    \end{itemize}
+
+
+\item {\bf Broader impacts}
+    \item[] Question: Does the paper discuss both potential positive societal impacts and negative societal impacts of the work performed?
+    \item[] Answer: \answerTODO{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+    \item[] Justification: \justificationTODO{}
+    \item[] Guidelines:
+    \begin{itemize}
+        \item The answer \answerNA{} means that there is no societal impact of the work performed.
+        \item If the authors answer \answerNA{} or \answerNo, they should explain why their work has no societal impact or why the paper does not address societal impact.
+        \item Examples of negative societal impacts include potential malicious or unintended uses (e.g., disinformation, generating fake profiles, surveillance), fairness considerations (e.g., deployment of technologies that could make decisions that unfairly impact specific groups), privacy considerations, and security considerations.
+        \item The conference expects that many papers will be foundational research and not tied to particular applications, let alone deployments. However, if there is a direct path to any negative applications, the authors should point it out. For example, it is legitimate to point out that an improvement in the quality of generative models could be used to generate Deepfakes for disinformation. On the other hand, it is not needed to point out that a generic algorithm for optimizing neural networks could enable people to train models that generate Deepfakes faster.
+        \item The authors should consider possible harms that could arise when the technology is being used as intended and functioning correctly, harms that could arise when the technology is being used as intended but gives incorrect results, and harms following from (intentional or unintentional) misuse of the technology.
+        \item If there are negative societal impacts, the authors could also discuss possible mitigation strategies (e.g., gated release of models, providing defenses in addition to attacks, mechanisms for monitoring misuse, mechanisms to monitor how a system learns from feedback over time, improving the efficiency and accessibility of ML).
+    \end{itemize}
+    
+\item {\bf Safeguards}
+    \item[] Question: Does the paper describe safeguards that have been put in place for responsible release of data or models that have a high risk for misuse (e.g., pre-trained language models, image generators, or scraped datasets)?
+    \item[] Answer: \answerTODO{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+    \item[] Justification: \justificationTODO{}
+    \item[] Guidelines:
+    \begin{itemize}
+        \item The answer \answerNA{} means that the paper poses no such risks.
+        \item Released models that have a high risk for misuse or dual-use should be released with necessary safeguards to allow for controlled use of the model, for example by requiring that users adhere to usage guidelines or restrictions to access the model or implementing safety filters. 
+        \item Datasets that have been scraped from the Internet could pose safety risks. The authors should describe how they avoided releasing unsafe images.
+        \item We recognize that providing effective safeguards is challenging, and many papers do not require this, but we encourage authors to take this into account and make a best faith effort.
+    \end{itemize}
+
+\item {\bf Licenses for existing assets}
+    \item[] Question: Are the creators or original owners of assets (e.g., code, data, models), used in the paper, properly credited and are the license and terms of use explicitly mentioned and properly respected?
+    \item[] Answer: \answerTODO{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+    \item[] Justification: \justificationTODO{}
+    \item[] Guidelines:
+    \begin{itemize}
+        \item The answer \answerNA{} means that the paper does not use existing assets.
+        \item The authors should cite the original paper that produced the code package or dataset.
+        \item The authors should state which version of the asset is used and, if possible, include a URL.
+        \item The name of the license (e.g., CC-BY 4.0) should be included for each asset.
+        \item For scraped data from a particular source (e.g., website), the copyright and terms of service of that source should be provided.
+        \item If assets are released, the license, copyright information, and terms of use in the package should be provided. For popular datasets, \url{paperswithcode.com/datasets} has curated licenses for some datasets. Their licensing guide can help determine the license of a dataset.
+        \item For existing datasets that are re-packaged, both the original license and the license of the derived asset (if it has changed) should be provided.
+        \item If this information is not available online, the authors are encouraged to reach out to the asset's creators.
+    \end{itemize}
+
+\item {\bf New assets}
+    \item[] Question: Are new assets introduced in the paper well documented and is the documentation provided alongside the assets?
+    \item[] Answer: \answerTODO{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+    \item[] Justification: \justificationTODO{}
+    \item[] Guidelines:
+    \begin{itemize}
+        \item The answer \answerNA{} means that the paper does not release new assets.
+        \item Researchers should communicate the details of the dataset\slash code\slash model as part of their submissions via structured templates. This includes details about training, license, limitations, etc. 
+        \item The paper should discuss whether and how consent was obtained from people whose asset is used.
+        \item At submission time, remember to anonymize your assets (if applicable). You can either create an anonymized URL or include an anonymized zip file.
+    \end{itemize}
+
+\item {\bf Crowdsourcing and research with human subjects}
+    \item[] Question: For crowdsourcing experiments and research with human subjects, does the paper include the full text of instructions given to participants and screenshots, if applicable, as well as details about compensation (if any)? 
+    \item[] Answer: \answerTODO{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+    \item[] Justification: \justificationTODO{}
+    \item[] Guidelines:
+    \begin{itemize}
+        \item The answer \answerNA{} means that the paper does not involve crowdsourcing nor research with human subjects.
+        \item Including this information in the supplemental material is fine, but if the main contribution of the paper involves human subjects, then as much detail as possible should be included in the main paper. 
+        \item According to the NeurIPS Code of Ethics, workers involved in data collection, curation, or other labor should be paid at least the minimum wage in the country of the data collector. 
+    \end{itemize}
+
+\item {\bf Institutional review board (IRB) approvals or equivalent for research with human subjects}
+    \item[] Question: Does the paper describe potential risks incurred by study participants, whether such risks were disclosed to the subjects, and whether Institutional Review Board (IRB) approvals (or an equivalent approval/review based on the requirements of your country or institution) were obtained?
+    \item[] Answer: \answerTODO{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+    \item[] Justification: \justificationTODO{}
+    \item[] Guidelines:
+    \begin{itemize}
+        \item The answer \answerNA{} means that the paper does not involve crowdsourcing nor research with human subjects.
+        \item Depending on the country in which research is conducted, IRB approval (or equivalent) may be required for any human subjects research. If you obtained IRB approval, you should clearly state this in the paper. 
+        \item We recognize that the procedures for this may vary significantly between institutions and locations, and we expect authors to adhere to the NeurIPS Code of Ethics and the guidelines for their institution. 
+        \item For initial submissions, do not include any information that would break anonymity (if applicable), such as the institution conducting the review.
+    \end{itemize}
+
+\item {\bf Declaration of LLM usage}
+    \item[] Question: Does the paper describe the usage of LLMs if it is an important, original, or non-standard component of the core methods in this research? Note that if the LLM is used only for writing, editing, or formatting purposes and does \emph{not} impact the core methodology, scientific rigor, or originality of the research, declaration is not required.
+    %this research? 
+    \item[] Answer: \answerTODO{} % Replace by \answerYes{}, \answerNo{}, or \answerNA{}.
+    \item[] Justification: \justificationTODO{}
+    \item[] Guidelines:
+    \begin{itemize}
+        \item The answer \answerNA{} means that the core method development in this research does not involve LLMs as any important, original, or non-standard components.
+        \item Please refer to our LLM policy in the NeurIPS handbook for what should or should not be described.
+    \end{itemize}
+
+\end{enumerate}
+
+
+
+
+\end{document}
