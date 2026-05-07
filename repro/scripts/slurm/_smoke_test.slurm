@@ -107,4 +107,28 @@ srun apptainer exec \
     "$CONTAINER" \
     python3 -c "import sys; sys.path.insert(0, '$REPO'); from src.generators._internals.do_check_lag import check_lag; print('check_lag OK:', check_lag.__doc__[:60] if check_lag.__doc__ else 'no docstring')"
 
+echo "=== check src.mimic.train_mimic CLI parses ==="
+srun apptainer exec --nv \
+    --bind "$REPO:$REPO" \
+    --env PYTHONUNBUFFERED=1 \
+    --env REPRO_ROOT="$REPO" \
+    "$CONTAINER" \
+    python3 -m src.mimic.train_mimic --help 2>&1 | head -10
+
+echo "=== check src.mimic.kgram_analysis CLI parses ==="
+srun apptainer exec \
+    --bind "$REPO:$REPO" \
+    --env PYTHONUNBUFFERED=1 \
+    --env REPRO_ROOT="$REPO" \
+    "$CONTAINER" \
+    python3 -m src.mimic.kgram_analysis --help 2>&1 | head -10
+
+echo "=== check src.mimic.shuffle_test CLI parses ==="
+srun apptainer exec \
+    --bind "$REPO:$REPO" \
+    --env PYTHONUNBUFFERED=1 \
+    --env REPRO_ROOT="$REPO" \
+    "$CONTAINER" \
+    python3 -m src.mimic.shuffle_test --help 2>&1 | head -10
+
 echo "=== smoke_test DONE  $(date) ==="

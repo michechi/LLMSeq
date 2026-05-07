@@ -4,6 +4,8 @@ Code and data accompanying the NeurIPS 2026 submission *Sequential Learning or S
 
 The paper introduces a synthetic letter-sequence framework with three task variants (Tricky Deterministic, Tricky Random, Parity), evaluates the model families in Table 2 of the paper (XGBoost, LSTM, Transformer encoder, BiLSTM-Transformer hybrid, BERT-base, RoBERTa-large, Llama-3.2-1B, Llama-3.1-8B, Llama-3.1-70B [parity only], Qwen3-4B-Think, Qwen2.5-14B), and audits whether sequence models recover the latent rule or solve the task via lag-aware pair counts.
 
+The same shortcut-audit ladder is then applied to MIMIC-IV CKD->ESRD diagnosis-sequence prediction (paper Section 5 + Appendix F.x): cohort construction, k-gram diagnostic, order-invariant baselines (LogReg, XGBoost), and ordered-vs-shuffled training of Transformer / BiLSTM / BERT.
+
 ## Quickstart
 
 ```bash
@@ -33,6 +35,7 @@ Wall-clock figures are approximate; paper figures average 3 seeds (9550, 9551, 9
 ```
 repro/
 ├── data/simulation/tested/   # 15 CSV: train/val/test splits for the 3 tasks
+├── data/mimic/               # MIMIC-IV CKD->ESRD audit (no raw data shipped)
 ├── src/
 │   ├── common.py             # paths via env vars
 │   ├── generators/           # data generation scripts (CLI)
@@ -41,6 +44,7 @@ repro/
 │   ├── experiments/          # 5 main training scripts + parity decomp + few-shot
 │   ├── analysis/             # mechanism-ID audit, attention, plotting
 │   ├── ablations/            # appendix experiments (A, B, C, F, G)
+│   ├── mimic/                # MIMIC-IV CKD->ESRD audit (cohort, k-gram, shuffle, neural)
 │   └── utils/
 ├── configs/                  # default hyperparameters
 ├── scripts/                  # bash launchers + SLURM templates
@@ -66,6 +70,17 @@ The Naive sanity check dataset (tag `_alph`, App. A.2) is also included.
 ## Reproducing main results
 
 See [REPRODUCING.md](REPRODUCING.md) for the full claim -> script -> command table.
+
+## MIMIC-IV CKD->ESRD audit
+
+Section 5 and Appendix F.x of the paper apply the same shortcut-audit ladder to MIMIC-IV. Raw MIMIC-IV is gated (PhysioNet credentialing) and not shipped. After dropping the three required CSVs (`diagnoses_icd.csv`, `admissions.csv`, `patients.csv`) into `data/mimic/raw/hosp/` you can run
+
+```bash
+bash scripts/reproduce_mimic.sh                    # cohort + descriptive + k-gram + shuffle + splits
+bash scripts/slurm/submit_all_mimic.sh             # 12 ordered/shuffled neural jobs (HPC)
+```
+
+See [data/mimic/README.md](data/mimic/README.md) for the expected layout and the `MIMIC_*` env-var overrides.
 
 ## Known discrepancies between paper and code
 

@@ -83,3 +83,27 @@ Anonymized SLURM scripts live in `scripts/slurm/` (root-level for main experimen
 - `--account=<YOUR_ACCOUNT>` filled in
 - `CONTAINER=/path/to/your/pytorch.sif` exported (any image with Python 3.10+, torch 2.x, transformers, peft, scikit-learn, xgboost works)
 - `REPRO_ROOT` and `SCRATCH` env vars set to the repo path and a writable cache location
+
+## MIMIC-IV CKD->ESRD audit (Section 5, Appendix F.x)
+
+Raw MIMIC-IV is not shipped (PhysioNet credentialing). Drop `diagnoses_icd.csv`, `admissions.csv`, `patients.csv` into `data/mimic/raw/hosp/` (or override with `MIMIC_RAW=...`) before running the pipeline.
+
+| Paper element | Script | Command |
+|---|---|---|
+| Cohort construction (App. F.x) | `src.mimic.build_ckd_cohort_ccs` | `python -m src.mimic.build_ckd_cohort_ccs` |
+| Discriminative codes table (`tab:mimic_ckd_discriminative_codes`) and lag analysis | `src.mimic.descriptive_analysis` | `python -m src.mimic.descriptive_analysis` |
+| K-gram diagnostic, k=1..7 (`tab:mimic_ckd_audit`, k-gram rows) | `src.mimic.kgram_analysis` | `python -m src.mimic.kgram_analysis` |
+| Shuffle test: BoC LogReg / XGBoost + k-gram (`tab:mimic_ckd_audit`, BoC rows) | `src.mimic.shuffle_test` | `python -m src.mimic.shuffle_test` |
+| 60/20/20 splits for neural models (ordered + shuffled) | `src.mimic.prepare_training_data` | `python -m src.mimic.prepare_training_data` |
+| Transformer / BiLSTM / BERT ordered vs shuffled (`tab:mimic_ckd_audit`, neural rows) | `src.mimic.train_mimic` | `python -m src.mimic.train_mimic --model {transformer,bilstm,bert} --data {ordered,shuffled}` |
+| All 12 neural jobs at once (HPC) | `scripts/slurm/submit_all_mimic.sh` | `bash scripts/slurm/submit_all_mimic.sh` |
+| End-to-end CPU pipeline (cohort -> kgram -> shuffle -> splits) | `scripts/reproduce_mimic.sh` | `bash scripts/reproduce_mimic.sh` |
+| Visit-level shuffle test (robustness) | `src.mimic.build_visit_level_data` + `src.mimic.visit_shuffle_test` | `python -m src.mimic.build_visit_level_data && python -m src.mimic.visit_shuffle_test --mode all` |
+
+Outputs land in `${RESULTS_DIR:-./results}/mimic/`:
+- `kgram_analysis.csv`, `kgram_analysis_raw.csv`
+- `shuffle_test.csv`
+- `model_results.csv` (one row per `train_mimic` run, appended)
+- `visit_shuffle_test.csv`
+
+Cohort artefacts land in `${MIMIC_PROCESSED:-./data/mimic/processed}/`. Path overrides: `MIMIC_DIR`, `MIMIC_RAW`, `MIMIC_PROCESSED`, `MIMIC_TRAINING`, `MIMIC_CODES`, `MIMIC_RESULTS` (see [data/mimic/README.md](data/mimic/README.md)).
