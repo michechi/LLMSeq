@@ -52,6 +52,42 @@ Outputs:
 
 For an HPC SLURM run: `PHASE=2 EXTRA="--rows_train 200000" sbatch -J mechid_p2 src/analysis/mechanism_id/scripts/slurm/run_phase.sh` (set `CONTAINER` env var to your apptainer image).
 
+## KIP (Key-Inversion Parity)
+
+A task variant added for the NeurIPS rebuttal. Every sequence holds each of the m
+key letters exactly once; reading them in sequence order and mapping through
+kappa gives a permutation pi, and `Y = 1` iff `inv(pi)` is even. Two datasets,
+`kip_m4` and `kip_m6`, matching tag `6`'s sizes (400K/50K/50K), splits and seed
+handling. `rho = 0.5` and `AUC* = 1.000` by construction.
+
+The hidden `(S, kappa)` is **sampled per dataset**, not hardcoded, and stored as
+`<TAG>_rule.json` beside the CSVs. Load it; do not hardcode a key set.
+
+All three steps are CPU-only. Run in order -- the sanity suite gates the rest and
+exits non-zero on failure.
+
+```bash
+# 1. generate + self-check (about 10s)
+python -m src.generators.kip --build --verify
+
+# 2. sanity suite: structure, balance, swap-flip, shuffle, count purity
+python -m src.generators.kip_sanity
+
+# 3. audit ladder: unigram counts, contiguous k-grams k=2,3,4, fixed-lag pair
+#    counts, and the lag-agnostic all-pairs families
+python -m src.analysis.mechanism_id.scripts.kip_audit
+
+# 4. oracle + reveal ladder
+python -m src.analysis.mechanism_id.scripts.kip_oracle_reveal
+```
+
+Outputs: `${RESULTS_DIR}/kip_audit.csv`, `${RESULTS_DIR}/kip_oracle_reveal.csv`,
+and the write-up at `src/analysis/mechanism_id/kip_report.md`.
+
+Note that `DATA_DIR` must point at a populated data directory --
+`repro/data/simulation/tested/` ships empty, so in the development repo use
+`DATA_DIR=/path/to/LLMSeq/data`.
+
 ## Appendix experiments
 
 | Appendix section | Script | Command |

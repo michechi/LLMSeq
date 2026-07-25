@@ -27,13 +27,24 @@ from typing import Iterable, List
 import matplotlib.pyplot as plt
 import pandas as pd
 
+# The panel grid is derived from this list, so adding a tag adds a panel. KIP
+# (kip_m4 / kip_m6) is deliberately absent: no model-training runs exist for it
+# yet, and an empty panel would degrade the main figure. Add the two entries here
+# once src/experiments results for those tags are present.
 DATASETS = [
     ("6", "Tricky Deterministic"),
     ("9", "Tricky Random"),
     ("test_just_pair", "Parity"),
 ]
 
-ORACLE_AUC = {"6": 1.000, "9": 0.670, "test_just_pair": 1.000}
+# pi = 0 and rho = 0.5 for both KIP tags, so AUC* = 1 - pi = 1.000.
+ORACLE_AUC = {
+    "6": 1.000,
+    "9": 0.670,
+    "test_just_pair": 1.000,
+    "kip_m4": 1.000,
+    "kip_m6": 1.000,
+}
 
 
 def iter_records(results_dir: Path) -> Iterable[dict]:
@@ -77,7 +88,12 @@ def main() -> None:
         wanted = {m.strip() for m in args.models.split(",")}
         df = df[df["model"].isin(wanted)]
 
-    fig, axes = plt.subplots(1, 3, figsize=(15, 4.5), sharey=True)
+    # Derived from DATASETS rather than hardcoded to 3: with a fixed count, a
+    # fourth entry would be silently dropped by the zip below and its panel would
+    # never appear.
+    fig, axes = plt.subplots(1, len(DATASETS), figsize=(5.0 * len(DATASETS), 4.5),
+                             sharey=True, squeeze=False)
+    axes = axes[0]
     args.output.parent.mkdir(parents=True, exist_ok=True)
     for ax, (tag, title) in zip(axes, DATASETS):
         sub = df[df["dataset"] == tag]

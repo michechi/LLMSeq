@@ -20,6 +20,10 @@ Attention_Llama/
 # Allow specific data directories
 !data/simulation/tested/
 !data/simulation/tested/*.csv
+# KIP stores its sampled hidden rule (S, kappa) beside the CSVs. Without this the
+# global *.json rule above would drop the sidecar and the data would ship with no
+# way to decode its labels.
+!data/simulation/tested/*_rule.json
 !data/processed/mimic_training/*.csv
 !data/processed/mimic_training/*.json
 !results/sensitivity/*.csv

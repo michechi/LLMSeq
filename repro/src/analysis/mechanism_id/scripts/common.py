@@ -400,3 +400,153 @@ def bundle_features(
         Xv=_mat("val"),
         Xte=_mat("test"),
     )
+
+
+# --------------------------------------------------------------------------
+# Contiguous k-gram baseline (the estimator the paper cites, Section 4.2:
+# P(Y=1|g) = #(g, Y=1) / #(g), averaged over the k-grams of a sequence).
+#
+# Ported from simulation/stat_test_ICML.py:48-80 so the repro tree does not
+# depend on simulation/. Contiguous k-grams are deliberately absent from
+# phase2_baseline_ladder.py, whose families are all count- or lag-based; for
+# k >= 3 a dense count matrix is infeasible (26^3 = 17576, 26^4 = 456976
+# columns), which is why an estimator rather than a feature matrix is used.
+# --------------------------------------------------------------------------
+def extract_ngrams(toks: Sequence[str], k: int) -> List[str]:
+    """Contiguous k-grams of a token list, joined with '-' as in the original."""
+    if len(toks) < k:
+        return []
+    return ["-".join(toks[i:i + k]) for i in range(len(toks) - k + 1)]
+
+
+def kgram_estimator_scores(
+    train_seqs: Sequence[Sequence[str]],
+    train_labels: Sequence[int],
+    eval_seqs: Sequence[Sequence[str]],
+    k: int,
+    default: float = 0.5,
+) -> Tuple[np.ndarray, float]:
+    """Fit P(Y=1|g) on train, score eval sequences by averaging over their k-grams.
+
+    Returns (scores, coverage) where coverage is the fraction of k-gram
+    occurrences in eval that were seen during training -- worth reporting,
+    because a low-coverage k-gram model scores mostly `default` and its AUC is
+    then uninformative rather than genuinely at chance.
+    """
+    counts: Dict[str, List[int]] = defaultdict(lambda: [0, 0])
+    for toks, label in zip(train_seqs, train_labels):
+        li = int(label)
+        for g in extract_ngrams(toks, k):
+            counts[g][li] += 1
+
+    probs = {g: (c[1] / (c[0] + c[1]) if (c[0] + c[1]) > 0 else default)
+             for g, c in counts.items()}
+
+    scores = np.empty(len(eval_seqs), dtype=np.float64)
+    seen = total = 0
+    for r, toks in enumerate(eval_seqs):
+        grams = extract_ngrams(toks, k)
+        if not grams:
+            scores[r] = default
+            continue
+        vals = []
+        for g in grams:
+            total += 1
+            p = probs.get(g)
+            if p is None:
+                vals.append(default)
+            else:
+                seen += 1
+                vals.append(p)
+        scores[r] = float(np.mean(vals))
+
+    coverage = (seen / total) if total else 0.0
+    return scores, coverage
+
+
+# --------------------------------------------------------------------------
+# KIP (Key-Inversion Parity) feature families.
+#
+# The label is the parity of inv(pi), where pi is the permutation obtained by
+# reading the key letters in sequence order and mapping through kappa. Because
+# inv(pi) = C(m,2) - sum(precedence bits), the precedence bits determine the
+# label exactly, which is what the reveal ladder exploits.
+#
+# All of these take the hidden rule explicitly. Never hardcode a KIP key set:
+# it is sampled per dataset and persisted to <TAG>_rule.json.
+# --------------------------------------------------------------------------
+def kip_key_ranks(toks: Sequence[str], kappa: Dict[str, int]) -> List[int]:
+    """kappa values of the key letters, in sequence order."""
+    return [kappa[t] for t in toks if t in kappa]
+
+
+def kip_precedence_pairs(m: int) -> List[Tuple[int, int]]:
+    """Canonical pair order: (r_a, r_b) over kappa ranks with r_a < r_b."""
+    return [(a, b) for a in range(1, m + 1) for b in range(a + 1, m + 1)]
+
+
+def feat_kip_precedence_bits(toks: Sequence[str], kappa: Dict[str, int]) -> np.ndarray:
+    """C(m,2) bits: 1 iff the letter of rank r_a occurs before that of rank r_b."""
+    m = len(kappa)
+    pos = {kappa[t]: i for i, t in enumerate(toks) if t in kappa}
+    pairs = kip_precedence_pairs(m)
+    out = np.zeros(len(pairs), dtype=np.float32)
+    for idx, (ra, rb) in enumerate(pairs):
+        pa, pb = pos.get(ra), pos.get(rb)
+        if pa is not None and pb is not None and pa < pb:
+            out[idx] = 1.0
+    return out
+
+
+def feat_kip_rank_sequence(toks: Sequence[str], kappa: Dict[str, int], n: int) -> np.ndarray:
+    """Length-n vector: kappa rank at each position, 0 at distractor positions."""
+    out = np.zeros(n, dtype=np.float32)
+    for i, t in enumerate(toks[:n]):
+        r = kappa.get(t)
+        if r is not None:
+            out[i] = float(r)
+    return out
+
+
+def feat_kip_inversion_count(toks: Sequence[str], kappa: Dict[str, int]) -> np.ndarray:
+    """Scalar: the number of inversions of pi."""
+    ranks = kip_key_ranks(toks, kappa)
+    inv = sum(
+        1
+        for i in range(len(ranks))
+        for j in range(i + 1, len(ranks))
+        if ranks[i] > ranks[j]
+    )
+    return np.array([float(inv)], dtype=np.float32)
+
+
+def feat_membership_bits(toks: Sequence[str], key_set, n: int) -> np.ndarray:
+    """Length-n 0/1 indicator of key-letter positions (no letter identity)."""
+    out = np.zeros(n, dtype=np.float32)
+    for i, t in enumerate(toks[:n]):
+        if t in key_set:
+            out[i] = 1.0
+    return out
+
+
+def feat_letter_onehot(toks: Sequence[str], n: int) -> np.ndarray:
+    """Flattened n x 26 one-hot encoding of the raw token sequence."""
+    out = np.zeros((n, 26), dtype=np.float32)
+    for i, t in enumerate(toks[:n]):
+        if len(t) == 1:
+            a = ord(t) - ord("A")
+            if 0 <= a < 26:
+                out[i, a] = 1.0
+    return out.reshape(-1)
+
+
+def kip_oracle_label(toks: Sequence[str], kappa: Dict[str, int]) -> int:
+    """Closed-form label from the precedence bits: Y = 1 iff inv(pi) is even.
+
+    inv(pi) = C(m,2) - sum(precedence bits), so this is exactly the parity of
+    that difference -- no training involved.
+    """
+    m = len(kappa)
+    bits = feat_kip_precedence_bits(toks, kappa)
+    inv = int(round(m * (m - 1) / 2 - float(bits.sum())))
+    return int(inv % 2 == 0)
