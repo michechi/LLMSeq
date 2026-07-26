@@ -92,7 +92,7 @@ python3 -u -m src.experiments.LLM_fraction_experiment \
     --patience 3 \
     --lr 2e-5 \
     --seed "$SEED" \
-    --fractions 1.0
+    --fractions 0.3
     # NO --peft (that is the experiment), NO --use_quantization
 
 # Preserve the full training log (per-epoch metrics; merged stdout+stderr).
