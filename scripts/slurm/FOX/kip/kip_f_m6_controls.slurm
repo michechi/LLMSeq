@@ -16,12 +16,15 @@
 #   sbatch --export=ALL,KIP_MODEL=LSTM        kip_f_m6_controls.slurm
 #   sbatch --export=ALL,KIP_MODEL=Transformer kip_f_m6_controls.slurm
 #   sbatch --export=ALL,KIP_MODEL=BERT        kip_f_m6_controls.slurm
+#   sbatch --export=ALL,KIP_MODEL=Llama1B     kip_f_m6_controls.slurm  # needs HF token
 #
 # Mode (c) tasks fail fast (FileNotFoundError) if the mode-(a) checkpoint for
-# that (model, seed) is not in $CKPT_ROOT -- run kip_d/e1/e2 first, and keep
+# that (model, seed) is not in $CKPT_ROOT -- run kip_d/e1/e2/h first, and keep
 # CKPT_ROOT identical between the runs (default: $REPO_ROOT/checkpoints/kip).
 # BERT runs at max_length 64, checkpoint-consistent with kip_e2; DL runs at
-# patience 5 (site convention).
+# patience 5 (site convention); Llama1B runs the Block-D as-run recipe
+# (max_length 50, bs 64), checkpoint-consistent with kip_h, and needs the
+# gated-model HF token (env or cached huggingface-cli login; never logged).
 #
 #SBATCH --job-name=kip_f_m6_ctrl
 #SBATCH --account=ec12
@@ -65,7 +68,15 @@ mkdir -p "$HF_HOME" "$CKPT_ROOT" "$CURVES_DIR"
 KIP_MODEL="${KIP_MODEL:-LSTM}"
 case "$KIP_MODEL" in
     LSTM|Transformer|BERT) ;;
-    *) echo "ERROR: KIP_MODEL must be LSTM, Transformer or BERT (got '$KIP_MODEL')"; exit 2 ;;
+    Llama1B)
+        # Gated model: token from env or cached login; never echoed or logged.
+        if [ -z "${HF_TOKEN:-}" ] && [ -f "$HOME/.cache/huggingface/token" ]; then
+            export HF_TOKEN="$(cat "$HOME/.cache/huggingface/token")"
+        fi
+        : "${HF_TOKEN:?ERROR: meta-llama is gated -- export HF_TOKEN before sbatch, or huggingface-cli login first}"
+        echo "HF token present (not shown)."
+        ;;
+    *) echo "ERROR: KIP_MODEL must be LSTM, Transformer, BERT or Llama1B (got '$KIP_MODEL')"; exit 2 ;;
 esac
 TAG=kip_m6
 MODES=(shuffled_train shuffled_eval)
@@ -82,6 +93,8 @@ SEED=${SEEDS[$(( SLURM_ARRAY_TASK_ID % N_SEEDS ))]}
 
 if [ "$KIP_MODEL" = "BERT" ]; then
     EXTRA_FLAGS=(--bert_max_length 64)
+elif [ "$KIP_MODEL" = "Llama1B" ]; then
+    EXTRA_FLAGS=(--llm_max_length 50 --llm_batch_size 64)
 else
     EXTRA_FLAGS=(--dl_patience 5)
 fi

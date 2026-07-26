@@ -35,6 +35,7 @@ exporting `REPO_ROOT` before `sbatch`; every script honors it).
 | 6 | `kip_e2_bert_m6.slurm` | BERT m6 ordered, seeds 9550–9552, max_len 64 | 0–2 | 8 h | unknown |
 | later | `kip_f_m6_controls.slurm` | modes (b)+(c) on any m6 family that converged | 0–5 | 8 h | chance (control) |
 | optional | `kip_g_llama_m4.slurm` | Llama-3.2-1B LoRA m4 ordered, seeds 9551+9552 | 0–1 | 8 h | likely chance (local seed 9550 flat at ~0.503) — **needs HF token**, see below |
+| optional | `kip_h_llama_m6.slurm` | Llama-3.2-1B LoRA m6 ordered, seeds 9550–9552 | 0–2 | 8 h | unknown (completes per-model m6 coverage) — **needs HF token**, see below |
 
 Seed note for kip_c: the task list said "seeds 2–3", read as the 2nd and 3rd
 canonical seeds (9551, 9552) — 9550 already ran locally. Edit `SEEDS` in the
@@ -209,22 +210,27 @@ must live in the ordering. Mode (c) reuses the mode-(a) checkpoint saved by
 kip_d/e1/e2 in `$REPO_ROOT/checkpoints/kip/` (`FileNotFoundError` = mode (a)
 didn't run here, or CKPT_ROOT changed between runs).
 
-## 7b. Optional: Llama seeds (kip_g)
+## 7b. Optional: Llama arms (kip_g, kip_h)
 
-Completes the Llama m4 triplet (seed 9550 runs locally as Block D).
-`meta-llama/Llama-3.2-1B` is **gated** — this is the one job that needs your
-HF credentials. Either have a cached `huggingface-cli login` (the script
-falls back to `~/.cache/huggingface/token`) or export the token in the shell
-you submit from; it is never echoed or logged:
+kip_g completes the Llama m4 triplet (seed 9550 runs locally as Block D);
+kip_h adds the Llama m6 triplet (seeds 9550–9552), completing per-model m6
+coverage. `meta-llama/Llama-3.2-1B` is **gated** — these are the only KIP
+jobs that need your HF credentials. Either have a cached `huggingface-cli
+login` (the scripts fall back to `~/.cache/huggingface/token`) or export the
+token in the shell you submit from; it is never echoed or logged:
 
 ```bash
 cd $HOME/MIMICIV/scripts/slurm/FOX/kip
 export HF_TOKEN=<your token>        # skip if huggingface-cli login was done
 sbatch kip_g_llama_m4.slurm
+sbatch kip_h_llama_m6.slurm
 ```
 
 ~2.5 GB model download per task unless `KIP_HF_CACHE` is set (step 4);
 ~7–10 min/epoch expected on H200, 20-epoch cap, patience 3 on val loss.
+If Llama m6 converges, its modes (b)/(c) run via
+`sbatch --export=ALL,KIP_MODEL=Llama1B kip_f_m6_controls.slurm` (also needs
+the token; checkpoint-consistent with kip_h).
 
 ## 8. Commit results back to the branch
 
