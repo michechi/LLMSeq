@@ -5,12 +5,18 @@ FOX (Educloud, SLURM). No outside context needed: task background is in
 `/HANDOFF.md` (repo root) and `repro/src/analysis/mechanism_id/kip_report.md`;
 this file is the exact command sequence.
 
-FOX runs everything from the NLPL module stack (transformers 4.47.1 — the
-same version the paper's cluster runs used); there are no containers. All
-jobs request `--partition=accel --gpus=nvidia_h200_nvl:1` (H200 NVL, per
-2026-07-26 site instruction). If sbatch rejects that gres type, check the
-available types with `sinfo -o "%P %G"`; the older templates in
-`scripts/slurm/FOX/` used `--gpus=a100:1`.
+FOX runs everything from the NLPL **2024a** module stack (torch 2.6.0 +
+cuda 12.6, python 3.12.3, transformers 4.55.4); there are no containers.
+Do NOT use the older 2022b stack (transformers 4.47.1, torch 2.1.2 +
+cuda 12.0): it predates the H200 nodes and crashes on them with
+`CUDA error: no kernel image is available` (verified 2026-07-26).
+transformers 4.55.4 vs the paper's 4.47.1 is a recorded, accepted deviation;
+the LSTM/Transformer runs are pure torch and unaffected.
+
+All jobs request `--partition=accel --gpus=nvidia_h200_nvl:1` (H200 NVL, per
+2026-07-26 site instruction; `sinfo` shows 6 of them in accel). Fallbacks in
+accel per `sinfo -o "%P %G"`: `a100`/`a100_80` (work with either stack),
+`h100nv` (sm_90 — also needs the 2024a stack).
 
 Everything below assumes the FOX checkout at `$HOME/MIMICIV` (override by
 exporting `REPO_ROOT` before `sbatch`; every script honors it).
@@ -60,11 +66,18 @@ tracked and must be built here.
 ```bash
 module purge
 module use -a /fp/projects01/ec30/software/easybuild/modules/all/
-module load nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8
-module load nlpl-llmtools/06-foss-2022b-Python-3.10.8
-module load nlpl-datasets/3.2.0-foss-2022b-Python-3.10.8
-module load nlpl-nlptools/04-foss-2022b-Python-3.10.8
-module load nlpl-scikit-bundle/1.3.2-foss-2022b-Python-3.10.8
+module load nlpl-pytorch/2.6.0-foss-2024a-cuda-12.6.0-Python-3.12.3
+module load nlpl-transformers/4.55.4-foss-2024a-Python-3.12.3
+module load nlpl-llmtools/01-foss-2024a-Python-3.12.3
+module load nlpl-datasets/3.6.0-foss-2024a-Python-3.12.3
+module load nlpl-nlptools/01-foss-2024a-Python-3.12.3
+module load nlpl-scikit-bundle/1.6.1-foss-2024a-Python-3.12.3
+module load nlpl-bitsandbytes/0.46.1-foss-2024a-Python-3.12.3
+
+# quick import check before anything else (catches a missing package in the
+# stack in seconds instead of a failed job):
+python3 -c "import torch, transformers, peft, sklearn, pandas; \
+print(torch.__version__, transformers.__version__, peft.__version__)"
 
 cd $HOME/MIMICIV/repro
 export DATA_DIR=$HOME/MIMICIV/data
@@ -214,6 +227,11 @@ tolerates it either way).
 
 ## Troubleshooting
 
+- **`CUDA error: no kernel image is available for execution on the device`**:
+  the job ran with the 2022b module stack (torch 2.1.2 + cuda 12.0, built
+  before the H200s, no sm_90 kernels). Use the 2024a module block exactly as
+  in the scripts; or switch the `#SBATCH` GPU line to `--gpus=a100_80:1`
+  (A100s accept either stack; `h100nv` needs 2024a like the H200).
 - **sbatch rejects `--gpus=nvidia_h200_nvl:1`**: list valid gres types with
   `sinfo -o "%P %G"` and adjust the type name; the older FOX templates used
   `--gpus=a100:1` and every KIP job fits an A100-40GB.

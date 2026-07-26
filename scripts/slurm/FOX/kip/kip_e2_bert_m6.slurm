@@ -31,12 +31,17 @@ set -o nounset
 # ============== MODULES ==============
 module purge
 module use -a /fp/projects01/ec30/software/easybuild/modules/all/
-module load nlpl-transformers/4.47.1-foss-2022b-Python-3.10.8
-module load nlpl-llmtools/06-foss-2022b-Python-3.10.8
-module load nlpl-datasets/3.2.0-foss-2022b-Python-3.10.8
-module load nlpl-nlptools/04-foss-2022b-Python-3.10.8
-module load nlpl-scikit-bundle/1.3.2-foss-2022b-Python-3.10.8
-module load nlpl-bitsandbytes/0.42.0-foss-2022b-Python-3.10.8
+# 2024a stack: torch 2.6.0 + cuda 12.6 has H200 (sm_90) kernels. The 2022b
+# stack (torch 2.1.2 + cuda 12.0) predates the H200 nodes and dies with
+# "CUDA error: no kernel image is available" on them. transformers 4.55.4
+# instead of the paper's 4.47.1 is a recorded, accepted deviation.
+module load nlpl-pytorch/2.6.0-foss-2024a-cuda-12.6.0-Python-3.12.3
+module load nlpl-transformers/4.55.4-foss-2024a-Python-3.12.3
+module load nlpl-llmtools/01-foss-2024a-Python-3.12.3
+module load nlpl-datasets/3.6.0-foss-2024a-Python-3.12.3
+module load nlpl-nlptools/01-foss-2024a-Python-3.12.3
+module load nlpl-scikit-bundle/1.6.1-foss-2024a-Python-3.12.3
+module load nlpl-bitsandbytes/0.46.1-foss-2024a-Python-3.12.3
 
 # ============== CONFIG ==============
 REPO_ROOT="${REPO_ROOT:-${HOME}/MIMICIV}"

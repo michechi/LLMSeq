@@ -120,8 +120,12 @@ instruction 2026-07-26). An equivalent Olivia package exists at
   Llama (Block D) needs HF_TOKEN in the tmux env — never echo/log it.
 - **FOX (Educloud, site=fox — the active cluster)**: SLURM account ec12,
   `--partition=accel --gpus=nvidia_h200_nvl:1`, no containers — the NLPL
-  module stack provides python 3.10 + transformers 4.47.1 + peft + sklearn
+  **2024a** module stack provides python 3.12 + torch 2.6.0/cu12.6 +
+  transformers 4.55.4 + peft + sklearn
   (`module use -a /fp/projects01/ec30/software/easybuild/modules/all/`).
+  The 2022b stack (transformers 4.47.1, torch 2.1.2/cu12.0) has no H200
+  kernels — "no kernel image" crash (2026-07-26); 4.55.4 vs the paper's
+  4.47.1 is a recorded, accepted deviation.
   Compute nodes have internet; bert-base-uncased downloads in-job, ungated,
   **no HF token needed or wanted**. Checkout at `$HOME/MIMICIV`; checkpoints
   in `$REPO_ROOT/checkpoints/kip/` (gitignored, ~4 GB for the BERT arms —
