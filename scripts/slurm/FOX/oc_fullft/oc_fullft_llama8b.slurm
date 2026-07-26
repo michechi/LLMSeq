@@ -29,7 +29,7 @@
 #
 #SBATCH --job-name=oc_fullft_8b
 #SBATCH --account=ec12
-#SBATCH --time=36:00:00
+#SBATCH --time=24:00:00
 #SBATCH --nodes=1
 #SBATCH --partition=accel --gpus=nvidia_h200_nvl:1
 #SBATCH --mem-per-gpu=80G
