@@ -111,9 +111,15 @@ instruction 2026-07-26). An equivalent Olivia package exists at
    each (BERT @64).
 6. `kip_f_m6_controls.slurm` — follow-up modes (b)/(c) per converged m6 family.
 7. `kip_g_llama_m4.slurm` (optional) — Llama-1B LoRA m4 (a), seeds 9551+9552,
-   completing the triplet with local Block D's seed 9550. The one FOX job
+   completing the triplet with local Block D's seed 9550. The one KIP FOX job
    needing HF credentials (gated model); token read from env or cached login,
    never logged.
+
+Separate rebuttal arm (NOT KIP): `scripts/slurm/FOX/oc_fullft/` — does the
+OC (tricky_rnd, tag 9) decoder conclusion survive FULL fine-tuning instead
+of LoRA? Llama-3.2-1B + Llama-3.1-8B, paper recipe verbatim minus --peft
+(8B also minus 4-bit), seed 8888, via LLM_fraction_experiment. Results into
+`results/oc_fullft/` (tracked). See the README there.
 
 ## Environments
 
