@@ -367,19 +367,23 @@ def llm_args(args, csv_dir: Path) -> argparse.Namespace:
     Python function argument, exactly as LLM_fraction_experiment.run_experiment
     does. It is never placed in argv, logs, results rows, or checkpoints.
     """
+    default_names = {"Llama1B": "meta-llama/Llama-3.2-1B",
+                     "Llama8B": "meta-llama/Llama-3.1-8B"}
+    model_name = args.llm_model_name or default_names[args.model]
     argv = [
         "--number_to_use", args.tag,
         "--path_csv", str(csv_dir) + "/",
-        "--model_name", args.llm_model_name,
-        "--peft",
+        "--model_name", model_name,
         "--epochs", "20",
         "--seed", str(args.seed),
         "--cache_dir", str(HF_CACHE),
         "--output_dir", str(REPO_ROOT / "results" / "kip_llm_raw"),
-        "--fractions", "1.0",
+        "--fractions", str(args.llm_fraction),
         "--max_length", str(args.llm_max_length),
         "--batch_size", str(args.llm_batch_size),
     ]
+    if not args.llm_full_ft:
+        argv.append("--peft")
     largs = lfx.parse_args(argv)
     if args.smoke:
         largs.epochs = 1
@@ -393,9 +397,11 @@ def run_llm(args) -> dict:
 
     csv_dir = data_dir_for(args.mode, args)
     largs = llm_args(args, csv_dir)
-    recipe = (f"LLM_fraction_experiment defaults + --peft: {largs.model_name} "
-              f"LoRA(r=8,a=16,qkvo,drop=.1,CAUSAL_LM) AdamW lr={largs.lr} "
-              f"bs={largs.batch_size} max_len={largs.max_length} "
+    ft_desc = ("FULL fine-tuning (no LoRA)" if args.llm_full_ft
+               else "LoRA(r=8,a=16,qkvo,drop=.1,CAUSAL_LM)")
+    recipe = (f"LLM_fraction_experiment: {largs.model_name} {ft_desc} "
+              f"AdamW lr={largs.lr} bs={largs.batch_size} "
+              f"max_len={largs.max_length} fraction={args.llm_fraction} "
               f"epochs<={largs.epochs} patience={largs.patience} "
               f"early={largs.early} warmup=6% bf16")
     logger.info("recipe: %s", recipe)
@@ -418,6 +424,12 @@ def run_llm(args) -> dict:
         X_train, y_train = _maybe_truncate(X_train, 2000), _maybe_truncate(y_train, 2000)
         X_val, y_val = _maybe_truncate(X_val, 1000), _maybe_truncate(y_val, 1000)
         X_test, y_test = _maybe_truncate(X_test, 1000), _maybe_truncate(y_test, 1000)
+    elif args.llm_fraction < 1.0:
+        # Same stratified subsample the fraction sweep uses (seeded, by Outcome).
+        X_train, y_train = lfx.subsample_training_data(
+            X_train, y_train, args.llm_fraction, args.seed)
+        logger.info("training subset after fraction %.2f: %d rows",
+                    args.llm_fraction, len(X_train))
 
     def _ds(X, y):
         texts = X.apply(lfx.standard_narrative_prompt, axis=1).tolist()
@@ -472,7 +484,8 @@ def run_llm(args) -> dict:
             "optimal_threshold": threshold, "val_f1_optimal": val_f1_opt,
             "val_auc": best_auc, "val_loss": best_val_loss,
             "epochs_done": epochs_done, "seed": args.seed, "mode": args.mode,
-            "tag": args.tag, "model_name": largs.model_name, "peft": True,
+            "tag": args.tag, "model_name": largs.model_name,
+            "peft": not args.llm_full_ft, "fraction": args.llm_fraction,
         }, indent=2) + "\n")
         logger.info("checkpoint saved: %s", ckpt_dir / "ckpt.pt")
         row = {"train_rows": len(X_train), "epochs_done": epochs_done,
@@ -495,7 +508,8 @@ def run_llm(args) -> dict:
 # --------------------------------------------------------------------------- #
 def parse_args(args: Iterable[str] | None = None) -> argparse.Namespace:
     p = argparse.ArgumentParser(description="KIP GPU training driver (one run)")
-    p.add_argument("--model", required=True, choices=list(DL_MODELS) + ["BERT", "Llama1B"])
+    p.add_argument("--model", required=True,
+                   choices=list(DL_MODELS) + ["BERT", "Llama1B", "Llama8B"])
     p.add_argument("--tag", required=True, choices=["kip_m4", "kip_m6"])
     p.add_argument("--mode", required=True, choices=list(MODES))
     p.add_argument("--seed", type=int, required=True)
@@ -505,9 +519,17 @@ def parse_args(args: Iterable[str] | None = None) -> argparse.Namespace:
     p.add_argument("--results_csv", type=Path, default=RESULTS_CSV)
     p.add_argument("--smoke", action="store_true",
                    help="2K train rows, 1 epoch, separate smoke results file")
-    p.add_argument("--llm_model_name", type=str, default="meta-llama/Llama-3.2-1B",
-                   help="Decoder model for --model Llama1B. Smoke tests may pass an "
-                        "ungated stand-in (e.g. HuggingFaceTB/SmolLM2-135M).")
+    p.add_argument("--llm_model_name", type=str, default=None,
+                   help="Decoder model override. Default resolves per --model: "
+                        "Llama1B -> meta-llama/Llama-3.2-1B, "
+                        "Llama8B -> meta-llama/Llama-3.1-8B. Smoke tests may pass "
+                        "an ungated stand-in (e.g. HuggingFaceTB/SmolLM2-135M).")
+    p.add_argument("--llm_full_ft", action="store_true",
+                   help="FULL fine-tuning: omit --peft so every parameter trains. "
+                        "Recorded deviation from the paper's LoRA recipe.")
+    p.add_argument("--llm_fraction", type=float, default=1.0,
+                   help="Stratified training-data fraction for the decoder run "
+                        "(0.3 = 120K rows), via lfx.subsample_training_data.")
     p.add_argument("--llm_max_length", type=int, default=512,
                    help="Decoder pad/truncate length. 512 = script default; smaller "
                         "values are a recorded deviation.")
@@ -554,7 +576,7 @@ def main(argv: Iterable[str] | None = None) -> int:
 
     if args.model == "BERT":
         run_fn = run_bert
-    elif args.model == "Llama1B":
+    elif args.model in ("Llama1B", "Llama8B"):
         run_fn = run_llm
     else:
         run_fn = run_dl
