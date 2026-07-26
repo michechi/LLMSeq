@@ -15,9 +15,12 @@
 # states + activations (bs 64 x 50 tokens) ~= 80-90 GB on-GPU -> fits the
 # H200 NVL (141 GB) without gradient checkpointing.
 #
-# Wall time: ~1-1.5 h/epoch expected -> 20-epoch cap ~24-30 h; patience 3
-# usually stops far earlier. If sbatch rejects 36 h, check the partition
-# limit (scontrol show partition accel | grep -i maxtime) and lower --time.
+# Wall time: FOX site limit is 24 h. At the expected ~1-1.5 h/epoch on H200
+# that covers ~16-24 epochs; patience 3 on val loss typically stops near 10.
+# CAVEAT: the paper pipeline has no mid-run checkpointing — a run killed at
+# the wall is lost and restarts from scratch on resubmit. If a seed dies at
+# the wall twice, tell the assistant; options then are a recorded deviation
+# (e.g. --epochs 15) rather than silently losing compute.
 #
 # TOKEN: meta-llama is gated. Export HF_TOKEN before sbatch or have a cached
 # `huggingface-cli login`. Never echoed or logged. ~16 GB model download on
