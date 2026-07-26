@@ -24,6 +24,14 @@ Attention_Llama/
 # global *.json rule above would drop the sidecar and the data would ship with no
 # way to decode its labels.
 !data/simulation/tested/*_rule.json
+
+# KIP GPU-training artifacts: checkpoints and per-run logs are large and
+# machine-local; the shuffled control data is deterministically regenerable via
+# `python -m src.data.kip_shuffles` (seed recorded in its shuffle_manifest.json).
+# The aggregated results/kip_training.csv IS tracked.
+checkpoints/
+logs/kip/
+data/simulation/kip_shuffled/
 !data/processed/mimic_training/*.csv
 !data/processed/mimic_training/*.json
 !results/sensitivity/*.csv
