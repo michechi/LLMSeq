@@ -258,14 +258,23 @@ varies.
   machine/library independent. One shuffle per user per variant×seed, saved
   to disk; EVERY downstream consumer reads the SAME files. Never re-shuffle
   per consumer.
-- **CONSUMER CONTRACT (load-bearing)**: files are stable-sorted by
-  (user_id, timestamp); sequence order within equal timestamps = file row
-  order. Group consecutive rows per user; do NOT re-sort by timestamp alone
-  and do NOT feed these files through [25]'s unmodified `LMDataset` (it uses
-  an unstable single-key sort; 30Music has tied timestamps — manifest records
-  the exposure: 4,095 test users have ties, 95 could see a different window
-  multiset and 58 a different last-window item ONLY under a
-  contract-violating loader).
+- **CONSUMER CONTRACT (load-bearing, ENFORCED IN CODE)**: files are
+  stable-sorted by (user_id, timestamp); sequence order within equal
+  timestamps = file row order. Group consecutive rows per user; do NOT
+  re-sort by timestamp alone and do NOT feed these files through [25]'s
+  unmodified `LMDataset` (it uses an unstable single-key sort; 30Music has
+  tied timestamps — manifest records the exposure: 4,095 test users have
+  ties, 95 could see a different window multiset and 58 a different
+  last-window item ONLY under a contract-violating loader).
+  **Enforcement**: the grid harness MUST obtain eval sequences via
+  `src.recsys.eval_loader.load_eval_input(variant_csv, audit_dir)` — on every
+  load it validates file structure (contiguous user blocks, non-decreasing
+  timestamps) and re-verifies, per user, window-multiset equality vs
+  `ordered_windows_30Music.csv`, target equality vs `targets_30Music.csv`,
+  and the variant-specific invariant (keep_last / early_half / ordered),
+  raising `AuditContractViolation` on any mismatch. Negative-tested against
+  corrupted targets, cross-user item swaps (invisible to global-multiset
+  checks), and timestamp-only re-sorts — all fail loudly.
 - Verification baked into the build (on the SHIPPED bytes): targets
   byte-identical across ordered + all 9 variants, non-window rows untouched,
   per-user window multiset preserved → `target_identity_check: PASS`.
@@ -322,7 +331,8 @@ flag if RecBole-SASRec ordered HR@10 deviates from the anchor's 0.197 by >2×).
 
 **Eval inputs per model/baseline** (10 each): ordered (`test_30Music.csv`,
 window = last 128 minus target) + 3 variants × 3 shuffle seeds from `audit/`.
-Consume files under the CONSUMER CONTRACT above.
+Consume files via `src.recsys.eval_loader.load_eval_input` (contract
+enforcement built in — see above); never read variant CSVs directly.
 
 **Optional final block** (protocol uniformity with synthetic mode (b);
 precedent in [25]'s extended journal version): GRU4Rec shuffled-train —
@@ -348,13 +358,20 @@ Jaccard/CIs can be recomputed offline.
 1. Environment: NLPL 2024a stack (see KIP section: `module use -a
    /fp/projects01/ec30/software/easybuild/modules/all/`; python 3.12 + torch
    2.6.0/cu12.6) + `pip install --user recbole` (MIT; no HF token needed).
-2. Pull branch `Rebuttals_NeurIPS`; rsync data (below); verify:
+2. Pull branch `Rebuttals_NeurIPS`; rsync data (below); verify bytes AND
+   contract (both must pass before any training):
        cd $REPO_ROOT/data/recsys/30music/audit && sha256sum -c audit_files.sha256
        cd ../split && sha256sum -c split_files.sha256
-3. Feed sequences per the CONSUMER CONTRACT (group consecutive rows per
-   user; if converting to RecBole atomic files, derive a per-user position
-   column from file row order and use IT as the time field — do not let
-   RecBole re-sort tied timestamps).
+       cd $REPO_ROOT/repro && python -m src.recsys.eval_loader \
+         --audit-dir $REPO_ROOT/data/recsys/30music/audit \
+         --split-dir $REPO_ROOT/data/recsys/30music/split --check-all
+3. Feed sequences per the CONSUMER CONTRACT — in practice: EVAL sequences
+   come from `src.recsys.eval_loader.load_eval_input` ONLY (it re-verifies
+   the invariants on every load and raises on violation). For TRAINING files
+   (ordered or mode-(b)), group consecutive rows per user; if converting to
+   RecBole atomic files, derive a per-user position column from file row
+   order and use IT as the time field — do not let RecBole re-sort tied
+   timestamps.
 4. Grid: 3 models × 3 seeds training (`--partition=accel
    --gpus=nvidia_h200_nvl:1`, account ec12), then 10 evals per model from
    saved checkpoints; baselines on CPU. Optional GRU4Rec shuffled-train last.
