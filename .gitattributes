@@ -1,0 +1,5 @@
+# Cross-site results CSVs are append-only: rows are added concurrently on the
+# local A100 box and on Olivia. Union merge keeps both row sets instead of
+# conflicting (each row is one line; the header is identical on both sides).
+results/kip_training.csv merge=union
+results/kip_training_p5.csv merge=union

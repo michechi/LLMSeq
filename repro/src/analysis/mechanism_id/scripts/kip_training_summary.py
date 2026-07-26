@@ -1,4 +1,9 @@
-"""Summarize results/kip_training.csv: AUC mean +/- std per (model, dataset, mode).
+"""Summarize results/kip_training.csv: AUC mean +/- std per
+(model, dataset, mode, site, patience).
+
+Site and patience are part of the grouping so cross-site rows (site column,
+2026-07-26 schema) and recipe variants (patience 3 as-run vs patience 5 paper
+recipe) never blend into one cell or double-count a seed.
 
 Emits a markdown table extending the KIP cross-task picture, keeping the two
 reference lines from the audit/reveal work:
@@ -17,6 +22,7 @@ from __future__ import annotations
 
 import argparse
 import logging
+import os
 from pathlib import Path
 from typing import Iterable
 
@@ -25,7 +31,8 @@ import pandas as pd
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s: %(message)s")
 
-RESULTS_CSV = Path("/root/LLMSeq/results/kip_training.csv")
+RESULTS_CSV = (Path(os.environ.get("LLMSEQ_ROOT", "/root/LLMSeq"))
+               / "results" / "kip_training.csv")
 
 MODE_LABEL = {
     "ordered": "(a) ordered/ordered",
@@ -42,14 +49,25 @@ REFERENCE_ROWS = [
 
 
 def summarize(df: pd.DataFrame, wallclock: bool) -> str:
+    # Union merges of the cross-site CSV can leave stray duplicate header
+    # lines inside the file; drop them before any numeric parsing.
+    df = df[df["timestamp"].astype(str) != "timestamp"]
     df = df[df["smoke"].astype(str).str.lower() != "true"].copy()
     if df.empty:
         return "(no non-smoke rows yet)"
     df["test_auc"] = pd.to_numeric(df["test_auc"])
     df["test_f1"] = pd.to_numeric(df["test_f1"])
     df["wallclock_s"] = pd.to_numeric(df["wallclock_s"])
+    df["epochs_done"] = pd.to_numeric(df["epochs_done"])
+    # Rows written before the 2026-07-26 schema migration lack the site
+    # column (NaN after read); they are all local rows.
+    if "site" not in df.columns:
+        df["site"] = "local"
+    df["site"] = df["site"].fillna("local")
+    df["patience"] = (df["recipe"].astype(str)
+                      .str.extract(r"patience=(\d+)")[0].fillna("?"))
 
-    g = (df.groupby(["model", "dataset", "mode"])
+    g = (df.groupby(["model", "dataset", "mode", "site", "patience"])
            .agg(auc_mean=("test_auc", "mean"), auc_std=("test_auc", "std"),
                 f1_mean=("test_f1", "mean"),
                 n_seeds=("seed", "nunique"),
@@ -58,13 +76,15 @@ def summarize(df: pd.DataFrame, wallclock: bool) -> str:
            .reset_index())
     g["auc_std"] = g["auc_std"].fillna(0.0)
 
-    header = ["model", "dataset", "mode", "AUC mean +/- std", "F1 mean", "seeds"]
+    header = ["model", "dataset", "mode", "site", "patience",
+              "AUC mean +/- std", "F1 mean", "seeds"]
     if wallclock:
         header += ["mean wall-clock", "mean epochs"]
     lines = ["| " + " | ".join(header) + " |",
              "|" + "|".join("---" for _ in header) + "|"]
-    for _, r in g.sort_values(["dataset", "model", "mode"]).iterrows():
+    for _, r in g.sort_values(["dataset", "model", "mode", "site", "patience"]).iterrows():
         row = [r["model"], r["dataset"], MODE_LABEL.get(r["mode"], r["mode"]),
+               r["site"], r["patience"],
                f"{r['auc_mean']:.4f} +/- {r['auc_std']:.4f}",
                f"{r['f1_mean']:.4f}", str(int(r["n_seeds"]))]
         if wallclock:
@@ -73,7 +93,7 @@ def summarize(df: pd.DataFrame, wallclock: bool) -> str:
         lines.append("| " + " | ".join(row) + " |")
 
     for name, ds, mode, auc in REFERENCE_ROWS:
-        row = [f"*{name}*", ds, mode, auc, "--", "--"]
+        row = [f"*{name}*", ds, mode, "--", "--", auc, "--", "--"]
         if wallclock:
             row += ["--", "--"]
         lines.append("| " + " | ".join(row) + " |")

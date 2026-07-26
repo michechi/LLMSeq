@@ -71,7 +71,7 @@ from src.experiments import LLM_fraction_experiment as lfx
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s: %(message)s")
 
-REPO_ROOT = Path("/root/LLMSeq")
+REPO_ROOT = Path(os.environ.get("LLMSEQ_ROOT", "/root/LLMSeq"))
 ORDERED_CSV = REPO_ROOT / "data" / "simulation" / "tested"
 SHUFFLED_CSV = REPO_ROOT / "data" / "simulation" / "kip_shuffled"
 CHECKPOINT_ROOT = REPO_ROOT / "checkpoints" / "kip"
@@ -85,7 +85,22 @@ RESULT_COLUMNS = [
     "timestamp", "model", "dataset", "mode", "seed", "train_rows", "epochs_done",
     "val_auc", "val_f1", "test_auc", "test_f1", "test_precision", "test_recall",
     "threshold", "n_params", "recipe", "wallclock_s", "checkpoint", "smoke",
+    "site", "host", "gpu", "slurm_job_id",
 ]
+
+
+def provenance() -> dict:
+    """host / GPU / SLURM id for the results row (site comes from --site)."""
+    array_job = os.environ.get("SLURM_ARRAY_JOB_ID")
+    if array_job:
+        slurm_id = f"{array_job}_{os.environ.get('SLURM_ARRAY_TASK_ID', '?')}"
+    else:
+        slurm_id = os.environ.get("SLURM_JOB_ID", "")
+    return {
+        "host": os.uname().nodename,
+        "gpu": torch.cuda.get_device_name(0) if torch.cuda.is_available() else "cpu",
+        "slurm_job_id": slurm_id,
+    }
 
 
 def append_result(row: dict, results_csv: Path) -> None:
@@ -94,7 +109,10 @@ def append_result(row: dict, results_csv: Path) -> None:
     with open(results_csv, "a") as f:
         fcntl.flock(f, fcntl.LOCK_EX)
         try:
-            write_header = f.tell() == 0
+            # fstat, not tell(): an O_APPEND handle opened before another
+            # process's first write still reports position 0, so concurrent
+            # first writers would each emit a header row.
+            write_header = os.fstat(f.fileno()).st_size == 0
             f.write(line.to_csv(index=False, header=write_header))
             f.flush()
             os.fsync(f.fileno())
@@ -179,7 +197,7 @@ def run_dl(args) -> dict:
                                   shuffle=True, collate_fn=dlx.collate_fn, num_workers=0)
         model = dlx.create_model(args.model, config)
         n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-        (model, best_val_f1, best_val_auc, _p, _r, epochs_done, _h) = \
+        (model, best_val_f1, best_val_auc, _p, _r, epochs_done, history) = \
             dlx.train_model_with_early_stopping(
                 model, train_loader, val_loader,
                 num_epochs=epochs, lr=lr, patience=patience, device=device,
@@ -192,6 +210,8 @@ def run_dl(args) -> dict:
                     "model": args.model, "seed": args.seed, "mode": args.mode,
                     "tag": args.tag, "lr": lr}, ckpt_dir / "ckpt.pt")
         logger.info("checkpoint saved: %s", ckpt_dir / "ckpt.pt")
+        (ckpt_dir / "curve.json").write_text(json.dumps(history, indent=2) + "\n")
+        logger.info("per-epoch val curve saved: %s", ckpt_dir / "curve.json")
         row = {
             "train_rows": len(tr_s), "epochs_done": epochs_done,
             "val_auc": best_val_auc, "val_f1": best_val_f1,
@@ -498,10 +518,17 @@ def parse_args(args: Iterable[str] | None = None) -> argparse.Namespace:
                         "smaller values are a recorded deviation (see bert_args).")
     p.add_argument("--dl_patience", type=int, default=3,
                    help="DL early-stopping patience. 3 = as-run default (every "
-                        "committed invocation); 5 = the paper appendix value. "
-                        "When overriding, also point --results_csv and "
-                        "--checkpoint_root elsewhere so variant rows and "
-                        "checkpoints never mix with the as-run results.")
+                        "committed local invocation); 5 = the paper appendix "
+                        "value and the going-forward/cross-site convention. "
+                        "When mixing patience values within one site's as-run "
+                        "block, point --results_csv and --checkpoint_root "
+                        "elsewhere (as done for results/kip_training_p5.csv); "
+                        "cluster runs write to the main CSV, where the recipe "
+                        "and site columns keep variants distinguishable.")
+    p.add_argument("--site", type=str, default="local",
+                   help="Provenance tag written to the results row (e.g. "
+                        "olivia). host, gpu and SLURM job id are captured "
+                        "automatically.")
     return p.parse_args(list(args) if args is not None else None)
 
 
@@ -513,7 +540,7 @@ def main(argv: Iterable[str] | None = None) -> int:
     # runner's remaining queue after a mid-block plan change, without touching
     # the run currently on the GPU (its python process already loaded this
     # module and never re-reads it).
-    skip_sentinel = Path("/root/LLMSeq/logs/kip/SKIP_BLOCKB_QUEUE")
+    skip_sentinel = REPO_ROOT / "logs" / "kip" / "SKIP_BLOCKB_QUEUE"
     if skip_sentinel.exists():
         logger.info("skip sentinel %s present -- exiting without running "
                     "(%s %s %s seed=%d)", skip_sentinel, args.model, args.tag,
@@ -536,6 +563,7 @@ def main(argv: Iterable[str] | None = None) -> int:
         "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "model": args.model, "dataset": args.tag, "mode": args.mode,
         "seed": args.seed, "smoke": args.smoke,
+        "site": args.site, **provenance(),
     })
     append_result(row, args.results_csv)
     logger.info("DONE %s %s %s seed=%d: test_auc=%.4f test_f1=%.4f (%.1fs)",
