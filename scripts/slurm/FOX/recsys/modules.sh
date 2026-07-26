@@ -10,3 +10,8 @@ export REPO_ROOT="${REPO_ROOT:-$HOME/MIMICIV}"
 export KIP_SITE=fox
 export DATA30="$REPO_ROOT/data/recsys/30music"
 cd "$REPO_ROOT/repro"
+
+# NOTE tensorboard: deliberately NOT loaded and NOT installed. No
+# 2024a-toolchain module exists (only 3.9/3.10 builds — mixing toolchains
+# breaks worse), and src/recsys/recbole_grid.py stubs
+# torch.utils.tensorboard when the package is absent.

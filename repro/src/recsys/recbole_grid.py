@@ -21,6 +21,29 @@ import random
 import numpy as np
 import torch
 
+# recbole imports torch.utils.tensorboard.SummaryWriter at package-import
+# time, but this harness never uses recbole's Trainer/logger. FOX's 2024a
+# stack has no compatible tensorboard (only 3.9/3.10-toolchain modules, and
+# nothing further may be pip-installed there), so when the package is absent
+# we pre-register a stub that satisfies the import and raises only if
+# something actually tries to WRITE tensorboard logs.
+try:
+    import torch.utils.tensorboard  # noqa: F401  (works where tb exists)
+except (ImportError, ModuleNotFoundError):
+    import sys
+    import types
+
+    class _TensorboardStubbedOut:
+        def __init__(self, *args, **kwargs):
+            raise RuntimeError(
+                "tensorboard is stubbed out in this environment; the recsys "
+                "grid never writes tensorboard logs")
+
+    _stub = types.ModuleType("torch.utils.tensorboard")
+    _stub.SummaryWriter = _TensorboardStubbedOut
+    _stub.FileWriter = _TensorboardStubbedOut
+    sys.modules["torch.utils.tensorboard"] = _stub
+
 MAX_LEN = 128
 PAD = 0
 
