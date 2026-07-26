@@ -110,6 +110,10 @@ instruction 2026-07-26). An equivalent Olivia package exists at
 5. `kip_e1_transformer_m6.slurm` + `kip_e2_bert_m6.slurm` — m6 (a), 3 seeds
    each (BERT @64).
 6. `kip_f_m6_controls.slurm` — follow-up modes (b)/(c) per converged m6 family.
+7. `kip_g_llama_m4.slurm` (optional) — Llama-1B LoRA m4 (a), seeds 9551+9552,
+   completing the triplet with local Block D's seed 9550. The one FOX job
+   needing HF credentials (gated model); token read from env or cached login,
+   never logged.
 
 ## Environments
 
