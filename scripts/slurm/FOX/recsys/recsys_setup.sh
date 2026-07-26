@@ -19,6 +19,12 @@ rm -rf "$HOME"/.local/lib/python3.12/site-packages/tensorboard \
 
 pip install --user --no-deps \
   recbole==1.2.1 colorlog colorama thop tabulate texttable
+
+# tensorboard: NOT installed at all. FOX has no 2024a-toolchain tensorboard
+# module (only 3.9/3.10 builds — loading them would mix toolchains) and no
+# further user-site installs are wanted. recbole only touches tensorboard
+# via torch.utils.tensorboard.SummaryWriter, which src/recsys/recbole_grid.py
+# stubs out when the package is absent (the grid never writes tb logs).
 python - <<'PY'
 import pandas, sklearn, numpy, torch, recbole
 assert recbole.__version__ == "1.2.1", recbole.__version__
