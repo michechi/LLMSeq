@@ -312,9 +312,13 @@ validation, training seeds **{17, 32, 45}**:
 
 Shared training protocol: max 100 epochs, early stop patience 5 on val
 NDCG@10, full-catalog eval, NO seen-item filtering (matches [25]
-`filter_seen: False`). Batch size: largest of {4, 16, 64} that fits and is
-stable — RECORD the value used ([25] used 4 for 30Music; batch is a compute
-detail, everything protocol-critical is pinned above). Document per model:
+`filter_seen: False`). Training objective = RecBole-standard (prefix
+augmentation; CE at last position for SASRec/GRU4Rec; BERT4Rec cloze with
+mask_ratio 0.2 + ft_ratio 0.5 mask-last batches, replicated from
+recbole==1.2.1 PINNED). Batch size is a recorded compute detail
+(training.csv column): 2048 for SASRec/GRU4Rec, 256 for BERT4Rec (its cloze
+CE logits are [B, 25, 839100] — B=2048 would need >170 GB and OOM an H200;
+measured ~61 GiB peak at B=256). Document per model:
 config dump + any equivalence checks (RecBole implementations are
 scale-matched, not bit-identical, to [25]'s — the anchor bridges protocols;
 flag if RecBole-SASRec ordered HR@10 deviates from the anchor's 0.197 by >2×).
