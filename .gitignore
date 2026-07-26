@@ -107,3 +107,8 @@ mimic_analysis/data/dfci_models/
 
 # RecSys audit raw/derived data (rebuilt deterministically; only code + manifest are tracked)
 data/recsys/
+
+# RecSys audit: tracked manifests + compact anchor artifacts (global *.json/*.log/*.gz rules above would drop them)
+!scripts/recsys/*.json
+!results/recsys_audit/
+!results/recsys_audit/**

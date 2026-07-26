@@ -1,0 +1,69 @@
+{
+  "dataset": "30Music",
+  "source": "ThirtyMusic.tar.gz (Politecnico di Milano ReMAP lab SharePoint), relations/events.idomaar -> 30M.csv via src.recsys.convert_30music",
+  "raw_30M_csv_sha256": "1da11812df0f2abd7f09d06123a7c703c68561ba24660f36014ecffa9eae7052",
+  "raw_convert_meta": {
+    "total_lines": 31351945,
+    "parsed": 31351945,
+    "skipped": 0,
+    "events_idomaar_sha256": "947511e0c1497ddad5cb307ec11b578ac54cbf594bf7d9f7d523d422d4bfd63f",
+    "out_sha256": "1da11812df0f2abd7f09d06123a7c703c68561ba24660f36014ecffa9eae7052"
+  },
+  "prep_csv_sha256": "5c9eb0606dde1a48efb6d39bb118d6329af680e5849d900f55f2c418d911b71f",
+  "preprocessing": {
+    "protocol": "Klenitskiy et al. 2024 (ref [25]): iterative 5-core + consecutive-repeat removal, LabelEncoder ids, 90% global temporal split, 500 validation users",
+    "config": {
+      "min_seq_len": 5,
+      "min_item_count": 5,
+      "drop_repeats": true,
+      "core": true,
+      "encoding": true,
+      "boundary_quantile": 0.9,
+      "validation_size": 500,
+      "val_sampling_np_seed": 17
+    },
+    "executed_with": "their code (scratch clone, run_prepr_split.py driver); independently re-implemented + verified IDENTICAL in src.recsys.preprocess"
+  },
+  "consumer_contract": "sequence order = file row order per user (files are stable-sorted by (user_id,timestamp)); do NOT re-sort by timestamp alone / do NOT use [25]'s LMDataset loader",
+  "tie_risk_stats": {
+    "users_with_tied_timestamps": 4095,
+    "users_window_boundary_tie": 95,
+    "users_last_slot_tie": 58
+  },
+  "window_rule": "per test user: drop target, window = last min(128, len) inputs; permute WITHIN window",
+  "variants": [
+    "full_shuffle",
+    "keep_last",
+    "early_half"
+  ],
+  "shuffle_seeds": [
+    101,
+    102,
+    103
+  ],
+  "mode_b_train_shuffle": {
+    "seed": 101,
+    "rule": "full-sequence per-user shuffle of train (+validation), rng random.Random(f'{seed}:{role}_full_shuffle:{user_id}')"
+  },
+  "rng": "random.Random(f'{seed}:{variant}:{user_id}')",
+  "target_identity_check": "PASS",
+  "code_git_rev": "9e2d2e6-dirty",
+  "files_sha256": {
+    "targets_30Music.csv": "0d65b5433bf1ee9c3e654c8fb41e42553ca176661702e90d33b47a0beefcc0c7",
+    "ordered_windows_30Music.csv": "4500d78c7e267692d364797a7e87ccfc1cd4921c221b5210fa074cd0597bc07e",
+    "test_30Music_full_shuffle_s101.csv": "9c1c0c881a2e517abc891c88b123f38b035909d48d66b12bb8fda159cfb9df67",
+    "test_30Music_full_shuffle_s102.csv": "48f79607abb8ebc75aeace9671506d03856d2b2e1f6f13f05550252ccb523397",
+    "test_30Music_full_shuffle_s103.csv": "52404e18710af05a6f77403ce7cd90564529c1bc2d5dc88f96b0b5f8d79a59f8",
+    "test_30Music_keep_last_s101.csv": "cf35e4f1a357330459ab2c1d8e50de0ca7b5962b91077494b17e6d1df2e16e88",
+    "test_30Music_keep_last_s102.csv": "89c453d0bf39b59477aec78c66589eaed921051e9fd9042e8964f977ac42ac16",
+    "test_30Music_keep_last_s103.csv": "eb76b9f9815e23500b36856c01b64dda01b2a3662118cfa2c2234d642d8f3e3c",
+    "test_30Music_early_half_s101.csv": "f638c6f077aeca879f578708a06e0196edcd8d66a3b54542fb4601bcee2f0dd2",
+    "test_30Music_early_half_s102.csv": "19957da686535a34149bb9f13187d6bfe9d58e863e94287fd8c7add00150256b",
+    "test_30Music_early_half_s103.csv": "8a3fd5e76d9376d00c20e5d72d1458cbe935e9fcd106a2dcafbfbbfa426b74ea",
+    "train_30Music_full_shuffle_s101.csv": "286ec593d6c03ffda6673377d718e0aeb2a09d9806f28341c784977676f6fa63",
+    "validation_30Music_full_shuffle_s101.csv": "a9992778c1b086b7881dab871d0a63c4076e959168b3f65a273d2a94b801b024",
+    "split/train_30Music.csv": "831bd11f3abe2e56cf056ecb1200da8e6d9e9290b93e67d1f20afc8d5a522edb",
+    "split/validation_30Music.csv": "3c8ffb55bde27a48515c34184e27b2d67526977e3159c10107e018368ed8f077",
+    "split/test_30Music.csv": "be43c19fc37c2594238d0e6ed199db706328edfdccb162700c0dc8e4f1be26f2"
+  }
+}
