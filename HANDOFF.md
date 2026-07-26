@@ -1,4 +1,10 @@
-# HANDOFF — KIP task state (NeurIPS rebuttal)
+# HANDOFF — NeurIPS rebuttal state (KIP + RecSys audit)
+
+Two arms: **KIP** (synthetic Key-Inversion Parity, below) and the **RECSYS
+AUDIT** (reviewer Q3, real order-sensitive task — see the section at the end;
+it is self-contained for a cold H200 session).
+
+# KIP task state
 
 Last updated: 2026-07-26 (local blocks C/D still in flight — check
 `results/kip_training.csv` for rows newer than this file).
@@ -118,6 +124,9 @@ instruction 2026-07-26). An equivalent Olivia package exists at
    credentials (gated model); token read from env or cached login, never
    logged.
 
+Separate rebuttal arm (NOT KIP): the RecSys audit grid — full spec in the
+"RECSYS AUDIT" section at the end of this file.
+
 Separate rebuttal arm (NOT KIP): `scripts/slurm/FOX/oc_fullft/` — does the
 OC (tricky_rnd, tag 9) decoder conclusion survive FULL fine-tuning instead
 of LoRA? Llama-3.2-1B + Llama-3.1-8B, paper recipe verbatim minus --peft
@@ -151,3 +160,231 @@ of LoRA? Llama-3.2-1B + Llama-3.1-8B, paper recipe verbatim minus --peft
   NN12048K, partition accel, container `extended-pytorch.sif`, no HF token,
   BERT pre-fetched + `HF_HUB_OFFLINE=1`, checkpoints under
   `/cluster/work/projects/nn12048k/michechi/results/kip/checkpoints/`.
+
+---
+
+# RECSYS AUDIT (reviewer Q3) — 30Music order-sensitivity grid
+
+Second real order-sensitive task with shuffle controls, mirroring the protocol
+of ref [25] (Klenitskiy et al., "Does It Look Sequential?", RecSys '24,
+arXiv:2408.12008; code github.com/Antondfger/Does-It-Look-Sequential). Their
+repo has **NO license file**: it is cloned ONLY to local scratch
+(`/root/recsys_scratch/Does-It-Look-Sequential`, with our run drivers beside
+it) — their code is never copied into this repo. The pipeline was
+independently re-implemented in `repro/src/recsys/` and verified equivalent.
+
+## Status (local A100 box, 2026-07-26) — all gates PASSED
+
+- **Dataset: 30Music** (first choice, no fallback needed). Official direct
+  SharePoint download linked from https://remaplab.deib.polimi.it/resources/
+  (the old recsys.deib.polimi.it page 404s; the `download.aspx?share=<token>`
+  URL form avoids the 403 on the raw share link). Raw =
+  `relations/events.idomaar`, 31,351,945 play events, converted by
+  `src.recsys.convert_30music` (0 parse skips; sha256 of source + output in
+  `30M.csv.convert_meta.json`, folded into the audit manifest).
+- **Preprocessing gate vs their published stats: PASS** — users **43,762
+  (exact)**, interactions **22,604,876 (exact)**, mean length 516.54
+  (ref ≈516.5); their published "822,507 items" is reproduced **exactly** as
+  the TEST-split vocabulary (prep-level nunique is 839,099).
+- **Split** (their code; validation sampling np.random.seed(17), recorded —
+  their code leaves it unseeded): train 42,712 users / 20,119,073 events /
+  834,223 items; validation 500 users / 225,297 events; test 25,518 users /
+  18,453,009 events / 822,507 items. Median prep length 261. 97.81% of test
+  targets are in the train-split vocab (97.84% incl. validation).
+- **Independent re-implementation** (`src.recsys.preprocess --verify`):
+  all four outputs (prep, train, validation, test) **row-for-row IDENTICAL**
+  to their pipeline's on the same raw CSV.
+- **Anchor** (their code verbatim via observation-only shims, SASRec seed 17,
+  batch 4, patience 5; 65 min wall-clock, under the 2 h cap):
+
+  | metric | [25] published (5-seed mean) | ours (seed 17) |
+  |---|---|---|
+  | HR@10 ordered | 0.198 | **0.19692** |
+  | HR@10 shuffled | 0.020 | **0.02006** |
+  | HR@10 rel. drop | −90% | **−89.81%** |
+  | NDCG@10 ordered | 0.136 | **0.12995** |
+  | NDCG@10 shuffled | 0.010 | **0.01015** |
+  | NDCG@10 rel. drop | −92% | **−92.19%** |
+  | Jaccard@10 | 0.12 | 0.0594 |
+
+  Same qualitative picture (near-exact on HR/NDCG; Jaccard same order of
+  magnitude, seed-dependent). Machine-readable copy:
+  `scripts/recsys/30music_anchor_result.json`; rec lists + log archived in
+  `results/recsys_audit/anchor/` (tracked). Recorded environment deviation:
+  torch 2.13 / PL 2.6.5 / recommenders 1.2.1 vs their older pins.
+
+## Protocol facts of [25] (recon from their code)
+
+- Preprocessing: iterative loop until min user len ≥5 AND min item count ≥5:
+  drop users <5 events → drop items <5 occurrences → collapse consecutive
+  repeats (i-i-j → i-j) on (user, time)-sorted rows; then LabelEncoder
+  (sorted-unique → consecutive ids) for items, then users.
+- Split: global 90% quantile of ALL timestamps (pandas linear interpolation).
+  Train users = 2nd event ≤ boundary (their post-boundary events dropped);
+  test users = last event > boundary (FULL history kept — train/test user
+  sets overlap by design); validation = 500 random train users, removed from
+  train.
+- Model input: last 128 items of history-minus-target (`max_length: 128`);
+  target = last item per val/test user.
+- Training: full-catalog cross-entropy (tied item-embedding head), Adam
+  lr 1e-3, batch 4 (their 30Music setting), max 100 epochs, early stop on
+  val NDCG@10, patience 5, best checkpoint restored.
+- Eval: FULL catalog, `filter_seen: False` (seen items NOT filtered);
+  HR@10 = `recommenders` recall@10 (single target ⇒ hit rate); NDCG@10 same
+  package; Jaccard@10 = mean per-user Jaccard between ordered-input and
+  shuffled-input top-10 lists.
+- Their shuffle control: permute the ENTIRE history-minus-target
+  (np.random.seed(random_state), one global seeding) BEFORE the 128
+  truncation ⇒ the model sees different ITEMS, not just different order.
+  Kept ONLY for the anchor; the audit grid uses the window variants below.
+- Their published 30Music GRU4Rec drops (for grid reference): HR@10 −95%,
+  NDCG@10 −96%, Jaccard@10 0.02.
+
+## Audit data (main-result files; OUR protocol, deliberately ≠ anchor shuffle)
+
+Built by `src.recsys.audit_shuffles` from the canonical split files. Per test
+user: drop target → fix ordered visible window = last min(128, len) input
+rows (exactly what a max_length=128 model consumes) → permute item values
+WITHIN the window only (timestamps stay in their slots). Every condition
+shows the model the same item multiset and the same target; only order
+varies.
+
+- Variants: `full_shuffle` (whole window), `keep_last` (last window item
+  fixed), `early_half` (first ⌊W/2⌋ permuted, second half intact) × shuffle
+  seeds {101, 102, 103} ⇒ 9 files, drop-in schema for `test_30Music.csv`.
+- Mode-(b) extras: `{train,validation}_30Music_full_shuffle_s101.csv` —
+  full-sequence per-user shuffles for the optional shuffled-train block.
+- Determinism: `random.Random(f"{seed}:{variant}:{user_id}")` per user —
+  machine/library independent. One shuffle per user per variant×seed, saved
+  to disk; EVERY downstream consumer reads the SAME files. Never re-shuffle
+  per consumer.
+- **CONSUMER CONTRACT (load-bearing, ENFORCED IN CODE)**: files are
+  stable-sorted by (user_id, timestamp); sequence order within equal
+  timestamps = file row order. Group consecutive rows per user; do NOT
+  re-sort by timestamp alone and do NOT feed these files through [25]'s
+  unmodified `LMDataset` (it uses an unstable single-key sort; 30Music has
+  tied timestamps — manifest records the exposure: 4,095 test users have
+  ties, 95 could see a different window multiset and 58 a different
+  last-window item ONLY under a contract-violating loader).
+  **Enforcement**: the grid harness MUST obtain eval sequences via
+  `src.recsys.eval_loader.load_eval_input(variant_csv, audit_dir)` — on every
+  load it validates file structure (contiguous user blocks, non-decreasing
+  timestamps) and re-verifies, per user, window-multiset equality vs
+  `ordered_windows_30Music.csv`, target equality vs `targets_30Music.csv`,
+  and the variant-specific invariant (keep_last / early_half / ordered),
+  raising `AuditContractViolation` on any mismatch. Negative-tested against
+  corrupted targets, cross-user item swaps (invisible to global-multiset
+  checks), and timestamp-only re-sorts — all fail loudly.
+- Verification baked into the build (on the SHIPPED bytes): targets
+  byte-identical across ordered + all 9 variants, non-window rows untouched,
+  per-user window multiset preserved → `target_identity_check: PASS`.
+- Manifest (tracked): `scripts/recsys/30music_audit_manifest.json` (raw
+  checksum + converter provenance, machine-readable preprocessing config,
+  prep + split + ordered-window + per-variant×seed checksums, target-identity
+  result, tie stats, git rev) and flat `sha256sum -c` files:
+  `scripts/recsys/30music_audit_files.sha256`,
+  `scripts/recsys/30music_split_files.sha256` (copies live beside the data).
+
+## File layout
+
+    data/recsys/30music/                 # gitignored; manifests tracked in scripts/recsys/
+      30M.csv (+.convert_meta.json)      # converted raw (user,item,timestamp)
+      prep_30Music.csv                   # preprocessing output (their code)
+      split/{train,validation,test}_30Music.csv + split_files.sha256
+      own/                               # our re-implementation outputs (equivalence check)
+      audit/                             # ← THE GRID CONSUMES EXACTLY split/ + audit/
+        targets_30Music.csv
+        ordered_windows_30Music.csv
+        test_30Music_{full_shuffle,keep_last,early_half}_s{101,102,103}.csv
+        {train,validation}_30Music_full_shuffle_s101.csv
+        audit_manifest.json + audit_files.sha256
+
+## THE FULL GRID (H200 / FOX)
+
+**Models** — train on ordered `train_30Music.csv`, early-stop on ordered
+validation, training seeds **{17, 32, 45}**:
+
+| model | implementation | config (matched in scale to [25]) |
+|---|---|---|
+| SASRec | RecBole ≥1.2 (MIT) | n_layers 2, n_heads 2, hidden 64, dropout 0.1, max_len 128, loss CE (full softmax), Adam lr 1e-3 |
+| GRU4Rec | RecBole | embedding 64, hidden 64, 1 layer, dropout 0.1, max_len 128, loss CE, lr 1e-3 |
+| BERT4Rec | RecBole | n_layers 2, n_heads 2, hidden 64, mask ratio 0.2 (RecBole default), max_len 128, loss CE, lr 1e-3 |
+
+Shared training protocol: max 100 epochs, early stop patience 5 on val
+NDCG@10, full-catalog eval, NO seen-item filtering (matches [25]
+`filter_seen: False`). Batch size: largest of {4, 16, 64} that fits and is
+stable — RECORD the value used ([25] used 4 for 30Music; batch is a compute
+detail, everything protocol-critical is pinned above). Document per model:
+config dump + any equivalence checks (RecBole implementations are
+scale-matched, not bit-identical, to [25]'s — the anchor bridges protocols;
+flag if RecBole-SASRec ordered HR@10 deviates from the anchor's 0.197 by >2×).
+
+**Baselines** (CPU-cheap, implement in our repo — no copied code):
+
+- MostPopular: train-split popularity ranking, same list for all users
+  (order-invariant ⇒ expected Δ ≈ 0; sanity row).
+- ItemKNN (bag-of-items): cosine on the binary user×item train matrix;
+  score(i) = Σ_{j∈window} sim(i,j) (order-invariant by construction).
+- Markov-1: score(i) = train count(last_item → i).
+- Markov-2: score(i) = train count((prev,last) → i), backoff to Markov-1 on
+  unseen (prev,last) context, then to popularity (deterministic ladder).
+
+**Eval inputs per model/baseline** (10 each): ordered (`test_30Music.csv`,
+window = last 128 minus target) + 3 variants × 3 shuffle seeds from `audit/`.
+Consume files via `src.recsys.eval_loader.load_eval_input` (contract
+enforcement built in — see above); never read variant CSVs directly.
+
+**Optional final block** (protocol uniformity with synthetic mode (b);
+precedent in [25]'s extended journal version): GRU4Rec shuffled-train —
+train on `train_30Music_full_shuffle_s101.csv`, early-stop on
+`validation_30Music_full_shuffle_s101.csv`, eval on
+`test_30Music_full_shuffle_s101.csv`, 1 seed (17).
+
+**Metrics** per (model, eval input): HR@10, NDCG@10; Jaccard@10 vs the SAME
+model's ordered top-10 lists (per-user mean); Δabs = shuffled − ordered;
+Δrel = Δabs/ordered; user-bootstrap 95% CIs (resample the 25,518 test users
+with replacement, B = 1000, numpy seed 4242) for each metric AND each Δ.
+Report per shuffle seed and mean across the 3 shuffle seeds.
+
+**Outputs**: one row per (model, eval_input, train_seed, shuffle_seed) into
+`results/recsys_audit/metrics.csv` (tracked — results/recsys_audit/** is
+un-gitignored; add `merge=union` to .gitattributes BEFORE parallel appends,
+mirroring kip_training.csv) + top-10 lists per run under
+`results/recsys_audit/recs/` (user_id → 10 items, parquet or csv.gz) so
+Jaccard/CIs can be recomputed offline.
+
+## H200 bootstrap (cold start)
+
+1. Environment: NLPL 2024a stack (see KIP section: `module use -a
+   /fp/projects01/ec30/software/easybuild/modules/all/`; python 3.12 + torch
+   2.6.0/cu12.6) + `pip install --user recbole` (MIT; no HF token needed).
+2. Pull branch `Rebuttals_NeurIPS`; rsync data (below); verify bytes AND
+   contract (both must pass before any training):
+       cd $REPO_ROOT/data/recsys/30music/audit && sha256sum -c audit_files.sha256
+       cd ../split && sha256sum -c split_files.sha256
+       cd $REPO_ROOT/repro && python -m src.recsys.eval_loader \
+         --audit-dir $REPO_ROOT/data/recsys/30music/audit \
+         --split-dir $REPO_ROOT/data/recsys/30music/split --check-all
+3. Feed sequences per the CONSUMER CONTRACT — in practice: EVAL sequences
+   come from `src.recsys.eval_loader.load_eval_input` ONLY (it re-verifies
+   the invariants on every load and raises on violation). For TRAINING files
+   (ordered or mode-(b)), group consecutive rows per user; if converting to
+   RecBole atomic files, derive a per-user position column from file row
+   order and use IT as the time field — do not let RecBole re-sort tied
+   timestamps.
+4. Grid: 3 models × 3 seeds training (`--partition=accel
+   --gpus=nvidia_h200_nvl:1`, account ec12), then 10 evals per model from
+   saved checkpoints; baselines on CPU. Optional GRU4Rec shuffled-train last.
+5. Commit results rows back on the branch.
+
+## rsync (run FROM the local A100 box; NOT yet executed)
+
+    rsync -avz --progress \
+      /root/LLMSeq/data/recsys/30music/split \
+      /root/LLMSeq/data/recsys/30music/audit \
+      <fox-user>@fox.educloud.no:~/MIMICIV/data/recsys/30music/
+
+(`30M.csv`/`prep_30Music.csv` are not needed on FOX — the grid consumes only
+split/ + audit/. Full local rebuild if ever needed: `src.recsys.convert_30music`
+→ their preprocessing (or `src.recsys.preprocess`, verified identical) →
+`src.recsys.audit_shuffles`; every seed is recorded in the manifest.)

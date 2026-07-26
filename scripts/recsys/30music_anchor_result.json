@@ -1,0 +1,44 @@
+{
+  "run": "SASRec anchor, ref [25] code verbatim (scratch clone), seed 17, batch 4, patience 5, early stop on val NDCG@10",
+  "launched_utc": "2026-07-26T14:51:19",
+  "wall_clock_min": 65,
+  "training_time_sec": 3349.3,
+  "best_val_ndcg10": 0.116,
+  "val": {
+    "hr10": 0.184,
+    "ndcg10": 0.11459
+  },
+  "test_ordered": {
+    "hr10": 0.19691982130260993,
+    "ndcg10": 0.12994872026016469
+  },
+  "test_shuffled": {
+    "hr10": 0.02006426835958931,
+    "ndcg10": 0.010150061444353655
+  },
+  "drops": {
+    "hr10_rel": -0.8981,
+    "ndcg10_rel": -0.9219,
+    "hr10_abs": -0.17686,
+    "ndcg10_abs": -0.1198
+  },
+  "jaccard10": 0.059374277724882914,
+  "published_ref25": {
+    "hr10": [
+      0.198,
+      0.02
+    ],
+    "ndcg10": [
+      0.136,
+      0.01
+    ],
+    "rel": [
+      -0.9,
+      -0.92
+    ],
+    "jaccard10": 0.12,
+    "note": "published = mean over 5 seeds; ours = seed 17 only"
+  },
+  "environment_deviations": "torch 2.13/PL 2.6.5/recommenders 1.2.1/pandas 3.x vs their pins (recorded; metric semantics stable)",
+  "verdict": "PASS - same qualitative picture; HR/NDCG near-exact, Jaccard same order of magnitude (0.059 vs 0.12)"
+}
