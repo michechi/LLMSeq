@@ -1,0 +1,81 @@
+Starting job 4012605 on gpu-17 on Fox at Sun Jul 26 16:25:17 CEST 2026
+
+HF token present (not shown).
+=== JOB CONFIGURATION ===
+Job: 4012605 / Array task: 0
+Node: gpu-17.fox
+Config: model=Llama1B tag=kip_m6 mode=ordered seed=9550 maxlen=50 bs=64
+2026-07-26 16:26:40,054: arg bert_max_length = 512
+2026-07-26 16:26:40,054: arg checkpoint_root = /fp/homes01/u01/ec-michelec/MIMICIV/checkpoints/kip
+2026-07-26 16:26:40,054: arg dl_patience = 3
+2026-07-26 16:26:40,054: arg llm_batch_size = 64
+2026-07-26 16:26:40,054: arg llm_max_length = 50
+2026-07-26 16:26:40,054: arg llm_model_name = meta-llama/Llama-3.2-1B
+2026-07-26 16:26:40,054: arg mode = ordered
+2026-07-26 16:26:40,054: arg model = Llama1B
+2026-07-26 16:26:40,054: arg ordered_csv = /fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/tested
+2026-07-26 16:26:40,054: arg results_csv = /fp/homes01/u01/ec-michelec/MIMICIV/results/kip_training.csv
+2026-07-26 16:26:40,054: arg seed = 9550
+2026-07-26 16:26:40,054: arg shuffled_csv = /fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/kip_shuffled
+2026-07-26 16:26:40,054: arg site = fox
+2026-07-26 16:26:40,054: arg smoke = False
+2026-07-26 16:26:40,054: arg tag = kip_m6
+2026-07-26 16:26:40,445: device: cuda
+2026-07-26 16:26:40,446: Argument batch_size: 64
+2026-07-26 16:26:40,446: Argument cache_dir: '/localscratch/4012605/hf_cache'
+2026-07-26 16:26:40,446: Argument cold_start: False
+2026-07-26 16:26:40,446: Argument early: 'loss'
+2026-07-26 16:26:40,446: Argument epochs: 20
+2026-07-26 16:26:40,446: Argument fractions: '1.0'
+2026-07-26 16:26:40,446: Argument gradient_accumulation_steps: 1
+2026-07-26 16:26:40,446: Argument lr: 2e-05
+2026-07-26 16:26:40,446: Argument max_length: 50
+2026-07-26 16:26:40,446: Argument model_name: 'meta-llama/Llama-3.2-1B'
+2026-07-26 16:26:40,446: Argument model_type: 'general'
+2026-07-26 16:26:40,446: Argument number_to_use: 'kip_m6'
+2026-07-26 16:26:40,446: Argument output_dir: '/fp/homes01/u01/ec-michelec/MIMICIV/results/kip_llm_raw'
+2026-07-26 16:26:40,446: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/tested/'
+2026-07-26 16:26:40,446: Argument patience: 3
+2026-07-26 16:26:40,446: Argument peft: True
+2026-07-26 16:26:40,446: Argument seed: 9550
+2026-07-26 16:26:40,446: Argument tiny: False
+2026-07-26 16:26:40,446: Argument tiny_type: '1M'
+2026-07-26 16:26:40,446: Argument use_quantization: False
+2026-07-26 16:26:40,446: recipe: LLM_fraction_experiment defaults + --peft: meta-llama/Llama-3.2-1B LoRA(r=8,a=16,qkvo,drop=.1,CAUSAL_LM) AdamW lr=2e-05 bs=64 max_len=50 epochs<=20 patience=3 early=loss warmup=6% bf16
+2026-07-26 16:26:42,538: Tokenizer has no pad_token. Adding [PAD].
+2026-07-26 16:26:44,090: Loading pre-trained CausalLM model (WARM START)
+2026-07-26 16:26:54,592: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+trainable params: 1,703,936 || all params: 1,237,518,336 || trainable%: 0.1377
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2026-07-26 16:38:22,263: Epoch 1/20 | Train Loss: 3.5156 | Val Loss: 3.0415 | Val AUC: 0.5000 | Val F1: 0.4569
+2026-07-26 16:38:22,606: New best model (AUC: 0.5000)
+2026-07-26 16:49:50,233: Epoch 2/20 | Train Loss: 3.0235 | Val Loss: 3.0091 | Val AUC: 0.4998 | Val F1: 0.6110
+2026-07-26 16:49:50,604: New best model (AUC: 0.4998)
+2026-07-26 17:01:15,464: Epoch 3/20 | Train Loss: 3.0120 | Val Loss: 3.0047 | Val AUC: 0.4993 | Val F1: 0.6221
+2026-07-26 17:01:15,776: New best model (AUC: 0.4993)
+2026-07-26 17:12:42,665: Epoch 4/20 | Train Loss: 3.0091 | Val Loss: 3.0035 | Val AUC: 0.5000 | Val F1: 0.2770
+2026-07-26 17:12:42,963: New best model (AUC: 0.5000)
+2026-07-26 17:24:15,719: Epoch 5/20 | Train Loss: 3.0077 | Val Loss: 3.0044 | Val AUC: 0.4997 | Val F1: 0.6662
+2026-07-26 17:35:45,666: Epoch 6/20 | Train Loss: 3.0069 | Val Loss: 3.0024 | Val AUC: 0.4988 | Val F1: 0.2207
+2026-07-26 17:35:45,977: New best model (AUC: 0.4988)
+2026-07-26 17:47:13,577: Epoch 7/20 | Train Loss: 3.0067 | Val Loss: 3.0023 | Val AUC: 0.4986 | Val F1: 0.3036
+2026-07-26 17:47:13,847: New best model (AUC: 0.4986)
+2026-07-26 17:58:40,979: Epoch 8/20 | Train Loss: 3.0065 | Val Loss: 3.0019 | Val AUC: 0.4992 | Val F1: 0.1761
+2026-07-26 17:58:41,275: New best model (AUC: 0.4992)
+2026-07-26 18:10:08,991: Epoch 9/20 | Train Loss: 3.0063 | Val Loss: 3.0019 | Val AUC: 0.4998 | Val F1: 0.1444
+2026-07-26 18:21:35,734: Epoch 10/20 | Train Loss: 3.0063 | Val Loss: 3.0015 | Val AUC: 0.4993 | Val F1: 0.4035
+2026-07-26 18:21:36,012: New best model (AUC: 0.4993)
+2026-07-26 18:33:03,052: Epoch 11/20 | Train Loss: 3.0062 | Val Loss: 3.0017 | Val AUC: 0.4995 | Val F1: 0.3911
+2026-07-26 18:44:29,697: Epoch 12/20 | Train Loss: 3.0061 | Val Loss: 3.0019 | Val AUC: 0.4977 | Val F1: 0.6184
+2026-07-26 18:55:56,780: Epoch 13/20 | Train Loss: 3.0060 | Val Loss: 3.0015 | Val AUC: 0.5011 | Val F1: 0.5360
+2026-07-26 18:55:57,045: New best model (AUC: 0.5011)
+2026-07-26 19:07:23,889: Epoch 14/20 | Train Loss: 3.0064 | Val Loss: 3.0015 | Val AUC: 0.5001 | Val F1: 0.5895
+2026-07-26 19:07:24,171: New best model (AUC: 0.5001)
+2026-07-26 19:18:48,563: Epoch 15/20 | Train Loss: 3.0060 | Val Loss: 3.0015 | Val AUC: 0.4995 | Val F1: 0.5791
+2026-07-26 19:30:12,191: Epoch 16/20 | Train Loss: 3.0061 | Val Loss: 3.0015 | Val AUC: 0.4991 | Val F1: 0.4012
+2026-07-26 19:41:37,235: Epoch 17/20 | Train Loss: 3.0061 | Val Loss: 3.0018 | Val AUC: 0.5001 | Val F1: 0.5292
+2026-07-26 19:41:37,235: Early stopping at epoch 17
+2026-07-26 19:42:18,289: optimal threshold: 0.10 (val F1 0.6665)
+2026-07-26 19:42:59,236: checkpoint saved: /fp/homes01/u01/ec-michelec/MIMICIV/checkpoints/kip/Llama1B_kip_m6_ordered_9550/ckpt.pt
+2026-07-26 19:42:59,436: result row appended to /fp/homes01/u01/ec-michelec/MIMICIV/results/kip_training.csv
+2026-07-26 19:42:59,437: DONE Llama1B kip_m6 ordered seed=9550: test_auc=0.4995 test_f1=0.6675 (11775.1s)
