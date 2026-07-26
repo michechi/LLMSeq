@@ -376,10 +376,15 @@ Jaccard/CIs can be recomputed offline.
    RecBole atomic files, derive a per-user position column from file row
    order and use IT as the time field — do not let RecBole re-sort tied
    timestamps.
-4. Grid: 3 models × 3 seeds training (`--partition=accel
-   --gpus=nvidia_h200_nvl:1`, account ec12), then 10 evals per model from
-   saved checkpoints; baselines on CPU. Optional GRU4Rec shuffled-train last.
-5. Commit results rows back on the branch.
+4. Grid: **packed into SLURM at `scripts/slurm/FOX/recsys/`** (see the README
+   there) — `recsys_job1_grid.slurm` = 3 models × 3 seeds training + 10 evals
+   each + all baselines + report table (sequential, resumable, one GPU;
+   smoke-tested end-to-end on the local A100 2026-07-26);
+   `recsys_job2_shuffled_train.slurm` = optional GRU4Rec mode-(b), submit
+   ONLY after the Job-1 table is reviewed. Harness code:
+   `repro/src/recsys/{recbole_grid,train_grid,eval_grid,baselines,report}.py`
+   (RecBole 1.2.0 model classes + our contract-honoring loops).
+5. Commit results rows back on the branch (`git add results/recsys_audit`).
 
 ## rsync (run FROM the local A100 box; NOT yet executed)
 
