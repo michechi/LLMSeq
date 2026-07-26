@@ -22,13 +22,17 @@ the same recorded stack deviation as the KIP runs.
 cd $HOME/MIMICIV/scripts/slurm/FOX/oc_fullft
 mkdir -p logs
 export HF_TOKEN=<token>       # gated meta-llama; or cached huggingface-cli login
-sbatch oc_fullft_llama1b.slurm    # ~4 h cap
-sbatch oc_fullft_llama8b.slurm    # ~24-30 h cap, usually early-stops long before
+sbatch oc_fullft_llama1b.slurm    # 3 seeds, ~4 h cap each
+sbatch oc_fullft_llama8b.slurm    # 3 seeds, ~24-30 h cap each, usually early-stops long before
 ```
 
-Seed override: `OC_SEED=9550 sbatch ...` (default 8888 = the as-run wrapper
-default). For extra seeds just resubmit with different `OC_SEED` values —
-each run writes its own timestamped results file.
+**Seeds:** each script is a 3-task array over seeds **8888 / 8889 / 8890**
+(one per task, run in parallel). Task 0's seed 8888 is the paper's as-run
+wrapper default — the anchored comparison against the LoRA baseline; the
+other two are extension seeds for per-seed reporting. To run only the
+anchored seed (e.g. to gate the expensive 8B before spending 3× the compute):
+`sbatch --array=0 <script>`, then `sbatch --array=1-2 <script>` later — each
+run writes its own timestamped results file, nothing collides.
 
 ## Outputs
 

@@ -25,7 +25,8 @@
 #
 # Submit with:
 #   cd scripts/slurm/FOX/oc_fullft && mkdir -p logs
-#   sbatch oc_fullft_llama8b.slurm          # seed override: OC_SEED=... sbatch ...
+#   sbatch oc_fullft_llama8b.slurm            # all 3 seeds
+#   sbatch --array=0 oc_fullft_llama8b.slurm  # just the paper-anchored seed 8888
 #
 #SBATCH --job-name=oc_fullft_8b
 #SBATCH --account=ec12
@@ -34,7 +35,8 @@
 #SBATCH --partition=accel --gpus=nvidia_h200_nvl:1
 #SBATCH --mem-per-gpu=80G
 #SBATCH --cpus-per-task=8
-#SBATCH --output=logs/oc_fullft_8b_%j.out
+#SBATCH --array=0-2
+#SBATCH --output=logs/oc_fullft_8b_%A_%a.out
 
 set -o errexit
 set -o nounset
@@ -68,10 +70,17 @@ OUTPUT_DIR="$REPO_ROOT/results/oc_fullft"
 mkdir -p "$HF_HOME" "$OUTPUT_DIR"
 
 MODEL_NAME="meta-llama/Llama-3.1-8B"
-SEED="${OC_SEED:-8888}"
+# Task 0 = seed 8888, the paper's as-run wrapper default (the anchored
+# comparison); 8889/8890 are extension seeds for per-seed reporting.
+SEEDS=(8888 8889 8890)
+if [ "$SLURM_ARRAY_TASK_ID" -ge "${#SEEDS[@]}" ]; then
+    echo "ARRAY_TASK_ID $SLURM_ARRAY_TASK_ID out of range -- exiting."
+    exit 0
+fi
+SEED=${SEEDS[$SLURM_ARRAY_TASK_ID]}
 
 echo "=== JOB CONFIGURATION ==="
-echo "Job: $SLURM_JOB_ID"
+echo "Job: $SLURM_JOB_ID / Array task: $SLURM_ARRAY_TASK_ID"
 echo "Node: $(hostname)"
 echo "Config: model=$MODEL_NAME tag=9 (OC noisy) FULL-FT seed=$SEED bs=64 maxlen=50"
 
@@ -93,7 +102,7 @@ python3 -u -m src.experiments.LLM_fraction_experiment \
     # NO --peft (that is the experiment), NO --use_quantization
 
 # Preserve the full training log (per-epoch metrics; merged stdout+stderr).
-cp -f "$SLURM_SUBMIT_DIR/logs/oc_fullft_8b_${SLURM_JOB_ID}.out" \
+cp -f "$SLURM_SUBMIT_DIR/logs/oc_fullft_8b_${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.out" \
       "$OUTPUT_DIR/fox_oc_fullft_llama8b_seed${SEED}.trainlog.txt" 2>/dev/null || true
 
 echo "=== JOB FINISHED ==="
