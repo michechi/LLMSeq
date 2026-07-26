@@ -93,6 +93,10 @@ def main() -> None:
     ap.add_argument("--max-epochs", type=int, default=100)
     ap.add_argument("--max-steps-per-epoch", type=int, default=0,
                     help="smoke-testing only; 0 = full epoch")
+    ap.add_argument("--time-budget-hours", type=float, default=0,
+                    help="stop after this many hours and keep the best "
+                         "checkpoint so far (guards SLURM wall-time kills; "
+                         "0 = no budget)")
     ap.add_argument("--site", default=os.environ.get("KIP_SITE", "local"))
     args = ap.parse_args()
 
@@ -166,7 +170,13 @@ def main() -> None:
             best = {"ndcg": ndcg, "hr": hr, "epoch": epoch,
                     "state": {k: v.detach().cpu().clone()
                               for k, v in model.state_dict().items()}}
-        elif epoch - best["epoch"] >= args.patience:
+        if args.time_budget_hours and \
+                time.time() - t0 > args.time_budget_hours * 3600:
+            print(f"time budget {args.time_budget_hours}h reached at epoch "
+                  f"{epoch}; stopping with best epoch {best['epoch']}",
+                  flush=True)
+            break
+        if epoch > best["epoch"] and epoch - best["epoch"] >= args.patience:
             print(f"early stop at epoch {epoch} (best {best['epoch']})",
                   flush=True)
             break

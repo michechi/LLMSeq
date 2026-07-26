@@ -376,14 +376,17 @@ Jaccard/CIs can be recomputed offline.
    RecBole atomic files, derive a per-user position column from file row
    order and use IT as the time field — do not let RecBole re-sort tied
    timestamps.
-4. Grid: **packed into SLURM at `scripts/slurm/FOX/recsys/`** (see the README
-   there) — `recsys_job1_grid.slurm` = 3 models × 3 seeds training + 10 evals
-   each + all baselines + report table (sequential, resumable, one GPU;
-   smoke-tested end-to-end on the local A100 2026-07-26);
-   `recsys_job2_shuffled_train.slurm` = optional GRU4Rec mode-(b), submit
-   ONLY after the Job-1 table is reviewed. Harness code:
-   `repro/src/recsys/{recbole_grid,train_grid,eval_grid,baselines,report}.py`
-   (RecBole 1.2.0 model classes + our contract-honoring loops).
+4. Grid: **packed into ≤2 SLURM jobs at `scripts/slurm/FOX/recsys/`** (see
+   RUNBOOK.md there) — `recsys_job1_grid.slurm` = ONE 9-task array (per task:
+   train a model×seed cell with the measured per-model batch, then its 10
+   contract-enforced evals; task 0 also runs the four baselines; resumable
+   per task), then the report builds on the login node
+   (`python -m src.recsys.report`); `recsys_job2_shuffled_train.slurm` =
+   optional GRU4Rec mode-(b), submit ONLY after the Job-1 table is reviewed.
+   Harness: `repro/src/recsys/{recbole_grid,train_grid,eval_grid,baselines,
+   report}.py` (RecBole model classes — 1.2.1 pinned on FOX via
+   recsys_setup.sh — with our contract-honoring loops; smoke-tested
+   end-to-end on the local A100 against the real data, 2026-07-26).
 5. Commit results rows back on the branch (`git add results/recsys_audit`).
 
 ## rsync (run FROM the local A100 box; NOT yet executed)

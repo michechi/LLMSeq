@@ -20,20 +20,43 @@ If data needs re-verification (e.g. after re-rsync):
       --audit-dir ~/MIMICIV/data/recsys/30music/audit \
       --split-dir ~/MIMICIV/data/recsys/30music/split --check-all
 
-## 1. Submit order
+## 1. Submit (≤2 jobs; Job 2 is gated on the Job-1 table)
 
     cd ~/MIMICIV/scripts/slurm/FOX/recsys && mkdir -p logs
-    sbatch recsys_a_train.slurm                          # 9 cells: 3 models x seeds 17/32/45
-    sbatch recsys_c_baselines.slurm                      # independent of (a)
-    # after (a) completes (or per finished cells):
-    sbatch --dependency=afterok:<jobid_a> recsys_b_eval.slurm
-    sbatch recsys_d_gru_shuffletrain.slurm               # OPTIONAL mode-(b) block
+    sbatch recsys_job1_grid.slurm      # ONE array job = the whole main grid:
+                                       # 9 tasks (3 models x seeds 17/32/45),
+                                       # each trains + evals its checkpoint on
+                                       # all 10 inputs; task 0 also runs the
+                                       # four baselines. Resumable per task.
 
-Time guesses (H200; batch 2048 causal / 256 BERT4Rec — per-model, see
-recsys_a_train.slurm header for the memory math): training ≤48 h/cell (early
-stop patience 5 usually far sooner; A100 smoke: ~0.08 s/step at batch 512,
-~10k steps/epoch at 2048), eval ~1 h/cell, baselines ~2 h total (Markov-2
-table build alone is ~15 min).
+The models are tiny (few M params) — 9 single-GPU tasks that queue behind,
+never disturb, the Q1 full-FT jobs. If the H200s are saturated:
+`sbatch --gpus=a100_80:1 recsys_job1_grid.slurm` runs identically.
+
+**Job 2 — DO NOT SUBMIT YET.** Only after the Job-1 table is reviewed:
+
+    sbatch recsys_job2_shuffled_train.slurm   # GRU4Rec shuffled-train, seed 17
+
+Time guesses (H200; batch 2048 causal / 256 BERT4Rec — per-model, see the
+recsys_job1_grid.slurm header for the memory math): training ≤48 h/cell
+(early stop patience 5 usually far sooner; A100 smoke: ~0.08 s/step at batch
+512, ~10k steps/epoch at 2048), eval ~1 h/cell, baselines ~2 h on task 0
+(Markov-2 table build alone is ~15 min).
+
+## 1b. Report (login node, CPU, ~2 min) — then STOP
+
+After the array finishes (`squeue --me` empty of recsys_job1):
+
+    cd ~/MIMICIV/repro
+    python -m src.recsys.report \
+      --audit-dir ~/MIMICIV/data/recsys/30music/audit \
+      --recs-dir ~/MIMICIV/results/recsys_audit/recs \
+      --out ~/MIMICIV/results/recsys_audit/report_job1.md
+
+That file IS the Job-1 deliverable (main table: models × ordered/
+full_shuffle/keep_last/early_half with bootstrap CIs + Δs, Jaccard@10,
+baseline ladder with reach + drop_explained per rung). **STOP here** —
+commit it back (step 4) and review before any thought of Job 2.
 
 ## 2. Sanity gates (check BEFORE trusting the grid)
 
@@ -79,7 +102,9 @@ cleanly.
   keep that discipline.
 - BERT4Rec trains with RecBole's full standard objective (mask_ratio 0.2
   cloze + ft_ratio 0.5 mask-last batches — both branches of MaskItemSequence
-  replicated, recbole==1.2.1 PINNED); SASRec/GRU4Rec with CE over the full
-  catalog at the last position of each augmented prefix.
+  replicated; recbole==1.2.1 PINNED on FOX via recsys_setup.sh; the local
+  A100 smoke ran 1.2.0 — identical model-constructor contract, verified).
+  SASRec/GRU4Rec with CE over the full catalog at the last position of each
+  augmented prefix.
 - All ids are +1-shifted inside the models (RecBole pad token 0) and shifted
   back before anything is written; recs files contain RAW [25]-encoding ids.

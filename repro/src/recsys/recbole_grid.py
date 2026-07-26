@@ -1,6 +1,6 @@
 """Shared plumbing for the 30Music audit grid built on RecBole model classes.
 
-Models come from recbole.model.sequential_recommender (recbole==1.2.0, MIT,
+Models come from recbole.model.sequential_recommender (recbole==1.2.1, MIT,
 PINNED — the mock config below matches that version's constructor contract).
 We use RecBole's models and objectives (CE over the full catalog; BERT4Rec's
 cloze masking replicated from recbole.data.transform.MaskItemSequence) with a
