@@ -20,7 +20,11 @@ audit.
 (patience 5 = paper recipe; modes a/b/c; per-seed reporting; site column),
 results so far, and the cross-site run plan.
 
-- On Olivia (Sigma2): follow `scripts/slurm/Olivia/kip/RUNBOOK.md` exactly.
+- On FOX (Educloud, the active cluster): follow
+  `scripts/slurm/FOX/kip/RUNBOOK.md` exactly (GPU spec:
+  `--gpus=nvidia_h200_nvl:1`). The Olivia package
+  (`scripts/slurm/Olivia/kip/`) is retained but Olivia is unavailable
+  (2026-07-26).
 - On the local A100 box: python lives at `/root/kip-venv/bin/python` (system
   python has no pip); export `DATA_DIR=/root/LLMSeq/data`; training runs only
   in detached tmux sessions — never in the assistant's foreground shell, and

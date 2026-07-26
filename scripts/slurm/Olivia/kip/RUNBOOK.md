@@ -1,5 +1,10 @@
 # KIP on Olivia — runbook (NeurIPS rebuttal, 2026-07)
 
+> **SUPERSEDED (2026-07-26): Olivia is not available. Use the FOX package at
+> `scripts/slurm/FOX/kip/RUNBOOK.md` instead.** This package is kept in case
+> Olivia comes back; the run plan and conventions are identical (site column
+> value `olivia` vs `fox`).
+
 Self-contained instructions for running the remaining small-model KIP jobs on
 Olivia. No outside context needed: task background is in `/HANDOFF.md` (repo
 root) and `repro/src/analysis/mechanism_id/kip_report.md`; this file is the
@@ -68,7 +73,7 @@ apptainer exec --env DATA_DIR=/cluster/home/michechi/MIMICIV/data "$CONTAINER" \
 ```
 
 **Sanity-suite expectation:** the container has no `xgboost`, so the full
-suite prints `10/12 passed -- 2 FAILED` where BOTH failures read
+suite prints `10/12 passed  -- 2 FAILED` where BOTH failures read
 `xgboost missing` (check "5 count purity (XGBoost)", m=4 and m=6) and the exit
 code is 1. That exact outcome is expected — count purity was validated locally
 (`repro/src/analysis/mechanism_id/results/kip_sanity.txt`, 12/12). **Any other

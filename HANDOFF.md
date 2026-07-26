@@ -30,7 +30,8 @@ that contrast is the point of the GPU runs.
 - Regeneration: `python -m src.generators.kip --build --m 4 6` (seed 959693,
   deterministic, byte-identical across sites); `--verify` re-derives labels;
   `python -m src.generators.kip_sanity` is the 12-check suite.
-- Cross-site proof: `scripts/slurm/Olivia/kip/kip_data.sha256` (28 files).
+- Cross-site proof: `scripts/slurm/FOX/kip/kip_data.sha256` (28 files;
+  identical copy in the Olivia package).
 - All repro-tree code needs `DATA_DIR=<repo>/data` exported and runs as
   `cd <repo>/repro && python -m src.<module>`.
 
@@ -59,7 +60,8 @@ scripts' exact recipes (see its docstring), saves a checkpoint + per-epoch
   tokens; recorded in the recipe column either way).
 - **Results CSV**: tracked in git, append-only, `merge=union` in
   .gitattributes. Columns include provenance (`site,host,gpu,slurm_job_id`);
-  `site=local` is the A100 box, `site=olivia` is Sigma2 Olivia. Rows written
+  `site=local` is the A100 box, `site=fox` is FOX (Educloud), `site=olivia`
+  is Sigma2 Olivia (unavailable as of 2026-07-26). Rows written
   by processes that predate the 2026-07-26 schema migration may lack the last
   4 fields — pandas reads them as NaN; backfill with
   `,local,hazy-book-sings-fin-03,NVIDIA A100-SXM4-80GB,` if needed.
@@ -67,9 +69,10 @@ scripts' exact recipes (see its docstring), saves a checkpoint + per-epoch
   (kept separate so they never mix with the as-run patience-3 block).
 - **Curves**: DL runs write `curve.json` next to the checkpoint (added
   2026-07-26 — local runs completed before then have per-epoch curves only in
-  `logs/kip/*.log`); cluster jobs copy curves + the `.err` training logs into
+  `logs/kip/*.log`); cluster jobs copy curves + the full training log into
   `results/kip_curves/` (tracked). BERT curves are the per-epoch lines in the
-  training log — python logging goes to stderr.
+  training log; python logging goes to stderr, so that's the single merged
+  `.out` on FOX and the `.err` on Olivia (which splits streams).
 - **`epochs_done` caveat**: for DL rows the column records the BEST epoch
   (early-stopping selection), for BERT/Llama rows the number of epochs
   actually executed. Don't compare it across families; DL's full history is
@@ -88,13 +91,15 @@ scripts' exact recipes (see its docstring), saves a checkpoint + per-epoch
 
 Interpretation so far: only the LSTM learns KIP at m=4, consistent with the
 CPU probes (pairwise precedence suffices at m=4). m=6 — where pairwise
-stops sufficing — is the decisive experiment, hence its priority on Olivia.
+stops sufficing — is the decisive experiment, hence its priority on FOX.
 
-## Olivia task list (cross-site runs)
+## FOX task list (cross-site runs)
 
-Package: `scripts/slurm/Olivia/kip/` — **start at `RUNBOOK.md` there**; it is
-self-contained (data regen → sha256 verify → BERT prefetch → sbatch order →
-monitoring → committing rows back).
+Package: `scripts/slurm/FOX/kip/` — **start at `RUNBOOK.md` there**; it is
+self-contained (data regen → sha256 verify → sbatch order → monitoring →
+committing rows back). All jobs request `--gpus=nvidia_h200_nvl:1` (site
+instruction 2026-07-26). An equivalent Olivia package exists at
+`scripts/slurm/Olivia/kip/` but Olivia is unavailable as of 2026-07-26.
 
 1. `kip_d_lstm_m6.slurm` — **PRIORITY**: LSTM m6 (a), 3 seeds, patience 5.
 2. `kip_a_anchor.slurm` — anchor LSTM m4 (a) seed 9550 p5; must reproduce
@@ -113,9 +118,19 @@ monitoring → committing rows back).
   `cd /root/LLMSeq/repro && DATA_DIR=/root/LLMSeq/data /root/kip-venv/bin/python -m src.<module>`.
   Training only inside detached tmux; never kill a session to inspect it.
   Llama (Block D) needs HF_TOKEN in the tmux env — never echo/log it.
-- **Olivia (Sigma2, site=olivia)**: SLURM account NN12048K, partition accel,
-  container `extended-pytorch.sif` (transformers 4.47.1 + peft + sklearn;
-  **no xgboost** — sanity check 5's XGB arm reports "xgboost missing" there,
-  the only acceptable sanity failure). No HF token on Olivia; BERT weights
-  pre-fetched to the permanent cache, jobs run `HF_HUB_OFFLINE=1`.
-  Checkpoints: `/cluster/work/projects/nn12048k/michechi/results/kip/checkpoints/`.
+- **FOX (Educloud, site=fox — the active cluster)**: SLURM account ec12,
+  `--partition=accel --gpus=nvidia_h200_nvl:1`, no containers — the NLPL
+  module stack provides python 3.10 + transformers 4.47.1 + peft + sklearn
+  (`module use -a /fp/projects01/ec30/software/easybuild/modules/all/`).
+  Compute nodes have internet; bert-base-uncased downloads in-job, ungated,
+  **no HF token needed or wanted**. Checkout at `$HOME/MIMICIV`; checkpoints
+  in `$REPO_ROOT/checkpoints/kip/` (gitignored, ~4 GB for the BERT arms —
+  keep until kip_f ran). If the sanity suite lacks xgboost there, the only
+  acceptable failures are the two "xgboost missing" lines (12/12 was
+  validated locally, tracked in
+  `repro/src/analysis/mechanism_id/results/kip_sanity.txt`).
+- **Olivia (Sigma2, site=olivia — UNAVAILABLE as of 2026-07-26)**: package
+  retained at `scripts/slurm/Olivia/kip/` in case it comes back: account
+  NN12048K, partition accel, container `extended-pytorch.sif`, no HF token,
+  BERT pre-fetched + `HF_HUB_OFFLINE=1`, checkpoints under
+  `/cluster/work/projects/nn12048k/michechi/results/kip/checkpoints/`.
