@@ -1,0 +1,57 @@
+HF token present (not shown).
+=== JOB CONFIGURATION ===
+Job: 4012564
+Node: gpu-17.fox
+Config: model=meta-llama/Llama-3.2-1B tag=9 (OC noisy) FULL-FT seed=8888 bs=64 maxlen=50
+2026-07-26 13:59:02,513: Argument batch_size: 64
+2026-07-26 13:59:02,513: Argument cache_dir: '/localscratch/4012564/hf_cache'
+2026-07-26 13:59:02,513: Argument cold_start: False
+2026-07-26 13:59:02,513: Argument early: 'loss'
+2026-07-26 13:59:02,513: Argument epochs: 20
+2026-07-26 13:59:02,513: Argument fractions: '1.0'
+2026-07-26 13:59:02,513: Argument gradient_accumulation_steps: 1
+2026-07-26 13:59:02,513: Argument lr: 2e-05
+2026-07-26 13:59:02,513: Argument max_length: 50
+2026-07-26 13:59:02,513: Argument model_name: 'meta-llama/Llama-3.2-1B'
+2026-07-26 13:59:02,513: Argument model_type: 'general'
+2026-07-26 13:59:02,513: Argument number_to_use: '9'
+2026-07-26 13:59:02,513: Argument output_dir: '/fp/homes01/u01/ec-michelec/MIMICIV/results/oc_fullft/'
+2026-07-26 13:59:02,513: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/tested/'
+2026-07-26 13:59:02,513: Argument patience: 3
+2026-07-26 13:59:02,513: Argument peft: False
+2026-07-26 13:59:02,513: Argument seed: 8888
+2026-07-26 13:59:02,513: Argument tiny: False
+2026-07-26 13:59:02,513: Argument tiny_type: '1M'
+2026-07-26 13:59:02,513: Argument use_quantization: False
+2026-07-26 13:59:02,631: Using device: cuda
+2026-07-26 13:59:02,632: Output directory: /fp/homes01/u01/ec-michelec/MIMICIV/results/oc_fullft/
+2026-07-26 13:59:04,912: Tokenizer has no pad_token. Adding [PAD].
+2026-07-26 13:59:04,912: Loading datasets...
+2026-07-26 13:59:05,223: Dataset sizes - Train: 400000, Val: 50000, Test: 50000
+2026-07-26 13:59:05,223: Testing fractions: [1.0]
+2026-07-26 13:59:05,447: ======================================================================
+2026-07-26 13:59:05,447: Training with 100% of training data
+2026-07-26 13:59:05,447: ======================================================================
+2026-07-26 13:59:05,447: Training subset size: 400000
+2026-07-26 13:59:06,374: Loading pre-trained CausalLM model (WARM START)
+2026-07-26 13:59:14,541: We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+The new embeddings will be initialized from a multivariate normal distribution that has old embeddings' mean and covariance. As described in this article: https://nlp.stanford.edu/~johnhew/vocab-expansion.html. To disable this, use `mean_resizing=False`
+2026-07-26 14:13:30,544: Epoch 1/20 | Train Loss: 2.9638 | Val Loss: 2.7675 | Val AUC: 0.6048 | Val F1: 0.3661
+2026-07-26 14:13:30,920: New best model (AUC: 0.6048)
+2026-07-26 14:27:45,850: Epoch 2/20 | Train Loss: 2.7419 | Val Loss: 2.7280 | Val AUC: 0.6634 | Val F1: 0.5764
+2026-07-26 14:27:46,227: New best model (AUC: 0.6634)
+2026-07-26 14:42:01,307: Epoch 3/20 | Train Loss: 2.7278 | Val Loss: 2.7231 | Val AUC: 0.6658 | Val F1: 0.5757
+2026-07-26 14:42:01,652: New best model (AUC: 0.6658)
+2026-07-26 14:56:16,558: Epoch 4/20 | Train Loss: 2.7245 | Val Loss: 2.7235 | Val AUC: 0.6681 | Val F1: 0.5759
+2026-07-26 15:10:31,608: Epoch 5/20 | Train Loss: 2.7235 | Val Loss: 2.7231 | Val AUC: 0.6657 | Val F1: 0.5750
+2026-07-26 15:24:46,921: Epoch 6/20 | Train Loss: 2.7231 | Val Loss: 2.7244 | Val AUC: 0.6667 | Val F1: 0.5758
+2026-07-26 15:24:46,921: Early stopping at epoch 6
+2026-07-26 15:25:25,612: Optimal threshold: 0.28 (Val F1: 0.5930)
+2026-07-26 15:26:03,478: Fraction 100% - Test AUC: 0.6703, Test F1: 0.5917, Time: 5218.0s
+2026-07-26 15:26:03,635: Results saved to: /fp/homes01/u01/ec-michelec/MIMICIV/results/oc_fullft/llm_fraction_experiment_meta-llama_Llama-3.2-1B_9_20260726_152603.csv
+2026-07-26 15:26:03,635: 
+======================================================================
+2026-07-26 15:26:03,635: EXPERIMENT SUMMARY
+2026-07-26 15:26:03,635: ======================================================================
+ fraction  train_samples  val_auc   val_f1  val_f1_optimal  val_loss  optimal_threshold  test_auc  test_f1  test_accuracy  test_precision  test_recall  epochs  training_time_s     test_confusion_matrix
+      1.0         400000 0.665758 0.575662        0.592956  2.723068               0.28  0.670337 0.591711        0.42036         0.42018     0.999905       6      5218.030953 [[17, 28980], [2, 21001]]

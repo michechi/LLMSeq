@@ -1,0 +1,32 @@
+Starting job 4012545 on gpu-17 on Fox at Sun Jul 26 12:46:26 CEST 2026
+
+=== JOB CONFIGURATION ===
+Job: 4012545 / Array task: 0
+Node: gpu-17.fox
+Config: model=LSTM tag=kip_m6 mode=ordered seed=9550 dl_patience=5
+2026-07-26 12:47:18,652: arg bert_max_length = 512
+2026-07-26 12:47:18,652: arg checkpoint_root = /fp/homes01/u01/ec-michelec/MIMICIV/checkpoints/kip
+2026-07-26 12:47:18,652: arg dl_patience = 5
+2026-07-26 12:47:18,652: arg llm_batch_size = 8
+2026-07-26 12:47:18,652: arg llm_max_length = 512
+2026-07-26 12:47:18,652: arg llm_model_name = meta-llama/Llama-3.2-1B
+2026-07-26 12:47:18,652: arg mode = ordered
+2026-07-26 12:47:18,652: arg model = LSTM
+2026-07-26 12:47:18,652: arg ordered_csv = /fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/tested
+2026-07-26 12:47:18,652: arg results_csv = /fp/homes01/u01/ec-michelec/MIMICIV/results/kip_training.csv
+2026-07-26 12:47:18,652: arg seed = 9550
+2026-07-26 12:47:18,653: arg shuffled_csv = /fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/kip_shuffled
+2026-07-26 12:47:18,653: arg site = fox
+2026-07-26 12:47:18,653: arg smoke = False
+2026-07-26 12:47:18,653: arg tag = kip_m6
+2026-07-26 12:47:19,006: device: cuda
+2026-07-26 12:47:19,006: Loading data from: /fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/tested/
+2026-07-26 12:47:19,660: Data loaded - Train: 400000, Val: 50000, Test: 50000
+2026-07-26 12:47:19,683: recipe: DL_TR_baselines_experiment OPTIMAL: Adam lr=0.0005 bs=64 epochs<=30 patience=5 early=val_f1 config={'vocab_size': 26, 'embedding_dim': 64, 'hidden_dim': 128, 'num_layers': 2, 'num_classes': 2, 'dropout': 0.5}
+2026-07-26 12:48:02,252:   Epoch [5/30] Train Loss: 0.6932, Val F1: 0.6478, Val AUC: 0.4995
+2026-07-26 12:48:44,176:   Epoch [10/30] Train Loss: 0.6932, Val F1: 0.6665, Val AUC: 0.4979
+2026-07-26 12:49:09,427:   Early stopping at epoch 13
+2026-07-26 12:49:10,092: checkpoint saved: /fp/homes01/u01/ec-michelec/MIMICIV/checkpoints/kip/LSTM_kip_m6_ordered_9550/ckpt.pt
+2026-07-26 12:49:10,092: per-epoch val curve saved: /fp/homes01/u01/ec-michelec/MIMICIV/checkpoints/kip/LSTM_kip_m6_ordered_9550/curve.json
+2026-07-26 12:49:10,219: result row appended to /fp/homes01/u01/ec-michelec/MIMICIV/results/kip_training.csv
+2026-07-26 12:49:10,219: DONE LSTM kip_m6 ordered seed=9550: test_auc=0.5011 test_f1=0.6675 (110.4s)

@@ -1,0 +1,31 @@
+Starting job 4012531 on gpu-17 on Fox at Sun Jul 26 11:57:43 CEST 2026
+
+=== JOB CONFIGURATION ===
+Job: 4012531 / Array task: 2
+Node: gpu-17.fox
+Config: model=Transformer tag=kip_m6 mode=ordered seed=9552 dl_patience=5
+2026-07-26 11:58:37,430: arg bert_max_length = 512
+2026-07-26 11:58:37,430: arg checkpoint_root = /fp/homes01/u01/ec-michelec/MIMICIV/checkpoints/kip
+2026-07-26 11:58:37,430: arg dl_patience = 5
+2026-07-26 11:58:37,430: arg llm_batch_size = 8
+2026-07-26 11:58:37,430: arg llm_max_length = 512
+2026-07-26 11:58:37,430: arg llm_model_name = meta-llama/Llama-3.2-1B
+2026-07-26 11:58:37,430: arg mode = ordered
+2026-07-26 11:58:37,430: arg model = Transformer
+2026-07-26 11:58:37,430: arg ordered_csv = /fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/tested
+2026-07-26 11:58:37,430: arg results_csv = /fp/homes01/u01/ec-michelec/MIMICIV/results/kip_training.csv
+2026-07-26 11:58:37,430: arg seed = 9552
+2026-07-26 11:58:37,430: arg shuffled_csv = /fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/kip_shuffled
+2026-07-26 11:58:37,430: arg site = fox
+2026-07-26 11:58:37,430: arg smoke = False
+2026-07-26 11:58:37,430: arg tag = kip_m6
+2026-07-26 11:58:37,699: device: cuda
+2026-07-26 11:58:37,699: Loading data from: /fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/tested/
+2026-07-26 11:58:38,366: Data loaded - Train: 400000, Val: 50000, Test: 50000
+2026-07-26 11:58:38,389: recipe: DL_TR_baselines_experiment OPTIMAL: Adam lr=0.001 bs=64 epochs<=30 patience=5 early=val_f1 config={'vocab_size': 26, 'embedding_dim': 64, 'num_heads': 8, 'num_layers': 2, 'dim_feedforward': 512, 'num_classes': 2, 'dropout': 0.3, 'max_seq_length': 20}
+2026-07-26 11:59:56,948:   Epoch [5/30] Train Loss: 0.6933, Val F1: 0.0000, Val AUC: 0.5027
+2026-07-26 12:00:12,444:   Early stopping at epoch 6
+2026-07-26 12:00:13,307: checkpoint saved: /fp/homes01/u01/ec-michelec/MIMICIV/checkpoints/kip/Transformer_kip_m6_ordered_9552/ckpt.pt
+2026-07-26 12:00:13,307: per-epoch val curve saved: /fp/homes01/u01/ec-michelec/MIMICIV/checkpoints/kip/Transformer_kip_m6_ordered_9552/curve.json
+2026-07-26 12:00:13,439: result row appended to /fp/homes01/u01/ec-michelec/MIMICIV/results/kip_training.csv
+2026-07-26 12:00:13,439: DONE Transformer kip_m6 ordered seed=9552: test_auc=0.5031 test_f1=0.6675 (94.9s)
