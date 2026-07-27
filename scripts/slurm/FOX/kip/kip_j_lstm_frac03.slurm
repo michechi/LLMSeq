@@ -37,12 +37,18 @@ set -o nounset
 # ============== MODULES ==============
 module purge
 module use -a /fp/projects01/ec30/software/easybuild/modules/all/
-# 2024a stack (H200/sm_90 kernels); same proven set as the other kip jobs.
+# 2024a stack (H200/sm_90 kernels). The full kip_i module set, NOT a subset:
+# the training driver imports the BERT and LLM experiment modules at top level
+# regardless of which model runs, so peft (nlpl-llmtools) must be present even
+# for a pure-torch LSTM job (verified: job 4012771 died with
+# ModuleNotFoundError: peft when llmtools was omitted, 2026-07-27).
 module load nlpl-pytorch/2.6.0-foss-2024a-cuda-12.6.0-Python-3.12.3
 module load nlpl-transformers/4.55.4-foss-2024a-Python-3.12.3
+module load nlpl-llmtools/01-foss-2024a-Python-3.12.3
 module load nlpl-datasets/3.6.0-foss-2024a-Python-3.12.3
 module load nlpl-nlptools/01-foss-2024a-Python-3.12.3
 module load nlpl-scikit-bundle/1.6.1-foss-2024a-Python-3.12.3
+module load nlpl-bitsandbytes/0.46.1-foss-2024a-Python-3.12.3
 
 # ============== CONFIG ==============
 REPO_ROOT="${REPO_ROOT:-${HOME}/MIMICIV}"
