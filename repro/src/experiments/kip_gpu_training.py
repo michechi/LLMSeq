@@ -136,6 +136,30 @@ def _maybe_truncate(df: pd.DataFrame, n: int | None) -> pd.DataFrame:
     return df if n is None else df.iloc[:n].reset_index(drop=True)
 
 
+def save_checkpoint(save_fn, ckpt_path: Path) -> str:
+    """Run a checkpoint/sidecar writer without letting it destroy the run.
+
+    A full-FT state_dict is gigabytes; on quota-limited filesystems torch.save
+    can fail mid-write (observed on FOX 2026-07-27: PytorchStreamWriter "file
+    write failed" at the 1B save, which killed the process AFTER test metrics
+    were computed and thereby lost the results row). Metrics must outlive a
+    failed save: return the checkpoint path on success, or a SAVE_FAILED
+    marker (recorded in the results row instead of the path) on failure.
+    """
+    try:
+        save_fn()
+        logger.info("checkpoint saved: %s", ckpt_path)
+        return str(ckpt_path)
+    except Exception as exc:  # noqa: BLE001 -- deliberately broad: the row must survive
+        logger.error("CHECKPOINT SAVE FAILED (%s): %s -- continuing so the "
+                     "results row is still appended", ckpt_path, exc)
+        try:  # a torn file is worse than no file (mode c would load garbage)
+            ckpt_path.unlink(missing_ok=True)
+        except OSError:
+            pass
+        return f"SAVE_FAILED: {type(exc).__name__}: {str(exc)[:120]}"
+
+
 # --------------------------------------------------------------------------- #
 # DL family (LSTM / Transformer)                                              #
 # --------------------------------------------------------------------------- #
@@ -160,6 +184,12 @@ def run_dl(args) -> dict:
         te_s, te_l = te_s[:smoke_eval], te_l[:smoke_eval]
 
     max_seq_length = max(len(str(s)) for s in list(tr_s) + list(va_s) + list(te_s))
+    if not args.smoke and args.dl_fraction < 1.0:
+        # Same stratified subsample run_fraction_experiment uses (seeded, by
+        # label); max_seq_length is computed on the full data first, as there.
+        tr_s, tr_l = dlx.subsample_training_data(tr_s, tr_l, args.dl_fraction, args.seed)
+        logger.info("training subset after fraction %.2f: %d rows",
+                    args.dl_fraction, len(tr_s))
     config = copy.deepcopy(dlx.OPTIMAL_CONFIGS[args.model])
     if args.model in ("MLP", "Transformer", "RNNTransformer", "Mamba"):
         config["max_seq_length"] = max_seq_length
@@ -168,7 +198,8 @@ def run_dl(args) -> dict:
     patience = args.dl_patience
     batch_size = 64
     recipe = (f"DL_TR_baselines_experiment OPTIMAL: Adam lr={lr} bs={batch_size} "
-              f"epochs<={epochs} patience={patience} early=val_f1 config={config}")
+              f"epochs<={epochs} patience={patience} early=val_f1 "
+              f"fraction={args.dl_fraction} config={config}")
     logger.info("recipe: %s", recipe)
 
     test_loader = DataLoader(dlx.LetterSequenceDataset(te_s, te_l), batch_size=batch_size,
@@ -206,17 +237,21 @@ def run_dl(args) -> dict:
 
         ckpt_dir = ckpt_dir_for(args.model, args.tag, args.mode, args.seed, args)
         ckpt_dir.mkdir(parents=True, exist_ok=True)
-        torch.save({"state_dict": model.state_dict(), "config": config,
-                    "model": args.model, "seed": args.seed, "mode": args.mode,
-                    "tag": args.tag, "lr": lr}, ckpt_dir / "ckpt.pt")
-        logger.info("checkpoint saved: %s", ckpt_dir / "ckpt.pt")
-        (ckpt_dir / "curve.json").write_text(json.dumps(history, indent=2) + "\n")
-        logger.info("per-epoch val curve saved: %s", ckpt_dir / "curve.json")
+
+        def _save_dl():
+            torch.save({"state_dict": model.state_dict(), "config": config,
+                        "model": args.model, "seed": args.seed, "mode": args.mode,
+                        "tag": args.tag, "lr": lr,
+                        "fraction": args.dl_fraction}, ckpt_dir / "ckpt.pt")
+            (ckpt_dir / "curve.json").write_text(json.dumps(history, indent=2) + "\n")
+            logger.info("per-epoch val curve saved: %s", ckpt_dir / "curve.json")
+
+        ckpt_ref = save_checkpoint(_save_dl, ckpt_dir / "ckpt.pt")
         row = {
             "train_rows": len(tr_s), "epochs_done": epochs_done,
             "val_auc": best_val_auc, "val_f1": best_val_f1,
             "threshold": "argmax", "n_params": n_params,
-            "checkpoint": str(ckpt_dir / "ckpt.pt"),
+            "checkpoint": ckpt_ref,
         }
 
     row.update({
@@ -334,17 +369,20 @@ def run_bert(args) -> dict:
 
         ckpt_dir = ckpt_dir_for(args.model, args.tag, args.mode, args.seed, args)
         ckpt_dir.mkdir(parents=True, exist_ok=True)
-        torch.save(model.state_dict(), ckpt_dir / "ckpt.pt")
-        (ckpt_dir / "meta.json").write_text(json.dumps({
-            "optimal_threshold": threshold, "val_f1_optimal": val_f1_opt,
-            "val_auc": best_auc, "val_loss": best_val_loss,
-            "epochs_done": epochs_done, "seed": args.seed, "mode": args.mode,
-            "tag": args.tag, "model_name": bargs.model_name, "peft": True,
-        }, indent=2) + "\n")
-        logger.info("checkpoint saved: %s", ckpt_dir / "ckpt.pt")
+
+        def _save_bert():
+            torch.save(model.state_dict(), ckpt_dir / "ckpt.pt")
+            (ckpt_dir / "meta.json").write_text(json.dumps({
+                "optimal_threshold": threshold, "val_f1_optimal": val_f1_opt,
+                "val_auc": best_auc, "val_loss": best_val_loss,
+                "epochs_done": epochs_done, "seed": args.seed, "mode": args.mode,
+                "tag": args.tag, "model_name": bargs.model_name, "peft": True,
+            }, indent=2) + "\n")
+
+        ckpt_ref = save_checkpoint(_save_bert, ckpt_dir / "ckpt.pt")
         row = {"train_rows": n_train, "epochs_done": epochs_done,
                "val_auc": best_auc, "val_f1": best_f1, "threshold": threshold,
-               "n_params": n_params, "checkpoint": str(ckpt_dir / "ckpt.pt")}
+               "n_params": n_params, "checkpoint": ckpt_ref}
 
     row.update({
         "test_auc": test_metrics["auc"], "test_f1": test_metrics["f1"],
@@ -479,18 +517,21 @@ def run_llm(args) -> dict:
 
         ckpt_dir = ckpt_dir_for(args.model, args.tag, args.mode, args.seed, args)
         ckpt_dir.mkdir(parents=True, exist_ok=True)
-        torch.save(model.state_dict(), ckpt_dir / "ckpt.pt")
-        (ckpt_dir / "meta.json").write_text(json.dumps({
-            "optimal_threshold": threshold, "val_f1_optimal": val_f1_opt,
-            "val_auc": best_auc, "val_loss": best_val_loss,
-            "epochs_done": epochs_done, "seed": args.seed, "mode": args.mode,
-            "tag": args.tag, "model_name": largs.model_name,
-            "peft": not args.llm_full_ft, "fraction": args.llm_fraction,
-        }, indent=2) + "\n")
-        logger.info("checkpoint saved: %s", ckpt_dir / "ckpt.pt")
+
+        def _save_llm():
+            torch.save(model.state_dict(), ckpt_dir / "ckpt.pt")
+            (ckpt_dir / "meta.json").write_text(json.dumps({
+                "optimal_threshold": threshold, "val_f1_optimal": val_f1_opt,
+                "val_auc": best_auc, "val_loss": best_val_loss,
+                "epochs_done": epochs_done, "seed": args.seed, "mode": args.mode,
+                "tag": args.tag, "model_name": largs.model_name,
+                "peft": not args.llm_full_ft, "fraction": args.llm_fraction,
+            }, indent=2) + "\n")
+
+        ckpt_ref = save_checkpoint(_save_llm, ckpt_dir / "ckpt.pt")
         row = {"train_rows": len(X_train), "epochs_done": epochs_done,
                "val_auc": best_auc, "val_f1": best_f1, "threshold": threshold,
-               "n_params": n_params, "checkpoint": str(ckpt_dir / "ckpt.pt")}
+               "n_params": n_params, "checkpoint": ckpt_ref}
 
     row.update({
         "test_auc": test_metrics["auc"], "test_f1": test_metrics["f1"],
@@ -538,6 +579,10 @@ def parse_args(args: Iterable[str] | None = None) -> argparse.Namespace:
     p.add_argument("--bert_max_length", type=int, default=512,
                    help="BERT tokenizer pad/truncate length. 512 = paper appendix; "
                         "smaller values are a recorded deviation (see bert_args).")
+    p.add_argument("--dl_fraction", type=float, default=1.0,
+                   help="Stratified training-data fraction for the DL run "
+                        "(0.3 = 120K rows), via dlx.subsample_training_data. "
+                        "Used for fraction-matched controls of the full-FT arm.")
     p.add_argument("--dl_patience", type=int, default=3,
                    help="DL early-stopping patience. 3 = as-run default (every "
                         "committed local invocation); 5 = the paper appendix "
