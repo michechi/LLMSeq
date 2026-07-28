@@ -39,9 +39,9 @@ from .recbole_grid import append_locked, hr_ndcg_at_k
 K = 10
 
 
-def load_train(split_dir: str) -> pd.DataFrame:
-    df = _read(os.path.join(split_dir, "train_30Music.csv"))
-    _assert_structure(df, "train_30Music.csv")
+def load_train(train_csv: str) -> pd.DataFrame:
+    df = _read(train_csv)
+    _assert_structure(df, os.path.basename(train_csv))
     return df
 
 
@@ -175,6 +175,11 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--split-dir", required=True)
     ap.add_argument("--audit-dir", required=True)
+    ap.add_argument("--train-csv",
+                    help="fit-data override for the mode-(b) shuffled-fit arm "
+                         "(default: <split-dir>/train_30Music.csv)")
+    ap.add_argument("--mode-label", default="ordered",
+                    help="train_mode recorded in metrics.csv rows")
     ap.add_argument("--baselines", nargs="+", default=["all"])
     ap.add_argument("--results-csv", default="results/recsys_audit/metrics.csv")
     ap.add_argument("--recs-dir", default="results/recsys_audit/recs")
@@ -187,7 +192,8 @@ def main() -> None:
     names = (["MostPopular", "ItemKNN", "Markov1", "Markov2"]
              if args.baselines == ["all"] else args.baselines)
 
-    train = load_train(args.split_dir)
+    train = load_train(args.train_csv
+                       or os.path.join(args.split_dir, "train_30Music.csv"))
     n_items = int(max(train["item_id"].max(),
                       _read(os.path.join(args.split_dir,
                                          "test_30Music.csv"))["item_id"].max())) + 1
@@ -223,11 +229,13 @@ def main() -> None:
                 res = {"users": np.array(users), "topk": topk,
                        "hr": hr, "ndcg": ndcg}
             results[input_name] = res
-            label = {"model": name, "seed": "", "mode": "ordered",
+            label = {"model": name, "seed": "", "mode": args.mode_label,
                      "site": args.site, "checkpoint": "",
                      "order_invariant": str(ORDER_INVARIANT[name]).lower()}
+            tag = (name if args.mode_label == "ordered"
+                   else f"{name}_{args.mode_label}")
             save_recs(os.path.join(args.recs_dir,
-                                   f"{name}__{input_name}.csv.gz"),
+                                   f"{tag}__{input_name}.csv.gz"),
                       res["users"], res["topk"])
             row = metric_row(label, input_name, res, results["ordered"], t0)
             append_locked(args.results_csv, METRICS_HEADER, row)
