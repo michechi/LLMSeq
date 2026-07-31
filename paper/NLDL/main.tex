@@ -2153,4 +2153,62 @@ The audit shows that CKD$\to$ESRD prediction, while is clinically temporal, is n
 \paragraph{Limitations and data access.}
 MIMIC-IV is an ICU-centered EHR dataset and may not reflect outpatient CKD progression trajectories. The audit uses diagnosis codes only; richer longitudinal variables such as eGFR, laboratory values, medications, dialysis timing, visit intervals, and outpatient follow-up may contain decisive temporal information. Within-admission order reflects billing/discharge order rather than clinical event time. All MIMIC-IV analyses are performed under credentialed access. We release cohort-construction and preprocessing code, but not raw MIMIC-IV data or patient-level derived sequences.
 
+\section{Sensitivity analysis (full sweep)}
+\label{app:sensitivity}
+
+We run the stochastic sweep over
+\(m\in\{3,6,10\}\) and \(\lambda\in\{1,3,5,7,9,10\}\), yielding 18
+configurations. For each configuration we train BERT-base, a single-layer LSTM, a two-layer Transformer encoder, and Llama-3.2-1B with LoRA from scratch on 400K training sequences, using the same hyperparameters as Appendix~\ref{subsec:training_appendix}; we report mean AUC over three seeds and divide by the theoretical oracle $\mathrm{AUC}^{*}$ from Theorem~\ref{thm:optimal_performance} to obtain the $\mathrm{AUC}/\mathrm{AUC}^{*}$ ratio used in Table~\ref{tab:sensitivity}.
+
+\begin{table}[tb]
+  \centering
+  \caption{Sensitivity analysis in the stochastic setting ($\pi=0.3$). Each cell reports $\text{AUC}/\text{AUC}^*$, where $\text{AUC}^*$ is the            
+  per-configuration theoretical ceiling. A ratio of 1.00 indicates the model reaches the Bayes-optimal bound.}
+  \label{tab:sensitivity}
+  \small
+  \fitwidth{%
+\begin{tabular}{cc c cccc}
+  \toprule                                                                    
+  $m$ & $\lambda$ & AUC$^*$ & BERT & LSTM & Transformer & Llama-3.2-1B \\
+  \midrule                             
+  3  & 1  & .602 & 1.00 & 1.00 & 0.94 & 0.96 \\
+  3  & 3  & .595 & 1.00 & 1.00 & 0.94 & 0.93 \\                              
+  3  & 5  & .589 & 1.00 & 1.00 & 0.94 & 0.95 \\                             
+  3  & 7  & .581 & 1.00 & 0.98 & 0.96 & 0.95 \\
+  3  & 9  & .574 & 1.00 & 1.00 & 0.97 & 0.96 \\
+  3  & 10 & .570 & 1.00 & 0.99 & 1.00 & 0.95 \\
+  \midrule
+  6  & 1  & .683 & 1.00 & 1.00 & 0.97 & 0.88 \\
+  6  & 3  & .679 & 1.00 & 1.00 & 0.99 & 0.86 \\                    
+  6  & 5  & .675 & 1.00 & 1.00 & 1.00 & 0.86 \\
+  \textbf{6}  & \textbf{7}  & \textbf{.670} & \textbf{1.00} & \textbf{0.99} & \textbf{1.00} & \textbf{0.88} \\
+  6  & 9  & .666 & 1.00 & 0.99 & 1.00 & 0.88 \\
+  6  & 10 & .664 & 1.00 & 0.99 & 1.00 & 0.89 \\                           
+  \midrule        
+  10 & 1  & .699 & 1.00 & 1.00 & 0.76 & 0.78 \\
+  10 & 3  & .699 & 1.00 & 1.00 & 0.80 & 0.79 \\
+  10 & 5  & .698 & 1.00 & 0.99 & 0.83 & 0.81 \\
+  10 & 7  & .698 & 1.00 & 0.96 & 0.87 & 0.85 \\
+  10 & 9  & .697 & 1.00 & 0.96 & 0.98 & 0.85 \\                             
+  10 & 10 & .696 & 1.00 & 0.98 & 0.99 & 0.87 \\
+  \bottomrule
+  \end{tabular}}
+
+  \parbox{\linewidth}{\raggedright\footnotesize
+    \vspace{3pt} % piccolo stacco dalla tabella
+    Bold: baseline configuration ($m{=}6, \lambda{=}7$) from the main paper.
+  }
+\end{table}
+
+BERT and LSTM stay within 0.05 of the ceiling across the sweep.
+
+Three patterns emerge from Table~\ref{tab:sensitivity}. First, BERT and LSTM are essentially at the oracle ceiling throughout the stochastic sweep. Second, Llama-3.2-1B is consistently below the encoder/recurrent models, with the largest gaps in the \(m=10\) regime where \(\mathrm{AUC}^*\) is highest. Third, the small Transformer is sensitive to dense-key regimes: it degrades at \(m=10\) for small and medium lags but recovers at larger lags. The main-paper setting \((m=6,\lambda=7)\) is
+therefore a medium-difficulty point rather than a cherry-picked worst case;
+harder \(m=10\) regimes amplify the encoder/recurrent advantage.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% MECHANISM-ID AUDIT APPENDIX
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \end{document}
