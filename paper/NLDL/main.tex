@@ -772,4 +772,905 @@ Oracle AUC & 1.000 & .670 & 1.000 \\
 
 \FloatBarrier
 
+\section{Proofs}
+\label{appendix:proof_theorems}
+
+\begin{theorem}[Optimal Performance under Label Noise]
+\label{thm:optimal_performance}
+Under symmetric label noise with parameter $\pi \in [0, 0.5)$ and compliance rate $\rho$ (i.e., $\mathbb{P}(Y^{*}=1)=\rho, \text{ and } \mathbb{P}(Y=1|Y^{*}=1)=1-\pi)$, a classifier with perfect access to compliance status (oracle) achieves:
+\[
+\mathrm{AUC}^* = \frac{1}{2} + \frac{1}{2}(A - C) \overset{\rho=0.5}{=} 1 - \pi
+\]
+where
+\[
+A = \frac{(1-\pi)\rho}{\rho(1-\pi) + (1-\rho)\pi}, \quad C = \frac{\pi\rho}{\rho\pi + (1-\rho)(1-\pi)}.
+\]
+Similarly, $F_1^* = 2(1-\pi)\rho / (\pi + 2\rho(1-\pi)) \overset{\rho=0.5}{=} 1-\pi$. Per dataset, this gives $\mathrm{AUC}^*=F_1^*=1.000$ for Naive sanity check, OC-Deterministic, and GPC-Deterministic (all with $\pi=0$), and $\mathrm{AUC}^*=0.670$, $F_1^*=0.577$, Precision$^*=0.700$, Recall$^*=0.491$ for OC-Noisy ($\pi=0.3$, $\rho=0.293$).
+\end{theorem}
+
+\begin{proof}[Proof of Theorem~\ref{thm:optimal_performance}]
+\label{proof:optimal_performance}
+Under symmetric label noise,
+\[
+P(Y=1 \mid Y^{*}=1)=1-\pi, \qquad P(Y=1 \mid Y^{*}=0)=\pi.
+\]
+Because $\pi < 1/2$, the posterior $P(Y=1 \mid Y^{*})$ is strictly increasing in $Y^{*}$, so any Bayes-optimal ranking is equivalent to scoring by $s=Y^{*}$. We therefore compute the AUC of the binary oracle score $s \in \{0,1\}$.
+
+\begin{equation}
+AUC = P(s_+ > s_-) + \frac{1}{2} P(s_+ = s_-)
+\end{equation}
+where $s_+$ is the score for a random instance with $Y = 1$ and $s_-$ is the score for a random instance with $Y = 0$.
+
+The Joint Distribution is:
+
+\begin{align}
+P(Y = 1, Y^* = 1) &= (1-\pi)\rho \\
+P(Y = 1, Y^* = 0) &= \pi(1-\rho) \\
+P(Y = 0, Y^* = 1) &= \pi\rho \\
+P(Y = 0, Y^* = 0) &= (1-\pi)(1-\rho)
+\end{align}
+
+Marginal Distributions:
+
+\begin{align}
+P(Y = 1) &= \rho(1-\pi) + (1-\rho)\pi \\
+P(Y = 0) &= \rho \pi + (1-\rho)(1-\pi)
+\end{align}
+
+Note that $P(Y = 1) + P(Y = 0) = 1$.
+
+For the conditional score distributions, define:
+\begin{align}
+    A &= P(s = 1 \mid Y = 1) = \frac{(1-\pi)\rho}{\rho(1-\pi) + (1-\rho)\pi} \\
+    B &= P(s = 0 \mid Y = 1) = \frac{\pi(1-\rho)}{\rho(1-\pi) + (1-\rho)\pi} \\
+    C &= P(s = 1 \mid Y = 0) = \frac{\pi\rho}{\rho \pi + (1-\rho)(1-\pi)} \\
+    D &= P(s = 0 \mid Y = 0) = \frac{(1-\pi)(1-\rho)}{\rho \pi + (1-\rho)(1-\pi)}
+\end{align}
+
+
+    
+
+Note that $A + B = 1$ and $C + D = 1$.
+
+AUC Calculation:
+
+\begin{align}
+AUC &= A \cdot D + \frac{1}{2}(A \cdot C + B \cdot D) \\
+&= A(1-C) + \frac{1}{2}A \cdot C + \frac{1}{2}(1-A)(1-C) \\
+&= A - AC + \frac{1}{2}AC + \frac{1}{2} - \frac{1}{2}A - \frac{1}{2}C + \frac{1}{2}AC \\
+&= \frac{1}{2} + \frac{1}{2}(A - C)
+\end{align}
+
+Simplification for balanced classes:
+
+For $\rho = 0.5$:
+\begin{align}
+A &= \frac{0.5(1-\pi)}{0.5(1-\pi) + 0.5\pi} = \frac{0.5(1-\pi)}{0.5} = 1-\pi \\
+C &= \frac{0.5\pi}{0.5\pi + 0.5(1-\pi)} = \frac{0.5\pi}{0.5} = \pi
+\end{align}
+
+Therefore:
+\begin{equation}
+AUC = \frac{1}{2} + \frac{1}{2}[(1-\pi) - \pi] = \frac{1}{2} + \frac{1}{2}(1-2\pi) = 1 - \pi
+\end{equation}
+
+Alternatively, we can use the following expression.
+
+Define $X = \rho(1-\pi) + (1-\rho)\pi$ and $Y = \rho \pi + (1-\rho)(1-\pi)$.
+
+The numerator of $(A - C)$ can be computed as:
+\begin{align}
+(A - C) \cdot XY &= (1-\pi)\rho \cdot Y - \pi\rho \cdot X \\
+&= \rho[(1-\pi)Y - \pi X] \\
+&= \rho[(1-\pi)(\rho \pi + (1-\rho)(1-\pi)) \\
+&\qquad - \pi(\rho(1-\pi) + (1-\rho)\pi)] \\
+&= \rho[(1-\pi)^2(1-\rho) - \pi^2(1-\rho)] \\
+&= \rho(1-\rho)[(1-\pi)^2 - \pi^2] \\
+&= \rho(1-\rho)(1-2\pi)
+\end{align}
+
+Note: $(1-\pi)^2 - \pi^2 = 1 - 2\pi + \pi^2 - \pi^2 = 1 - 2\pi$.
+
+Therefore:
+\begin{equation}
+A - C = \frac{\rho(1-\rho)(1-2\pi)}{XY}
+\end{equation}
+
+and
+\begin{equation}
+AUC = \frac{1}{2} + \frac{\rho(1-\rho)(1-2\pi)}{2XY}
+\end{equation}
+\qed
+
+For the thresholded oracle classifier $\widehat{Y}=Y^{*}$, we now compute the resulting F1 score with respect to the observed labels.
+
+Since we evaluate performance against the stochastic observed labels $Y$, the confusion matrix elements are:
+
+\begin{align}
+\text{TP} &= P(\hat{Y} = 1 \cap Y = 1) = P(Y^* = 1 \cap Y = 1) \nonumber \\
+&= P(Y = 1 \mid Y^* = 1) \cdot P(Y^* = 1) = (1-\pi)\rho \\
+\text{FP} &= P(\hat{Y} = 1 \cap Y = 0) = P(Y^* = 1 \cap Y = 0) \nonumber \\
+&= P(Y = 0 \mid Y^* = 1) \cdot P(Y^* = 1) = \pi\rho \\
+\text{FN} &= P(\hat{Y} = 0 \cap Y = 1) = P(Y^* = 0 \cap Y = 1) \nonumber \\
+&= P(Y = 1 \mid Y^* = 0) \cdot P(Y^* = 0) = \pi(1-\rho) \\
+\text{TN} &= P(\hat{Y} = 0 \cap Y = 0) = P(Y^* = 0 \cap Y = 0) \nonumber \\
+&= P(Y = 0 \mid Y^* = 0) \cdot P(Y^* = 0) = (1-\pi)(1-\rho)
+\end{align}
+
+For the precision, by definition:
+\begin{align}
+\text{Precision} &= \frac{\text{TP}}{\text{TP} + \text{FP}} = \frac{(1-\pi)\rho}{(1-\pi)\rho + \pi\rho} \nonumber \\
+&= \frac{(1-\pi)\rho}{\rho[(1-\pi) + \pi]} = \frac{(1-\pi)\rho}{\rho} = 1 - \pi
+\end{align}
+
+\textbf{Observation:} Precision is independent of the class distribution $\rho$ and depends only on the noise rate $\pi$.
+
+For the recall, by definition:
+\begin{align}
+\text{Recall} &= \frac{\text{TP}}{\text{TP} + \text{FN}} = \frac{(1-\pi)\rho}{(1-\pi)\rho + \pi(1-\rho)} \nonumber \\
+&= \frac{(1-\pi)\rho}{\rho - \pi\rho + \pi - \pi\rho} = \frac{(1-\pi)\rho}{\rho(1-2\pi) + \pi}
+\end{align}
+
+\textbf{Verification for $\rho = 0.5$:}
+\begin{equation}
+\begin{aligned}
+\text{Recall}
+&= \frac{(1-\pi) \cdot 0.5}{0.5(1-2\pi) + \pi}
+ = \frac{0.5(1-\pi)}{0.5 - \pi + \pi} \\
+&= \frac{0.5(1-\pi)}{0.5} = 1 - \pi
+\end{aligned}
+\end{equation}
+
+Thus, for balanced classes, precision $=$ recall $= 1-\pi$.
+
+For F1, we use the harmonic mean of precision and recall:
+\begin{equation}
+F_1 = \frac{2 \cdot \text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
+\end{equation}
+
+Substituting our expressions:
+\begin{align}
+F_1 &= \frac{2(1-\pi) \cdot \frac{(1-\pi)\rho}{\rho(1-2\pi) + \pi}}{(1-\pi) + \frac{(1-\pi)\rho}{\rho(1-2\pi) + \pi}} \nonumber \\
+&= \frac{2(1-\pi)^2\rho}{(1-\pi)[\rho(1-2\pi) + \pi] + (1-\pi)\rho}
+\end{align}
+
+Simplifying the denominator:
+\begin{align}
+&(1-\pi)[\rho(1-2\pi) + \pi] + (1-\pi)\rho \nonumber \\
+&= (1-\pi)\rho(1-2\pi) + \pi(1-\pi) + (1-\pi)\rho \nonumber \\
+&= (1-\pi)\rho[(1-2\pi) + 1] + \pi(1-\pi) \nonumber \\
+&= (1-\pi)\rho(2-2\pi) + \pi(1-\pi) \nonumber \\
+&= (1-\pi)[2\rho(1-\pi) + \pi]
+\end{align}
+
+Therefore:
+\begin{align}
+F_1 &= \frac{2(1-\pi)^2\rho}{(1-\pi)[2\rho(1-\pi) + \pi]} = \frac{2(1-\pi)\rho}{2\rho(1-\pi) + \pi} \nonumber \\
+&= \frac{2(1-\pi)\rho}{\pi + 2\rho(1-\pi)}
+\end{align}
+
+\textbf{Verification for $\rho = 0.5$:}
+\begin{equation}
+\begin{aligned}
+F_1 &= \frac{2(1-\pi) \cdot 0.5}{\pi + 2 \cdot 0.5 \cdot (1-\pi)} \\
+&= \frac{1-\pi}{\pi + (1-\pi)} = \frac{1-\pi}{1} = 1 - \pi
+\end{aligned}
+\end{equation}
+
+\end{proof}
+
+\subsection{Proof of Theorem~\ref{thm:impossibility}}
+\label{appendix:proof_impossibility}
+
+\begin{proof}
+Let $s_{\min}\in\mathcal{S}$ satisfy $\kappa(s_{\min})=1$.
+We first show that the map
+\[
+a \longmapsto P(Y^*=1\mid X_1=a)
+\]
+is not constant on $\mathcal{A}$.
+
+\paragraph{Case 1: $\mathcal{S}\subsetneq\mathcal{A}$.}
+Choose $a_0\in\mathcal{A}\setminus\mathcal{S}$.
+Because the coordinates of $X$ are independent and have full support,
+both events $\{X_1=s_{\min}\}$ and $\{X_1=a_0\}$ have positive probability,
+and conditioning on $X_1$ does not change the joint law of
+$(X_2,\ldots,X_n)$.
+
+Let $Z_2,\ldots,Z_n$ be independent random variables with
+$Z_t\sim\mathcal{L}(X_t)$, and define
+\[
+\widetilde X := (s_{\min},Z_2,\ldots,Z_n),
+\qquad
+\widetilde X' := (a_0,Z_2,\ldots,Z_n).
+\]
+Then
+\[
+\widetilde X \stackrel{d}{=} (X\mid X_1=s_{\min}),
+\qquad
+\widetilde X' \stackrel{d}{=} (X\mid X_1=a_0).
+\]
+
+Let
+\[
+C := \{\widetilde X \text{ is compliant}\},
+\qquad
+C' := \{\widetilde X' \text{ is compliant}\}.
+\]
+Since $\widetilde X'_1=a_0\notin\mathcal S$, any ordered maximal
+$\lambda$-run in $\widetilde X'$ must avoid position $1$. If such a run does
+not start at $1+\lambda$, the same maximal run is present in $\widetilde X$.
+If it starts at $1+\lambda$, then in $\widetilde X$ it is extended to the left
+by $s_{\min}$, and the extended maximal run remains ordered because
+$\kappa(s_{\min})=1$ is the minimum rank. Hence every compliant witness in
+$\widetilde X'$ induces a compliant witness in $\widetilde X$, so
+\[
+C'\subseteq C.
+\]
+
+Now define the event
+\[
+E
+:=
+\{Z_{1+\lambda}\in\mathcal{S}\}
+\cap
+\bigcap_{t\in\{2,\ldots,n\}\setminus\{1+\lambda\}}
+\{Z_t\notin\mathcal{S}\}.
+\]
+Because $n\ge \lambda+1$, because $\mathcal{S}\subsetneq\mathcal{A}$,
+and because every symbol has positive probability at every position,
+we have $P(E)>0$.
+
+On $E$, the sequence $\widetilde X$ contains the maximal $\lambda$-run
+$(1,1+\lambda)$: both symbols belong to $\mathcal S$, the gap is $\lambda$,
+the run cannot be extended to the left, and it cannot be extended to the right
+because all other positions are non-key. Moreover,
+\[
+\kappa(\widetilde X_1)=\kappa(s_{\min})=1
+\leq
+\kappa(\widetilde X_{1+\lambda}).
+\]
+Hence this maximal run is ordered, and $\widetilde X$ is compliant.
+
+On the same event $E$, the sequence $\widetilde X'$ is not compliant.
+Indeed, among positions $2,\ldots,n$, the only key position is $1+\lambda$,
+so no compliant chain of length at least $2$ can exist. Therefore
+\[
+E \subseteq C\setminus C'.
+\]
+
+Since \(C' \subseteq C\), we have
+\[
+P(C)-P(C') = P(C\setminus C').
+\]
+Moreover, \(E \subseteq C\setminus C'\) and \(P(E)>0\). Therefore
+\[
+P(C)-P(C') \ge P(E) > 0,
+\]
+which implies
+\[
+P(C) > P(C').
+\]
+Hence
+\[
+\begin{aligned}
+P(Y^*=1 \mid X_1=s_{\min})
+&=
+P(C)
+>
+P(C')\\
+&=
+P(Y^*=1 \mid X_1=a_0).
+\end{aligned}
+\]
+
+\paragraph{Case 2: $\mathcal{S}=\mathcal{A}$.}
+When $\mathcal{S}=\mathcal{A}$, the maximal $\lambda$-runs are deterministic:
+they are the residue classes of positions modulo $\lambda$, truncated to
+$\{1,\ldots,n\}$. Let
+\[
+L := 1+\left\lfloor \frac{n-1}{\lambda}\right\rfloor .
+\]
+Since $n\geq \lambda+1$, we have $L\geq 2$. Let
+\[
+R_1 := (1,1+\lambda,\ldots,1+(L-1)\lambda)
+\]
+be the maximal $\lambda$-run containing position $1$.
+
+Let $O_1$ be the event that $R_1$ is ordered, and let $B$ be the event that
+some maximal $\lambda$-run different from $R_1$ is ordered. Then
+\[
+\{Y^*=1\}=B\cup O_1.
+\]
+Moreover, $B$ depends only on coordinates outside $R_1$, whereas $O_1$
+depends only on coordinates in $R_1$. By independence of the coordinates,
+for every $a\in\mathcal{A}$,
+\[
+\begin{aligned}
+&P(Y^*=1\mid X_1=a)\\
+&\qquad=
+P(B)+(1-P(B))\,P(O_1\mid X_1=a).
+\end{aligned}
+\]
+Since $B\subseteq\{Y^*=1\}$, if $P(B)=1$ then $P(Y^*=1)=1$, contradicting
+$\rho\in(0,1)$. Hence
+\[
+P(B)<1.
+\]
+
+Let $s_{\max}\in\mathcal{A}$ satisfy
+\[
+\kappa(s_{\max})=|\mathcal{A}|.
+\]
+The assumption $\rho\in(0,1)$ implies $|\mathcal{A}|\geq 2$, so
+$s_{\min}\neq s_{\max}$. Define
+\[
+p_a := P(O_1\mid X_1=a).
+\]
+We now show that $p_{s_{\min}}>p_{s_{\max}}$.
+
+Conditioning on $X_1=s_{\min}$, the first element of $R_1$ has minimal
+rank. Thus
+\[
+\begin{aligned}
+p_{s_{\min}}
+=
+P\bigl(
+&\kappa(X_{1+\lambda})
+\leq
+\kappa(X_{1+2\lambda})\\
+&\leq
+\cdots
+\leq
+\kappa(X_{1+(L-1)\lambda})
+\bigr),
+\end{aligned}
+\]
+with the convention that the event is the whole space when $L=2$.
+Conditioning on $X_1=s_{\max}$, the first element of $R_1$ has maximal rank,
+so the run can be ordered only if every later element of the run is also
+$s_{\max}$:
+\[
+p_{s_{\max}}
+=
+P\!\left(
+X_{1+\lambda}=X_{1+2\lambda}=\cdots=X_{1+(L-1)\lambda}=s_{\max}
+\right).
+\]
+The latter event is contained in the former. The containment is strict with
+positive probability, because by full support and independence the event
+\[
+X_{1+\lambda}=X_{1+2\lambda}=\cdots=X_{1+(L-1)\lambda}=s_{\min}
+\]
+has positive probability, belongs to the former event, and does not belong to
+the latter. Therefore
+\[
+p_{s_{\min}}>p_{s_{\max}}.
+\]
+Consequently,
+\begin{align*}
+&P(Y^*=1\mid X_1=s_{\min})
+-
+P(Y^*=1\mid X_1=s_{\max})
+\\
+&\qquad =
+(1-P(B))\,(p_{s_{\min}}-p_{s_{\max}})
+>0.
+\end{align*}
+Thus
+\[
+P(Y^*=1\mid X_1=s_{\min})
+\neq
+P(Y^*=1\mid X_1=s_{\max}).
+\]
+
+In both cases, there exist $a,b\in\mathcal{A}$ such that
+\[
+P(Y^*=1\mid X_1=a)\neq P(Y^*=1\mid X_1=b).
+\]
+Therefore $Y^*$ is not independent of $X_1$. Since mutual information
+between discrete variables is zero if and only if the variables are
+independent, it follows that
+\[
+I(Y^*;X_1)>0.
+\]
+
+Finally, by the symmetric noise model \eqref{eq:label_noise},
+\begin{align*}
+&P(Y=1\mid X_1=a)\\
+&=
+P(Y=1\mid Y^*=1)\,P(Y^*=1\mid X_1=a)
+\\
+&\quad+
+P(Y=1\mid Y^*=0)\,P(Y^*=0\mid X_1=a)
+\\
+&=
+(1-\pi)\,P(Y^*=1\mid X_1=a)\\
+&\quad+
+\pi\,\bigl(1-P(Y^*=1\mid X_1=a)\bigr)
+\\
+&=
+\pi + (1-2\pi)\,P(Y^*=1\mid X_1=a).
+\end{align*}
+Because $\pi<1/2$, the map
+\[
+u \longmapsto \pi + (1-2\pi)u
+\]
+is strictly increasing. Hence the map
+\[
+a \longmapsto P(Y=1\mid X_1=a)
+\]
+is also non-constant on $\mathcal{A}$. Thus $Y$ is not independent of $X_1$,
+and again
+\[
+I(Y;X_1)>0.
+\]
+\end{proof}
+
+\subsection{A Quantitative Uniform Lower Bound}
+\label{sec:uniform_witness_bound}
+
+Theorem~\ref{thm:impossibility} is qualitative and holds under independent full-support sampling. Under the uniform proposal law used in our synthetic benchmark, the witness event in its proof yields an explicit lower bound on the amount of local leakage.
+
+\begin{corollary}[Uniform witness lower bound]
+\label{cor:uniform_witness_bound}
+Assume the setting of Theorem~\ref{thm:impossibility} with
+$\mathcal{S}\subsetneq\mathcal{A}$ and
+$X_t \overset{\mathrm{iid}}{\sim} \mathrm{Uniform}(\mathcal{A})$.
+Let $s_{\min}\in\mathcal{S}$ satisfy $\kappa(s_{\min})=1$ and
+$a_0\in\mathcal{A}\setminus\mathcal{S}$. Define
+$\delta(a,b) := P(Y^*\!=\!1\mid X_1\!=\!a)
+              - P(Y^*\!=\!1\mid X_1\!=\!b)$.
+Then
+\begin{equation}
+\label{eq:witness_clean}
+\delta(s_{\min},a_0)
+\;\ge\;
+\frac{m}{\ell}
+\!\left(\frac{\ell-m}{\ell}\right)^{\!n-2}.
+\end{equation}
+If $Y$ is generated from $Y^*$ via \eqref{eq:label_noise}, then
+\begin{equation}
+\label{eq:witness_noisy}
+\delta_Y(s_{\min},a_0)
+\;\ge\;
+(1-2\pi)\,\frac{m}{\ell}
+\!\left(\frac{\ell-m}{\ell}\right)^{\!n-2},
+\end{equation}
+where
+$\delta_Y(a,b) := P(Y\!=\!1\mid X_1\!=\!a)
+                 - P(Y\!=\!1\mid X_1\!=\!b)$.
+\end{corollary}
+
+See \ref{appendix:proof_uniform_witness_bound} for full proof and remarks.
+
+
+
+
+\subsection{Proof of Corollary~\ref{cor:uniform_witness_bound} with remarks}
+\label{appendix:proof_uniform_witness_bound}
+\begin{proof}
+As in the proof of Theorem~\ref{thm:impossibility}, let
+$Z_2,\ldots,Z_n$ be independent random variables with
+$Z_t\sim \mathrm{Uniform}(\mathcal{A})$, and define
+\[
+\widetilde X=(s_{\min},Z_2,\ldots,Z_n),
+\qquad
+\widetilde X'=(a_0,Z_2,\ldots,Z_n).
+\]
+Then
+\[
+\widetilde X \stackrel{d}{=} (X\mid X_1=s_{\min}),
+\qquad
+\widetilde X' \stackrel{d}{=} (X\mid X_1=a_0).
+\]
+
+Let
+\[
+C:=\{\widetilde X \text{ is compliant}\},
+\qquad
+C':=\{\widetilde X' \text{ is compliant}\}.
+\]
+As in Theorem~\ref{thm:impossibility}, one has $C'\subseteq C$.
+
+Now define the witness event
+\[
+E
+:=
+\{Z_{1+\lambda}\in\mathcal{S}\}
+\cap
+\bigcap_{t\in\{2,\ldots,n\}\setminus\{1+\lambda\}}
+\{Z_t\notin\mathcal{S}\}.
+\]
+On $E$, the sequence $\widetilde X$ is compliant via the chain
+$(1,1+\lambda)$, while $\widetilde X'$ is not compliant. Hence
+\[
+E \subseteq C\setminus C'.
+\]
+Therefore
+\[
+P(C)-P(C') = P(C\setminus C') \ge P(E).
+\]
+
+By independence and uniformity,
+\[
+\begin{aligned}
+&P(Z_{1+\lambda}\in\mathcal{S})=\frac{m}{\ell},
+\qquad
+P(Z_t\notin\mathcal{S})=\frac{\ell-m}{\ell}\\
+&\text{for each } t\in\{2,\ldots,n\}\setminus\{1+\lambda\}.
+\end{aligned}
+\]
+There are exactly $n-2$ such latter positions, so
+\[
+P(E)
+=
+\frac{m}{\ell}\left(\frac{\ell-m}{\ell}\right)^{n-2}.
+\]
+Since
+\[
+\begin{aligned}
+P(C)&=P(Y^*=1\mid X_1=s_{\min}),\\
+P(C')&=P(Y^*=1\mid X_1=a_0),
+\end{aligned}
+\]
+the first claim follows.
+
+For the observed label, by \eqref{eq:label_noise},
+\[
+P(Y=1\mid X_1=a)
+=
+\pi + (1-2\pi)\,P(Y^*=1\mid X_1=a).
+\]
+Subtracting the expressions for $a=s_{\min}$ and $a=a_0$ yields
+\[
+P(Y=1\mid X_1=s_{\min})
+-
+P(Y=1\mid X_1=a_0)
+=
+\]
+\[
+\begin{aligned}
+= (1-2\pi)\Bigl(
+&P(Y^*=1\mid X_1=s_{\min})\\
+&-
+P(Y^*=1\mid X_1=a_0)
+\Bigr),
+\end{aligned}
+\]
+and the result follows from the first part.
+\end{proof}
+
+\begin{remark}[Scope of the explicit bound]
+\label{rem:scope_uniform_bound}
+The closed-form expression in Corollary~\ref{cor:uniform_witness_bound} is
+specific to the uniform proposal law. Under the more general assumptions of
+Theorem~\ref{thm:impossibility}, if we write
+\[
+\alpha_t := P(X_t\in\mathcal{S}),
+\]
+then the same witness-event argument gives
+\[
+\begin{aligned}
+&P(Y^*=1\mid X_1=s_{\min})
+-
+P(Y^*=1\mid X_1=a_0)\\
+&\qquad\;\ge\;
+\alpha_{1+\lambda}
+\prod_{t\in\{2,\ldots,n\}\setminus\{1+\lambda\}}(1-\alpha_t)
+\end{aligned}
+\]
+whenever $\mathcal{S}\subsetneq\mathcal{A}$.
+In the i.i.d.\ but non-uniform case with common law $q$, this becomes
+\[
+q(\mathcal{S})\bigl(1-q(\mathcal{S})\bigr)^{n-2}.
+\]
+No nontrivial positive lower bound depending only on $(m,\ell,n)$ can hold under
+mere full support, since $q(\mathcal{S})$ can be arbitrarily small while
+remaining positive.
+\end{remark}
+
+\begin{remark}[Effect of label balancing]
+\label{rem:label_balancing}
+Suppose the final experimental sample is obtained from a proposal law $P$ by
+retaining examples with probability depending only on the observed label $Y$.
+Equivalently,
+\[
+Q(x,y)=\frac{r_y P(x,y)}{Z},
+\qquad r_0,r_1>0.
+\]
+Then
+\[
+Q(X\mid Y=y)=P(X\mid Y=y),
+\]
+so class-conditional sequence structure, and hence AUC, are unchanged by this
+reweighting. However, posterior quantities are transformed. Writing
+$\beta:=r_1/r_0$ and
+\[
+h_\beta(u):=\frac{\beta u}{1+(\beta-1)u},
+\]
+one has
+\[
+Q(Y=1\mid X_1=a)
+=
+h_\beta\!\bigl(P(Y=1\mid X_1=a)\bigr).
+\]
+Since $h_\beta$ is strictly increasing, label balancing preserves the presence of
+local information, but because $h_\beta$ is nonlinear it can either enlarge or
+shrink posterior gaps. Consequently,
+Corollary~\ref{cor:uniform_witness_bound} should be interpreted as a statement
+about the proposal law, not automatically about the retained balanced sample.
+
+More generally, if
+\[
+\Delta_P := P(Y=1\mid X_1=s_{\min}) - P(Y=1\mid X_1=a_0),
+\]
+\[
+\Delta_Q := Q(Y=1\mid X_1=s_{\min}) - Q(Y=1\mid X_1=a_0),
+\]
+Then by the mean value theorem:
+\[
+\Delta_Q \ge \min\{\beta,\beta^{-1}\}\,\Delta_P.
+\]
+The same remark applies with $Y^*$ in place of $Y$ if balancing is performed
+using the latent label rather than the observed one.
+\end{remark}
+
+
+
+\subsection{Proof of Theorem~\ref{thm:parity_local_purity}}
+\label{appendix:proof_parity_local_purity}
+
+\begin{proof}
+For each \(t\in\{1,\ldots,n\}\), define
+\[
+B_t := \mathbf{1}\{X_t\in K\}.
+\]
+Since \(X_t \overset{\mathrm{iid}}{\sim} \mathrm{Uniform}(\mathcal A)\) and
+\[
+p = \frac{|K|}{|\mathcal A|},
+\]
+we have
+\[
+B_t \overset{\mathrm{iid}}{\sim} \mathrm{Bernoulli}(p).
+\]
+Let
+\[
+T := \Bigl(\sum_{t=1}^n B_t\Bigr)\bmod 2.
+\]
+
+We first show that \(Y^*\) is a fixed bit-flip of \(T\). Using addition modulo \(2\),
+\[
+\mathbf{1}\{N_k \text{ is even}\} = 1 \oplus (N_k \bmod 2),
+\]
+where \(\oplus\) denotes XOR. Hence
+
+\begin{align*}
+Y^*
+&=
+1 \oplus\bigoplus_{k\in K} \mathbf{1}\{N_k \text{ is even}\} \\
+&=
+1 \oplus\bigoplus_{k\in K} \bigl(1 \oplus (N_k \bmod 2)\bigr) \\
+&=
+1 \oplus\bigl(|K|\bmod 2\bigr)\oplus \bigoplus_{k\in K}(N_k \bmod 2).
+\end{align*}
+But
+\[
+\begin{aligned}
+\bigoplus_{k\in K}(N_k \bmod 2)
+&=
+\Bigl(\sum_{k\in K} N_k\Bigr)\bmod 2\\
+&=
+\Bigl(\sum_{t=1}^n \mathbf{1}\{X_t\in K\}\Bigr)\bmod 2
+=
+T.
+\end{aligned}
+\]
+Therefore
+\[
+Y^* = 1 \oplus\bigl(|K|\bmod 2\bigr)\oplus T.
+\]
+The map \(T\mapsto Y^*\) is thus a bijection on \(\{0,1\}\), so for every index set \(J\),
+\[
+I(Y^*;X_J)=I(T;X_J).
+\]
+It is therefore enough to study \(I(T;X_J)\).
+
+Fix an index set
+\[
+J\subseteq \{1,\ldots,n\},
+\qquad 1\le |J|<n.
+\]
+Write
+\[
+r := |J|,
+\qquad
+s := n-r = |J^c| \ge 1.
+\]
+Define
+\[
+U_J := \Bigl(\sum_{j\in J} B_j\Bigr)\bmod 2,
+\qquad
+V_J := \Bigl(\sum_{j\in J^c} B_j\Bigr)\bmod 2.
+\]
+Then
+\[
+T = U_J \oplus V_J.
+\]
+
+Since \(\{B_j : j\in J\}\) and \(\{B_j : j\in J^c\}\) are independent,
+\(V_J\) is independent of \(X_J\). Moreover, \(U_J\) is a deterministic function of
+\(X_J\).
+
+Let
+\[
+q_s := P(V_J=1).
+\]
+Because \(V_J\) is the parity of \(s\) i.i.d.\ Bernoulli\((p)\) random variables,
+\[
+q_s = \frac{1-(1-2p)^s}{2}.
+\]
+Therefore, for every realization \(x_J\) of \(X_J\),
+\[
+P(T=1\mid X_J=x_J)
+=
+\begin{cases}
+q_s, & U_J(x_J)=0,\\
+1-q_s, & U_J(x_J)=1.
+\end{cases}
+\]
+
+\paragraph{Balanced case: \(p=1/2\).}
+If \(p=1/2\), then
+\[
+q_s = \frac{1-(1-2p)^s}{2} = \frac{1}{2}.
+\]
+Hence, for every realization \(x_J\),
+\[
+\begin{aligned}
+P(T=1\mid X_J=x_J)&=\tfrac12,\\
+P(T=0\mid X_J=x_J)&=\tfrac12.
+\end{aligned}
+\]
+Thus the conditional law of \(T\) does not depend on \(x_J\), so \(T\) is independent
+of \(X_J\). Therefore
+\[
+I(T;X_J)=0,
+\]
+and hence
+\[
+I(Y^*;X_J)=0.
+\]
+
+\paragraph{Unbalanced case: \(p\neq 1/2\), finite \(n\).}
+Since \(K\) is nonempty and proper, \(p\in(0,1)\). If \(p\neq 1/2\), then
+\[
+|1-2p|<1
+\qquad\text{and}\qquad
+(1-2p)^s \neq 0
+\]
+for every finite \(s\ge 1\). Hence
+\[
+q_s \neq \frac12.
+\]
+
+Choose any \(j_0\in J\), any \(a_{\mathrm{in}}\in K\), and any
+\(a_{\mathrm{out}}\in \mathcal A\setminus K\). Define two realizations
+\(x_J,x'_J\in \mathcal A^J\) by
+\[
+x_j = a_{\mathrm{out}} \quad \text{for all } j\in J,
+\]
+and
+\[
+x'_{j_0}=a_{\mathrm{in}},
+\qquad
+x'_j=a_{\mathrm{out}} \quad \text{for all } j\in J\setminus\{j_0\}.
+\]
+Then
+\[
+U_J(x_J)=0,
+\qquad
+U_J(x'_J)=1.
+\]
+Therefore
+\[
+\begin{aligned}
+P(T=1\mid X_J=x_J)&=q_s,\\
+P(T=1\mid X_J=x'_J)&=1-q_s.
+\end{aligned}
+\]
+Since \(q_s\neq 1/2\), these two conditional probabilities are different. Thus the
+conditional law of \(T\) depends on \(X_J\), so \(T\) and \(X_J\) are not independent.
+Hence
+\[
+I(T;X_J)>0,
+\]
+and therefore
+\[
+I(Y^*;X_J)>0.
+\]
+
+\paragraph{Asymptotic decay when \(p\neq 1/2\).}
+Now let \(J\subset\mathbb N\) be any fixed finite index set, and for all sufficiently large
+\(n\) identify it with a subset of \(\{1,\ldots,n\}\). Then \(r=|J|\) is fixed and
+\[
+s=n-r \to \infty.
+\]
+Since \(|1-2p|<1\),
+\[
+q_s = \frac{1-(1-2p)^s}{2} \to \frac12.
+\]
+Hence, uniformly over all realizations \(x_J\),
+\[
+P(T=1\mid X_J=x_J)\to \frac12.
+\]
+Because \(X_J\) takes values in the finite set \(\mathcal A^r\), this implies that the joint
+law of \((T,X_J)\) converges to the product law of \(T\) and \(X_J\). Therefore
+\[
+I(T;X_J)\to 0.
+\]
+Since \(Y^*\) is a bijective function of \(T\),
+\[
+I(Y^*;X_J)=I(T;X_J)\to 0.
+\]
+
+\paragraph{Observed stochastic label \(Y\).}
+Assume now that \(Y\) is generated from \(Y^*\) according to \eqref{eq:label_noise}
+with \(\pi<1/2\).
+
+If \(p=1/2\), then \(Y^*\) is independent of \(X_J\). Since \(Y\) depends on \(X_J\)
+only through \(Y^*\), it follows that \(Y\) is also independent of \(X_J\). Hence
+\[
+I(Y;X_J)=0.
+\]
+
+If \(p\neq 1/2\), then
+\begin{align*}
+P(Y=1\mid X_J)
+&=
+P(Y=1\mid Y^*=1)\,P(Y^*=1\mid X_J) \\
+&\quad +
+P(Y=1\mid Y^*=0)\,P(Y^*=0\mid X_J) \\
+&=
+(1-\pi)P(Y^*=1\mid X_J)\\
+&\quad+
+\pi\bigl(1-P(Y^*=1\mid X_J)\bigr) \\
+&=
+\pi + (1-2\pi)P(Y^*=1\mid X_J).
+\end{align*}
+Because \(\pi<1/2\), the map
+\[
+u \mapsto \pi + (1-2\pi)u
+\]
+is strictly increasing. Thus whenever \(P(Y^*=1\mid X_J)\) is non-constant as a
+function of \(X_J\), so is \(P(Y=1\mid X_J)\). Therefore, for every finite \(n\),
+\[
+I(Y;X_J)>0.
+\]
+
+Finally, since \(Y\) is obtained from \(Y^*\) through a channel independent of \(X_J\),
+the data processing inequality gives
+\[
+I(Y;X_J)\le I(Y^*;X_J).
+\]
+Hence, for every fixed finite \(J\subset\mathbb N\),
+\[
+I(Y;X_J)\to 0
+\qquad\text{as } n\to\infty.
+\]
+
+This proves all claims. In particular, when \(p=1/2\), we have
+\[
+\begin{aligned}
+&I(Y^*;X_J)=0\\
+&\text{for every } J\subseteq \{1,\ldots,n\}\text{ with } |J|<n.
+\end{aligned}
+\]
+Therefore the task is \(k\)-locally pure for every \(k<n\).
+\end{proof}
+
+% ==================================================
+% HYPERPARAMETER CONFIGURATION
+% ==================================================
+
 \end{document}
