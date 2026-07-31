@@ -2386,7 +2386,11 @@ The fine-tuned-to-ICL gap is large on the two \emph{learnable} tasks (OC-Determi
 \begin{itemize}
 \item \textbf{Transformer:} 2 layers, 8 heads, $d_{\text{model}}=64$, $d_{\text{ff}}=512$, dropout 0.3 (168\,642 parameters at $n=10$, 169\,282 at $n=20$). Adam optimizer, learning rate $10^{-3}$, batch size 64, 30 epochs, early-stopping patience 3 on validation loss.
 \item \textbf{LSTM:} same training schedule as the Transformer.
-\item \textbf{BERT-base:} 110M parameters, fine-tuned with LoRA following Appendix~\ref{appendix:bert}; 20 epochs, batch size 32.
+% TODO(author): the source cited \ref{appendix:bert}, a label that exists
+% nowhere in paper.tex, so it rendered as "??". Repointed to the appendix
+% that actually carries the BERT LoRA configuration (Table~\ref{tab:bert_config}
+% lives there). Confirm this is the intended target.
+\item \textbf{BERT-base:} 110M parameters, fine-tuned with LoRA following Appendix~\ref{appendix:training}; 20 epochs, batch size 32.
 \end{itemize}
 
 We run 3 seeds per architecture per stage.
@@ -2420,5 +2424,68 @@ Architecture & Seed & Stage 1 ($n{=}10$) & Stage 2 ($n{=}20$) \\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ATTENTION-ANALYSIS APPENDIX
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Exploratory attention inspection}
+\label{appendix:attention}
+
+We include an attention inspection as a qualitative diagnostic only; our mechanism
+attribution is based on the feature-space audits in Section~\ref{sec:mechanism_id},
+not on attention as causal explanation. We extract per-layer attention matrices from
+fine-tuned BERT-base and Llama-3.2-1B on 10{,}000 held-out OC-Deterministic
+test sequences. For each source position containing a key letter, we partition
+unmasked target positions into three classes: (i) lag-connected key targets at
+distance $\lambda$, (ii) other key targets, and (iii) non-key targets. We then average
+attention mass over heads and examples within each layer. Figure~\ref{fig:attn_layer_summary}
+reports the resulting profiles on true-compliant sequences correctly predicted by
+each model.
+
+Two qualitative patterns emerge. First, neither model concentrates attention on the
+exact lag-connected key pairs in the middle or deeper layers. In BERT, lag-connected
+attention is high only in the first two layers and becomes negligible by the layer
+where other key-to-key attention peaks; in Llama-3.2-1B, lag-connected attention is
+also not selectively elevated and is typically the smallest of the three classes.
+Thus, successful compliance classification does not appear to require direct
+attention mass from a key position to its lag-$\lambda$ counterpart.
+
+Second, BERT shows a visible key/non-key separation that Llama-3.2-1B does not:
+from about layer 4 onward, BERT assigns less attention to non-key targets than to
+other key targets, whereas in Llama the non-key and other-key curves remain close.
+This is consistent with the audit result that compliance contains exploitable
+key-symbol and lagged-pair signal. However, because the models have different
+attention masks, architectures, and readout mechanisms, we do not interpret absolute
+attention magnitudes as a controlled architecture comparison.
+
+We also stratified true-compliant sequences into correctly predicted and missed
+examples. The same averaged statistic did not cleanly separate the two groups for
+either model: correct predictions did not show a systematic increase in attention
+to lag-connected key pairs. We therefore do not interpret residual errors as failures
+of attending to the right positions alone. Identifying a causal pathway would require
+value-pathway, MLP, and readout ablations.
+
+
+\begin{figure}[tb]
+\centering
+\begin{subfigure}[t]{0.48\textwidth}
+    \centering
+    \figureorplaceholder{BERT.png}{BERT per-layer attention summary.}
+    \caption{BERT-base.}
+\end{subfigure}
+\hfill
+\begin{subfigure}[t]{0.48\textwidth}
+    \centering
+    \figureorplaceholder{Llama.png}{Llama per-layer attention summary.}
+    \caption{Llama-3.2-1B.}
+\end{subfigure}
+\caption{
+Per-layer attention allocation from key source positions on true-compliant
+sequences correctly predicted by each model. Red: lag-connected key targets at
+distance $\lambda$ among unmasked positions. Blue: other key targets. Gray:
+non-key targets. BERT shows key/non-key separation in middle layers, but neither
+model shows selective attention to lag-connected key pairs. Panels use separate
+$y$-axis ranges; because BERT and Llama have different attention masks and
+architectures, absolute magnitudes should not be compared directly.
+}
+\label{fig:attn_layer_summary}
+\end{figure}
 
 \end{document}
