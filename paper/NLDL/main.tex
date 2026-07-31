@@ -1,0 +1,420 @@
+% !TeX spellcheck = en_US
+% !TeX program=pdflatex
+% !BIB program=biber
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% NLDL 2027 submission -- adapted from the NeurIPS version (paper/paper.tex).
+% Class options:
+% 'fullpaper' = 5-8 page full paper; 'abstract' = 2-page extended abstract.
+% 'review' (default) anonymizes the submission and adds review line numbers.
+% 'final' de-anonymizes and adds the proceedings footer (needs \vol).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\documentclass[fullpaper,final]{nldl}
+\documentclass[fullpaper]{nldl}
+%\documentclass[abstract]{nldl}
+
+% TODO: replace 42 with the OpenReview submission number once available.
+\paperID{42}
+% Replace 'V' with the provided volume number at camera-ready time.
+\vol{V}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%% Math
+\usepackage{mathtools}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+% Figures
+\usepackage{graphicx}
+% Figures live in the parent paper/ directory in this repository.
+\graphicspath{{./}{../}{../n_grams_plots/}}
+
+%% Tables
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{placeins}
+
+%% Lists
+\usepackage{enumitem}
+
+% Algorithms
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\renewcommand{\thealgorithm}{\arabic{algorithm}}
+
+%% Diagrams
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+
+%% Code
+\usepackage{listings}
+\lstset{
+  basicstyle=\small\ttfamily,
+  breaklines,
+}
+
+% References
+\addbibresource{references.bib}
+
+
+% Links and hyperlinks
+\usepackage{hyperref}
+\usepackage{url}
+\hypersetup{
+  pdfusetitle,
+  colorlinks,
+  linkcolor = BrickRed,
+  citecolor = NavyBlue,
+  urlcolor  = Magenta!80!black,
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% THEOREMS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}[theorem]{Assumption}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\cmark}{\checkmark}
+\newcommand{\xmark}{\times}
+
+% Graceful handling of figure assets that are not present in this checkout.
+% When the real PNG is dropped next to main.tex (or in paper/), it is used
+% automatically; until then a labelled placeholder keeps the document compiling.
+\newcommand{\figureorplaceholder}[2]{%
+  \IfFileExists{#1}{\includegraphics[width=\linewidth]{#1}}{%
+    \fbox{\parbox[b][0.28\linewidth][c]{0.95\linewidth}{\centering\small
+      \texttt{\detokenize{#1}} not found in this checkout.\\[2pt] #2}}}%
+}
+
+
+% In review mode the class replaces these with "Anonymous Full Paper Submission".
+\title{Do Large Language Models Exploit Decisive Sequential Information?}
+\author[1]{Anonymous Author}
+\affil[1]{Anonymous Affiliation}
+
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Can Large Language Models (LLMs) capture sequential structure when outcomes depend causally on order? We study this within a controlled, semantic-free sequence framework that instantiates two mechanisms: ordered-compliance (driven by strict sequential order) and global-property-compliance (driven by a global property). Theoretically, we prove that ordered-compliance inherently leaks information through frequency patterns, creating predictive shortcuts that allow models to succeed without truly capturing causal sequential structure. To isolate true order learning, we introduce a shortcut-auditing protocol that quantifies the predictive power of non-sequential features (\eg, $k$-grams, pair counts) under label noise. Empirically, encoder and recurrent models reach the theoretical optimum (measured by AUC and F1) on ordered-compliance more efficiently than fine-tuned decoder-only LLMs. Conversely, on global-property-compliance, all architectures fail under standard end-to-end training unless explicitly guided on feature relevance. Our results demonstrate that high performance on order-sensitive tasks often masks shortcut exploitation, highlighting the critical need for rigorous shortcut auditing.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:introduction}
+
+Consider a clinician reviewing a patient's medical history to predict disease progression. The sequence of symptoms matters: \textit{diabetes mellitus} followed by \textit{visual disturbance} tells a different story than the same conditions appearing in reverse order for predicting \textit{myocardial infarction}~\citep{edelman2026order_specific_ehr}. Similarly, in recommendation systems, process tracing, and transaction streams, labels may depend not only on \emph{which} events occurred, but also on the \emph{order} in which they occurred. Recent electronic health record (EHR) studies use comparator cohorts that preserve event content while altering temporal structure, and show that sequence-based disease representations consistently outperform bag-of-events models by leveraging the prognostic value of directional disease progression~\citep{edelman2026order_specific_ehr,beaney2024coded_disease_representations,placido2023pancreatic_trajectories,pollington2026trajectory_review}. In recommendation, the same preferred items can reflect different user preferences when encountered in different orders~\citep{kimLostSequenceLarge2025b}.
+
+Suppose a sequential model outperforms a bag-of-events model on clinical trajectories. Has it really learned to use order? Not necessarily. Real sequential data contain many overlapping signals: which events occur, how often, how recently, and which ones tend to appear together. A model can use any of these, or fall back on local pattern matching and lagged pair statistics, without ever recovering the causal latent trajectory rule. The difficulty is that real-world event trajectories rarely come with a known underlying mechanism, and the space of possible shortcuts is open-ended. The reason to study a controlled setting is therefore not that real-world trajectories are simple, but that they are too entangled to support mechanism attribution directly. We instantiate two complementary mechanisms, both defined over a hidden subset of letters: in \emph{ordered-compliance} (OC), these letters must appear in a secret order at a fixed lag; in \emph{global-property-compliance} (GPC), the label depends on a global property of their counts.
+
+As LLMs and transformer-based sequential models are increasingly applied to clinical event prediction, sequential recommendation, and temporal reasoning~\citep{savcisens2024using,delphi2025transformer,li2020behrt,rasmy2021medbert,fatemiTESTTIMEBENCHMARK2025}, the relevant question is not only whether they can use order, but also whether their performance supports a claim about the mechanism they learned. Recent evidence motivates this concern: LLM-based recommenders often retain most of their performance even when item order is shuffled~\citep{kimLostSequenceLarge2025b}; clinical analyses raise concerns about statistical pattern matching rather than faithful temporal reasoning~\citep{bediFidelityMedicalReasoning2025}; and transformer predictions can often be approximated by simple $k$-gram statistics~\citep{nguyen2024understanding}.
+
+We study this problem with a controlled letter-sequence framework in which semantic meaning and world knowledge are deliberately removed. The abstraction preserves two structural ingredients common to real-world event trajectories: only a hidden subset of letters is relevant, and labels depend on structure among those letters. A consequence of this setup, made precise in Section~\ref{sec:formulation}, is that simpler local or lagged statistics may already carry predictive signal even when the underlying mechanism is sequential; exactly the entanglement that makes shortcut auditing necessary. We prove that for non-degenerate ordered-compliance rules sampled \iid with full support, individual positions inevitably carry information about the label, formalized through \emph{single-position local purity}. The empirical question therefore shifts: rather than asking whether models use sequential structure at all, we ask how much of the label is already recoverable from local and lagged statistics, and which architectures recover them efficiently from raw sequences.
+
+To answer this, we compare decoder-only LLMs, encoder-style transformers, and recurrent architectures against a graded series of baselines that includes contiguous $k$-grams and $\lambda$-aware pair-count classifiers. Three findings emerge: encoder-style and recurrent models reach the theoretical optimum on OC with substantially fewer parameters and less data than decoder-only LLMs; under label noise this gap widens, with decoder-only models dropping to the $k$-gram level up to 8B parameters; and on GPC all architectures remain at chance under end-to-end training, but a 64-unit MLP solves the task once subset membership is provided. Finally, a real-world clinical audit validates our core premise: even temporal dependencies can be heavily shortcut-dominated.
+
+\paragraph{Contributions.}
+\begin{itemize}[leftmargin=*,itemsep=1pt,topsep=2pt]
+\item \textbf{Theory.} For OC and GPC, two label-generating mechanisms over letter sequences, we prove that they have opposite local-information structure: OC inevitably leaks single-position information, whereas balanced GPC is invisible to every proper subset of positions.
+\item \textbf{Shortcut-auditing protocol.} We quantify how much outcome signal is recoverable from unordered counts, contiguous $k$-grams, lag-aware pair counts, and pair counts over all possible lags, with closed-form expressions for the theoretical optimum under label noise.
+\item \textbf{Mechanism attribution.} Across decoder-only LLMs, encoder-style transformers, and recurrent models, the protocol identifies what each architecture actually learns: on OC, performance is explained by lag-aware pair-count features; on GPC, the protocol isolates subset identification as the limiting sub-task.
+\item \textbf{Real-world audit.} We apply the protocol to a real clinical prediction task, demonstrating that apparent temporal sequences in real-world data can be heavily shortcut-dominated.
+\end{itemize}
+
+\section{Related work}
+\label{sec:related_work}
+A growing body of work in domains such as healthcare and recommendation suggests that temporal order can add predictive value beyond unordered event identity~\citep{beaney2024coded_disease_representations,placido2023pancreatic_trajectories,pollington2026trajectory_review,kimLostSequenceLarge2025b}, and transformer-based models are now routinely applied to longitudinal event histories~\citep{li2020behrt,rasmy2021medbert,savcisens2024using,delphi2025transformer}. Of particular relevance, \citet{edelman2026order_specific_ehr} study interpretable \(A\to B\to C\) clinical trajectories using comparator cohorts that preserve event content while changing temporal structure, including \(B\) without prior \(A\), reverse-order, and unordered comparisons. Such settings, together with event-log domains such as predictive process monitoring and system-log anomaly detection~\citep{teinemaa2019outcome,du2017deeplog}, motivate our question but cannot answer it directly: sequence-model gains may reflect temporal order, event semantics, co-occurrence, recency, or local event-pattern shortcuts rather than global trajectory reasoning.
+
+Several recent benchmarks probe temporal or sequential ability~\citep{fatemiTESTTIMEBENCHMARK2025,cui2025timertemporalinstructionmodeling}, but \citet{klenitskiyDoesItLook2024} argue that many datasets marketed as sequential do not in fact require strong sequential modeling. Consistent with this, transformer behavior is often well approximated by local statistics or $k$-gram rules~\citep{nguyen2024understanding,kimLostSequenceLarge2025b,bediFidelityMedicalReasoning2025}, connecting to the broader shortcut-learning literature~\citep{mccoy2019right,geirhos2020shortcut,mirzadeh2024gsm}. At the same time, sequential models can in principle realize dependencies beyond fixed \(k\)-gram rules~\citep{olsson2022induction,guMambaLinearTimeSequence2024}.
+
+Recent work has introduced tunable synthetic benchmarks for reasoning and sequence processing~\citep{kaiserCogniLoadSyntheticNatural2025,ramezanaliSeqBenchTunableBenchmark2025}. Our framework differs by stripping away semantics while enabling a theoretical analysis of the local-information structure of each mechanism: OC suffers unavoidable local leakage, whereas balanced GPC is invisible to every proper subset of positions. We pair the framework with a shortcut-auditing protocol that quantifies which feature families explain each model's predictions.
+
+\section{Methods and theory}
+\label{sec:formulation}
+In this section, we formalize the notion of \textit{pure sequential dependence}, introduce the two experimental mechanisms of our framework, and prove theoretical properties characterizing each mechanism with respect to this property.
+
+\paragraph{Illustrative example.}
+We abstract temporal signals from domains like EHRs or recommendation into semantic-free sequences. Here, only a hidden subset of letters is predictive, and the label depends on their relative order under a rule $\kappa$ at a fixed lag $\lambda$. Our shortcut-auditing protocol tests whether models recover these latent parameters or merely exploit simpler correlates. A clinical analogy and concrete sequence walk-through are deferred to Appendix~\ref{app:illustrative}.
+
+\subsection{Setup and notation}
+\label{sec:setup}
+
+Let $\mathcal{A}$ be an alphabet of size $\ell = |\mathcal{A}|$. Consider a hidden key subset $\mathcal{S} \subseteq \mathcal{A}$ of size $m = |\mathcal{S}|$ ($m \geq 1$) uniformly among all $m$-subsets of $\mathcal{A}$, and then sample a bijection $\kappa : \mathcal{S} \to \{1,\ldots,m\}$ uniformly among all such bijections. The realized pair $(\mathcal{S},\kappa)$ is fixed for that particular mechanism; all probabilities below are conditional on this realized pair unless stated otherwise. Symbols in $\mathcal{A}\setminus\mathcal{S}$ act as distractors and play no role in determining compliance. Let $P_0$ denote the proposal distribution over candidate sequences of length $n$: $X_t \stackrel{\mathrm{iid}}{\sim} \mathrm{Uniform}(\mathcal{A}), t=1,\ldots,n.$ This \iid uniform law is the base synthetic generation mechanism.
+
+\begin{definition}[Ordered-Compliance Mechanism]
+\label{def:compliance}
+Fix a lag parameter $\lambda \geq 1$. A \emph{$\lambda$-run of key symbols}
+in a sequence $X=(X_1,\ldots,X_n)$ is a tuple of positions
+\[
+r=(t,t+\lambda,\ldots,t+(q-1)\lambda),
+\qquad q\geq 1,
+\]
+such that $t \geq 1$ and $t+(q-1)\lambda\leq n$, and
+\[
+X_{t+i\lambda}\in\mathcal{S}
+\qquad
+\text{for every } i=0,\ldots,q-1.
+\]
+The run is \emph{maximal} if it cannot be extended to the left or to the right
+by another key symbol at distance $\lambda$; that is,
+\[
+t-\lambda < 1
+\quad\text{or}\quad
+X_{t-\lambda}\notin\mathcal{S},
+\quad\text{and}\quad t+q\lambda > n
+\quad\text{or}\quad
+X_{t+q\lambda}\notin\mathcal{S}.
+\]
+A maximal $\lambda$-run $r=(t,t+\lambda,\ldots,t+(q-1)\lambda)$ is
+\emph{ordered} if $q\geq 2$ and
+\[
+\kappa(X_t)
+\leq
+\kappa(X_{t+\lambda})
+\leq
+\cdots
+\leq
+\kappa(X_{t+(q-1)\lambda}).
+\]
+We say that $X$ is \emph{ordered-compliant} (OC) if it contains at least one ordered
+maximal $\lambda$-run.
+\end{definition}
+
+Let $Y^*=\mathbf{1}\{X \text{ is compliant}\}$, $\pi\in[0,1/2)$, and
+$Y$ denote the observed label, generated from $Y^*$ according to
+\begin{equation}
+\label{eq:label_noise}
+P(Y=1\mid Y^*=y^*)=
+\begin{cases}
+1-\pi, & y^*=1,\\
+\pi, & y^*=0.
+\end{cases}
+\end{equation}
+
+For the experiments in Sections~\ref{sec:experiments} and~\ref{sec:results}, we generate an initial oversized pool of sequences \iid from $P_0$ and compute the deterministic latent labels $Y^*$. We then stratify on $Y^*$ to create train/validation/test splits and subsamples of varying size, strictly preserving the latent prevalence reported in Table~\ref{tab:datasets}. Next, we assign the final labels $Y$ according to~\eqref{eq:label_noise}: for the deterministic setting $(\pi = 0)$, $Y = Y^*$ whereas for the noisy setting $(\pi \in (0, 1/2))$, we independently flip the labels after stratification. Note that post-stratification, the empirical distribution of the retained sequences need not be an \iid sample from $P_0$ with exactly uniform marginals. Thus, our theoretical results apply to the proposal law $P_0$, requiring only independence and full support.
+
+\subsection{Pure sequential dependence}
+\label{sec:pure_sequential_def}
+We use the term \emph{pure sequential dependence} informally to denote order-sensitive tasks without local shortcuts. Since this phrase mixes order-sensitivity with distributional independence, we formalize the latter through $J$-local purity.
+
+\begin{definition}[Local purity]
+\label{def:local_purity}
+Let \(X=(X_1,\ldots,X_n)\in\mathcal A^n\) and \(Y\in\{0,1\}\)
+be distributed according to \(P\). For \(J\subseteq [n] = \{1, \ldots, n\}\), write
+\(X_J=(X_j)_{j\in J}\), which takes values in \(\mathcal A^J\).
+A task is \(J\)-locally pure under \(P\) if \(I_P(Y;X_J)=0\).
+It is \emph{\(k\)-locally pure} if
+\[
+I_P(Y;X_J)=0
+\qquad
+\text{for every } J\subseteq [n] \text{ with } 1\le |J|\le k.
+\]
+In particular, \(1\)-local purity is equivalent to
+\(I_P(Y;X_j)=0\) for every \(j\in[n]\).
+For finite alphabets,
+\[
+I_P(Y;X_J)
+=
+\sum_{y\in\{0,1\}}
+\sum_{x_J\in\mathcal A^J}
+P(Y=y,X_J=x_J)
+\log
+\frac{
+P(Y=y,X_J=x_J)
+}{
+P(Y=y)P(X_J=x_J)
+}.
+\]
+\end{definition}
+
+Theorem~\ref{thm:impossibility} shows that the ordered-compliance mechanism of Definition~\ref{def:compliance} is not even 1-locally pure: there exists a single coordinate, $X_1$ under the theorem's indexing, such that $I_P(Y;X_1)>0$.
+
+\begin{theorem}[OC Mechanism Induces Local Information]
+\label{thm:impossibility}
+Fix a realized pair $(\mathcal{S},\kappa)$ as in Section~\ref{sec:setup}.
+Let $\lambda \ge 1$ and $n \ge \lambda+1$.
+Let $X=(X_1,\ldots,X_n)$ have independent coordinates with full support on
+$\mathcal{A}$, \ie\ $P(X_t=a)>0$ for all $t$ and all $a\in\mathcal{A}$.
+Define
+$Y^* = \mathbf{1}\{X \text{ is OC}\}$ and let $Y$ be the observed label generated from $Y^*$ according to
+\eqref{eq:label_noise}. Let $\rho := P(Y^*=1)$.
+If $\rho\in(0,1)$, then there exist $a,b\in\mathcal{A}$ such that $P(Y^*=1\mid X_1=a)\neq P(Y^*=1\mid X_1=b)$.
+Consequently, $I(Y^*;X_1)>0$. Moreover, $P(Y=1\mid X_1=a)\neq P(Y=1\mid X_1=b)$ and therefore $I(Y;X_1)>0$.
+\end{theorem}
+
+The proof couples two sequences differing only at position~1 and shows the resulting posteriors differ; the symmetric-noise channel maps \(u=P(Y^*=1\mid X_1=a)\) to \(\pi+(1-2\pi)u\), strictly monotone for \(\pi<1/2\), so the dependence carries over to \(Y\). See Appendix~\ref{appendix:proof_impossibility}. Hence, non-degenerate OC mechanisms under independent full-support sampling are not $1$-locally pure.
+
+\subsection{A complementary global-property-compliance mechanism}
+\label{sec:parity}
+While ordered-compliance inevitably leaks single-position information (Theorem~\ref{thm:impossibility}), we now introduce a complementary mechanism with the opposite information structure: global-property-compliance (GPC), in which the label requires information from the full sequence to be recovered.
+
+\begin{definition}[Global-Property-Compliance]
+\label{def:parity}
+Let $\mathcal{A}$ be an alphabet of size $\ell = |\mathcal{A}|$. Fix a non-empty proper subset $K \subsetneq \mathcal{A}$.
+Let $X = (X_1,\ldots,X_n)$ with $X_t \overset{\mathrm{iid}}{\sim} \mathrm{Uniform}(\mathcal{A})$.
+For $k \in K$, define the count $N_k := \sum_{t=1}^n \mathbf{1}\{X_t = k\}$.
+The target label is
+\[
+Y^* := \mathbf{1}\!\left\{
+\left|\{k\in K : N_k \equiv 0 \pmod 2\}\right|
+\equiv 0 \pmod 2
+\right\}.
+\]
+Hence, $Y^* = 1$ iff an even number of key letters have an even occurrence count. Equivalently, \(Y^*\) is a fixed bit flip of the parity of $\sum_t \mathbf{1}\{X_t\in K\}$; the challenge is therefore to identify the hidden membership predicate and compute global parity over the resulting membership bits.
+\end{definition}
+
+The quantity $Y^*$ depends on the full sequence through a global parity computation over a hidden subset. Unlike the compliance family, this construction is not defined through ordered lagged chains.
+
+\begin{theorem}[$k$-local Purity of the GPC Mechanism]
+\label{thm:parity_local_purity}
+Assume the setting of Definition~\ref{def:parity} with
+$p := |K|/|\mathcal{A}|$. For \(J\subseteq [n] = \{1, \ldots, n\}\), write
+\(X_J=(X_j)_{j\in J}\), which takes values in \(\mathcal A^J\).
+Fix $n\ge 1$ and let
+$J \subseteq [n]$ with $1 \le |J| < n$. Then $I(Y^*;X_J)=0$ if $p = 1/2$, and $I(Y^*;X_J)>0$ if $p \neq 1/2$. Moreover, if $p\neq 1/2$ and $J\subset \mathbb{N}$ is any fixed finite index set, interpreted as a subset of $\{1,\ldots,n\}$ for all sufficiently large~$n$, then $I(Y^*;X_J)\to 0$ as
+$n\to\infty$. If the observed label $Y$ is generated from $Y^*$ via
+\eqref{eq:label_noise} with $\pi<1/2$, the same qualitative statements hold with $Y$ in place of $Y^*$. In particular, when $p=1/2$, the parity task is $k$-locally pure for every $k<n$.
+\end{theorem}
+
+See Appendix~\ref{appendix:proof_parity_local_purity} for the detailed proof.
+
+\section{Experiments}
+\label{sec:experiments}
+
+We evaluate whether different architectures recover the hidden mechanism signal beyond contiguous $k$-gram baselines, and then audit whether that signal is explained by lag-aware local features. We then apply the same shortcut-auditing logic to a real diagnosis-code prediction task in MIMIC-IV~\citep{johnson2023mimiciv}, a widely adopted public database of electronic health records, to test whether a clinically temporal task is also order-informational under a diagnosis-sequence representation. Code is available in an anonymous repository.\footnote{\url{https://anonymous.4open.science/r/anonymous_neurips_seqllm/}}
+
+\subsection{Controlled synthetic dataset and task variants}
+\label{sec:task_variants}
+
+We instantiate the mechanisms of Section~\ref{sec:formulation} on semantic-free sequences of 20 letters over a 26-symbol alphabet. The dataset variants, summarized in Table~\ref{tab:datasets}, are designed to separate possible explanations of model success: content-frequency shortcuts, contiguous local patterns, lag-aware pair-count shortcuts, and recovery of the intended hidden mechanism.
+
+We use $(n,\ell,m,\lambda)=(20,26,6,7)$ as a medium-difficulty anchor regime rather than a tuned optimum. With $m=6$, a sequence contains $nm/\ell \approx 4.6$ key symbols in expectation, so the hidden subset is sparse but not vanishingly rare. With $\lambda=7$, the ordered relation is non-adjacent while still providing $n-\lambda=13$ candidate lagged pairs and residue-class runs of length two or three. The resulting latent compliance rate is $\rho \approx 0.293$, giving a non-degenerate classification problem. Appendix~\ref{app:sensitivity} sweeps $m$ and $\lambda$ and shows that the qualitative conclusions are stable around this anchor.
+
+We instantiate the \textbf{OC-Deterministic} ($\pi=0$) and \textbf{OC-Noisy} ($\pi=0.3$) variants to implement the OC mechanism (Definition~\ref{def:compliance}), extending the order-sensitive trajectory paradigm~\citep{edelman2026order_specific_ehr,placido2023pancreatic_trajectories} to a controlled synthetic setting. These variants test whether models can discover the hidden subset and lagged ordering rule, and whether their performance exceeds contiguous $k$-gram shortcuts. We also introduce the \textbf{GPC-Deterministic} variant to implement the GPC mechanism (Definition~\ref{def:parity}): its label depends on a global modular property over a hidden subset, not on temporal order, a paradigm long used as a stress test for sequence-model expressivity~\citep{hahn-2020-theoretical}. We use $|K|=6$ to match the hidden-subset size of the OC variants; the balanced $|K|=13$ regime is studied in Appendix~\ref{app:parity_vocab}.
+
+\begin{table}[tb]
+\centering
+\caption{Dataset characteristics for the sequential classification task. $N_{train}$ indicates training size.}
+\label{tab:datasets}
+\begin{tabular}{lcccccc}
+\toprule
+Dataset & $N_{train}$ & $n$ & $\rho$ & $\lambda$ & $\pi$ & $m$ \\
+\midrule
+OC-Deterministic    & 400K & 20 & 0.293 & 7 & 0 & 6 \\
+OC-Noisy  & 400K & 20 & 0.293 & 7 & 0.3        & 6 \\
+GPC-Deterministic         & 400K & 20 & 0.499 & --& 0.0        & 6 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Models and baselines}
+\label{subsec:models}
+
+We compare three categories of models; Table~\ref{tab:models} in Appendix~\ref{appendix:training} summarizes all configurations.
+
+\paragraph{Pretrained LLMs (fine-tuned).} We fine-tune Llama-3.2-1B, Llama-3.1-8B and Llama-3.1-70B (the latter only on GPC-Deterministic)~\citep{touvron2023llama, grattafiori2024llama3}, Qwen3-4B-Think~\citep{bai2023qwen}, Qwen2.5-14B~\citep{qwen2.5, qwen2}, and BERT-base (110M)~\citep{devlin2019bert} and RoBERTa-large (355M)~\citep{liu2019robertarobustlyoptimizedbert} for binary classification.
+
+\paragraph{Randomly initialized architectures.} To isolate architecture from pretrained knowledge, we train Llama-style decoders (1M), LSTM~\citep{hochreiter1997lstm}, Transformer encoder~\citep{vaswani2017attention}, and a hybrid BiLSTM-Transformer~\citep{graves2005bilstm} (RNNTransformer henceforth), each with 100K--400K parameters.
+
+\paragraph{Traditional baselines.} XGBoost~\citep{chen2016xgboost} with two encodings: ordinal integer-mapped characters (XGBoost-basic) and, following~\citet{XGBoost_LLMs, XGBoost_LLMs_HF}, mean-pooled embeddings from Llama-3.2-1B (XGBoost-LLM). Sequences are encoded as a \texttt{Sequential events: $x_1\,\ldots\,x_n$} prompt for LLMs/BERT and as learned embeddings for randomly-initialized models (Appendix~\ref{subsec:encoding}).
+
+\paragraph{$k$-gram and lag-aware baselines.} Three local-pattern references: (i) a contiguous $k$-gram classifier that estimates $\hat{\mathbb{P}}(Y=1\mid g) = \#(g, Y=1)/\#(g)$ and averages over the test sequence's $k$-grams (Appendix~\ref{appendix:k_gram_analysis}); (ii) a $\lambda$-aware pair-count classifier, logistic regression with $L_2$ regularization on the $26\!\times\!26$-dimensional feature $g_{ab}^{(\lambda)}$ with $\lambda$ given, which controls for whether the task can be solved by a single linear readout once the hidden offset is known; and (iii) a $\lambda$-agnostic baseline that stacks $g_{ab}^{(\lambda')}$ across all candidate offsets $\lambda' \in \{1, \ldots, n{-}1\}$ (dimension $(n{-}1)\!\times\! 676 = 12\,844$) and lets an $L_1$-regularized logistic regression or a boosted tree rediscover $\lambda$ from data. Baseline (iii) is the fair ``is the encoder's advantage about discovering $\lambda$?'' test.
+
+\subsection{Training, evaluation, and theoretical ceiling}
+\label{subsec:training}
+\label{subsec:evaluation}
+
+For the controlled synthetic tasks, all neural models are trained with AdamW~\citep{AdamW} and cross-entropy loss under early stopping. Pretrained LLMs and BERT are fine-tuned with LoRA~\citep{LoRA}, using gradient checkpointing and mixed precision for the larger models; randomly initialized models use architecture-specific learning rates and dropout; XGBoost uses regularized boosting with class weighting. We tune the decision threshold on validation to maximize F1. Experiments are run on a single NVIDIA H100 with three seeds; full hyperparameters are in Appendix~\ref{appendix:training}. Denoting by $N$ the total amount of data, we write $N_{train}$, $N_{val}$, $N_{test}$ for the Training/Validation/Test split, using a ratio of 80\%--10\%--10\%. We report AUC, F1, Precision and Recall on held-out test sets, sweeping training size from 4K to 400K.
+
+For the synthetic mechanisms, we denote by $\mathrm{AUC}^*$ the AUC obtained by an oracle score that perfectly recovers the latent noise-free decision rule $Y^*$; see Theorem~\ref{thm:optimal_performance}. In deterministic settings ($\pi=0$), this gives $\mathrm{AUC}^*=1$. For OC-Noisy, using the latent compliance rate $\rho = P(Y^*=1)=0.293$ and noise rate $\pi=0.3$, Theorem~\ref{thm:optimal_performance} gives $\mathrm{AUC}^*=0.670$. The same theorem also reports the precision, recall, and F1 of the hard oracle classifier $\hat Y=Y^*$ evaluated against the stochastic labels: for OC-Noisy these are precision $0.700$, recall $0.491$, and F1 $0.577$. These F1-related quantities are not upper bounds under validation-threshold tuning, so we use AUC as the primary metric. We interpret $\mathrm{AUC}\approx 0.50$ as no recovery of the latent rule, $0.55<\mathrm{AUC}<\mathrm{AUC}^*$ as partial recovery, and
+$\mathrm{AUC}\approx\mathrm{AUC}^*$ as full recovery up to label noise.
+
+\subsection{Real-world audit protocol: clinical diagnosis sequences}
+\label{subsec:mimic_ckd_protocol}
+Moving beyond synthetic settings, motivated by~\citet{edelman2026order_specific_ehr}, we sought a real clinical task where temporal structure is plausible but model-mechanism attribution remains directly auditable. We select MIMIC-IV~\citep{johnson2024mimiciv31,johnson2023mimiciv} as our clinical testbed, given its status as a foundational machine learning benchmark and its growing adoption for evaluating LLMs in healthcare. We focus on progression from chronic kidney disease (CKD) to end-stage renal disease (ESRD), a staged renal-progression endpoint with inherently temporal clinical structure~\citep{kdigo2024ckd,sumida2017disease_trajectories_esrd}. CKD defines cohort entry, ESRD defines the future endpoint, and the model observes the pre-endpoint diagnosis history. Our question is not whether CKD progression is clinically temporal, but whether temporal order within that diagnosis history is decisive for model performance under a diagnosis-code representation. We construct a cohort of 14,813 patients (1,146 positives), mapping their specific diagnosis codes to $293$ broader Clinical Classifications Software (CCS) categories~\citep{hcup_ccs}. To prevent label leakage, we exclude patients who receive both diagnoses during the same admission. Sequences are ordered temporally across admissions and by billing order within them. We audit this task using three shortcut controls: (i) contiguous $k$-gram diagnostics, (ii) order-invariant bag-of-codes baselines (Logistic Regression, XGBoost), and (iii) sequence models evaluated on randomly shuffled patient sequences. We use AUC as the primary metric, with full cohort definitions provided in Appendix~\ref{app:mimic_ckd}.
+
+\section{Results and discussion}
+\label{sec:results}
+\label{sec:discussion}
+
+\begin{figure*}[tb]
+    \centering
+    \figureorplaceholder{auc_combined_main_1row.png}{Main AUC figure: test AUC vs.\ training samples for one representative model per family on OC-Deterministic, OC-Noisy, and GPC-Deterministic. Regenerate with \texttt{python -m src.analysis.plot\_main\_figure}.}
+    \caption{Test AUC across three synthetic datasets. For readability, we show one representative model per family; full results across all 13 models are reported in Appendix~\ref{appendix:results}. \textbf{OC-Deterministic}: bidirectional encoders, recurrent models, and larger causal decoders (8B) reach optimality, while smaller decoders (1B) plateau at $\sim$0.85. \textbf{OC-Noisy}: bidirectional models approach the optimal bound (0.67) with modest parameter counts, while decoder-only models require substantially more parameters (14B) to reach similar performance. In \textbf{GPC-Deterministic} all models fail the task, regardless of the number of parameters (we tested up to 70B decoder-only).}
+    \label{fig:comparison_AUC_all}
+\end{figure*}
+
+We evaluate all models on the three datasets of Table~\ref{tab:datasets}; Figure~\ref{fig:comparison_AUC_all} and Table~\ref{tab:results_summary} summarize the findings and Appendix~\ref{appendix:results} reports full numbers. A sanity-check task (Naive) in which all models except XGBoost achieve near-perfect AUC is reported in Appendix~\ref{app:naive}.
+
+\paragraph{OC-Deterministic: bidirectional and recurrent models learn the offset efficiently.}
+When compliance requires detecting a lag-7 ordered key run, pretrained bidirectional encoders (BERT, RoBERTa) and small randomly initialized sequential models (Transformer, LSTM, RNNTransformer; 100K--400K parameters) reach AUC \(\ge 0.997\). Decoder-only Llama-3.2-1B plateaus at AUC \(\approx 0.85\), close to the contiguous 2-gram baseline of 0.82, while Llama-3.1-8B reaches AUC $=0.995$. XGBoost on frozen Llama-3.2-1B mean-pooled embeddings also fails; this likely reflects a mismatch between pretrained representations and our synthetic letter task rather than a property of the embedding architecture per se. The mechanism-identification audit of Section~\ref{sec:mechanism_id} shows that a 676-dimensional logistic regression on the \(\lambda\)-aware pair feature \(g_{ab}^{(\lambda=7)}\) also reaches AUC $=0.997$, and that a \(\lambda\)-agnostic 12,844-dimensional logistic regression recovers \(\lambda=7\) on its own. We therefore read the encoder--decoder gap on this task as an efficiency gap in discovering the right lagged-pair feature from raw-token supervision, rather than as evidence for global sequence integration.
+
+\paragraph{OC-Noisy: scale unlocks autoregressive models.}
+At $\pi=0.3$ the theoretical upper bound is $\mathrm{AUC}^*=0.67$. Our custom Transformer and RNNTransformer reach this ceiling (AUC $=0.671$), BERT reaches AUC $=0.669$, and LSTM reaches AUC$=0.665$. Smaller decoder-only models (Llama-3.2-1B, 8B) plateau near AUC$=0.587$, close to the contiguous 2-gram baseline ($=0.585$), but at sufficient scale Qwen-14B also approaches the ceiling. The mechanism-identification ladder again matches the ceiling with a linear model when $\lambda$ is given ($L_2$ logistic regression on $g_{ab}^{(\lambda=7)}$, AUC $=0.671$) and with a boosted tree when $\lambda$ is not given ($\lambda$-agnostic XGBoost on stacked all-offset pair counts, AUC $=0.667$). The $\lambda$-agnostic linear baseline underperforms the ceiling (AUC $=0.632$): under label noise the right $\lambda$-block is not separable by a linear sparsity pattern and the top-weight lag on $L_1$ logistic regression drifts to $\lambda=19$ (Appendix~\ref{appendix:mechanism_id}). Decoder-only models can reach the ceiling at sufficient scale in our tested regime, but require substantially more parameters than encoders to match what a boosted tree does with hand-crafted pair features.
+
+\paragraph{GPC-Deterministic: a hidden-subset identification failure, not a modular-arithmetic failure.}
+Every tested model is at chance (AUC $\approx 0.50$) on hidden-subset parity, including 70B-parameter LLMs, bidirectional transformers, and recurrent networks; the $k$-gram baselines also fail, consistent with \citet{countingLLMs}. This holds both in the main $|K|=6$ regime and, for the core architectures, in the exactly balanced $|K|=13$ regime (Appendix~\ref{appendix:mechanism_id}). A decomposition (Appendix~\ref{appendix:parity_decomp}) localizes the failure to joint hidden-subset identification and modular arithmetic under end-to-end supervision, rather than to modular arithmetic itself: a 64-unit MLP fed the per-position membership bits $b_t = \mathbf{1}\{X_t \in K\}$ (a 20-dim binary input that does not name the key letters) reaches AUC $=0.997$ in under a minute, and AUC $=1.000$ when fed the 6-dim per-key parity vector. Binary-vocabulary parity and induction-head circuits succeed on related tasks~\citep{olsson2022induction}; we reproduce one such protocol and locate our regime on the non-learnable side of a length-driven phase boundary (Appendix~\ref{appendix:parity_reference}). The negative result is therefore about end-to-end supervised learning of hidden-subset identification, not a general claim on parity learnability. Few-shot in-context evaluation of Llama-3.2-1B, Llama-3.1-8B, and Qwen2.5-14B fails on both OC variants and on GPC, indicating the main fine-tuning results are not an artifact of access mode (Appendix~\ref{appendix:fewshot}).
+
+\begin{table}[tb]
+\centering
+\caption{Summary of model performance across datasets, using criteria from Section~\ref{subsec:evaluation}. $\cmark$: full recovery (AUC $\approx$ AUC$^*$); {\raise.17ex\hbox{$\scriptstyle\sim$}}: partial recovery ($0.55 <$ AUC $<$ AUC$^*$); $\xmark$: no learning (AUC $\approx 0.50$). $\bigstar$: most data-efficient models to reach the optimum. $-$: not tested on that dataset. All evaluations based on 100\% training data.}
+\label{tab:results_summary}
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Model & OC-Det. & OC-Noisy & GPC-Det. \\
+\midrule
+$k$-gram baseline & {\raise.17ex\hbox{$\scriptstyle\sim$}} & {\raise.17ex\hbox{$\scriptstyle\sim$}} & $\xmark$ \\
+XGBoost & {\raise.17ex\hbox{$\scriptstyle\sim$}} & $\xmark$ & $\xmark$ \\
+BERT & $\bigstar$ & $\bigstar$ & $\xmark$ \\
+RoBERTa & $\cmark$ & $\cmark$ & $\xmark$ \\
+Llama-3.2-1B & {\raise.17ex\hbox{$\scriptstyle\sim$}} & {\raise.17ex\hbox{$\scriptstyle\sim$}} & $\xmark$ \\
+Qwen3-4B-Think & {\raise.17ex\hbox{$\scriptstyle\sim$}} & {\raise.17ex\hbox{$\scriptstyle\sim$}} & $\xmark$ \\
+Llama-3.1-8B & $\cmark$ & {\raise.17ex\hbox{$\scriptstyle\sim$}} & $\xmark$ \\
+Qwen2.5-14B & $-$& $\cmark$ & $-$ \\
+Llama-3.1-70B  & $-$ & $-$ & $\xmark$ \\
+LSTM & $\cmark$  & $\cmark$ & $\xmark$ \\
+Transformer & $\bigstar$ & $\bigstar$ & $\xmark$ \\
+RNNTransformer$^{*}$ & $\cmark$ & $\cmark$ & $\xmark$ \\
+\bottomrule
+\multicolumn{4}{@{}l@{}}{\footnotesize $^{*}$We call RNNTransformer a BiLSTM-Transformer.}
+\end{tabular}
+\end{table}
+
+\subsection{Mechanism-identification audit and sensitivity sweep}
+\label{sec:mechanism_id}
+
+To explain the drivers of model performance, we evaluate a hierarchy of seven feature sets across three simple classifiers (Appendix~\ref{appendix:mechanism_id}). On both OC variants, a logistic regression trained solely on lag-aware aggregated pair counts perfectly matches the encoder ceiling, whereas simple content counts fall short (AUC $0.82$ for deterministic, $0.58$ for noisy). We contextualize this linear performance through two controls. First, a leave-one-rule-out experiment reveals that the linear model learns rule-specific weights rather than a transferable algorithm (within-rule AUC $1.00$ \vs across-rule AUC $0.50$; Appendix~\ref{appendix:heldout}). Second, even after matching on key-letter counts, lag-aware features retain a non-trivial predictive signal (within-group AUC $0.65$ \vs chance $0.50$ on OC-Noisy). Internally, attention analysis confirms that while BERT suppresses non-key positions, it does not preferentially attend to lag-connected key pairs (Appendix~\ref{appendix:attention}). Finally, a sensitivity sweep over $m$ and $\lambda$ (Appendix~\ref{app:sensitivity}) preserves the same qualitative pattern: BERT and LSTM operate near the oracle ceiling, while Llama-3.2-1B remains consistently less efficient.
+
+\subsection{A length-based curriculum partially recovers the GPC mechanism}
+\label{sec:curriculum}
+\citet{hahn-2020-theoretical} identifies length-dependent difficulties for transformer parity learning (the key ingredient of our GPC mechanism), consistent with what we observe: small encoders learn parity at $n=10$ but collapse to chance at $n=20$ (Appendix~\ref{appendix:parity_reference}). We exploit this gap with a two-stage curriculum: train from scratch on $n=10$, then warm-start on $n=20$ with positional embeddings transferred where applicable. This recovers global-property-compliance for an LSTM and for a small randomly initialized Transformer, but not for pretrained BERT or Llama under our tested recipes (Appendix~\ref{app:parity_curriculum}). The bottleneck for shallow random-init architectures is therefore addressable by training-paradigm interventions, while pretrained models require additional study.
+
+\subsection{Real-world audit: limited gains can reflect non-decisive sequential information}
+\label{sec:mimic_ckd_results}
+Our empirical results demonstrate that for CKD$\to$ESRD progression, the prediction task becomes heavily shortcut-dominated under a diagnosis-code representation. Unigrams alone capture most of the predictive signal (AUC $0.823 \pm 0.015$), outperforming contiguous 2-grams ($0.801 \pm 0.016$). Order-invariant baselines are similarly strong, with Logistic Regression and XGBoost reaching AUCs of 0.809 and 0.803, respectively. A Transformer achieves the peak ordered AUC (0.860), but most of this gain remains after randomly shuffling each patient's sequence (AUC 0.844), while BiLSTM and BERT show no ordered-versus-shuffled gain. In this representation, the task can be solved by exploiting diagnosis identity, frequency, and co-occurrence: learning \emph{what} diagnoses occur is largely sufficient, so learning \emph{when} they occur is not decisive for performance. Full results in Appendix~\ref{app:mimic_ckd}.
+
+\section{Discussion and limitations}
+\label{sec:limitations}
+This work introduced a semantic-free diagnostic framework to test whether sequence models recover the intended latent mechanism or exploit simpler predictive shortcuts. The two mechanisms expose complementary regimes. In the OC mechanism, models can perform well by discovering lag-aware pair-count features; indeed, these features match the empirical ceiling reached by the best encoders. Thus, strong OC performance should be interpreted as efficient recovery of the relevant lagged statistic, not as evidence of global sequence integration. In the GPC mechanism, all models fail under standard end-to-end training, while the task becomes solvable once hidden membership information is provided. This localizes the difficulty to joint hidden-subset identification and global aggregation.
+
+From the theoretical perspective, Theorem~\ref{thm:impossibility} is specific to the OC mechanism and does not extend to arbitrary order-sensitive labels. For example, if $\mathcal{A}=\{0,1,2,3,4\}$, $X_t \overset{\mathrm{iid}}{\sim} \mathrm{Uniform}(\mathcal{A})$, and $Y=\mathbf{1}\{(X_2+2X_3)\bmod 5 \in \{0,1\}\}$, then $I(Y;X_t)=0$ for every $t$, although $Y$ depends on the ordered pair $(X_2,X_3)$. The theorem also guarantees only the existence of single-position leakage, but does not provide a theoretical lower bound on its magnitude. Theorem~\ref{thm:parity_local_purity} should be read as a bounded-local result.
+
+The synthetic setting is intentionally narrow. It targets two capabilities: recovering a hidden positional offset from raw tokens, and jointly identifying a hidden subset while applying a global modular rule. It is not a general benchmark for long-range sequential learning. Empirically, we focus on one main regime per task, with sensitivity sweeps and ablations in the appendix; most models are tested up to 14B parameters, with the 70B model evaluated only on the GPC mechanism. The theoretical claims also rely on independent full-support sampling and should not be read as impossibility results for arbitrary real-world sequence distributions, transformers, or parity-like tasks in general.
+
+Finally, our MIMIC-IV audit is limited to a single clinical case study. However, as recent work highlights~\citep{edelman2026order_specific_ehr}, while true temporal dependencies certainly exist in clinical trajectories, they are neither ubiquitous nor trivial to isolate. Therefore, judging a sequence model's architectural adequacy based solely on its raw performance on real-world sequential tasks requires extreme caution. Although our case study is not an exhaustive benchmark, it efficiently demonstrates a broader fundamental principle: apparent sequentiality in real data does not imply an absence of predictive shortcuts.
+
+\printbibliography
+
+\end{document}
