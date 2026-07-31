@@ -222,7 +222,10 @@ We use the term \emph{pure sequential dependence} informally to denote order-sen
 Let \(X=(X_1,\ldots,X_n)\in\mathcal A^n\) and \(Y\in\{0,1\}\)
 be distributed according to \(P\). For \(J\subseteq [n] = \{1, \ldots, n\}\), write
 \(X_J=(X_j)_{j\in J}\), which takes values in \(\mathcal A^J\).
-A task is \(J\)-locally pure under \(P\) if \(I_P(Y;X_J)=0\).
+A task is \(J\)-locally pure under \(P\) if
+\[
+I_P(Y;X_J)=0.
+\]
 It is \emph{\(k\)-locally pure} if
 \[
 I_P(Y;X_J)=0
@@ -230,16 +233,20 @@ I_P(Y;X_J)=0
 \text{for every } J\subseteq [n] \text{ with } 1\le |J|\le k.
 \]
 In particular, \(1\)-local purity is equivalent to
-\(I_P(Y;X_j)=0\) for every \(j\in[n]\).
+\[
+I_P(Y;X_j)=0
+\qquad
+\text{for every } j\in[n].
+\]
 For finite alphabets,
 \[
 \begin{aligned}
 I_P(Y;X_J)
-={}&
+&=
 \sum_{y\in\{0,1\}}
 \sum_{x_J\in\mathcal A^J}
 P(Y=y,X_J=x_J)\\
-&\times
+&\qquad
 \log
 \frac{
 P(Y=y,X_J=x_J)
@@ -257,7 +264,7 @@ Theorem~\ref{thm:impossibility} shows that the ordered-compliance mechanism of D
 Fix a realized pair $(\mathcal{S},\kappa)$ as in Section~\ref{sec:setup}.
 Let $\lambda \ge 1$ and $n \ge \lambda+1$.
 Let $X=(X_1,\ldots,X_n)$ have independent coordinates with full support on
-$\mathcal{A}$, \ie\ $P(X_t=a)>0$ for all $t$ and all $a\in\mathcal{A}$.
+$\mathcal{A}$, i.e.\ $P(X_t=a)>0$ for all $t$ and all $a\in\mathcal{A}$.
 Define
 $Y^* = \mathbf{1}\{X \text{ is OC}\}$ and let $Y$ be the observed label generated from $Y^*$ according to
 \eqref{eq:label_noise}. Let $\rho := P(Y^*=1)$.
