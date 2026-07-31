@@ -169,12 +169,15 @@ X_{t+i\lambda}\in\mathcal{S}
 The run is \emph{maximal} if it cannot be extended to the left or to the right
 by another key symbol at distance $\lambda$; that is,
 \[
-t-\lambda < 1
+\begin{aligned}
+&t-\lambda < 1
 \quad\text{or}\quad
 X_{t-\lambda}\notin\mathcal{S},
-\quad\text{and}\quad t+q\lambda > n
+\quad\text{and}\\
+&t+q\lambda > n
 \quad\text{or}\quad
 X_{t+q\lambda}\notin\mathcal{S}.
+\end{aligned}
 \]
 A maximal $\lambda$-run $r=(t,t+\lambda,\ldots,t+(q-1)\lambda)$ is
 \emph{ordered} if $q\geq 2$ and
@@ -224,17 +227,20 @@ In particular, \(1\)-local purity is equivalent to
 \(I_P(Y;X_j)=0\) for every \(j\in[n]\).
 For finite alphabets,
 \[
+\begin{aligned}
 I_P(Y;X_J)
-=
+={}&
 \sum_{y\in\{0,1\}}
 \sum_{x_J\in\mathcal A^J}
-P(Y=y,X_J=x_J)
+P(Y=y,X_J=x_J)\\
+&\times
 \log
 \frac{
 P(Y=y,X_J=x_J)
 }{
 P(Y=y)P(X_J=x_J)
 }.
+\end{aligned}
 \]
 \end{definition}
 
@@ -307,6 +313,7 @@ We instantiate the \textbf{OC-Deterministic} ($\pi=0$) and \textbf{OC-Noisy} ($\
 \centering
 \caption{Dataset characteristics for the sequential classification task. $N_{train}$ indicates training size.}
 \label{tab:datasets}
+\resizebox{\linewidth}{!}{%
 \begin{tabular}{lcccccc}
 \toprule
 Dataset & $N_{train}$ & $n$ & $\rho$ & $\lambda$ & $\pi$ & $m$ \\
@@ -315,7 +322,7 @@ OC-Deterministic    & 400K & 20 & 0.293 & 7 & 0 & 6 \\
 OC-Noisy  & 400K & 20 & 0.293 & 7 & 0.3        & 6 \\
 GPC-Deterministic         & 400K & 20 & 0.499 & --& 0.0        & 6 \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}
 
 \subsection{Models and baselines}
@@ -425,6 +432,7 @@ Appendices A--F provide task examples, proofs, and reproducibility details. Appe
 \begin{table}[tb]
 \centering
 \caption{Purpose of appendix analyses.}
+\resizebox{\linewidth}{!}{%
 \begin{tabular}{ll}
 \toprule
 Appendix & Purpose \\
@@ -443,7 +451,7 @@ Appendix & Purpose \\
 \ref{app:parity_curriculum} & Curriculum control for parity learnability \\
 \ref{appendix:attention} & Exploratory attention inspection, not primary evidence \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}
 
 \section{Real-world trajectory motivation and synthetic abstraction}
@@ -473,5 +481,210 @@ near-perfect AUC with $\ge 40$K training examples, while XGBoost without explici
 adjacent-pair features does not (Table~\ref{tab:results_full}). We therefore use Naive
 only to verify the training and evaluation pipeline, and exclude it from the main
 benchmark.
+
+\section{Compliance Mechanisms}
+\begin{figure*}[tb]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[scale=0.85]
+% Full sequence with key letters highlighted
+\foreach \i/\letter in {1/\texttt{A},2/\texttt{A},3/\texttt{C},4/\texttt{D},5/\texttt{E},6/\texttt{F},7/\texttt{G},8/\texttt{H},9/\texttt{I},10/\texttt{L},11/\texttt{M},12/\texttt{M},13/\texttt{M},14/\texttt{P},15/\texttt{Q},16/\texttt{R},17/\texttt{S},18/\texttt{T},19/\texttt{U},20/\texttt{V}} {
+    \node[draw,minimum size=0.65cm,text=black, fill=green!20] (n\i) at (\i*0.75,0) {\letter};
+}
+\node[anchor=east] at (-0.5,0) {Sequence $X_j$:};
+\node[right=12cm of n1] {$\in \mathcal{X}$};
+
+% Position numbers above key letters
+\node[above=0.05cm of n1,black,font=\tiny] {1};
+\node[above=0.05cm of n2,black,font=\tiny] {2};
+\node[above=0.05cm of n3,black,font=\tiny] {3};
+\node[above=0.05cm of n4,black,font=\tiny] {4};
+\node[above=0.05cm of n5,black,font=\tiny] {5};
+\node[above=0.05cm of n6,black,font=\tiny] {6};
+\node[above=0.05cm of n7,black,font=\tiny] {7};
+\node[above=0.05cm of n8,black,font=\tiny] {8};
+\node[above=0.05cm of n9,black,font=\tiny] {9};
+\node[above=0.05cm of n10,black,font=\tiny] {10};
+\node[above=0.05cm of n11,black,font=\tiny] {11};
+\node[above=0.05cm of n12,black,font=\tiny] {12};
+\node[above=0.05cm of n13,black,font=\tiny] {13};
+\node[above=0.05cm of n14,black,font=\tiny] {14};
+\node[above=0.05cm of n15,black,font=\tiny] {15};
+\node[above=0.05cm of n16,black,font=\tiny] {16};
+\node[above=0.05cm of n17,black,font=\tiny] {17};
+\node[above=0.05cm of n18,black,font=\tiny] {18};
+\node[above=0.05cm of n19,black,font=\tiny] {19};
+\node[above=0.05cm of n20,black,font=\tiny] {20};
+
+% Key information - moved down more
+\node at (7.5,-1) {Key: $\mathcal{S} = \mathcal{A}$, Ordering: $\kappa(\texttt{A})=1 < \kappa(\texttt{B})=2 < \kappa(\texttt{C})=3 < \cdots < \kappa(\texttt{Z})=26$, lag $\lambda=1$};
+
+% Arrows showing different paths - all starting lower and with better spacing
+
+\draw[->,thick,green,dotted] (n1.north) to[out=80,in=100] (n2.north);
+\draw[->,thick,green,dotted] (n2.north) to[out=80,in=100] (n3.north);
+\draw[->,thick,green,dotted] (n3.north) to[out=80,in=100] (n4.north);
+\draw[->,thick,green,dotted] (n4.north) to[out=80,in=100] (n5.north);
+\draw[->,thick,green,dotted] (n5.north) to[out=80,in=100] (n6.north);
+\draw[->,thick,green,dotted] (n6.north) to[out=80,in=100] (n7.north);
+\draw[->,thick,green,dotted] (n7.north) to[out=80,in=100] (n8.north);
+\draw[->,thick,green,dotted] (n8.north) to[out=80,in=100] (n9.north);
+\draw[->,thick,green,dotted] (n9.north) to[out=80,in=100] (n10.north);
+\draw[->,thick,green,dotted] (n10.north) to[out=80,in=100] (n11.north);
+\draw[->,thick,green,dotted] (n11.north) to[out=80,in=100] (n12.north);
+\draw[->,thick,green,dotted] (n12.north) to[out=80,in=100] (n13.north);
+\draw[->,thick,green,dotted] (n13.north) to[out=80,in=100] (n14.north);
+\draw[->,thick,green,dotted] (n14.north) to[out=80,in=100] (n15.north);
+\draw[->,thick,green,dotted] (n15.north) to[out=80,in=100] (n16.north);
+\draw[->,thick,green,dotted] (n16.north) to[out=80,in=100] (n17.north);
+\draw[->,thick,green,dotted] (n17.north) to[out=80,in=100] (n18.north);
+\draw[->,thick,green,dotted] (n18.north) to[out=80,in=100] (n19.north);
+\draw[->,thick,green,dotted] (n19.north) to[out=80,in=100] (n20.north);
+
+% Results - moved down even more
+\node[align=center] at (7.5,-2.5) {The subsequence consisting on the whole sequence satisfies both lag $\lambda$=1 and the ordering key $\kappa(\mathcal{S}) \equiv \mathcal{A}$.\\
+$\Rightarrow$ Ordered (i.e., $Y^{*}=1$)};
+\end{tikzpicture}%
+}
+\caption{Sequence classification example in the \textbf{Naive} sanity check. Key letters $\mathcal{S} = \mathcal{A}$ (i.e., all letters). Arrows show gaps between key letters.
+In green letters (and gaps) that do have lag-connections with other key letters and that satisfy the ordering $\kappa(\mathcal{S}) \equiv \mathcal{A}$. Note: in this example $n=20$, $m=26$.}
+\label{fig:naive_example}
+\end{figure*}
+
+\label{appendix:Figures}
+\begin{figure*}[tb]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[scale=0.85, baseline=(current bounding box.center)]
+% Full sequence with key letters highlighted
+\foreach \i/\letter in {1/\texttt{M},2/\texttt{T},3/\texttt{W},4/\texttt{F},5/\texttt{K},6/\texttt{R},7/\texttt{T},8/\texttt{D},9/\texttt{X},10/\texttt{A},11/\texttt{Z},12/\texttt{C},13/\texttt{Q},14/\texttt{Z},15/\texttt{E},16/\texttt{T},17/\texttt{Q},18/\texttt{A},19/\texttt{M},20/\texttt{L}} {
+    % Check prima se è posizione 9 (rosso)
+    \ifnum\i=9
+        \node[draw,thick,red,minimum size=0.65cm,fill=red!20] (n\i) at (\i*0.75,0) {\textbf{\letter}};
+
+    \else
+        \ifnum\i=17
+            \node[draw,thick,red,minimum size=0.65cm,fill=red!20] (n\i) at (\i*0.75,0) {\textbf{\letter}};
+        \else
+            % Altrimenti check se è 3, 8 o 13 (arancione)
+            \pgfmathparse{\i==3 || \i==8 || \i==13 ? 1 : 0}
+            \ifnum\pgfmathresult=1
+                \node[draw,thick,black,minimum size=0.65cm,fill=green!20] (n\i) at (\i*0.75,0) {\textbf{\letter}};
+            \else
+                % Altrimenti grigio
+                \node[draw,minimum size=0.65cm,text=gray!40] (n\i) at (\i*0.75,0) {\letter};
+            \fi
+        \fi
+    \fi
+}
+\node[anchor=east] at (-0.5,0) {Sequence $X_i$:};
+\node[right=12cm of n1] {$\in \mathcal{X}$};
+
+% Position numbers above key letters
+\node[above=0.05cm of n1,gray!40,font=\tiny] {1};
+\node[above=0.05cm of n2,gray!40,font=\tiny] {2};
+\node[above=0.05cm of n3,black,font=\tiny] {3};
+\node[above=0.05cm of n4,gray!40,font=\tiny] {4};
+\node[above=0.05cm of n5,gray!40,font=\tiny] {5};
+\node[above=0.05cm of n6,gray!40,font=\tiny] {6};
+\node[above=0.05cm of n7,gray!40,font=\tiny] {7};
+\node[above=0.05cm of n8,black,font=\tiny] {8};
+\node[above=0.05cm of n9,red,font=\tiny] {9};
+\node[above=0.05cm of n10,gray!40,font=\tiny] {10};
+\node[above=0.05cm of n11,gray!40,font=\tiny] {11};
+\node[above=0.05cm of n12,gray!40,font=\tiny] {12};
+\node[above=0.05cm of n13,black,font=\tiny] {13};
+\node[above=0.05cm of n14,gray!40,font=\tiny] {14};
+\node[above=0.05cm of n15,gray!40,font=\tiny] {15};
+\node[above=0.05cm of n16,gray!40,font=\tiny] {16};
+\node[above=0.05cm of n17,red,font=\tiny] {17};
+\node[above=0.05cm of n18,gray!40,font=\tiny] {18};
+\node[above=0.05cm of n19,gray!40,font=\tiny] {19};
+\node[above=0.05cm of n20,gray!40,font=\tiny] {20};
+
+% Key information - moved down more
+\node at (7.5,-3) {Key: $\mathcal{S} = \{\texttt{D}, \texttt{Q}, \texttt{J}, \texttt{W}, \texttt{X}, \texttt{U}\}$,
+with $\kappa(\texttt{W}) < \kappa(\texttt{D}) < \kappa(\texttt{Q}) < \kappa(\texttt{J}) < \kappa(\texttt{X}) < \kappa(\texttt{U})$, $\lambda=5$};
+
+% Arrows showing different paths - all starting lower and with better spacing
+% Path 1: B to D (gap=5, red)
+\draw[<->,thick,green,dotted] (n3.south) to[out=-70,in=-110] node[below,yshift=0.5cm,font=\scriptsize,black] {gap=5} (n8.south);
+
+% Path 2: D to G (gap=4, green)
+\draw[<->,thick,green,dotted] (n8.south) to[out=-75,in=-105] node[below,yshift=0.5cm,font=\scriptsize,black] {gap=5} (n13.south);
+
+% Path 3: B to G (gap=10, purple)
+\draw[<->,thick,red,dotted] (n3.south) to[out=-60,in=-120] node[below,yshift=0cm,font=\scriptsize,red] {gap=10} (n13.south);
+
+\draw[<->,thick,red,dotted] (n8.north) to[out=80,in=100] node[above,yshift=0.25cm,font=\scriptsize,red] {gap=1} (n9.north);
+
+\draw[<->,thick,red,dotted] (n9.north) to[out=80,in=100] node[above,yshift=0.25cm,font=\scriptsize,red] {gap=4} (n13.north);
+
+\draw[<->,thick,red,dotted] (n13.north) to[out=80,in=100] node[above,yshift=0.25cm,font=\scriptsize,red] {gap=4} (n17.north);
+
+% Results - moved down even more
+\node[align=center] at (7.5,-4.5) {The subsequence \texttt{W}-\texttt{D}-\texttt{Q} satisfies both lag $\lambda$=5 and the ordering key $\kappa(\mathcal{S})$
+$\Rightarrow$ Ordered (i.e., $Y^{*}=1$)};
+
+\end{tikzpicture}%
+}
+\caption{Sequence classification with \textbf{OC} mechanism. Key letters $\mathcal{S} = \{\texttt{D}, \texttt{Q}, \texttt{J}, \texttt{W}, \texttt{X}, \texttt{U}\}$ are extracted from the full sequence (non-key in gray). Arrows indicate gaps. Red: letters/gaps without lag-connections to other keys. Green: letters/gaps with lag-connections satisfying ordering $\kappa(\mathcal{S})$. Here $n=20$, $m=6$.}
+
+\label{fig:tricky_example}
+\end{figure*}
+
+\begin{figure*}[tb]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[scale=0.85, baseline=(current bounding box.center)]
+\foreach \i/\letter in {1/\texttt{M},2/\texttt{T},3/\texttt{W},4/\texttt{F},5/\texttt{K},6/\texttt{R},7/\texttt{T},8/\texttt{D},9/\texttt{X},10/\texttt{A},11/\texttt{Z},12/\texttt{C},13/\texttt{Q},14/\texttt{Z},15/\texttt{E},16/\texttt{T},17/\texttt{Q},18/\texttt{A},19/\texttt{M},20/\texttt{L}} {
+    \ifnum\i=3
+        \node[draw,thick,red,minimum size=0.65cm,fill=red!20] (n\i) at (\i*0.75,0) {\textbf{\letter}};
+    \else
+        % D at position 8 (odd count -> red)
+        \ifnum\i=8
+            \node[draw,thick,red,minimum size=0.65cm,fill=red!20] (n\i) at (\i*0.75,0) {\textbf{\letter}};
+        \else
+            % U at position 9 (odd count -> red)
+            \ifnum\i=9
+                \node[draw,thick,red,minimum size=0.65cm,fill=red!20] (n\i) at (\i*0.75,0) {\textbf{\letter}};
+            \else
+                % Q at positions 13 and 17 (even count -> green)
+                \pgfmathparse{\i==13 || \i==17 ? 1 : 0}
+                \ifnum\pgfmathresult=1
+                    \node[draw,thick,black,minimum size=0.65cm,fill=green!20] (n\i) at (\i*0.75,0) {\textbf{\letter}};
+                \else
+                    % Non-key letters in gray
+                    \node[draw,minimum size=0.65cm,text=gray!40] (n\i) at (\i*0.75,0) {\letter};
+                \fi
+            \fi
+        \fi
+    \fi
+}
+\node[anchor=east] at (-0.5,0) {Sequence $X_i$:};
+\node[right=12cm of n1] {$\in \mathcal{X}$};
+
+% Position numbers above letters
+\foreach \i in {1,...,20} {
+    \pgfmathparse{\i==3 || \i==8 || \i==9 ? "red" : (\i==13 || \i==17 ? "black" : "gray!40")}
+    \edef\nodecolor{\pgfmathresult}
+    \node[above=0.05cm of n\i,\nodecolor,font=\tiny] {\i};
+}
+
+% Key information
+\node at (7.5,-1.5) {$K = \{\texttt{D}, \texttt{Q}, \texttt{J}, \texttt{W}, \texttt{X}, \texttt{U}\}$};
+
+
+% Result
+\node[align=center] at (6.5,-2.5) {An odd number of letters belonging to $K$ appear in an even manner (including 0) in the sequence
+$\Rightarrow Y^{*}=0$};
+
+\end{tikzpicture}%
+}
+\caption{Sequence classification example for the \textbf{GPC} mechanism. The parity-relevant subset is $K = \{\texttt{D}, \texttt{Q}, \texttt{J}, \texttt{W}, \texttt{X}, \texttt{U}\}$.
+The parity criterion requires \emph{an even number of unique} key letter to appear an \textbf{even} number of times (including 0, which is even).
+In green: key letters with even count. In red: key letters with odd count. Note: that also \texttt{J} and \texttt{U} have even count, including zero, in the sequence satisfying Definition~\ref{def:parity}. So we have in total 3 letters in $K$ with an even count, and since 3 is not even the sequence is labeled as $Y^{*}=0$.}
+\label{fig:parity_example}
+\end{figure*}
 
 \end{document}
