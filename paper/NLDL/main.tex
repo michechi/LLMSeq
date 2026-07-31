@@ -1958,4 +1958,199 @@ All experiments use a fixed random seed (9550) for data splitting, weight initia
 Experiments are conducted on a single NVIDIA H100 GPU (80GB). Fine-tuning Llama-8B requires approximately 128GB CPU memory with gradient checkpointing enabled. Training times range from minutes (small models, 1\% data) to several hours (Llama-8B, full data).
 \FloatBarrier
 
+\section{Results}
+\label{appendix:results}
+
+This appendix provides the numerical results of our framework and the cohort-construction details and audit results for the real-world CKD$\to$ESRD diagnosis-sequence experiment in Section~\ref{subsec:mimic_ckd_protocol}.
+
+\begin{table}[tb]
+\centering
+\caption{Full classification performance across models and datasets (100\% training data). Standard deviations in parentheses.}
+\label{tab:results_full}
+\small
+\fitwidth{%
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Model & AUC & F1 & Prec & Rec \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{Naive ($\pi=0.0$)}} \\
+\textit{Oracle} & 1.000 & 1.000 & 1.000 & 1.000 \\
+$k$-gram & .999 & .999 & .999 & .999 \\
+XGBoost (basic) & .603 (.004) & .714 (.005) & .556 (.004) & .995 (.003) \\
+XGBoost (LLM) & .502 (.004) & .536 (.008) & .501 (.004) & .577 (.010) \\
+BERT & .999 (.001) & .999 (.001) & .999 (.001) & .999 (.001) \\
+RoBERTa & .999 (.001) & .999 (.001) & .999 (.001) & .999 (.001) \\
+Llama-3.2-1B & .999 (.001) & .999 (.001) & .999 (.001) & .999 (.001) \\
+Llama-3.1-8B & .999 (.001) & .999 (.001) & .999 (.001) & .999 (.001) \\
+Llama-1M (cold) & .999 (.001) & .999 (.001) & .999 (.001) & .999 (.001) \\
+Qwen3-4B-Think & .999 (.001) & .999 (.001) & .999 (.001) & .999 (.001) \\
+LSTM & .999 (.001) & .999 (.001) & .999 (.001) & .999 (.001) \\
+Transformer & .999 (.001) & .999 (.001) & .999 (.001) & .999 (.001) \\
+RNNTransformer$^{\dagger}$ & .999 (.001) & .999 (.001) & .999 (.001) & .999 (.001) \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{OC-Deterministic ($\pi=0.0$)}} \\
+\textit{Oracle} & 1.000 & 1.000 & 1.000 & 1.000 \\
+2-gram & .821 & .672 & .593 & .775 \\
+XGBoost (basic) & .625 (.012) & .457 (.015) & .516 (.010) & .409 (.018) \\
+XGBoost (LLM) & .494 (.010) & .399 (.012) & .353 (.008) & .459 (.015) \\
+BERT & .999 (.001) & .999 (.001) & .999 (.001) & 1.000 (.001) \\
+RoBERTa & .999 (.001) & .999 (.001) & .999 (.001) & 1.000 (.001) \\
+Llama-3.2-1B & .846 (.015) & .695 (.018) & .623 (.020) & .785 (.022) \\
+Llama-3.1-8B & .995 (.003) & .984 (.008) & .976 (.010) & .993 (.007) \\
+Llama-1M (cold) & .832 (.012) & .686 (.015) & .605 (.018) & .791 (.020) \\
+Qwen3-4B-Think & .850 (.014) & .701 (.016) & .620 (.017) & .800 (.020) \\
+LSTM & .999 (.001) & .994 (.003) & .995 (.003) & .994 (.003) \\
+Transformer & .999 (.001) & .992 (.002) & .985 (.005) & 1.000 (.001) \\
+RNNTransformer$^{\dagger}$ & .997 (.002) & .992 (.003) & .985 (.005) & 1.000 (.002) \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{OC-Noisy ($\pi=0.3$)}} \\
+\textit{Oracle} & .670 & .577 & .700 & .491 \\
+2-gram & .585 & .592 & .420 & 1.000 \\
+XGBoost (basic) & .463 (.010) & .418 (.012) & .437 (.008) & .400 (.015) \\
+XGBoost (LLM) & .418 (.011) & .453 (.014) & .437 (.008) & .470 (.018) \\
+BERT & .669 (.006) & .592 (.004) & .420 (.005) & 1.000 (.002) \\
+RoBERTa & .652 (.008) & .592 (.003) & .420 (.005) & 1.000 (.002) \\
+Llama-3.2-1B & .587 (.008) & .592 (.005) & .420 (.006) & .999 (.005) \\
+Llama-3.1-8B & .575 (.008) & .591 (.005) & .425 (.006) & .968 (.010) \\
+Qwen3-4B-Think & .597 (.007) & .591 (.004) & .423 (.005) & .979 (.008) \\
+Qwen2.5-14B$^{*}$ & .670 (---) & .586 (---) & .476 (---) & .763 (---) \\
+LSTM & .665 (.003) & .562 (.020) & .660 (.002) & .489 (.031) \\
+Transformer & .671 (.001) & .579 (.003) & .701 (.015) & .492 (.012) \\
+RNNTransformer$^{\dagger}$ & .671 (.005) & .578 (.005) & .683 (.010) & .501 (.005) \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{GPC-Deterministic ($\pi=0.0$)}} \\
+\textit{Oracle} & 1.000 & 1.000 & 1.000 & 1.000 \\
+1-gram & .505 & .668 & .501 & 1.000 \\
+XGBoost (basic) & .495 (.004) & .490 (.005) & .497 (.003) & .484 (.006) \\
+XGBoost (LLM) & .501 (.003) & .639 (.005) & .502 (.002) & .881 (.008) \\
+BERT & .503 (.002) & .668 (.002) & .501 (.002) & 1.000 (.001) \\
+RoBERTa & .501 (.003) & .668 (.002) & .501 (.002) & 1.000 (.001) \\
+Llama-3.2-1B & .497 (.005) & .668 (.001) & .501 (.002) & 1.000 (.001) \\
+Llama-3.1-8B & .500 (.003) & .668 (.002) & .501 (.002) & 1.000 (.001) \\
+Llama-1M (cold) & .503 (.003) & .668 (.002) & .501 (.003) & 1.000 (.001) \\
+Llama-3.1-70B$^{*}$ & .502 (---) & .668 (---) & .501 (---) & 1.000 (---) \\
+Qwen3-4B-Think & .500 (.002) & .668 (.001) & .501 (.000) & 1.000 (.001) \\
+LSTM & .502 (.003) & .668 (.002) & .501 (.002) & 1.000 (.001) \\
+Transformer & .501 (.003) & .668 (.002) & .501 (.002) & 1.000 (.001) \\
+RNNTransformer$^{\dagger}$ & .501 (.002) & .668 (.002) & .501 (.003) & 1.000 (.001) \\
+\bottomrule
+$^{*} \text{single due to time constraint, no standard deviation.}$\\
+$^{\dagger}\text{We call RNNTransformer a BiLSTM-Transformer.}$
+\end{tabular}}
+\end{table}
+
+
+
+\begin{figure}[tb]
+    \centering
+    \figureorplaceholder{auc_combined_full_1row.png}{Full AUC grid across all 13 models on the three synthetic datasets.}
+       \caption{Full AUC learning curves for all evaluated models on the three core tasks. Left: OC-Deterministic (\(\pi=0\)); middle: OC-Noisy with symmetric label noise (\(\pi=0.3\)); right: hidden-subset GPC-Deterministic (\(\pi=0\)). AUC is used because it is threshold-independent and is the primary metric for rule recovery; threshold-dependent metrics are reported separately in Table~\ref{tab:results_full}. Dashed horizontal lines indicate the relevant reference levels: oracle AUC for deterministic compliance, the noise-limited oracle AUC for OC-Noisy, and chance performance for GPC-Deterministic. The curves show that encoder-style and recurrent models reach the compliance ceiling under our protocol, some decoder-only models plateau below that ceiling on the OC datasets, and all tested architectures remain at chance on hidden-subset GPC-Deterministic under single-stage end-to-end supervision. Shaded regions denote variability across seeds; single-run large-model results are plotted without shading.}
+    \label{fig:full_auc_curves}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+% MIMIC
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Real-world audit}
+\label{app:mimic_ckd}
+The goal is not to build a clinical deployment model, but to test whether temporal order is decisive for model performance under a diagnosis-code representation.
+
+\paragraph{Cohort definition.}
+We use MIMIC-IV v3.1 diagnosis records \citep{johnson2024mimiciv31,johnson2023mimiciv}. ICD diagnosis codes are mapped to Clinical Classifications Software (CCS) categories \citep{hcup_ccs}. CKD is defined using ICD-10 N18.1--N18.5 and ICD-9 585.1--585.5. ESRD-related endpoint codes include ICD-10 N18.6, Z99.2, Z49.* and ICD-9 585.6, V45.1, V56.*. Positives are patients whose first ESRD-related code occurs in an admission strictly after the first CKD-coded admission; their sequences are truncated before the ESRD-coded admission. Negatives are CKD patients with no ESRD-related code in the observed record. Patients whose first CKD and ESRD-related codes occur in the same admission are excluded to avoid same-visit label leakage. Patients with fewer than 10 diagnosis codes after preprocessing are also excluded. Across admissions, diagnoses are ordered by admission time; within admissions, they are ordered by diagnosis sequence number, which reflects billing/discharge order rather than true event time. See Table \ref{tab:mimic_ckd_cohort} for an overview.
+
+\begin{table}[tb]
+\centering
+\caption{Cohort summary and sanity checks for the MIMIC-IV CKD$\to$ESRD audit.}
+\label{tab:mimic_ckd_cohort}
+\small
+\setlength{\tabcolsep}{5pt}
+\fitwidth{%
+\begin{tabular}{@{}llr@{}}
+\toprule
+Category & Quantity & Value \\
+\midrule
+Cohort & Patients & 14,813 \\
+       & Progressors, $Y=1$ & 1,146 \\
+       & Non-progressors, $Y=0$ & 13,667 \\
+       & Progressor prevalence & 7.7\% \\
+       & CCS vocabulary size & 293 \\
+\midrule
+Sequence length & Median / mean / max codes & 49 / 82 / 2,396 \\
+                & Median length, $Y=1$ / $Y=0$ & 54 / 49 \\
+\midrule
+Admissions & Median / mean admissions & 3 / 4.9 \\
+           & Patients with $\geq2$ admissions & 76\% \\
+           & Patients with $\geq3$ admissions & 58\% \\
+\midrule
+Overlap checks & Shared CCS categories & 265 / 293 \\
+               & Vocabulary Jaccard overlap & 0.90 \\
+               & CCS categories exclusive to $Y=1$ & 0 \\
+               & Cosine similarity of code frequencies & 0.956 \\
+               & Spearman correlation of code frequencies & 0.968 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\paragraph{Audit protocol.}
+We apply three shortcut controls. First, for each contiguous $k$-gram $g$, we estimate $\hat P(Y=1\mid g)$ on the training set and score each test patient by averaging over the patient's observed $k$-grams. Second, we train order-invariant bag-of-codes Logistic Regression and XGBoost models over CCS counts. Third, for sequence models, we compare ordered training/evaluation against a shuffled condition that randomly permutes each patient's diagnosis sequence while preserving the patient-level multiset of codes. See Table \ref{tab:mimic_ckd_audit} for the results.
+
+\begin{table*}[tb]
+\centering
+\caption{Compact audit summary for MIMIC-IV CKD$\to$ESRD. $k$-gram rows report mean $\pm$ standard deviation over five 80/20 stratified splits. Bag-of-codes and neural rows use the 60/20/20 neural-model split.}
+\label{tab:mimic_ckd_audit}
+\small
+\setlength{\tabcolsep}{4pt}
+% \textwidth dice alla tabella di occupare esattamente la larghezza della pagina
+% La colonna 'X' assorbe tutto lo spazio che avanza comportandosi come una colonna 'p'
+\begin{tabularx}{\textwidth}{@{}llccc X@{}}
+\toprule
+Audit & Model/control & Ordered AUC & Shuffled AUC & Auxiliary & Interpretation \\
+\midrule
+$k$-gram & 1-gram & $0.823\pm0.015$ & -- & F1 $0.356$ & Code identity/frequency carries strong signal. \\
+          & 2-gram & $0.801\pm0.016$ & -- & F1 $0.341$ & Adding contiguous order does not improve over unigrams. \\
+          & 3-gram & $0.576\pm0.015$ & -- & F1 $0.165$ & Longer local patterns become sparse. \\
+          & 4--7 gram & $0.479$--$0.500$ & -- & F1 $0.144$--$0.146$ & Higher-order $k$-grams collapse to chance. \\
+\midrule
+Bag-of-codes & Logistic Reg. & 0.809 & 0.809 & $\Delta=0$ & Strong order-invariant baseline. \\
+             & XGBoost & 0.803 & 0.803 & $\Delta=0$ & Strong order-invariant baseline. \\
+\midrule
+Sequence models & Transformer & 0.860 & 0.844 & $\Delta=+0.016$ & Most of the gain survives order destruction. \\
+                & BiLSTM & 0.820 & 0.823 & $\Delta=-0.003$ & No positive ordered-vs-shuffled gain. \\
+                & BERT-base & 0.826 & 0.843 & $\Delta=-0.017$ & No positive ordered-vs-shuffled gain. \\
+                & LSTM & 0.500 & 0.467 & failed & Did not converge reliably on long sequences. \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+\paragraph{Discriminative unigram content.}
+In the MIMIC-IV audit, each token $X_t$ is a CCS diagnosis category. A $k$-gram is therefore a contiguous block of $k$ CCS tokens, and the $k=1$ case corresponds to a single diagnosis category. To understand why unigram and bag-of-codes baselines are strong, we inspect patient-level CCS prevalence differences between progressors and non-progressors. Table~\ref{tab:mimic_ckd_discriminative_codes} reports selected enriched unigrams. These are descriptive content checks, not validated clinical trajectories.
+
+\begin{table}[tb]
+\centering
+\caption{Selected CCS unigrams enriched among CKD$\to$ESRD progressors. Frequencies are patient-level prevalences. The log ratio is $\log_2(\mathrm{freq}_{Y=1}/\mathrm{freq}_{Y=0})$.}
+\label{tab:mimic_ckd_discriminative_codes}
+\small
+\fitwidth{%
+\begin{tabular}{l l r r r}
+\toprule
+Code & Description & $Y=1$ & $Y=0$ & $\log_2$ ratio \\
+\midrule
+CCS\_156 & Nephritis, nephrosis, renal sclerosis & 30.3\% & 9.2\% & +1.71 \\
+CCS\_87 & Retinal detachments, retinopathy & 18.1\% & 7.4\% & +1.29 \\
+CCS\_215 & Genitourinary congenital anomalies & 5.5\% & 2.0\% & +1.47 \\
+\midrule
+CCS\_158 & Chronic kidney disease & 99.7\% & 89.9\% & +0.15 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+The cohort-defining CKD category itself, CCS\_158, is highly prevalent in both groups and therefore only weakly enriched. In contrast, the more enriched unigrams are shared diagnosis categories that occur more frequently among progressors. This supports the interpretation that the task is not driven by progressor-exclusive codes, but by frequency differences among shared clinical content.
+
+\paragraph{Interpretation.}
+The audit shows that CKD$\to$ESRD prediction, while is clinically temporal, is not strongly order-informational under this diagnosis-code representation. Unigrams and bag-of-codes baselines are already strong, and sequential-model gains largely survive order destruction. This should not be interpreted as evidence that CKD progression is clinically non-temporal, nor as evidence that sequence models are inadequate. Rather, it indicates that this representation contains strong non-temporal shortcuts: diagnosis identity, frequency, and co-occurrence carry enough signal that temporal order is not decisive for prediction.
+
+\paragraph{Limitations and data access.}
+MIMIC-IV is an ICU-centered EHR dataset and may not reflect outpatient CKD progression trajectories. The audit uses diagnosis codes only; richer longitudinal variables such as eGFR, laboratory values, medications, dialysis timing, visit intervals, and outpatient follow-up may contain decisive temporal information. Within-admission order reflects billing/discharge order rather than clinical event time. All MIMIC-IV analyses are performed under credentialed access. We release cohort-construction and preprocessing code, but not raw MIMIC-IV data or patient-level derived sequences.
+
 \end{document}
