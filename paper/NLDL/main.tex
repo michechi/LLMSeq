@@ -417,4 +417,61 @@ Finally, our MIMIC-IV audit is limited to a single clinical case study. However,
 
 \printbibliography
 
+\appendix
+
+\paragraph{Appendix roadmap.}
+Appendices A--F provide task examples, proofs, and reproducibility details. Appendix G reports full model results. Appendix H tests robustness of the compliance findings across subset size and lag. Appendix I contains the mechanism-identification audits and additional parity controls used to rule out alternative explanations. Appendix J provides an exploratory attention inspection; we do not use it as primary evidence for mechanism attribution.
+
+\begin{table}[tb]
+\centering
+\caption{Purpose of appendix analyses.}
+\begin{tabular}{ll}
+\toprule
+Appendix & Purpose \\
+\midrule
+\ref{app:illustrative} & Real-world motivation \\
+\ref{app:naive} & Naive Sanity Check \\
+\ref{appendix:Figures} & Ordering Mechanism Example \\
+\ref{appendix:k_gram_analysis} & Contiguous k-gram shortcut analysis \\
+\ref{appendix:proof_theorems} & Proofs of local leakage and parity purity \\
+\ref{appendix:training} & Reproducibility and model configurations \\
+\ref{appendix:results} & Full numerical results \\
+\ref{app:sensitivity} & Sensitivity to hidden-subset size and lag \\
+\ref{appendix:ladder}--\ref{appendix:parity_decomp} & Mechanism-identification audit \\
+\ref{appendix:parity_reference}--\ref{app:parity_length} & Parity robustness checks \\
+\ref{appendix:fewshot} & In-context access-mode control \\
+\ref{app:parity_curriculum} & Curriculum control for parity learnability \\
+\ref{appendix:attention} & Exploratory attention inspection, not primary evidence \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Real-world trajectory motivation and synthetic abstraction}
+\label{app:illustrative}
+
+Consider adverse-outcome prediction from longitudinal EHRs. 
+\citet{edelman2026order_specific_ehr} study order-specific trajectories of the form \(A\to B\to C\): two upstream events \(A\) and \(B\) define an ordered exposure, and \(C\) is a downstream adverse outcome. Their comparator design asks whether the ordered exposure \(A\to B\) changes risk relative to cohorts that preserve part of the same event content while altering temporal structure, including \(B\) with no prior \(A\), the reverse ordering \(B\to A\), and an unordered \(AB\) cohort. One validated example is diabetes mellitus \(\to\) visual disturbance for downstream myocardial infarction; at the five-year horizon, the ordered trajectory has elevated risk relative to both the primary comparator and the reverse-order comparator. We use this only as a motivating analogy: the association is prognostic rather than causal, and our benchmark does not model clinical outcomes, censoring, observation processes, or risk calibration. In particular, the clinical \(C\) is a future outcome, whereas \(Y^*\) in our compliance task is a synthetic label indicating whether a hidden ordered motif is present.
+
+Our synthetic tasks abstract only the mechanism-attribution problem exposed by such studies. In real EHRs, a model's success may come from event identity, disease semantics, code frequency, recency, care-utilization patterns, or local co-occurrence rather than from the intended temporal rule. We therefore replace event types by letters and remove semantic content: for exposition, diabetes mellitus can be denoted \texttt{D} and visual disturbance \texttt{V}, but these mnemonic choices are not used in the benchmark. In the experiments, the relevant subset and the ordering rule \(\kappa\) are hidden and randomized, so a model cannot exploit medical meaning, alphabetical order, or pre-existing associations.
+
+As a toy walk-through, let a patient history be represented by
+\[
+X=\texttt{BXDQAVZHELNPTKDWSRAJ},
+\]
+with length \(n=20\). Suppose the hidden key subset is \(S=\{\texttt{D},\texttt{V}\}\), with \(\kappa(\texttt{D})<\kappa(\texttt{V})\), and let \(\lambda=3\). Then positions \(3\) and \(6\) form a lag-\(\lambda\) ordered key pair, \(\texttt{D}\to\texttt{V}\), so the sequence is compliant. The lag \(\lambda\) is only a discrete abstraction of temporal spacing; it is not intended to represent a clinical time interval such as days or years. A rule-based solution would require recovering which letters matter, their ordering, and the relevant lag. The purpose of our audit is to determine whether neural models recover this hidden structure from raw tokens or whether their performance is already explained by simpler feature families such as unordered counts, contiguous \(k\)-grams, or lag-aware pair counts.
+
+
+\section{Degenerate local sanity check: Naive}
+\label{app:naive}
+
+We include \textbf{Naive} only as a pipeline sanity check, not as a core benchmark.
+Here $m=\ell$, $\lambda=1$, and $\kappa$ is the natural alphabetical order, so
+$Y^*=1$ iff the entire sequence is non-decreasing. This construction makes
+the label locally detectable: descending adjacent bigrams occur only in negatives, and
+a contiguous 2-gram classifier reaches AUC $\approx 0.999$. Consistent with this, all neural sequential models reach
+near-perfect AUC with $\ge 40$K training examples, while XGBoost without explicit
+adjacent-pair features does not (Table~\ref{tab:results_full}). We therefore use Naive
+only to verify the training and evaluation pipeline, and exclude it from the main
+benchmark.
+
 \end{document}
