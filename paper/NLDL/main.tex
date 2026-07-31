@@ -1673,4 +1673,289 @@ Therefore the task is \(k\)-locally pure for every \(k<n\).
 % HYPERPARAMETER CONFIGURATION
 % ==================================================
 
+\section{Models and Hyperparameter Configurations}
+\label{appendix:training}
+
+This appendix provides complete hyperparameter configurations for all models evaluated in our experiments.
+
+\subsection{Training Procedure}
+\label{subsec:training_appendix}
+
+\paragraph{Optimization.}
+All neural models are trained using the AdamW optimizer~\citep{AdamW} with weight decay. For pretrained LLMs and BERT, we use a linear learning rate schedule with 6\% warmup steps. We employ cross-entropy loss for binary classification. Training uses early stopping based on validation loss with patience of 3 epochs for pretrained models and 5 epochs for models trained with randomly initialized parameters.
+
+\paragraph{Pretrained models.}
+LLMs (Llama, Qwen) and BERT are fine-tuned with learning rate $2 \times 10^{-5}$, batch size 16, and maximum sequence length 200 tokens. To enable efficient fine-tuning, we apply LoRA~\citep{LoRA} with rank $r=8$, $\alpha=16$, and dropout 0.1, targeting the attention projection matrices (\texttt{q\_proj}, \texttt{k\_proj}, \texttt{v\_proj}, \texttt{o\_proj} for LLMs; \texttt{query}, \texttt{key}, \texttt{value} for BERT). Large models employ gradient checkpointing and mixed-precision training (bfloat16) to fit within GPU memory constraints. We train for a maximum of 20 epochs with patience of 3 epochs. Table~\ref{tab:llm_config} summarizes the fine-tuning configuration for pretrained LLMs. Table~\ref{tab:tiny_llm_config} shows the architectural configurations for small-scale Llama models trained with randomly initialized parameters. Table~\ref{tab:bert_config} summarizes the fine-tuning configuration for BERT-based models.
+
+\paragraph{Randomly initialized Models.}
+LSTM, BiLSTM, Transformer, and hybrid architectures are trained with batch size 64 for up to 30 epochs. Learning rates are tuned per architecture: $10^{-3}$ for recurrent models (LSTM, BiLSTM), $5 \times 10^{-4}$ for Transformer-based models, and $10^{-4}$ for the RNNTransformer. Dropout rates range from 0.2 to 0.3 depending on model capacity. Early stopping monitors validation F1 score with patience of 5 epochs. Table~\ref{tab:dl_training} summarizes the training configuration shared across all models trained from scratch. Table~\ref{tab:dl_default_config} and Table~\ref{tab:dl_optimal_config} present the default and optimized architecture configurations, respectively.
+
+Additional architecture details:
+\begin{itemize}
+    \item \textbf{Transformer}: 4 attention heads; GELU activation; learnable positional encodings; mean pooling with padding mask.
+    \item \textbf{LSTM}: Final hidden state used for classification.
+    \item \textbf{RNNTransformer}: BiLSTM output projected to embedding dimension, then processed by Transformer encoder.
+\end{itemize}
+
+
+\paragraph{XGBoost baselines.}
+XGBoost models use learning rate 0.05, maximum depth 6, subsample ratio 0.8, and column sampling ratio 0.8 per tree. We apply L1 regularization ($\alpha=0.5$) and L2 regularization ($\lambda=1.5$) with minimum child weight 2 and minimum split gain $\gamma=0.1$. Class imbalance is addressed via \texttt{scale\_pos\_weight}. Training runs for up to 200 boosting rounds with early stopping (patience 10) based on validation log-loss. Table~\ref{tab:xgboost_config} presents the XGBoost configuration. For XGBoost-LLM, embeddings are extracted from Llama-3.2-1B using the prompt format described in Section~\ref{subsec:encoding}, with mean pooling over the last hidden layer (dimension 2048).
+
+\paragraph{Threshold optimization.}
+For all models, we optimize the classification threshold on the validation set by searching over $\{0.10, 0.11, \ldots, 0.89\}$ to maximize F1 score, rather than using the default 0.5 threshold.
+
+\begin{table}[tb]
+\centering
+\caption{Models tested and relative dimension. For XGBoost, we report hyperparameter configuration in Table~\ref{tab:xgboost_config}. As tree ensemble complexity is not directly comparable to neural network parameter counts, we omit this metric; the trained model typically comprised 80--120 trees with maximum depth 6.}
+\label{tab:models}
+\fitwidth{%
+\begin{tabular}{llr}
+\toprule
+Category & Model & Parameters \\
+\midrule
+\multirow{7}{*}{Pretrained}
+  & BERT-base & 110M \\
+  & RoBERTa & 355M\\
+  & Llama-3.2-1B & 1.0B \\
+  & Qwen3-4B-Think & 4.0B\\
+  & Llama-3.1-8B & 8.0B \\
+  & Qwen2.5-14B & 14B \\
+  & Llama-3.1-70B & 70B \\
+\midrule
+\multirow{5}{*}{Randomly initialized}
+  & Llama-1M & 1M  \\
+  & LSTM & 198K--340K \\
+  & BiLSTM & 256K--395K \\
+  & Transformer & 103K--104K \\
+  & RNNTransformer$^{*}$ & 319K--455K \\
+\midrule
+Tree-based & XGBoost & -- \\
+\bottomrule
+\multicolumn{3}{@{}l@{}}{\footnotesize $^{*}$We call RNNTransformer a BiLSTM-Transformer.}
+\end{tabular}}
+\end{table}
+
+
+\subsection{Sequence Encoding}
+\label{subsec:encoding}
+We use three encoding strategies depending on the model family. \textbf{Prompt-based (LLMs and BERT).} For pretrained language models, we convert each sequence into a natural language prompt of the form \texttt{Sequential events: $x_1$ $x_2$ $\cdots$ $x_n$}. 
+
+For causal LLMs (Llama, Qwen), we additionally append the literal string \texttt{Outcome (0 or 1)}: so that the prompt always terminates at a fixed sentinel position; the true label is never appended to the prompt. Fine-tuning combines (i) the standard auto-regressive language-modeling loss on the prompt itself (no label leakage, equivalent to continued pretraining on the letter-sequence template) with (ii) a binary classification loss from a 2-layer MLP head ($d_{\text{model}} \to d_{\text{model}}/2 \to 2$, with Tanh and dropout 0.1) that reads from the last non-padding hidden state. The two losses are summed with equal weight; LoRA adapters cover only the backbone (q/k/v/o\_proj, $r{=}8$), while the classification head is trained full-rank from scratch. At inference and for early-stopping, predictions come from the head's softmax, not from next-token logits. The prompt is then tokenized using each model's native tokenizer. This same prompt format is used to extract embeddings from Llama-3.2-1B for the XGBoost-LLM baseline, where we apply mean pooling over the last hidden layer.
+
+\textbf{Learned and ordinal embeddings.} For all non-pretrained models, we map each letter to an integer index ($\texttt{A} \mapsto 1, \texttt{B} \mapsto 2, \ldots, \texttt{Z} \mapsto 26$). For XGBoost-basic, this ordinal encoding is used directly as features, relying on the tree ensemble to learn sequential dependencies. For neural architectures (LSTM, Transformer, and hybrids), a learned embedding layer maps each index to a dense vector $\mathbf{e}_i \in \mathbb{R}^{d_e}$ with $d_e \in \{32, 64, 128\}$. Transformer-based models additionally incorporate learnable positional encodings $\mathbf{h}_i = \mathbf{e}_i + \mathbf{p}_i$, where $\mathbf{P} \in \mathbb{R}^{L_{\max} \times d_e}$ is initialized from a standard normal distribution. Sequences are zero-padded within each mini-batch.
+
+\begin{table}[tb]
+\centering
+\caption{Fine-tuning configuration for pretrained LLMs (Llama, Qwen families).}
+\label{tab:llm_config}
+\fitwidth{%
+\begin{tabular}{ll}
+\toprule
+Hyperparameter & Value \\
+\midrule
+\multicolumn{2}{l}{\textit{Training}} \\
+Learning rate & $2 \times 10^{-5}$ \\
+Optimizer & AdamW \\
+Batch size & 16 \\
+Max epochs & 20 \\
+Early stopping patience & 3 \\
+Early stopping criterion & Validation loss \\
+Warmup ratio & 6\% of total steps \\
+Scheduler & Linear decay \\
+\midrule
+\multicolumn{2}{l}{\textit{LoRA Configuration (backbone only)}} \\
+Rank ($r$) & 8 \\
+Alpha ($\alpha$) & 16 \\
+Dropout & 0.1 \\
+Target modules & \texttt{q\_proj}, \texttt{k\_proj}, \texttt{v\_proj}, \texttt{o\_proj} \\
+Bias & None \\
+PEFT task type & \texttt{CAUSAL\_LM} (adapter-config only; see Loss row) \\
+\midrule
+\multicolumn{2}{l}{\textit{Classification head (outside LoRA, trained full-rank)}} \\
+Architecture & $d_{\text{model}} \to d_{\text{model}}/2 \to 2$ \\
+Activation / dropout & Tanh / $0.1$ \\
+Read position & Last non-padding token's last-layer hidden state \\
+\midrule
+\multicolumn{2}{l}{\textit{Loss}} \\
+Total loss & $\mathcal{L}_{\text{LM}}(\text{prompt}) + \mathcal{L}_{\text{CE}}(\hat{y}_{\text{head}}, y)$ \\
+LM-loss target & The prompt itself (autoregressive on letters + template) \\
+Inference logits & Classification head softmax (not next-token logits) \\
+\midrule
+\multicolumn{2}{l}{\textit{Input Processing}} \\
+Max sequence length & 200 tokens \\
+Padding & Max length \\
+Truncation & True \\
+\midrule
+\multicolumn{2}{l}{\textit{Memory Optimization}} \\
+Precision & bfloat16 \\
+Gradient checkpointing & Enabled \\
+Use cache & Disabled \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+
+
+\begin{table}[tb]
+\centering
+\caption{Architecture configurations for Llama models trained with randomly initialized parameters.}
+\label{tab:tiny_llm_config}
+\fitwidth{%
+\begin{tabular}{lrrrrr}
+\toprule
+Model & Hidden size & Layers & Heads & KV Heads & Intermediate size \\
+\midrule
+Llama-1M & 128 & 4 & 4 & 2 & 512 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+% ----------------------------------------------------------------------------
+
+
+\begin{table}[tb]
+\centering
+\caption{Fine-tuning configuration for BERT models.}
+\label{tab:bert_config}
+\fitwidth{%
+\begin{tabular}{ll}
+\toprule
+Hyperparameter & Value \\
+\midrule
+\multicolumn{2}{l}{\textit{Training}} \\
+Learning rate & $2 \times 10^{-5}$ \\
+Optimizer & AdamW \\
+Batch size & 16 \\
+Max epochs & 20 \\
+Early stopping patience & 3 \\
+Early stopping criterion & Validation loss \\
+Warmup ratio & 6\% of total steps \\
+Scheduler & Linear decay \\
+\midrule
+\multicolumn{2}{l}{\textit{LoRA Configuration (when used)}} \\
+Rank ($r$) & 8 \\
+Alpha ($\alpha$) & 16 \\
+Dropout & 0.1 \\
+Target modules & \texttt{query}, \texttt{key}, \texttt{value} \\
+Bias & None \\
+Task type & \texttt{SEQ\_CLS} \\
+\midrule
+\multicolumn{2}{l}{\textit{Input Processing}} \\
+Max sequence length & 200 tokens \\
+Padding & Max length \\
+Truncation & True \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+
+% ----------------------------------------------------------------------------
+
+\begin{table}[tb]
+\centering
+\caption{Training configuration for models trained with randomly initialized parameters.}
+\label{tab:dl_training}
+\fitwidth{%
+\begin{tabular}{ll}
+\toprule
+Hyperparameter & Value \\
+\midrule
+Optimizer & AdamW \\
+Batch size & 64 \\
+Max epochs & 30 \\
+Early stopping patience & 5 \\
+Early stopping criterion & Validation F1 \\
+Loss function & Cross-entropy \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+
+
+\begin{table}[tb]
+\centering
+\caption{Default architecture configurations for randomly initialized models.}
+\label{tab:dl_default_config}
+\fitwidth{%
+\begin{tabular}{llllll}
+\toprule
+Model & Embed. dim & Hidden dim & Layers & Dropout & Learning rate \\
+\midrule
+Transformer & 64 & 256 (FFN) & 2 & 0.3 & $5 \times 10^{-4}$ \\
+LSTM & 32 & 64 & 2 & 0.3 & $10^{-3}$ \\
+RNNTransformer$^{*}$ & 64 & 64 (RNN) / 256 (FFN) & 1+2 & 0.3 & $5 \times 10^{-4}$ \\
+\bottomrule
+\multicolumn{6}{@{}l@{}}{\footnotesize $^{*}$We call RNNTransformer a BiLSTM-Transformer.}
+\end{tabular}}
+\end{table}
+
+\begin{table}[tb]
+\centering
+\caption{Optimized architecture configurations for models randomly initialized.}
+\label{tab:dl_optimal_config}
+\fitwidth{%
+\begin{tabular}{llllll}
+\toprule
+Model & Embed. dim & Hidden dim & Layers & Dropout & Learning rate \\
+\midrule
+Transformer & 64 & 128 (FFN) & 3 & 0.3 & $5 \times 10^{-4}$ \\
+LSTM & 32 & 128 & 2 & 0.2 & $2 \times 10^{-3}$ \\
+RNNTransformer$^{*}$ & 128 & 32 (RNN) / 256 (FFN) & 1+3 & 0.3 & $10^{-4}$ \\
+\bottomrule
+\multicolumn{6}{@{}l@{}}{\footnotesize $^{*}$We call RNNTransformer a BiLSTM-Transformer.}
+\end{tabular}}
+\end{table}
+
+
+\begin{table}[tb]
+\centering
+\caption{XGBoost hyperparameter configuration.}
+\label{tab:xgboost_config}
+\fitwidth{%
+\begin{tabular}{ll}
+\toprule
+Hyperparameter & Value \\
+\midrule
+\multicolumn{2}{l}{\textit{Tree Parameters}} \\
+Max depth & 6 \\
+Min child weight & 2 \\
+Gamma (min split loss) & 0.1 \\
+Subsample & 0.8 \\
+Column sample by tree & 0.8 \\
+\midrule
+\multicolumn{2}{l}{\textit{Regularization}} \\
+L1 regularization ($\alpha$) & 0.5 \\
+L2 regularization ($\lambda$) & 1.5 \\
+\midrule
+\multicolumn{2}{l}{\textit{Training}} \\
+Learning rate ($\eta$) & 0.05 \\
+Max boosting rounds & 200 \\
+Early stopping patience & 10 \\
+Early stopping criterion & Validation log-loss \\
+Tree method & \texttt{hist} \\
+\midrule
+\multicolumn{2}{l}{\textit{Class Imbalance}} \\
+Scale pos weight & $N_{\text{negative}} / N_{\text{positive}}$ \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+
+
+% ----------------------------------------------------------------------------
+\subsection{Data Fractions}
+\label{appendix:fractions}
+
+To assess data efficiency, we train each model on the following fractions of the training set: $\{1\%, 10\%, 30\%, 50\%, 75\%, 100\%\}$. Subsampling is performed using stratified sampling to maintain class balance across all fractions.
+
+\paragraph{Reproducibility.}
+All experiments use a fixed random seed (9550) for data splitting, weight initialization, and stochastic optimization. Each configuration is run with three different seeds; we report means and standard deviations (see Table~\ref{tab:results_full}).
+
+% ----------------------------------------------------------------------------
+\subsection{Hardware and Software}
+\label{appendix:hardware}
+
+Experiments are conducted on a single NVIDIA H100 GPU (80GB). Fine-tuning Llama-8B requires approximately 128GB CPU memory with gradient checkpointing enabled. Training times range from minutes (small models, 1\% data) to several hours (Llama-8B, full data).
+\FloatBarrier
+
 \end{document}
