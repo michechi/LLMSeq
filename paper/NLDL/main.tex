@@ -88,6 +88,12 @@
 \newcommand{\cmark}{\checkmark}
 \newcommand{\xmark}{\times}
 
+% Shrink a box to the column only when it would otherwise overflow. Narrow
+% tables keep their natural size instead of being blown up to \linewidth,
+% which is what a bare \resizebox{\linewidth}{!} would do.
+\newcommand{\fitwidth}[1]{%
+  \resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{#1}}
+
 % Graceful handling of figure assets that are not present in this checkout.
 % When the real PNG is dropped next to main.tex (or in paper/), it is used
 % automatically; until then a labelled placeholder keeps the document compiling.
@@ -686,5 +692,84 @@ The parity criterion requires \emph{an even number of unique} key letter to appe
 In green: key letters with even count. In red: key letters with odd count. Note: that also \texttt{J} and \texttt{U} have even count, including zero, in the sequence satisfying Definition~\ref{def:parity}. So we have in total 3 letters in $K$ with an even count, and since 3 is not even the sequence is labeled as $Y^{*}=0$.}
 \label{fig:parity_example}
 \end{figure*}
+
+\section{Contiguous \(k\)-gram shortcut analysis}
+\label{appendix:k_gram_analysis}
+
+This appendix quantifies how much outcome signal is recoverable from contiguous
+local patterns alone. A \(k\)-gram is a contiguous subsequence
+\((X_t,\ldots,X_{t+k-1})\). For each \(k\)-gram \(g\) observed in the training set,
+we estimate \(\hat p(g)=\#(g,Y=1)/\#(g)\). For a test sequence \(X\), we score
+\[
+s_k(X)=\frac{1}{n-k+1}\sum_{t=1}^{n-k+1}
+\hat p(X_t,\ldots,X_{t+k-1}).
+\]
+Unseen \(k\)-grams are assigned the training-set positive rate. We report AUC,
+rather than threshold-dependent metrics, because AUC is the primary metric for
+latent-rule recovery.
+
+Table~\ref{tab:ngram_appendix} shows that contiguous \(k\)-grams capture
+nontrivial local signal in the compliance tasks but do not reach the neural or
+lag-aware pair-count ceiling. In OC-Deterministic, the best contiguous
+\(k\)-gram score is around \(0.82\) AUC; in OC-Noisy it is around \(0.59\),
+near the smaller decoder-only models. In contrast, all contiguous \(k\)-gram
+scores remain at chance on hidden-subset parity. Coverage collapses for
+\(k\ge5\), so longer contiguous patterns are too sparse to provide reliable
+generalization in this regime.
+
+\begin{table}[tb]
+\centering
+\small
+\caption{
+Contiguous \(k\)-gram baseline. Coverage is the fraction of test \(k\)-grams
+observed in the training set. OC and GPC mechanisms share the same i.i.d. sequence
+proposal, so coverage is common across these tasks.
+}
+\label{tab:ngram_appendix}
+\fitwidth{%
+\begin{tabular}{lcccc}
+\toprule
+\(k\) & Coverage & OC-Deterministic AUC & OC-Noisy AUC & GPC-Deterministic AUC \\
+\midrule
+1 & 100.0\% & .813 & .585 & .502 \\
+2 & 100.0\% & .819 & .586 & .498 \\
+3 & 100.0\% & .818 & .576 & .497 \\
+4 & 100.0\% & .781 & .534 & .499 \\
+5 & 41.7\%  & .617 & .508 & .497 \\
+6 & 1.9\%   & .524 & .499 & .501 \\
+7 & 0.1\%   & .501 & .501 & .500 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+Table~\ref{tab:signal_decomposition} separates content-only, contiguous-local,
+and lag-aware signal. The key finding is that contiguous \(k\)-grams explain part
+of the compliance performance but not the ceiling: the ceiling is reached only
+after exposing the \(\lambda\)-aware pair-count feature.
+
+\begin{table}[tb]
+\centering
+\small
+\caption{
+Signal decomposition by feature family, measured by test AUC.
+}
+\label{tab:signal_decomposition}
+\fitwidth{%
+\begin{tabular}{lccc}
+\toprule
+Method & OC-Deterministic & OC-Noisy & GPC-Deterministic \\
+\midrule
+Chance & .500 & .500 & .500 \\
+BoE-key counts & .774 & .574 & .503 \\
+BoE-XGB counts & .816 & .584 & .503 \\
+Best contiguous \(k\)-gram & .819 & .586 & .502 \\
+\(\lambda\)-aware pair LR & .997 & .671 & --- \\
+Best neural model & .999 & .671 & .503 \\
+Oracle AUC & 1.000 & .670 & 1.000 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\FloatBarrier
 
 \end{document}
