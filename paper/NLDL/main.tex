@@ -2211,4 +2211,214 @@ harder \(m=10\) regimes amplify the encoder/recurrent advantage.
 % MECHANISM-ID AUDIT APPENDIX
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\section{Mechanism-identification audit}
+\label{appendix:mechanism_id}
+This appendix documents the mechanism-identification audit referenced in Section~\ref{sec:mechanism_id} (baseline ladder, $\lambda$-agnostic ladder, held-out-rule generalization, parity decomposition) together with two complementary analyses: a binary-parity reference protocol locating our regime relative to known learnable cases, and an in-context few-shot evaluation.
+
+\subsection{Baseline ladder on standard evaluation}
+\label{appendix:ladder}
+We report test AUC across seven feature families and two classifiers (logistic regression with $L_2$ regularization, XGBoost) on the released OC-Deterministic and OC-Noisy splits. Training sample size: 200\,000; evaluation: 50\,000. Families include full 26-dimensional letter counts, 6-dimensional key-letter counts, residue-class counts modulo $\lambda$, aggregated $\lambda$-aware pair counts ($g_{ab}^{(\lambda=7)}$), 6$\times$6 key-only lag-pair counts, position-aware lag-pair indicators (sparse, 8788-dim), and 6$\times$6$\times$6 lag-trigram counts.
+
+\subsection{$\lambda$-agnostic ladder}
+\label{appendix:lam_agnostic}
+To test whether the encoder's advantage comes from knowing $\lambda$, we stack pair counts across all offsets $\lambda' \in \{1, \ldots, n{-}1\}$, giving a 12\,844-dimensional feature. $L_1$ logistic regression on this feature space reaches AUC $=0.997$ on OC-Deterministic (recovering $\lambda=7$ from data; the per-$\lambda$ weight norm is $303$ at $\lambda=7$ versus $\le 48$ elsewhere) and AUC $=0.632$ on OC-Noisy (where label noise prevents clean lag identification, with the top-weight lag drifting to $\lambda=19$). XGBoost on the same features closes the gap on OC-Noisy, reaching AUC $=0.667$, essentially matching the best encoder.
+
+\subsection{Held-out-rule generalization}
+\label{appendix:heldout}
+To check whether the $\lambda$-aware pair feature carries a transferable algorithm or a per-rule linear weighting, we generate 6 synthetic datasets with random $(\mathcal{S}, \kappa, \lambda)$ drawn from the same family as the main OC-Noisy dataset. Leave-one-rule-out: train logistic regression on 5 rules, evaluate on the held-out rule and on a held-out split of the same rule. The \(\lambda\)-aware pair-count feature reaches AUC $=1.00$ within-rule and
+AUC $=0.50$ across-rule; full letter-count features reach AUC $=0.77$ within-rule
+and AUC $=0.49$ across-rule. The linear ceiling is therefore carried by a per-rule weighting, not by a transferable procedure.
+
+\subsection{GPC-Deterministic failure decomposition}
+\label{appendix:parity_decomp}
+For the GPC-Deterministic case, we decompose its failure by revealing successive levels of information about the hidden subset $K$. Given raw tokens with $K$ hidden, both logistic regression and a 64-unit MLP remain at chance (AUC $=0.50$). Revealing the per-position membership bit $b_t = \mathbf{1}\{X_t \in K\}$ (a 20-dimensional binary input) allows the same MLP to reach AUC $=0.997$ in under one minute of training while logistic regression remains at chance. Revealing the 6-dimensional per-key count vector or per-key parity bits reaches AUC $=0.997$ and $1.000$ respectively with the MLP. Revealing only the scalar total key count yields AUC $=0.981$ with the MLP.
+
+\subsection{Reproduction of a binary-parity reference protocol}
+\label{appendix:parity_reference}
+As defined in Definition~\ref{def:parity}, the GPC mechanism is based on counting and checking whether the count is even. A known setting in which small transformer encoders learn parity is binary-vocabulary parity on short sequences \citep{hahn-2020-theoretical}. To locate our main-paper regime relative to this boundary, we reproduce that setting exactly, a 2-layer Transformer encoder ($d_{\text{model}}=64$, 8 heads, vocabulary size $2$, $n=10$) trained for $1000$ steps with a \texttt{[CLS]} readout, and then sweep sequence length and data regime to characterize the transition.
+
+\paragraph{Experimental grid.}
+We vary (i) sequence length $n \in \{10, 20\}$ and (ii) training-data regime: \emph{streaming} (a fresh uniformly random batch of $1024$ sequences at every gradient step) or \emph{fixed} (a training pool of $100{,}000$ sequences sampled once and drawn from with replacement at every step). All runs use identical architecture, optimizer (Adam, $\mathrm{lr}=10^{-3}$), batch size ($1024$), step count ($1000$), and are repeated for seeds $\in \{0,1,\ldots,9\}$. Test AUC is measured on a held-out set of $10{,}000$ fresh sequences. Because outcomes at $n=10$ are bimodal (a run either converges to AUC $\approx 1.0$ or remains at chance), we report both the mean $\pm$ std and the success rate, defined as the fraction of seeds reaching AUC $> 0.9$.
+
+\begin{table}[tb]
+\centering
+\caption{Test AUC for binary parity ($\ell=2$, $|K|=1$) across sequence length and training-data regime. Values are mean (std) over $10$ seeds, following the format of Table~\ref{tab:results_full}. Success rate counts seeds reaching AUC $>0.9$. At $n=10$, the same three seeds ($\{2,4,8\}$) fail in both regimes, confirming that the outcome is controlled by model initialization rather than the data-sampling regime.}
+\label{tab:parity_reference}
+\small
+\fitwidth{%
+\begin{tabular}{@{}llcc@{}}
+\toprule
+Regime & $n$ & AUC & Success rate \\
+\midrule
+streaming & 10 & .850 (.242) & 7/10 \\
+fixed     & 10 & .850 (.241) & 7/10 \\
+streaming & 20 & .503 (.004) & 0/10 \\
+fixed     & 20 & .499 (.005) & 0/10 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\paragraph{Three observations from Table~\ref{tab:parity_reference}.}
+(i) Streaming versus fixed-size training makes no material difference at either sequence length. A fixed pool of $10^{5}$ binary sequences of length $10$ contains the full $2^{10}=1024$-element input space many times over, and even at $n=20$ the fixed-size and streaming curves coincide at chance; data-regime effects are therefore not the load-bearing variable. (ii) At $n=10$, $7$ of $10$ seeds reach AUC $\approx 1.0$ and $3$ remain at chance, and the identity of the failing seeds ($\{2,4,8\}$) is identical across the two regimes. Since our seed controls model initialization and only the data pipeline differs across regimes, this is strong evidence that the failure mode is initialization-driven, consistent with the known sensitivity of parity learning to initialization in small transformers. (iii) At $n=20$, all $20$ runs across both regimes remain at AUC $\approx 0.50$, matching the main-paper result in the vocabulary sweep at $\ell=2$, $|K|=1$.
+
+\paragraph{Takeaway.}
+The protocol demonstrates that the balanced ablation at \(n=20, |K|=\ell/2\) lies on the failing side of a length-driven phase boundary, while the $n=10$ reference point lies on the learnable side. This suggests that sequence length and class balance are important contributors, not a methodological artifact of our training pipeline, consistent with length-dependent parity difficulty in standard-depth self-attention architectures \citep{hahn-2020-theoretical}.
+
+\subsection{Vocabulary-size sweep at the balanced regime}
+\label{app:parity_vocab}
+
+\paragraph{Setup.} We sweep the alphabet size $\ell \in \{2, 4, 8, 16, 26\}$ at the balanced parity regime $|K| = \max(1, \lfloor \ell/2 \rfloor)$, so that $|K|/|\mathcal{A}| = 1/2$ at every $\ell$ and Theorem~\ref{thm:parity_local_purity} gives exact $k$-local purity for every $k<n$. Sequence length is fixed at $n = 20$. For each $\ell$ we generate $100\text{K}$ train, $20\text{K}$ validation, and $20\text{K}$ test sequences with i.i.d.\ uniform sampling over the $\ell$-letter alphabet (data builder: \texttt{src/data/parity\_variants.py --build\_anchor}).
+
+\paragraph{Models and training.} Three architectures: BERT-base (110M, fine-tuned with LoRA, $20$ epochs, batch $32$); a 2-layer Transformer encoder ($d_{\text{model}}=64$, 8 heads, $\sim$170K parameters); and a single-layer LSTM. The two from-scratch architectures are trained for $30$ epochs with batch $64$, AdamW, learning rate $10^{-3}$. Three seeds per cell.
+
+\begin{table}[tb]
+\centering
+\caption{Test AUC on parity at the balanced regime $|K| = \max(1, \lfloor \ell/2 \rfloor)$, $n = 20$. Mean (std) over 3 seeds.}
+\label{tab:parity_vocab}
+\fitwidth{%
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+Arch & $\ell{=}2$ & $\ell{=}4$ & $\ell{=}8$ & $\ell{=}16$ & $\ell{=}26$ \\
+\midrule
+BERT        & .508 (.008) & .497 (.001) & .501 (.004) & .499 (.003) & .498 (.008) \\
+LSTM        & .501 (.003) & .499 (.002) & .499 (.003) & .503 (.001) & .505 (.002) \\
+Transformer & .505 (.000) & .501 (.003) & .500 (.002) & .504 (.003) & .501 (.005) \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\paragraph{Takeaway.} Every architecture sits at chance for every alphabet size in the balanced regime, including the binary case $\ell = 2$, $|K| = 1$. This is consistent with Theorem~\ref{thm:parity_local_purity}: at $|K|/|\mathcal{A}|=1/2$ the task is $k$-locally pure for every $k<n$, so none of our tested architectures trained end-to-end without curriculum at n = 20 finds a useful learning signal. The length-driven phase boundary documented for binary parity in Appendix~\ref{appendix:parity_reference} (success at $n = 10$, failure at $n = 20$) is therefore the relevant explanation for the main-paper failure, not a vocabulary effect. Results are reported in Table \ref{tab:parity_vocab}.
+
+\subsection{Subset-size sweep at $\ell = 26$}
+\label{app:parity_subset}
+
+\paragraph{Setup.} We fix $\ell = 26$ and $n = 20$ and sweep $|K| \in \{2, 4, 6, 8, 10, 13\}$, so that $p = |K|/|\mathcal{A}|$ ranges from $2/26 \approx 0.077$ to $13/26 = 0.500$ (the exactly balanced point). Per cell: $100\text{K}$ train, $20\text{K}$ validation, $20\text{K}$ test. Same architectures and training schedule as Appendix~\ref{app:parity_vocab}, three seeds per cell.
+
+\begin{table}[tb]
+\centering
+\caption{Test AUC on parity at $\ell = 26$, $n = 20$ as $|K|$ varies. Mean (std) over 3 seeds. $|K| = 13$ is the exactly balanced point $p = 1/2$ at which Theorem~\ref{thm:parity_local_purity} gives exact $k$-local purity.}
+\label{tab:parity_subset}
+\fitwidth{%
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+Arch & $|K|{=}2$ & $|K|{=}4$ & $|K|{=}6$ & $|K|{=}8$ & $|K|{=}10$ & $|K|{=}13$ \\
+\midrule
+BERT        & 1.000 (.000) & .497 (.003) & .501 (.008) & .499 (.003) & .505 (.002) & .498 (.008) \\
+LSTM        & 1.000 (.000) & .501 (.001) & .505 (.005) & .504 (.003) & .502 (.001) & .505 (.002) \\
+Transformer & 1.000 (.000) & .504 (.001) & .501 (.001) & .500 (.002) & .505 (.003) & .501 (.005) \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\paragraph{Takeaway.} The transition is sharp and located at $|K| = 2$, not at the balanced point. At $|K| = 2$ all three architectures reach AUC $\approx 1.000$ ($p = 2/26 \approx 0.077$ provides large finite-$n$ local leakage, which bounded-attention models pick up in full); from $|K| = 4$ onward every architecture drops to chance and stays there through $|K| = 13$. The main-paper regime ($|K| = 6$, $p \approx 0.231$) sits on the failing side of this transition, and approaching the balanced point does not change the outcome. The result is consistent with the bounded-local statement of Theorem~\ref{thm:parity_local_purity}: for $p \neq 1/2$ finite-$n$ leakage is positive but vanishes for fixed local view as $n$ grows; here $n = 20$ is already large enough that any $|K| \ge 4$ regime is no longer learnable end-to-end at our training budget. Results are reported in Table \ref{tab:parity_subset}.
+
+\subsection{Sequence-length sweep at the balanced regime}
+\label{app:parity_length}
+
+\paragraph{Setup.} We fix the balanced regime $\ell = 26$, $|K| = 13$ ($p = 1/2$, exact $k$-local purity by Theorem~\ref{thm:parity_local_purity}) and sweep $n \in \{10, 15, 20, 30\}$. The $n = 20$ column reuses the anchor runs from the $|K| = 13$ cell of Appendix~\ref{app:parity_subset}; for $n \in \{10, 15, 30\}$ we generate fresh $100\text{K}$ train / $20\text{K}$ validation / $20\text{K}$ test splits at $\ell = 26$, $|K| = 13$. Same architectures and training schedule as Appendix~\ref{app:parity_subset}, three seeds per cell.
+
+\begin{table}[tb]
+\centering
+\caption{Test AUC on parity at the balanced regime $\ell = 26$, $|K| = 13$ as $n$ varies. Mean (std) over 3 seeds.}
+\label{tab:parity_length}
+\fitwidth{%
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Arch & $n{=}10$ & $n{=}15$ & $n{=}20$ & $n{=}30$ \\
+\midrule
+BERT        & .501 (.001) & .501 (.007) & .498 (.008) & .503 (.004) \\
+LSTM        & .498 (.004) & .499 (.001) & .505 (.002) & .503 (.003) \\
+Transformer & .500 (.002) & .498 (.001) & .501 (.005) & .497 (.004) \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\paragraph{Takeaway.} At the balanced large-alphabet regime every architecture sits at chance across all four lengths, including $n = 10$. This is the key contrast with the binary regime $(\ell = 2, |K| = 1)$ of Appendix~\ref{appendix:parity_reference}, where the same 2-layer Transformer reaches AUC $\approx 1.0$ for $7/10$ seeds at $n = 10$ and decays to chance only at $n = 20$. The balanced-and-large-alphabet task appears harder under our tested training protocol: at $\ell = 26$, $|K| = 13$ even the short-sequence regime is not learned end-to-end at our training budget. Theorem~\ref{thm:parity_local_purity} removes the local shortcuts captured by our bounded-view analysis: reducing $n$ from $20$ to $10$ is not enough to compensate when the task is exactly $k$-locally pure. Results are reported in Table \ref{tab:parity_length}.
+
+\subsection{In-context (few-shot) evaluation}
+\label{appendix:fewshot}
+
+To rule out that the model-performance patterns of Table~\ref{tab:results_full} are artefacts of the fine-tuning access mode, we re-evaluate the three largest decoder-only models from our study in an in-context-learning configuration without any parameter updates, and compare to their fine-tuned counterparts on matched test splits.
+
+\paragraph{Protocol.}
+For each model $M \in \{\text{Llama-3.2-1B}, \text{Llama-3.1-8B}, \text{Qwen2.5-14B}\}$, task $\tau \in \{\text{OC-Deterministic}, \text{OC-Noisy}, \text{GPC-Deterministic}\}$, and shot count $k \in \{0,5,20\}$, we sample $k$ class-balanced training sequences (seeds $\{0,1,2\}$ for $k>0$), render the same \texttt{raw}-variant prompt used for our CausalLM fine-tuning pipeline (``\texttt{Sequential events: <letters>\textbackslash nOutcome (0 or 1):}''), and perform a single forward pass per test sequence. We read the logits for the single-token IDs of ``\texttt{\textvisiblespace 0}'' and ``\texttt{\textvisiblespace 1}'' at the final position, softmax between the two, and use the resulting $P(Y{=}1)$ to compute AUC, $F_1$, and accuracy. Test set: $1000$ examples per $(\tau, M, k)$ cell, drawn once from the paper test split per seed; this gives AUC within $\pm 0.015$ at 95\% CI, similar to the precision of the fine-tuned rows of Table~\ref{tab:results_full}.
+
+\begin{table}[tb]
+\centering
+\caption{In-context (few-shot) evaluation on OC-Deterministic, OC-Noisy, and GPC-Deterministic. Values are AUC mean (std) over 3 shot-selection seeds; \texttt{--} marks 0-shot runs, which are deterministic given the test-set subsample (single seed). Format matches Table~\ref{tab:results_full}; compare the cells below to the corresponding fine-tuned rows there.}
+\label{tab:fewshot}
+\small
+\fitwidth{%
+\begin{tabular}{@{}llccc@{}}
+\toprule
+Task & Model & 0-shot & 5-shot & 20-shot \\
+\midrule
+\multicolumn{5}{@{}l}{\textit{OC-Deterministic}}\\
+  & Llama-3.2-1B & .468 (---) & .516 (.010) & .544 (.028) \\
+  & Llama-3.1-8B & .507 (---) & .540 (.034) & .564 (.075) \\
+  & Qwen2.5-14B  & .451 (---) & .511 (.014) & .531 (.052) \\
+\multicolumn{5}{@{}l}{\textit{OC-Noisy}}\\
+  & Llama-3.2-1B & .512 (---) & .496 (.016) & .502 (.014) \\
+  & Llama-3.1-8B & .514 (---) & .525 (.023) & .517 (.013) \\
+  & Qwen2.5-14B  & .486 (---) & .492 (.009) & .509 (.013) \\
+\multicolumn{5}{@{}l}{\textit{GPC-Deterministic}}\\
+  & Llama-3.2-1B & .533 (---) & .505 (.010) & .497 (.014) \\
+  & Llama-3.1-8B & .503 (---) & .496 (.008) & .502 (.010) \\
+  & Qwen2.5-14B  & .480 (---) & .503 (.002) & .506 (.009) \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\paragraph{Three observations from Table~\ref{tab:fewshot}.}
+(i) \emph{On OC-Deterministic}, in-context performance rises modestly with $k$ (average lift of $+0.08$ AUC from $0$- to $20$-shot) but no model reaches AUC $=0.6$, whereas fine-tuned Llama-3.1-8B reaches AUC $=0.995$ and fine-tuned BERT reaches $0.999$ on the same test split. Scale within the ICL regime ($1\text{B} \to 14\text{B}$) moves the 20-shot number only from $0.544$ to $0.531$, whereas switching from ICL to fine-tuning moves it from $0.564$ to $0.995$; the dominant axis of variation is access mode, not model size.
+(ii) \emph{On OC-Noisy}, whose oracle $\mathrm{AUC}^*=0.670$ is saturated by fine-tuned BERT, no ICL configuration exceeds AUC $=0.525$; all three models remain essentially at chance regardless of $k$. ICL fails to extract even the stochastic-regime signal that fine-tuning extracts in full.
+(iii) \emph{On GPC-Deterministic}, every $(M, k)$ cell is at chance, matching the fine-tuned parity column of Table~\ref{tab:results_full} where every architecture sits at AUC $\approx 0.50$.
+
+\paragraph{Takeaway.}
+The fine-tuned-to-ICL gap is large on the two \emph{learnable} tasks (OC-Deterministic, OC-Noisy) and vanishes on the \emph{unlearnable} one (GPC-Deterministic). This is the behavior we expect if the bottleneck is the discovery of the latent combinatorial structure (a $\lambda$-aware pair count on the OC datasets; joint hidden-subset identification and modular arithmetic on GPC-Deterministic), rather than the training regime used to extract it. The ICL access mode therefore amplifies rather than causes the performance patterns of Table~\ref{tab:results_full}.
+
+\subsection{Length-based curriculum protocol and full per-seed results}
+\label{app:parity_curriculum}
+
+\paragraph{Setup.} We test a two-stage length curriculum on main-paper parity ($\ell=26$, $K=\mathcal{S}_{\text{parity}}$, $|K|=6$). Stage~1 trains a model from random initialization on $n=10$ sequences. Stage~2 loads the matched-seed Stage~1 checkpoint and fine-tunes on $n=20$. The shape mismatch in the positional embedding ($[1, 10, d] \to [1, 20, d]$) is handled by copying the first 10 positions from the Stage~1 checkpoint and randomly initializing the remaining 10; all other parameters are copied directly. Each stage uses a freshly generated dataset of 100K train / 20K validation / 20K test sequences.
+
+\paragraph{Architectures and hyperparameters.}
+\begin{itemize}
+\item \textbf{Transformer:} 2 layers, 8 heads, $d_{\text{model}}=64$, $d_{\text{ff}}=512$, dropout 0.3 (168\,642 parameters at $n=10$, 169\,282 at $n=20$). Adam optimizer, learning rate $10^{-3}$, batch size 64, 30 epochs, early-stopping patience 3 on validation loss.
+\item \textbf{LSTM:} same training schedule as the Transformer.
+\item \textbf{BERT-base:} 110M parameters, fine-tuned with LoRA following Appendix~\ref{appendix:bert}; 20 epochs, batch size 32.
+\end{itemize}
+
+We run 3 seeds per architecture per stage.
+
+\paragraph{Per-seed results.} Table~\ref{tab:curriculum-per-seed} reports test AUC for every (architecture, stage, seed) cell. Three patterns are visible. First, the LSTM is fully insensitive to initialization on this task: all 6 runs reach AUC $\geq 0.999$. Second, the Transformer's Stage~2 outcome is perfectly determined by its Stage~1 outcome: seed 1, which fails to learn $n=10$ parity (AUC $=0.502$), also fails after curriculum at $n=20$ (AUC $=0.497$); seeds 0 and 2, which succeed at $n=10$, also succeed at $n=20$ (AUC $\approx 1.0$ in both stages). The init-driven bimodality documented for $n=10$ binary parity in Appendix~\ref{appendix:parity_reference} is therefore inherited unchanged by the curriculum. Third, BERT-base does not benefit from the protocol: all 6 BERT runs sit at AUC $\approx 0.50$, and in particular Stage~1 itself is unsolved (no seed clears $0.51$ at $n=10$). The curriculum cannot transfer a representation that the warm-start checkpoint does not contain, so the Stage~2 outcome is at chance for every seed.
+
+\begin{table}[tb]
+\caption{Length-based curriculum learning per-seed test AUC. Stage 1: cold-start training on $n=10$. Stage 2: warm-start fine-tuning on $n=20$ from the matched-seed Stage 1 checkpoint.}
+\label{tab:curriculum-per-seed}
+\centering
+\fitwidth{%
+\begin{tabular}{lccc}
+\toprule
+Architecture & Seed & Stage 1 ($n{=}10$) & Stage 2 ($n{=}20$) \\
+\midrule
+\multirow{3}{*}{Transformer} & 0 & .999 & .999 \\
+ & 1 & .502 & .497 \\
+ & 2 & .999 & .999 \\
+\midrule
+\multirow{3}{*}{LSTM} & 0 & 1.000 & 1.000 \\
+ & 1 & 1.000 & 1.000 \\
+ & 2 & 1.000 & 1.000 \\
+\midrule
+\multirow{3}{*}{BERT} & 0 & .507 & .493 \\
+ & 1 & .504 & .502 \\
+ & 2 & .508 & .500 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ATTENTION-ANALYSIS APPENDIX
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \end{document}
