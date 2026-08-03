@@ -91,7 +91,7 @@ cd "$REPO_ROOT/repro"
 
 python3 -u -m src.experiments.kip_gpu_training \
     --model "$MODEL" --tag "$TAG" --mode "$MODE" --seed "$SEED" \
-    --llm_full_ft --llm_fraction 0.3 \
+    --llm_full_ft --llm_fraction 1 \
     --llm_max_length 50 --llm_batch_size 64 \
     --site fox \
     --ordered_csv "$DATA_DIR/simulation/tested" \
