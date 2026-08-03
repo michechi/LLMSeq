@@ -99,6 +99,13 @@ Requires [PhysioNet](https://physionet.org/) credentialed access to MIMIC-IV v3.
 
 **Preprocessing pipeline**: `src/mimic/prepare_training_data.py`
 
+An additional config-driven serum-creatinine AKI trajectory audit lives in
+`src/mimic/aki`. It includes audited episode labels, patient-safe splits,
+matched ordered-versus-shuffled controls, tabular baselines, LSTM/Transformer
+models, and three-seed AUC/F1 reporting. See
+[`docs/mimic_aki_audit.md`](docs/mimic_aki_audit.md); its protocol template is
+intentionally incomplete until every scientific choice is supplied.
+
 ### Simulation Data (Synthetic)
 
 For controlled experiments without PHI concerns.
