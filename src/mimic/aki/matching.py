@@ -26,7 +26,14 @@ FLOW_COLUMNS = [
     "n_unmatched",
     "retained_fraction",
 ]
-BALANCE_COLUMNS = ["split", "feature", "smd_before", "smd_after"]
+BALANCE_COLUMNS = [
+    "split",
+    "feature",
+    "smd_before",
+    "smd_after",
+    "maximum_absolute_smd",
+    "passes_threshold",
+]
 
 
 @dataclass(frozen=True)
@@ -53,6 +60,41 @@ def _required(cfg: Mapping[str, Any], key: str) -> Any:
     if key not in cfg or cfg[key] is None:
         raise ValueError(f"matching.{key} is required and has no default")
     return cfg[key]
+
+
+def _nonnegative_finite_number(value: Any, path: str) -> float:
+    if isinstance(value, bool) or not isinstance(value, (int, float, np.integer, np.floating)):
+        raise ValueError(f"{path} must be numeric")
+    result = float(value)
+    if not np.isfinite(result):
+        raise ValueError(f"{path} must be finite")
+    if result < 0:
+        raise ValueError(f"{path} must be >= 0")
+    return result
+
+
+def _maximum_smd_thresholds(
+    cfg: Mapping[str, Any], features: Sequence[str]
+) -> dict[str, float]:
+    default = _nonnegative_finite_number(
+        _required(cfg, "maximum_absolute_smd"), "matching.maximum_absolute_smd"
+    )
+    raw_overrides = cfg.get("maximum_absolute_smd_overrides", {})
+    if not isinstance(raw_overrides, Mapping):
+        raise ValueError("matching.maximum_absolute_smd_overrides must be a mapping")
+    unknown = set(raw_overrides).difference(features)
+    if unknown:
+        raise ValueError(
+            "matching.maximum_absolute_smd_overrides keys must be configured "
+            f"matching.coarsening features; unknown: {sorted(unknown)}"
+        )
+    overrides = {
+        feature: _nonnegative_finite_number(
+            value, f"matching.maximum_absolute_smd_overrides.{feature}"
+        )
+        for feature, value in raw_overrides.items()
+    }
+    return {feature: overrides.get(feature, default) for feature in features}
 
 
 def select_first_eligible_episode(
@@ -140,7 +182,7 @@ def _standardized_difference(frame: pd.DataFrame, feature: str, a: str, b: str) 
 def _balance_table(
     before: pd.DataFrame,
     after: pd.DataFrame,
-    features: list[str],
+    thresholds: Mapping[str, float],
     class_a: str,
     class_b: str,
 ) -> pd.DataFrame:
@@ -148,16 +190,21 @@ def _balance_table(
     for split in sorted(before["split"].unique()):
         pre = before[before["split"] == split]
         post = after[after["split"] == split]
-        for feature in features:
+        for feature, threshold in thresholds.items():
+            smd_after = _standardized_difference(post, feature, class_a, class_b)
             rows.append(
                 {
                     "split": split,
                     "feature": feature,
                     "smd_before": _standardized_difference(pre, feature, class_a, class_b),
-                    "smd_after": _standardized_difference(post, feature, class_a, class_b),
+                    "smd_after": smd_after,
+                    "maximum_absolute_smd": threshold,
+                    "passes_threshold": bool(
+                        np.isfinite(smd_after) and abs(smd_after) <= threshold
+                    ),
                 }
             )
-    return pd.DataFrame(rows)
+    return pd.DataFrame(rows, columns=BALANCE_COLUMNS)
 
 
 def coarsened_exact_match(features: pd.DataFrame, config: Any) -> MatchingResult:
@@ -169,13 +216,13 @@ def coarsened_exact_match(features: pd.DataFrame, config: Any) -> MatchingResult
     seed = int(_required(cfg, "selection_seed"))
     coarsening = _required(cfg, "coarsening")
     min_pairs = _required(cfg, "minimum_pairs_per_split")
-    max_abs_smd = float(_required(cfg, "maximum_absolute_smd"))
     if not isinstance(coarsening, Mapping) or not coarsening:
         raise ValueError(
             "matching.coarsening must map each invariant feature to a bin specification"
         )
     if not isinstance(min_pairs, Mapping):
         raise ValueError("matching.minimum_pairs_per_split must map split names to counts")
+    smd_thresholds = _maximum_smd_thresholds(cfg, list(coarsening))
 
     required_columns = {"episode_id", "subject_id", "label", "split", *coarsening.keys()}
     missing = required_columns.difference(features.columns)
@@ -248,10 +295,7 @@ def coarsened_exact_match(features: pd.DataFrame, config: Any) -> MatchingResult
                 }
             )
     flow = pd.DataFrame(flow_rows, columns=FLOW_COLUMNS)
-    numeric_features = [
-        feature for feature in coarsening if pd.api.types.is_numeric_dtype(before[feature])
-    ]
-    balance = _balance_table(before, matched, numeric_features, class_a, class_b)
+    balance = _balance_table(before, matched, smd_thresholds, class_a, class_b)
     if balance.empty:
         balance = pd.DataFrame(columns=BALANCE_COLUMNS)
 
@@ -267,14 +311,17 @@ def coarsened_exact_match(features: pd.DataFrame, config: Any) -> MatchingResult
                 f"{split} has {observed} matched pairs; configured minimum is {int(minimum)}"
             )
     if not balance.empty:
-        failed = balance[
-            balance["smd_after"].abs().replace([np.inf, -np.inf], np.inf) > max_abs_smd
-        ]
+        failed = balance[~balance["passes_threshold"]]
         if not failed.empty:
             details = ", ".join(
-                f"{row.split}/{row.feature}={row.smd_after:.3g}" for row in failed.itertuples()
+                f"{row.split}/{row.feature}={row.smd_after:.3g} "
+                f"(limit={row.maximum_absolute_smd:.3g})"
+                for row in failed.itertuples()
             )
-            reasons.append(f"post-match balance exceeds maximum_absolute_smd: {details}")
+            reasons.append(
+                "post-match balance exceeds maximum_absolute_smd or is non-finite: "
+                f"{details}"
+            )
 
     return MatchingResult(
         matched=matched.reset_index(drop=True),

@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import pandas as pd
+import pytest
 
 from src.mimic.aki.pipeline import (
     PopulationEpisodeResult,
     annotate_admission_censor_reasons,
+    construct_population_episodes,
     persist_pipeline_result,
     prepare_analysis_datasets,
 )
@@ -136,6 +138,95 @@ def _censor_config() -> dict:
     }
 
 
+def _population_episode_config() -> dict:
+    return {
+        "episodes": {
+            "columns": {
+                "timestamp": "specimen_time",
+                "value": "creatinine_mg_dl",
+                "subject_id": "subject_id",
+                "hadm_id": "hadm_id",
+            },
+            "admission_bounded": True,
+            "baseline": {
+                "method": "minimum",
+                "lookback_hours": 48,
+                "minimum_measurements": 1,
+            },
+            "onset": {
+                "absolute_rise_mg_dl": 0.3,
+                "window_hours": 48,
+                "boundary": "inclusive",
+                "tie_breaker": "earliest",
+            },
+            "recovery": {
+                "threshold_above_baseline_mg_dl": 0.3,
+                "window_hours": 48,
+                "time_boundary": "inclusive",
+                "value_comparison": "lt",
+                "sustained_hours": 48,
+            },
+            "follow_up": {"duration_days": 7, "boundary": "inclusive"},
+            "peak": {
+                "window_end": "follow_up",
+                "boundary": "inclusive",
+                "tie_breaker": "earliest",
+            },
+            "relapse": {
+                "window_days": 7,
+                "anchor": "onset",
+                "comparator": "recovery_nadir",
+                "boundary": "inclusive",
+            },
+            "observation": {
+                "max_gap_hours": 24,
+                "endpoint_tolerance_hours": 0,
+                "minimum_post_onset_measurements": 1,
+            },
+            "duplicates": {
+                "exact": "drop",
+                "conflicting_timestamp": "ambiguous",
+            },
+        }
+    }
+
+
+def _population_measurements() -> pd.DataFrame:
+    rows = []
+    for subject_id, phenotype in enumerate(
+        ("transient", "persistent", "relapsing", "no_aki"), start=1
+    ):
+        start = pd.Timestamp("2024-01-01") + pd.Timedelta(days=subject_id * 20)
+        for hour in range(0, 193, 12):
+            if phenotype == "no_aki" or hour < 24:
+                value = 1.0
+            elif phenotype == "persistent":
+                value = 1.4
+            elif phenotype == "transient":
+                value = 1.4 if hour < 36 else 1.0
+            else:
+                value = 1.4 if hour < 36 or hour >= 96 else 1.0
+            rows.append(
+                {
+                    "subject_id": subject_id,
+                    "hadm_id": 10_000 + subject_id,
+                    "specimen_time": start + pd.Timedelta(hours=hour),
+                    "creatinine_mg_dl": value,
+                }
+            )
+    measurements = pd.DataFrame(rows)
+    duplicate_time = measurements.loc[
+        measurements["subject_id"] == 1, "specimen_time"
+    ].iloc[2]
+    duplicate = measurements.loc[
+        (measurements["subject_id"] == 1)
+        & measurements["specimen_time"].eq(duplicate_time)
+    ]
+    return pd.concat([measurements, duplicate], ignore_index=True).sample(
+        frac=1.0, random_state=811
+    )
+
+
 def test_prepare_analysis_datasets_reuses_one_split_and_matches_within_split() -> None:
     measurements, population = _synthetic_population()
     result = prepare_analysis_datasets(measurements, population, _analysis_config())
@@ -216,3 +307,60 @@ def test_non_estimable_matching_still_returns_auditable_empty_model_tables() -> 
     assert result.primary_matched_labels.empty
     assert result.primary_matched_events.empty
     assert {"episode_id", "pair_id"}.issubset(result.matching.assignments.columns)
+
+
+def test_population_episode_parallel_output_exactly_matches_serial_output() -> None:
+    measurements = _population_measurements()
+    config = _population_episode_config()
+
+    serial = construct_population_episodes(measurements, config)
+    parallel = construct_population_episodes(
+        measurements,
+        config,
+        max_workers=2,
+        patient_chunk_size=2,
+    )
+
+    for attribute in ("episodes", "audit", "resolved_measurements"):
+        pd.testing.assert_frame_equal(
+            getattr(parallel, attribute),
+            getattr(serial, attribute),
+            check_exact=True,
+        )
+
+
+@pytest.mark.parametrize(
+    ("kwargs", "exception", "message"),
+    [
+        ({"max_workers": 0}, ValueError, "max_workers must be at least 1"),
+        ({"max_workers": True}, TypeError, "max_workers must be an integer"),
+        (
+            {"patient_chunk_size": 0},
+            ValueError,
+            "patient_chunk_size must be at least 1",
+        ),
+    ],
+)
+def test_population_episode_execution_parameters_fail_fast(
+    kwargs: dict, exception: type[Exception], message: str
+) -> None:
+    with pytest.raises(exception, match=message):
+        construct_population_episodes(
+            _population_measurements(),
+            _population_episode_config(),
+            **kwargs,
+        )
+
+
+def test_population_episode_parallel_worker_errors_are_propagated() -> None:
+    measurements = _population_measurements()
+    measurements["creatinine_mg_dl"] = measurements["creatinine_mg_dl"].astype(object)
+    measurements.loc[measurements["subject_id"] == 2, "creatinine_mg_dl"] = "invalid"
+
+    with pytest.raises(ValueError, match="finite numeric creatinine values"):
+        construct_population_episodes(
+            measurements,
+            _population_episode_config(),
+            max_workers=2,
+            patient_chunk_size=1,
+        )

@@ -62,10 +62,19 @@ def _run_prepare(
     measurements_path: str | Path,
     admissions_path: str | Path | None,
     output_dir: str | Path,
+    *,
+    max_workers: int = 1,
+    patient_chunk_size: int = 128,
 ) -> Any:
     measurements = _read_table(measurements_path)
     admissions = None if admissions_path is None else _read_table(admissions_path)
-    result = build_aki_audit_datasets(measurements, config, admissions=admissions)
+    result = build_aki_audit_datasets(
+        measurements,
+        config,
+        admissions=admissions,
+        max_workers=max_workers,
+        patient_chunk_size=patient_chunk_size,
+    )
     persist_pipeline_result(result, output_dir)
     return result
 
@@ -155,14 +164,28 @@ def _prepare_command(args: argparse.Namespace) -> None:
     manifest = destination / "run_manifest.json"
     if manifest.exists():
         raise FileExistsError(f"refusing to overwrite run manifest: {manifest}")
-    result = _run_prepare(config, args.measurements, args.admissions, args.output_dir)
+    result = _run_prepare(
+        config,
+        args.measurements,
+        args.admissions,
+        args.output_dir,
+        max_workers=args.workers,
+        patient_chunk_size=args.patient_chunk_size,
+    )
     summary = _pipeline_summary(result)
     write_run_manifest(
         manifest,
         config=config,
         repo_root=REPO_ROOT,
         artifacts={"prepared_directory": destination},
-        extra={"stage": "prepare", "summary": summary},
+        extra={
+            "stage": "prepare",
+            "runtime": {
+                "population_workers": args.workers,
+                "patient_chunk_size": args.patient_chunk_size,
+            },
+            "summary": summary,
+        },
     )
     _json_print({"manifest": manifest, **summary})
 
@@ -218,6 +241,8 @@ def _run_command(args: argparse.Namespace) -> None:
         extraction.measurements_path,
         extraction.admission_audit_path,
         prepared_dir,
+        max_workers=args.workers,
+        patient_chunk_size=args.patient_chunk_size,
     )
     summary = _pipeline_summary(prepared)
     artifacts: dict[str, str | Path] = {
@@ -257,6 +282,10 @@ def _run_command(args: argparse.Namespace) -> None:
         extra={
             "raw_directory": str(Path(args.raw_dir).expanduser().resolve()),
             "enabled_models": list(args.models),
+            "runtime": {
+                "population_workers": args.workers,
+                "patient_chunk_size": args.patient_chunk_size,
+            },
             "summary": summary,
         },
     )
@@ -276,6 +305,13 @@ def _add_models(parser: argparse.ArgumentParser) -> None:
         default=list(ALL_MODELS),
         help="Models to execute; the full requested matrix is the default",
     )
+
+
+def _positive_int(value: str) -> int:
+    parsed = int(value)
+    if parsed < 1:
+        raise argparse.ArgumentTypeError("value must be at least 1")
+    return parsed
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -306,6 +342,18 @@ def build_parser() -> argparse.ArgumentParser:
         help="Admission audit/table required for explicit discharge/death censor attribution",
     )
     prepare.add_argument("--output-dir", required=True)
+    prepare.add_argument(
+        "--workers",
+        type=_positive_int,
+        default=1,
+        help="Runtime-only subject workers for deterministic episode construction",
+    )
+    prepare.add_argument(
+        "--patient-chunk-size",
+        type=_positive_int,
+        default=128,
+        help="Runtime-only subjects per ordered multiprocessing task",
+    )
     prepare.set_defaults(handler=_prepare_command)
 
     train = subparsers.add_parser("train")
@@ -320,6 +368,18 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--raw-dir", required=True)
     run.add_argument("--output-dir", required=True)
     run.add_argument("--chunksize", type=int, default=500_000)
+    run.add_argument(
+        "--workers",
+        type=_positive_int,
+        default=1,
+        help="Runtime-only subject workers for deterministic episode construction",
+    )
+    run.add_argument(
+        "--patient-chunk-size",
+        type=_positive_int,
+        default=128,
+        help="Runtime-only subjects per ordered multiprocessing task",
+    )
     _add_models(run)
     run.set_defaults(handler=_run_command)
     return parser

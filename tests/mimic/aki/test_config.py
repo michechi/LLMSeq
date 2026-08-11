@@ -340,6 +340,36 @@ def test_unknown_scientific_keys_fail_fast(section: str, nested: str | None) -> 
         aki_config_from_mapping(mapping)
 
 
+def test_matching_smd_override_keys_must_be_coarsened_features() -> None:
+    mapping = _valid_mapping()
+    mapping["matching"]["maximum_absolute_smd_overrides"] = {"not_coarsened": 0.15}
+
+    with pytest.raises(AkiConfigError, match="configured matching.coarsening features"):
+        aki_config_from_mapping(mapping)
+
+
+@pytest.mark.parametrize("threshold", [-0.01, "0.15", True, float("inf")])
+def test_matching_smd_overrides_must_be_finite_nonnegative_numbers(threshold: object) -> None:
+    mapping = _valid_mapping()
+    mapping["matching"]["maximum_absolute_smd_overrides"] = {
+        "duration_hours": threshold
+    }
+
+    with pytest.raises(AkiConfigError, match="maximum_absolute_smd_overrides.duration_hours"):
+        aki_config_from_mapping(mapping)
+
+
+def test_matching_smd_override_changes_protocol_hash() -> None:
+    original = _valid_mapping()
+    amended = deepcopy(original)
+    amended["matching"]["maximum_absolute_smd_overrides"] = {"duration_hours": 0.15}
+
+    assert (
+        aki_config_from_mapping(original).config_hash
+        != aki_config_from_mapping(amended).config_hash
+    )
+
+
 def test_impossible_representation_window_column_fails_before_data_access() -> None:
     mapping = _valid_mapping()
     mapping["representations"]["window_start_column"] = "definitely_not_an_episode_column"

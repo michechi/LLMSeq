@@ -145,13 +145,20 @@ python -m src.mimic.aki prepare \
   --config path/to/protocol.yaml \
   --measurements data/processed/mimic_aki/cohort/aki_creatinine_measurements.parquet \
   --admissions data/processed/mimic_aki/cohort/aki_admission_audit.parquet \
-  --output-dir data/processed/mimic_aki/prepared
+  --output-dir data/processed/mimic_aki/prepared \
+  --workers 16 \
+  --patient-chunk-size 128
 
 python -m src.mimic.aki train \
   --config path/to/protocol.yaml \
   --prepared-dir data/processed/mimic_aki/prepared \
   --output-dir results/mimic/aki_audit/run_name/experiment
 ```
+
+`prepare --workers` and `--patient-chunk-size` are runtime-only execution
+controls. They do not alter the protocol or its configuration hash. The
+single-worker default preserves the original serial path; parallel chunks are
+collected in sorted patient order so the persisted tables remain deterministic.
 
 Extraction scans the large CSV once in chunks and stages the selected rows as
 Parquet. Full rejected-measurement, admission-flow, unit, episode-decision,

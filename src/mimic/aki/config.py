@@ -732,6 +732,7 @@ REQUIRED_SECTION_PATHS: dict[str, tuple[tuple[str, ...], ...]] = {
 
 
 OPTIONAL_SECTION_PATHS: dict[str, tuple[tuple[str, ...], ...]] = {
+    "matching": (("maximum_absolute_smd_overrides",),),
     "models": (("sequence_training", "momentum"),),
 }
 
@@ -1128,6 +1129,23 @@ def _validate_downstream_values(raw: Mapping[str, Any]) -> None:
     for split, value in minimum_pairs.items():
         _integer(value, f"matching.minimum_pairs_per_split.{split}", minimum=1)
     _number(matching["maximum_absolute_smd"], "matching.maximum_absolute_smd", minimum=0)
+    maximum_absolute_smd_overrides = _mapping(
+        matching.get("maximum_absolute_smd_overrides", {}),
+        "matching.maximum_absolute_smd_overrides",
+    )
+    unknown_smd_override_features = set(maximum_absolute_smd_overrides).difference(coarsening)
+    if unknown_smd_override_features:
+        raise AkiConfigError(
+            "matching.maximum_absolute_smd_overrides keys must be configured "
+            "matching.coarsening features; unknown: "
+            f"{sorted(unknown_smd_override_features)}"
+        )
+    for feature, threshold in maximum_absolute_smd_overrides.items():
+        _number(
+            threshold,
+            f"matching.maximum_absolute_smd_overrides.{feature}",
+            minimum=0,
+        )
 
     models = _mapping(raw["models"], "models")
     for name in ("tabular_preprocessing", "sequence_preprocessing"):

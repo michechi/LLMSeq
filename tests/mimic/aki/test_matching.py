@@ -1,4 +1,5 @@
 import pandas as pd
+import pytest
 
 from src.mimic.aki.matching import coarsened_exact_match, select_first_eligible_episode
 
@@ -83,3 +84,63 @@ def test_no_matching_strata_returns_auditable_empty_tables() -> None:
     assert result.assignments.empty
     assert {"episode_id", "pair_id", "split", "label"}.issubset(result.assignments.columns)
     assert not result.flow.empty
+
+
+def test_feature_specific_smd_override_is_used_for_estimability() -> None:
+    features = _features()
+    features["duration_hours"] = features["duration_hours"].astype(float)
+    features.loc[features["label"] == "persistent", "duration_hours"] += 0.1
+    config = _config()
+    config["matching"]["maximum_absolute_smd"] = 0.1
+
+    without_override = coarsened_exact_match(features, config)
+    assert not without_override.estimable
+
+    config["matching"]["maximum_absolute_smd_overrides"] = {"duration_hours": 0.15}
+    with_override = coarsened_exact_match(features, config)
+
+    assert with_override.estimable
+    duration_rows = with_override.balance[with_override.balance["feature"] == "duration_hours"]
+    assert duration_rows["maximum_absolute_smd"].eq(0.15).all()
+    assert duration_rows["passes_threshold"].all()
+    other_rows = with_override.balance[with_override.balance["feature"] != "duration_hours"]
+    assert other_rows["maximum_absolute_smd"].eq(0.1).all()
+
+
+def test_balance_reports_every_coarsening_feature_with_object_dtype() -> None:
+    features = _features()
+    configured_features = list(_config()["matching"]["coarsening"])
+    for feature in configured_features:
+        features[feature] = features[feature].astype("object")
+
+    result = coarsened_exact_match(features, _config())
+
+    expected = {
+        (split, feature)
+        for split in ("train", "validation", "test")
+        for feature in configured_features
+    }
+    assert set(result.balance[["split", "feature"]].itertuples(index=False, name=None)) == expected
+    assert result.balance["passes_threshold"].all()
+
+
+def test_non_finite_post_match_smd_fails_estimability() -> None:
+    features = _features().assign(site="ward-a")
+    config = _config()
+    config["matching"]["coarsening"]["site"] = {"method": "exact"}
+
+    result = coarsened_exact_match(features, config)
+
+    site_rows = result.balance[result.balance["feature"] == "site"]
+    assert site_rows["smd_after"].isna().all()
+    assert not site_rows["passes_threshold"].any()
+    assert not result.estimable
+    assert any("non-finite" in reason for reason in result.non_estimable_reasons)
+
+
+def test_matching_rejects_smd_override_for_unconfigured_feature() -> None:
+    config = _config()
+    config["matching"]["maximum_absolute_smd_overrides"] = {"not_coarsened": 0.15}
+
+    with pytest.raises(ValueError, match="configured matching.coarsening features"):
+        coarsened_exact_match(_features(), config)

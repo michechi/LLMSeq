@@ -8,10 +8,14 @@ tables to episodes explicitly marked ``include_in_analysis``.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 import json
+import multiprocessing as mp
+import pickle
+from collections import deque
+from concurrent.futures import ProcessPoolExecutor
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Mapping, Sequence
+from typing import Any, Iterator, Mapping, Sequence
 
 import pandas as pd
 
@@ -72,6 +76,109 @@ class PersistedPipelineArtifacts:
 
     parquet: Mapping[str, Path]
     csv_summaries: Mapping[str, Path]
+
+
+_POPULATION_WORKER_CONFIG: Any | None = None
+
+
+def _positive_execution_integer(value: Any, name: str) -> int:
+    """Validate a non-scientific population-execution setting."""
+
+    if isinstance(value, bool) or not isinstance(value, int):
+        raise TypeError(f"{name} must be an integer")
+    if value < 1:
+        raise ValueError(f"{name} must be at least 1")
+    return value
+
+
+def _parallel_worker_config(config: Any) -> Any:
+    """Return a pickle-safe protocol without changing its resolved values."""
+
+    as_dict = getattr(config, "as_dict", None)
+    worker_config = as_dict() if callable(as_dict) else config
+    try:
+        pickle.dumps(worker_config)
+    except Exception as exc:
+        raise TypeError(
+            "config must be pickleable for parallel population episode construction"
+        ) from exc
+    return worker_config
+
+
+def _initialize_population_worker(config: Any) -> None:
+    global _POPULATION_WORKER_CONFIG
+    _POPULATION_WORKER_CONFIG = config
+
+
+def _concat_population_parts(
+    results: Sequence[Any],
+) -> PopulationEpisodeResult:
+    return PopulationEpisodeResult(
+        episodes=pd.concat([result.episodes for result in results], ignore_index=True),
+        audit=pd.concat([result.audit for result in results], ignore_index=True),
+        resolved_measurements=pd.concat(
+            [result.resolved_measurements for result in results], ignore_index=True
+        ),
+    )
+
+
+def _construct_population_chunk(
+    patients: Sequence[pd.DataFrame],
+) -> PopulationEpisodeResult:
+    if _POPULATION_WORKER_CONFIG is None:
+        raise RuntimeError("population worker was not initialized with a configuration")
+    results = [
+        construct_aki_episodes(patient, _POPULATION_WORKER_CONFIG) for patient in patients
+    ]
+    return _concat_population_parts(results)
+
+
+def _patient_chunks(
+    ordered: pd.DataFrame,
+    subject_column: str,
+    patient_chunk_size: int,
+) -> Iterator[list[pd.DataFrame]]:
+    chunk: list[pd.DataFrame] = []
+    for _, patient in ordered.groupby(subject_column, sort=True, dropna=False):
+        chunk.append(patient)
+        if len(chunk) == patient_chunk_size:
+            yield chunk
+            chunk = []
+    if chunk:
+        yield chunk
+
+
+def _construct_population_parallel(
+    ordered: pd.DataFrame,
+    config: Any,
+    *,
+    subject_column: str,
+    max_workers: int,
+    patient_chunk_size: int,
+) -> PopulationEpisodeResult:
+    worker_config = _parallel_worker_config(config)
+    chunks = iter(_patient_chunks(ordered, subject_column, patient_chunk_size))
+    results: list[PopulationEpisodeResult] = []
+    context = mp.get_context("spawn")
+    with ProcessPoolExecutor(
+        max_workers=max_workers,
+        mp_context=context,
+        initializer=_initialize_population_worker,
+        initargs=(worker_config,),
+    ) as executor:
+        pending = deque()
+        for _ in range(max_workers * 2):
+            try:
+                pending.append(executor.submit(_construct_population_chunk, next(chunks)))
+            except StopIteration:
+                break
+        while pending:
+            results.append(pending.popleft().result())
+            try:
+                pending.append(executor.submit(_construct_population_chunk, next(chunks)))
+            except StopIteration:
+                pass
+    return _concat_population_parts(results)
 
 
 def _section(config: Any, name: str) -> Mapping[str, Any]:
@@ -137,12 +244,23 @@ def _admission_censoring_config(config: Any) -> Mapping[str, Any]:
 def construct_population_episodes(
     measurements: pd.DataFrame,
     config: Any,
+    *,
+    max_workers: int = 1,
+    patient_chunk_size: int = 128,
 ) -> PopulationEpisodeResult:
     """Run the deterministic state machine once for every unique subject.
 
     No-AKI admissions remain in the returned audit table.  Censored and
     ambiguous episodes remain in both tables; they are not filtered here.
+    ``max_workers`` and ``patient_chunk_size`` affect execution only.  The
+    default single-worker path retains the original serial implementation;
+    parallel chunks are collected in the same sorted patient order.
     """
+
+    max_workers = _positive_execution_integer(max_workers, "max_workers")
+    patient_chunk_size = _positive_execution_integer(
+        patient_chunk_size, "patient_chunk_size"
+    )
 
     episodes_config = _section(config, "episodes")
     columns = _required(episodes_config, "columns", "episodes")
@@ -166,6 +284,22 @@ def construct_population_episodes(
         [subject_column, hadm_column, "__pipeline_time"], kind="mergesort"
     ).drop(columns="__pipeline_time")
 
+    if ordered.empty:
+        empty = construct_aki_episodes(ordered.iloc[0:0], config)
+        return PopulationEpisodeResult(
+            empty.episodes,
+            empty.audit,
+            empty.resolved_measurements,
+        )
+    if max_workers > 1:
+        return _construct_population_parallel(
+            ordered,
+            config,
+            subject_column=subject_column,
+            max_workers=max_workers,
+            patient_chunk_size=patient_chunk_size,
+        )
+
     episode_parts: list[pd.DataFrame] = []
     audit_parts: list[pd.DataFrame] = []
     resolved_parts: list[pd.DataFrame] = []
@@ -175,13 +309,6 @@ def construct_population_episodes(
         audit_parts.append(result.audit)
         resolved_parts.append(result.resolved_measurements)
 
-    if not episode_parts:
-        empty = construct_aki_episodes(ordered.iloc[0:0], config)
-        return PopulationEpisodeResult(
-            empty.episodes,
-            empty.audit,
-            empty.resolved_measurements,
-        )
     episodes = pd.concat(episode_parts, ignore_index=True)
     audit = pd.concat(audit_parts, ignore_index=True)
     resolved = pd.concat(resolved_parts, ignore_index=True)
@@ -561,6 +688,8 @@ def build_aki_audit_datasets(
     config: Any,
     *,
     admissions: pd.DataFrame | None,
+    max_workers: int = 1,
+    patient_chunk_size: int = 128,
 ) -> AkiPipelineResult:
     """Construct, annotate, split, select, and match all non-model artifacts."""
 
@@ -572,7 +701,12 @@ def build_aki_audit_datasets(
                 "admission config_hash does not match the preparation protocol: "
                 f"observed={sorted(observed_hashes)}, expected={expected_hash}"
             )
-    population = construct_population_episodes(measurements, config)
+    population = construct_population_episodes(
+        measurements,
+        config,
+        max_workers=max_workers,
+        patient_chunk_size=patient_chunk_size,
+    )
     population = annotate_population_censoring(population, admissions, config)
     return prepare_analysis_datasets(measurements, population, config)
 
