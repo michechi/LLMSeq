@@ -883,6 +883,15 @@ def train_sequence_classifier(
         seed=seed,
     )
     model = build_sequence_model(model_name, train_arrays[0].shape[1], labels, config).to(device)
+    accelerator_name = (
+        torch.cuda.get_device_name(device) if device.type == "cuda" else device.type
+    )
+    print(
+        "AKI_SEQUENCE_DEVICE "
+        f"model={model_name} seed={seed} device={device} "
+        f"accelerator={accelerator_name}",
+        flush=True,
+    )
     optimizer = _build_optimizer(model, training_cfg)
 
     best_loss = float("inf")
@@ -951,6 +960,12 @@ def train_sequence_classifier(
     model.load_state_dict(best_state)
     model.to(device)
     validation_probabilities = _sequence_predict_proba(model, transformed_validation, options)
+    print(
+        "AKI_SEQUENCE_COMPLETE "
+        f"model={model_name} seed={seed} device={device} "
+        f"accelerator={accelerator_name} best_epoch={best_epoch}",
+        flush=True,
+    )
     return SequenceTrainingResult(
         model=model,
         model_name=model_name,
