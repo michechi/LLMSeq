@@ -39,6 +39,6 @@ This branch does **not** erase prior versions. Resolving public exposure and shr
 
 ## Use the cleanup safely
 
-Review this separate checkout or use the supplied snapshot ZIP. The original checkout is unchanged. Do not switch the original data-bearing working directory directly to a commit that deletes its tracked datasets: Git can remove those files during the switch. Create a separate worktree, or securely back up/move data outside the checkout first. Point experiment data paths at the intended external data directory.
+The approved cleanup is applied locally without deleting datasets or raw logs. Changed notebooks and documents are backed up in a separate local directory, and the pre-cleanup commit has a local backup branch. A snapshot ZIP is also available for a separate checkout. Do not switch the original data-bearing working directory directly to a commit that deletes its tracked datasets: Git can remove those files during the switch. Create a separate worktree, or securely back up/move data outside the checkout first. Point experiment data paths at the intended external data directory.
 
 A supplied Git bundle contains the cleanup commit relative to the existing base. It is for importing/reviewing the branch; it does not sanitize its ancestral history. A snapshot ZIP contains the proposed files without Git history. Neither artifact has been published to GitHub.
