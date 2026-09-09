@@ -1,3 +1,5 @@
+> Historical reproduction notes. For TMLR, start with [the current status](../docs/tmlr_status.md). These commands and claims have not been verified as an end-to-end TMLR protocol; data files are now restored from a manifest.
+
 # Reproduction protocol
 
 This file maps every claim in the paper to the script that produced it. All scripts run from the repo root via `python -m src.<...>`.

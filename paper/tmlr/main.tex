@@ -1,0 +1,319 @@
+\documentclass[10pt]{article}
+\usepackage{tmlr}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsthm,booktabs,tabularx,multirow}
+\usepackage{graphicx,xcolor,enumitem,placeins,float}
+\usepackage{hyperref,url}
+\hypersetup{colorlinks=true,linkcolor=blue!45!black,citecolor=blue!45!black,urlcolor=blue!45!black,pdfauthor={},pdftitle={Auditing Sequence Prediction with Known Label Rules}}
+\newcommand{\prov}[1]{{\color{black!65}\scriptsize[#1]}}
+\newcommand{\orig}{\prov{ORIG}}
+\newcommand{\ou}{\prov{ORIG-UNVERIFIED}}
+\newcommand{\recomp}{\prov{RECOMP}}
+\newcommand{\newres}{\prov{NEW}}
+\newcommand{\req}[2]{{\color{brown!75!black}\small[TODO-REQUIRED #1: #2]}}
+\newcommand{\opt}[2]{{\color{black!65}\small[TODO-OPTIONAL #1: #2]}}
+\newcommand{\ind}{\mathbf{1}}
+\newcommand{\AUC}{\mathrm{AUC}}
+\newcommand{\R}{\mathbb{R}}
+\newtheorem{proposition}{Proposition}
+\newtheorem{definition}{Definition}
+\setlist[itemize]{leftmargin=*,topsep=2pt,itemsep=1pt,parsep=0pt}
+\title{Auditing Sequence Prediction\\with Known Label Rules}
+\author{Anonymous authors}
+% Anonymous TMLR submission mode; no accepted or preprint option.
+\begin{document}
+\raggedbottom
+\maketitle
+
+\begin{abstract}
+A high sequence-prediction score does not show which input features a model uses. We examine what can be established using explicit label rules, restricted feature baselines, and order perturbations. On noisy ordered compliance, lag-pair logistic regression attains AUC $0.6709$ \recomp, compared with $0.6705$ for the true-rule score \newres. Yet we construct opposite-label inputs with identical pair counts, proving that those features cannot represent the clean rule exactly. For hidden-subset parity, a parity-specific learner recovers the subset from $256$ training examples and makes no errors on $100{,}000$ test examples \newres, limiting what neural training failures establish about the task. Key-inversion parity provides an order-sensitive comparison whose label is independent of small fixed sets of positions. Reported fine-tuning and inversion-parity experiments add model-level evidence, subject to verification of their run archives. Clinical diagnosis sequences and music recommendation illustrate the need to preserve visible events when testing order and to distinguish recent transitions from dependence on a long history. Together, the analyses specify which conclusions each comparison supports and which require further evidence. The contribution is a concrete evaluation procedure with explicit limits on its interpretation. All unverified results and unfinished checks remain identified.
+\end{abstract}
+
+{\small\textbf{Working-draft status.} Provenance tags distinguish verified original values \orig, unverified reported values \ou, recomputation \recomp, and new analyses \newres. Table tags cover all numerical entries unless stated otherwise. Required checks are retained in the text and Appendix~\ref{app:required}; this draft is not submission-ready.}
+
+\section{Introduction}
+\label{sec:intro}
+An accurate sequence classifier may rely on event identity, frequency, a recent transition, or a rule involving several positions. These explanations can produce similar test scores. Researchers need comparisons that distinguish them before attributing performance to a model's use of sequence structure.
+
+We study this problem using sequences whose clean labels are explicitly defined. Knowing the rule makes it possible to construct inputs on which a candidate feature representation loses information and to calculate a performance reference under label noise. We compare event counts, contiguous patterns, lagged pairs and rule-specific learners. When a restricted representation predicts well, it provides an alternative explanation of the score. Determining whether a particular neural model uses that representation requires a further test of the model itself.
+
+The tasks separate order sensitivity from information in small sets of positions. Ordered compliance (OC) is sensitive to order and has local information under its proposal distribution. Hidden-subset parity, retaining the original task abbreviation GPC, is invariant to order; its balanced version is independent of every proper fixed subset of positions. Key-inversion parity (KIP) is sensitive to order while retaining independence from sufficiently small position subsets. The constructions make these properties explicit, although differences in their input distributions prevent attributing training difficulty to a single property.
+
+The application studies ask what remains of this approach when the label rule is unknown. In diagnosis records and listening histories, we compare predictive performance after perturbing order and examine whether the visible events are preserved. These controls evaluate the selected representation and protocol. They do not by themselves identify causal processes in disease progression or user behavior.
+
+Our contributions are:
+\begin{itemize}
+\item A concrete separation of predictive performance from feature sufficiency: lag-pair prediction approaches the noisy-OC reference, while an explicit pair of inputs proves that those features do not determine the clean rule (Section~\ref{sec:synthetic}).
+\item Contrasting, fully specified label rules and a parity-specific learner that establish what information the tasks contain before interpreting the outcomes of neural training (Sections~\ref{sec:rules} and~\ref{sec:synthetic}).
+\item A comparison of adaptation and shuffle controls, with practical requirements for interpreting them and a clear account of the remaining evidence gaps in the model and application results (Sections~\ref{sec:setup}--\ref{sec:applications}).
+\end{itemize}
+The intended readers are researchers evaluating learned sequence representations. The main question is which explanation of a score survives a given comparison. Our findings support specific answers for these tasks and protocols; they do not establish a general hierarchy of model families.
+
+\section{Related work}
+\label{sec:related}
+\textbf{Performance and learned rules.} Shortcut learning is a general concern in neural prediction \citep{geirhos2020}. Diagnostic examples can distinguish an intended rule from a heuristic that performs well on the usual test distribution, as illustrated by HANS \citep{mccoy2019}. Our feature comparisons follow this logic. We use the word \emph{shortcut} only for predictive features that are insufficient for the specified clean rule; simplicity or low parameter count alone does not make a solution a shortcut.
+
+\textbf{Algorithmic sequence tasks.} Transformers can represent parity under suitable constructions \citep{chiang2022}. Expressibility, optimization, and length generalization nevertheless differ \citep{hahn2024,deletang2023}. Transformers can also learn alternative, exact algorithms for automata \citep{liu2023automata}; such algorithms need not be insufficient shortcuts in our sense. Controlled grammar studies probe learned structure in considerably richer synthetic languages \citep{allenzhu2023}. We do not claim novelty for parity or for the use of artificial sequences. Our focus is on which inference a baseline or perturbation licenses about a fixed predictor. Curriculum benefits on parity also have precedent \citep{abbe2023}, so successful length curricula must be interpreted as task-specific training results.
+
+\textbf{Order perturbations.} Strong downstream language performance can survive shuffled pretraining \citep{sinha2021}, and recommendation datasets differ in their sensitivity to shuffling \citep{klenitskiy2024}. LLM-based recommendation has also been examined for its use of sequence information \citep{kim2025}. These findings motivate controls; they do not imply that order is generally unnecessary. Our application audit distinguishes loss of order from changes in the retained events, and recent-transition information from dependence on the entire history.
+
+\section{Label rules and information available to a learner}
+\label{sec:rules}
+Let $X=(X_1,\ldots,X_n)$ be a sequence over a finite alphabet $\mathcal A$, and let $Y^*=f(X)\in\{0,1\}$ be its clean label. A hidden key set and any hidden ordering are fixed within a dataset. A \emph{task} consists of a rule, an input distribution, and a noise model.
+
+\subsection{Ordered compliance: an ordering rule with local information}
+Fix a key set $S\subseteq\mathcal A$, a rank map $\kappa:S\to\{1,\ldots,m\}$, and a lag $\lambda$. For each residue modulo $\lambda$, read the positions separated by that lag. A non-key symbol breaks the resulting chain. A \emph{maximal key run} is a consecutive stretch of keys in that chain, including every adjacent key before and after it. The ordered-compliance (OC) label is one exactly when at least one such run has length at least two and nondecreasing ranks. An ordered pair inside a longer, non-ordered run is not sufficient.
+
+The main OC configuration is $(n,|\mathcal A|,m,\lambda)=(20,26,6,7)$, with key order \texttt{WDQJXU}. \orig\ The proposal draws symbols independently and uniformly. The original description then stratifies an oversized pool by $Y^*$ and flips labels independently with probability $\pi\in\{0,0.3\}$. \ou\ The proposal law and the distribution after selection must not be treated as identical without checking the selection procedure.
+
+For a fixed position set $J$, write $X_J=(X_j:j\in J)$. We call the label \emph{independent of $J$} when $I(Y^*;X_J)=0$, where $I$ denotes mutual information. Independence from a few positions does not imply independence from a feature aggregate computed over the whole sequence.
+
+\begin{proposition}[Local information in OC]
+\label{prop:oc}
+For the stated maximal-run rule, independent coordinates with full support, $n\geq\lambda+1$, and a nonconstant label, $I(Y^*;X_1)>0$. Independent symmetric label noise with rate below one half preserves this dependence.
+\end{proposition}
+The reason is concrete. When distractors exist, replace the first distractor by the smallest key while leaving the remaining positions unchanged. Existing ordered runs remain valid, possibly after extension, and some previously negative inputs become positive. Independence makes the distribution of the remaining positions the same in both cases. Appendix~\ref{app:proofs} gives the full argument, including the all-key case. The proposition establishes information at a position, not sufficient information in counts or $k$-grams, and says nothing about which features a network learns.
+
+\subsection{Hidden-subset parity: aggregation without order}
+For hidden-subset parity (GPC), let $N_a(X)$ count occurrences of symbol $a$, and fix the key set $K$. The original definition labels a sequence according to whether an even number of keys have even counts. Its equivalent, simpler form is
+\begin{equation}
+Y^*=c\oplus\bigoplus_{t=1}^{n}\ind\{X_t\in K\},\qquad c=(1+|K|)\bmod 2,
+\label{eq:gpc}
+\end{equation}
+where $\oplus$ is addition modulo two. The original main setting uses $|K|=6$, alphabet size $26$, and $n=20$. \orig\ This rule is permutation-invariant: rearranging events cannot change its label.
+
+Under independent uniform symbols, let $p=|K|/|\mathcal A|$, with $0<p<1$. The parity of the unobserved membership bits has bias $(1-2p)^{n-|J|}$. Hence $Y^*$ is independent of every proper fixed position set exactly when $p=1/2$. The balanced control uses $|K|=13$; the main six-key task is not exactly locally independent. Its one-position conditional-probability gap is $7.797207\times10^{-6}$. \newres\ The small gap does not prove that every aggregate or learning algorithm is uninformative.
+
+\subsection{Key-inversion parity: order without local information}
+The additional key-inversion parity (KIP) task fixes $S$ and $\kappa$, samples $m$ distinct positions uniformly, puts each key in exactly once in a uniformly random order, and fills the other positions independently with non-keys. Reading the keys from left to right yields ranks $(r_1,\ldots,r_m)$. Define
+\begin{equation}
+Y^*=\left(\sum_{i<j}\ind\{r_i>r_j\}\right)\bmod 2.
+\label{eq:kip}
+\end{equation}
+The reported experiments use $n=20$, alphabet size $26$, $m\in\{4,6\}$ and no label noise. \ou\ This proposal is different from OC's independent-symbol proposal; its guarantees are distribution-specific.
+
+\begin{proposition}[Order sensitivity and independence in KIP]
+\label{prop:kip}
+Transposing any two keys reverses the label and preserves all symbol counts. Under the KIP proposal, $Y^*$ is independent of the full count vector and of every fixed set of at most $m-2$ positions. The latter bound is tight.
+\end{proposition}
+Given at most $m-2$ observed positions, at least two keys remain unseen. Swapping those keys leaves the observation unchanged, preserves probability, and reverses parity. This pairs every positive completion with a negative one. Observing the first $m-1$ keys in increasing rank order can instead fix the label. The proof and a finite enumeration check appear in Appendix~\ref{app:proofs}. The construction supplies the missing order-sensitive case; it does not show that increasing local independence alone causes optimization difficulty.
+
+\begin{table}[H]
+\centering\small
+\caption{The tasks separate order sensitivity from information in fixed positions. These are properties of the stated rules and proposal laws, not empirical claims about neural representations. KIP's exact bounds are established in Proposition~\ref{prop:kip}.}
+\label{tab:properties}
+\begin{tabular}{@{}lll@{}}\toprule
+Rule & Can a permutation change $Y^*$? & Independence from fixed positions \\\midrule
+OC & Yes & Fails already at $X_1$ \\
+GPC, $|K|/|\mathcal A|\ne 1/2$ & No & Not exact; bias decreases with length \\
+Balanced GPC & No & Every proper position subset \\
+KIP & Yes & Every subset of size at most $m-2$ \\
+\bottomrule\end{tabular}
+\end{table}
+
+\section{Evaluation procedure and experimental setup}
+\label{sec:setup}
+We first check that the stored labels match the stated rule. We then compare representations that retain different parts of the input, construct direct tests of any proposed sufficient representation, and distinguish model perturbations from retraining on perturbed data. Table~\ref{tab:comparisons} states what each comparison can establish. Source recovery and unrun model diagnostics remain required checks, rather than being treated as completed parts of the procedure.
+
+\begin{table}[H]
+\centering\small
+\caption{Different comparisons answer different questions. Shuffle comparisons require the same visible events and unchanged original targets.}
+\label{tab:comparisons}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{.25\linewidth}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}\toprule
+Comparison & What it establishes & What remains open \\\midrule
+Fit a restricted feature baseline & How well that representation predicts under the evaluated distribution & Whether a neural model uses those features \\
+Find opposite labels with identical features & The features cannot represent the exact clean rule & The model's behavior on those inputs and their frequency \\
+Evaluate a frozen model on shuffled inputs & Its sensitivity to that perturbation & Whether retraining can recover performance; effects of distribution shift \\
+Train and evaluate on shuffled inputs & Performance attainable by the tested learner under the altered distribution & The algorithm learned from the original ordered inputs \\
+\bottomrule\end{tabularx}
+\end{table}
+
+\textbf{Feature comparisons.} For each symbol we count occurrences. A contiguous $k$-gram scorer estimates its positive-label frequency on training data, uses $0.5$ for unseen grams, and averages scores over a test sequence. \orig\ Lag-pair features are
+\begin{equation}
+g_{ab}^{(d)}(X)=\sum_{t=1}^{n-d}\ind\{X_t=a,\ X_{t+d}=b\}.
+\label{eq:pairs}
+\end{equation}
+We fit logistic regression (LR) using the supplied OC lag, and separately stack all candidate lags. Giving the lag is privileged information and is stated explicitly. These features aggregate across positions and retain some order; calling all of them ``non-sequential'' would be incorrect. On KIP, all-lag features determine pairwise key precedence when the keys are known, even though small fixed position views are independent of the label.
+
+\textbf{Models and historical training.} The model inventory includes BERT-base \citep{devlin2019}, RoBERTa-large, Llama-3.2-1B, Llama-3.1-8B/70B, Qwen3-4B-Think, Qwen2.5-14B, a randomly initialized Llama-1M, LSTM \citep{hochreiter1997}, a small Transformer \citep{vaswani2017}, and a BiLSTM--Transformer hybrid (RNNTransformer). BiLSTM also appears in the clinical study. XGBoost \citep{chen2016} uses ordinal letter features or mean-pooled Llama embeddings. The full inventory and retained original scores are in Appendix~\ref{app:historical}.
+
+The documented pretrained recipe uses LoRA \citep{hu2022} with rank $8$, alpha $16$, and dropout $0.1$; learning rate $2\times10^{-5}$; batch size $16$; a $200$-token cap; and at most $20$ epochs with validation-loss patience $3$. \ou\ Both BERT and the decoders use LoRA, with different target projections. Decoder classification reads the last non-padding hidden state and sums classification and language-model losses. The small Transformer uses mean pooling; recurrent models use their final state. Small-model training is documented as at most $30$ epochs with validation-F1 patience $5$. \ou\ These procedures do not isolate attention direction, readout, pretraining, or trainable parameter count. Source/manuscript disagreements are retained in Appendix~\ref{app:recipes}, rather than silently resolved into a new historical recipe.
+
+\textbf{Data and verification.} The available OC files contain $400{,}000/50{,}000/50{,}000$ training/validation/test rows; GPC files contain $800{,}000/100{,}000/100{,}000$. \newres\ The original main table lists $400{,}000$ GPC training examples, while some training code also subsamples that dataset. \ou\ We therefore state each reanalysis's actual sample size and leave the main neural runs' exact data usage for archive verification.
+
+The stored deterministic OC test labels disagree with the declared strict rule in $9{,}697/50{,}000$ cases ($19.394\%$). \newres\ Their positive fraction is $0.35828$, whereas the original task table reports $0.293$. \newres\ou\ This discrepancy prevents a mechanism-level interpretation of the historical deterministic results. On noisy OC, the strict rule gives latent prevalence $0.29350$ and the observed flip rate is $0.30084$ (exact $95\%$ interval $[0.29682,0.30488]$). \newres\ Those checks support the stated noisy construction. We do not relabel or overwrite historical experiments. \req{R1}{recover exact generator/run provenance or report corrected runs as new experiments; see Appendix~\ref{app:required}.}
+
+\textbf{Metrics and uncertainty.} AUC is the probability that a positive example receives a higher score than a negative example, with half credit for ties. With latent prevalence $\rho$ and independent flip probability $\pi<1/2$, let $q=\pi+(1-2\pi)\rho$. The true-rule score has population AUC
+\begin{equation}
+\AUC^*=\frac12+\frac{(1-2\pi)\rho(1-\rho)}{2q(1-q)}.
+\label{eq:auc}
+\end{equation}
+At the original stated $(\rho,\pi)=(0.293,0.3)$, it is $0.670394$. \recomp\ A fitted model can slightly exceed the empirical rule score on a finite test set without violating this population reference. F1 is threshold-dependent and the hard-rule F1 is not its maximum.
+
+For recovered continuous predictions we compute paired DeLong AUC intervals/tests \citep{delong1988}, conditional on the fitted model and independent test rows. Six exploratory comparisons receive Holm correction \citep{holm1979}. \newres\ These quantify test uncertainty, not training-seed variation. Reported neural means/standard deviations cannot supply missing paired tests. Application predictions and most original neural runs were unavailable; uncertainty is not reconstructed from rounded tables.
+
+\section{Synthetic results}
+\label{sec:synthetic}
+\subsection{Pair counts predict noisy OC but do not determine its rule}
+Table~\ref{tab:ladder} shows the recomputed feature comparison. On noisy OC, the lag-pair gain over counts is $0.086996$ (paired $95\%$ interval $[0.081412,0.092580]$; Holm-adjusted $p<0.001$). \newres\ The gap between lag LR and the true-rule score is $0.000374$ ($[-0.002634,0.003381]$). \newres\ This is compatible with test variability; it is not an equivalence test or evidence that a neural model uses pairs. Removing the supplied lag is not free: the all-lag L1 fit scores lower on the noisy dataset.
+
+\begin{table}[H]
+\centering\small
+\caption{Recomputed AUCs on stored data. OC test size: $50{,}000$; GPC: $100{,}000$. \newres\ Brackets are marginal $95\%$ DeLong intervals. Count/2-gram fits use the full training files; lag LR uses $200{,}000$ training rows; all-lag LR uses $100{,}000$. \newres\ $\dagger$ The stored deterministic labels disagree with the strict OC rule.}
+\label{tab:ladder}
+\begin{tabular}{@{}lccc@{}}\toprule
+Features & Stored OC-Det.$^\dagger$ & OC-Noisy & GPC \\\midrule
+Count LR \recomp & .8155 & .5839 [.5788, .5889] & .5007 \\
+2-gram \recomp & .8208 & .5846 [.5795, .5896] & .4989 \\
+Lag-7 LR \recomp & .9967 & .6709 [.6660, .6758] & .5024 \\
+All-lag L1 LR \newres & .9973 & .6324 [.6274, .6374] & -- \\
+True-rule score \newres & Not applicable & .6705 [.6665, .6745] & 1.0000 \\
+\bottomrule\end{tabular}
+\end{table}
+
+The counts still fail a direct sufficiency check. Figure~\ref{fig:collision} gives opposite-label sequences with identical full symbol histograms and identical lag-pair histograms. No deterministic function of those histograms can implement the strict OC rule on every input. This statement concerns the representation, not the frequency of such examples or the computation performed by a trained model.
+
+\begin{figure}[H]
+\centering
+\fbox{\begin{minipage}{.95\linewidth}\small
+Let the key order be $A<B<C<D<E<F$, with $Z$ a distractor. The two length-$20$ sequences below use lag $7$. \newres
+\[
+\begin{array}{lll}
+\texttt{ACZZZZZBBZZZZZACZZZZ} & (A,B,A),\ (C,B,C) & Y^*=0\\
+\texttt{ACZZZZZBBZZZZZCAZZZZ} & (A,B,C),\ (C,B,A) & Y^*=1
+\end{array}
+\]
+The middle column lists the maximal key runs. Both inputs have lag-pair counts $AB=BA=BC=CB=1$ and $ZZ=9$; all other pair counts are zero. \newres
+\end{minipage}}
+\caption{An exact diagnostic example. One input contains an ordered maximal run and the other does not, despite identical count and lag-pair features. Symbol names are illustrative rank-preserving relabelings.}
+\label{fig:collision}
+\end{figure}
+
+\req{R2}{evaluate frozen neural models on diverse pairs of this type, with opposite clean labels and identical feature counts. Report within-pair ranking and uncertainty over seeds and template families; estimated 1--4 H200-hours for evaluation.} Failure would refute exact rule recovery on these inputs; successful discrimination would refute a pair-count-only account for those models. Neither result alone identifies their internal algorithm.
+
+On the noisy test set, the hard-rule F1 is $0.578396$, while predicting positive for every example yields $0.591609$. \newres\ Similar F1 values are therefore not evidence that two models learned the same ordering information. We retain AUC and validation-selected threshold metrics separately.
+
+\subsection{Parity failure is specific to a learning procedure}
+The reported main neural runs have near-chance GPC AUCs across the tested neural families, including a single $70$B decoder run. \ou\ The reported binary-parity and curriculum results rule out a universal claim that these architectures cannot learn parity. In the reported length curriculum, LSTM succeeds in all three seeds and Transformer in two of three. \ou\ The exact $95\%$ success-probability intervals from those counts are $[0.292,1]$ and $[0.094,0.992]$, respectively. \newres\ Three runs do not establish reliable success rates or isolate why a run failed.
+
+The hidden subset is learnable with a suitable hypothesis class. Set $z_a=N_a(X)\bmod2$ and let $w_a$ indicate membership in $K$. Equation~\ref{eq:gpc} gives linear equations in $w$ over the binary field. Gaussian elimination on the first $256$ training examples yields rank $25$ and complementary solutions of sizes six and twenty; the supplied subset size selects the six-key solution. \newres\ Validation and test each have zero errors on $100{,}000$ examples and AUC $1$. \newres\ The exact two-sided $95\%$ upper bound on test error is $0.00003689$. \newres
+
+This learner knows the parity family but is not given the key identities. It shows that data-level subset identification is possible, not that a neural optimizer will discover the same computation. The reported membership-revealed multilayer perceptron (MLP) controls likewise change the information supplied to the learner; they cannot uniquely locate a neural bottleneck. \req{R3}{verify the original curriculum archive and compare longer direct/curriculum training at matched optimizer steps, without early stopping; the specified five-seed small-model study is estimated at 30--50 H200-hours.}
+
+\subsection{Full adaptation changes the reported decoder comparison}
+\label{sec:adaptation}
+The additional results report full-backbone fine-tuning on noisy OC, with the input, classification readout, loss, learning rate and schedule otherwise held fixed. Table~\ref{tab:adaptation} retains these values alongside the original LoRA results. The reported improvement contradicts an interpretation of the earlier plateau as an intrinsic inability of causal decoders. It does not show that full fine-tuning is necessary, that a different LoRA configuration could not succeed, or that the successful models recovered the strict rule.
+
+\begin{table}[H]
+\centering\small
+\caption{Reported noisy-OC AUCs; all entries are \ou. Parentheses in the original rows are reported standard deviations. No seed count or interval accompanies the new full-fine-tuning values. Total model size is not the number of updated parameters.}
+\label{tab:adaptation}
+\begin{tabular}{@{}lll@{}}\toprule
+Model & Adaptation & AUC \\\midrule
+BERT-base & Rank-8 LoRA & .669 (.006) \\
+Llama-3.2-1B & Rank-8 LoRA & .587 (.008) \\
+Llama-3.2-1B & Full fine-tuning & .6703 \\
+Llama-3.1-8B & Rank-8 LoRA & .575 (.008) \\
+Llama-3.1-8B & Full fine-tuning & .6684 \\
+Qwen2.5-14B & Rank-8 LoRA; single run & .670 \\
+\bottomrule\end{tabular}
+\end{table}
+
+\req{R4}{recover configurations, exact trainable counts, checkpoints and continuous predictions for the full-fine-tuning runs; verify the stated matching and add seed/test uncertainty before claiming adaptation efficiency. Archive-based re-evaluation is estimated at 0--4 H200-hours; a training rerun needs a measured pilot.} The original objective, readout and tuning differences still prevent an architecture-only comparison. The reported Qwen success changes both scale and family, so it is not a controlled scaling result.
+
+\subsection{Inversion parity adds a positive order-learning case}
+Table~\ref{tab:kip} summarizes the additional KIP results. The construction itself proves count independence. The model controls address the separate question in Table~\ref{tab:comparisons}: whether successful prediction depends on order. Training on shuffled inputs with unchanged original labels tests for a surviving order-invariant route; evaluating a frozen ordered model on shuffled inputs tests its sensitivity to that perturbation. These controls are not interchangeable.
+
+\begin{table}[H]
+\centering\small
+\caption{Reported LSTM results on KIP with four keys; every numerical entry is \ou. Three ordered training seeds are reported. The supplied $\pm$ quantities have not been identified as standard deviations or confidence intervals.}
+\label{tab:kip}
+\begin{tabular}{@{}lll@{}}\toprule
+Training input & Test input & Reported AUC \\\midrule
+Ordered & Ordered & 1.000 in each seed \\
+Shuffled, original labels & Shuffled, original labels & $0.500\pm0.002$ \\
+Ordered, frozen checkpoint & Shuffled, original labels & $0.502\pm0.006$ \\
+\bottomrule\end{tabular}
+\end{table}
+
+The report describes near-chance four-key results for the small Transformer, BERT-LoRA, Llama-1B-LoRA and full-fine-tuned decoder controls; exact per-run values are missing. With six keys, it reports failure of all tested raw-sequence models, including LSTM. \ou\ Increasing the key count changes the inversion computation as well as the independence threshold, so this comparison cannot attribute difficulty to local independence alone. \req{R5}{verify the KIP generator, split hashes, complete run matrix, shuffle transformations and per-seed predictions; estimated 0--4 H200-hours for checkpoint evaluation, with any retraining budget set by a pilot.} The mathematical guarantee is established here; the positive neural demonstration remains conditional on that verification.
+
+\section{Applications: distinguish order from retained content}
+\label{sec:applications}
+\subsection{Clinical diagnosis sequences}
+We retain the original MIMIC-IV cohort \citep{johnson2023} for chronic kidney disease (CKD) and end-stage renal disease (ESRD): $14{,}813$ patients, $1{,}146$ positives and $293$ Clinical Classifications Software (CCS) diagnosis categories. \ou\ Positives contain records before the first ESRD-related admission; negatives contain their available histories. Same-admission CKD/ESRD cases are excluded. Codes are ordered by admission time and, within admissions, by diagnosis sequence number. That within-admission rank is not an event timestamp. Appendix~\ref{app:clinical} gives the unchanged endpoint codes and exclusions.
+
+This is a retrospective diagnosis-sequence audit. The cohort has no common prediction landmark and fixed future horizon, so it does not establish prospective CKD progression performance. Table~\ref{tab:clinical} shows points verified against aggregate training logs. The original rounded values are retained in the supplement. Bag-of-codes LR and the reported unigram scorer also perform well, but use different summary/split evidence and do not resolve the neural order comparison.
+
+\begin{table}[H]
+\centering\small
+\caption{Clinical AUCs verified from aggregate logs \orig. Each condition trains and evaluates a separate model on the same patient split. Differences are arithmetic from those points \newres; no paired patient or training-seed intervals are available. Shuffling before truncation confounds order with retained content.}
+\label{tab:clinical}
+\begin{tabular}{@{}lrrr@{}}\toprule
+Model & Ordered & Shuffled & Difference \\\midrule
+Transformer & .8596 & .8436 & +.0160 \\
+BiLSTM & .8203 & .8227 & -.0024 \\
+BERT & .8258 & .8426 & -.0168 \\
+LSTM & .5000 & .4672 & +.0328 \\
+\bottomrule\end{tabular}
+\end{table}
+
+Two implementation issues limit interpretation. The pipeline shuffles full histories before model-specific truncation, so long ordered/shuffled inputs can contain different codes. The recurrent implementation reads states after padding, which provides an alternative explanation for its failed LSTM result. The observed differences therefore do not establish that diagnosis order is unnecessary.
+
+\req{R6}{retain the same codes before shuffling; correct recurrent length handling; repeat Transformer/LSTM/BiLSTM over five training seeds and three shuffle draws; report average precision and paired patient/seed uncertainty. Estimated 4--12 H200-hours, inside the credentialed environment.} A bounded ``small order effect'' claim requires a prespecified practical margin and a sufficiently narrow interval, not merely a nonsignificant test.
+
+\subsection{Next-song prediction}
+The additional 30Music experiment \citep{turrin2015} compares SASRec \citep{kang2018}, GRU4Rec \citep{hidasi2015}, and simple recommendation baselines. HR@10 is the fraction of targets appearing among the ten highest-ranked candidates. The reported main protocol retains the same final $128$ songs before shuffling. \ou\ ``Last fixed'' preserves the last song; ``recent half fixed'' preserves the later half of the retained history. Table~\ref{tab:music} reports all supplied values.
+
+\begin{table}[H]
+\centering\small
+\caption{Reported 30Music HR@10 under a fixed visible-song multiset. All entries: \ou. The report mentions three training seeds and three shuffle draws, with variation at most $0.005$; this is not a defined uncertainty interval.}
+\label{tab:music}
+\begin{tabular}{@{}lrrrr@{}}\toprule
+Predictor & Ordered & All shuffled & Last fixed & Recent half fixed \\\midrule
+SASRec & .303 & .041 & .255 & .303 \\
+GRU4Rec & .278 & .029 & .099 & .274 \\
+Trigram with bigram fallback & .309 & .019 & .300 & .309 \\
+Bigram & .300 & .019 & .300 & .300 \\
+Item similarity & .065 & .065 & .065 & .065 \\
+Most popular & .003 & .003 & .003 & .003 \\
+\bottomrule\end{tabular}
+\end{table}
+
+The reported pattern differs from the clinical results: removing order substantially lowers prediction, while recent transitions account for much of the useful information. The bigram/trigram scores match or exceed the neural points; this does not demonstrate dependence on a long history. The report also reproduces a separate shuffle-before-truncation protocol at $0.197\to0.020$, against published $0.198\to0.020$. \ou\ Those numbers must not be compared directly with the fixed-content table because the protocols differ.
+
+\req{R7}{recover preprocessing, temporal splits, candidate/negative sampling, training-versus-test shuffle behavior and per-user predictions; verify train/test separation and equal retained songs. Report paired intervals across users, training seeds and shuffle draws. Estimated 0--4 H200-hours for archived-model scoring; retraining requires a pilot.} Until then, the table is an additional reported application, not an independently reproduced validation.
+
+\section{Discussion}
+The OC analysis shows why a strong feature baseline should lead to a model diagnostic. Near-reference AUC is attainable with pair counts, but the same pair counts can correspond to opposite clean labels. Testing neural predictions on those inputs would distinguish a pair-count-only explanation from alternatives. Agreement on ordinary test AUC cannot make that distinction. The diagnostic remains unfinished for the trained networks, and the current evidence establishes insufficiency of the representation rather than the internal computation of a model.
+
+The parity comparisons make a related distinction between information and optimization. A known hypothesis class can make the hidden subset easy to identify, whereas a neural training procedure may not find that computation. Conversely, KIP requires order without giving label information to a few fixed positions. Its all-lag representation can still retain the needed information. These examples show why independence from a restricted observation should not be promoted into a learnability claim about full sequences.
+
+The reported fine-tuning results change the interpretation of the original decoder gap: adaptation choices remain part of the explanation. In applications, a shuffle-related decline also admits more than one interpretation. It demonstrates sensitivity to the perturbation, potentially including distribution shift. Retrained controls and preservation of recent context address different alternatives. Retaining the same events is necessary to separate these effects from a change in available content.
+
+The practical procedure is therefore to state the candidate explanation, specify a comparison that could contradict it, and report the limits of that comparison. A successful predictor, a sufficient representation and a learned algorithm each require their own evidence. This principle is useful beyond the present tasks, while the empirical findings remain limited to the stated datasets, training procedures and available outputs.
+
+\section{Limitations}
+\label{sec:limitations}
+The synthetic rules are deliberately simple and do not approximate natural-language meaning or clinical causation. GPC is an order-invariant control; OC and KIP use different proposal laws. Generalization across hidden sets, ranks and lengths is limited. The deterministic OC provenance discrepancy is unresolved. Most original neural metrics and the new full-fine-tuning, KIP and 30Music findings lack available run archives; their tags cannot be removed without verification. Existing baselines establish representational sufficiency or insufficiency, not internal neural mechanisms. Single large-model runs and small seed counts do not support scale laws or precise success probabilities. The clinical construction and truncation issue prevent prospective or general clinical-order claims. An additional patient-level analysis must remain within credentialed access. These limitations constrain the conclusions even if all reported point estimates are reproduced.
+
+\section{Conclusion}
+Known label rules make sequence prediction auditable: they let us distinguish accurate scores from sufficient features and successful training procedures. OC, hidden-subset parity and inversion parity separate order sensitivity from local information. The resulting controls support specific statements about model behavior while keeping adaptation, data integrity and application protocol part of the explanation.
+\FloatBarrier
+\label{LastMainPage}
+\subsubsection*{Reproducibility statement}
+Definitions and proofs specify the synthetic rules. The feature reanalysis records input hashes, estimator settings, predictions and statistical computations. Appendices provide historical recipes, original results and explicit verification requirements; unverified values are not represented as reproduced. The anonymous repository link is retained: \url{https://anonymous.4open.science/r/anonymous_neurips_seqllm/}. No new training is claimed in this revision. The repository still needs the missing run archives, corrected experiment versions and final figure-generation material before submission.
+
+\subsubsection*{Broader impact and ethics statement}
+MIMIC-IV requires credentialed access, training and a data-use agreement \citep{johnson2023}. The clinical audit uses the original cohort definition and is intended to examine representation-dependent prediction, not to provide a clinical model or patient-care recommendation. Patient-level data, derived code sequences, identifiers and predictions are not released. Only approved aggregate outputs and analysis code may leave the credentialed environment. Misinterpreting predictive scores as evidence of clinically meaningful temporal reasoning could encourage unjustified confidence in a model; the stated limits and fixed-content checks address that risk. The revision's clinical checks used cohort scripts and aggregate logs, without accessing patient records. The synthetic labels are generated by explicit rules; language models do not annotate them.
+
+\subsubsection*{AI assistance disclosure}
+The original work disclosed AI assistance with code debugging, grammar improvement and visualization scripts. During this revision, an AI assistant additionally helped review the manuscript and reviewer responses, inspect code and aggregate results, perform and document reanalyses, check mathematical examples and references, interpret findings, plan controls, draft and restructure the text, and prepare the journal-format revision. These activities extend beyond language editing. No AI-generated empirical result substitutes for an executed experiment; unrecovered results and unrun controls are explicitly marked. The authors remain responsible for reviewing the final text, proofs, references and numerical provenance. \req{R8}{authors confirm and complete this disclosure, including any earlier assistance not recorded here.}
+
+\bibliography{references}
+\bibliographystyle{tmlr}
+\FloatBarrier
+\appendix
+\input{appendix}
+\end{document}

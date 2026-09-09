@@ -1,0 +1,81 @@
+\begin{table}[H]
+\centering\small
+\caption{Historical results: Naive ($\pi=0.0$). Values are transcribed without numerical changes from the supplied manuscript; parentheses are its reported standard deviations. All numerical entries: \ou. Run-level verification remains incomplete.}
+\begin{tabular}{@{}lcccc@{}}\toprule
+Model & AUC & F1 & Precision & Recall \\\midrule
+\textit{Oracle} & 1.000 & 1.000 & 1.000 & 1.000 \\
+$k$-gram & .999 & .999 & .999 & .999 \\
+XGBoost (basic) & .603 (.004) & .714 (.005) & .556 (.004) & .995 (.003) \\
+XGBoost (LLM) & .502 (.004) & .536 (.008) & .501 (.004) & .577 (.010) \\
+BERT & .999 (.001) & .999 (.001) & .999 (.001) & .999 (.001) \\
+RoBERTa & .999 (.001) & .999 (.001) & .999 (.001) & .999 (.001) \\
+Llama-3.2-1B & .999 (.001) & .999 (.001) & .999 (.001) & .999 (.001) \\
+Llama-3.1-8B & .999 (.001) & .999 (.001) & .999 (.001) & .999 (.001) \\
+Llama-1M (cold) & .999 (.001) & .999 (.001) & .999 (.001) & .999 (.001) \\
+Qwen3-4B-Think & .999 (.001) & .999 (.001) & .999 (.001) & .999 (.001) \\
+LSTM & .999 (.001) & .999 (.001) & .999 (.001) & .999 (.001) \\
+Transformer & .999 (.001) & .999 (.001) & .999 (.001) & .999 (.001) \\
+RNNTransformer$^{\dagger}$ & .999 (.001) & .999 (.001) & .999 (.001) & .999 (.001) \\
+\bottomrule\end{tabular}
+\end{table}
+\begin{table}[H]
+\centering\small
+\caption{Historical results: OC-Deterministic ($\pi=0.0$). Values are transcribed without numerical changes from the supplied manuscript; parentheses are its reported standard deviations. All numerical entries: \ou. Run-level verification remains incomplete.}
+\begin{tabular}{@{}lcccc@{}}\toprule
+Model & AUC & F1 & Precision & Recall \\\midrule
+\textit{Oracle} & 1.000 & 1.000 & 1.000 & 1.000 \\
+2-gram & .821 & .672 & .593 & .775 \\
+XGBoost (basic) & .625 (.012) & .457 (.015) & .516 (.010) & .409 (.018) \\
+XGBoost (LLM) & .494 (.010) & .399 (.012) & .353 (.008) & .459 (.015) \\
+BERT & .999 (.001) & .999 (.001) & .999 (.001) & 1.000 (.001) \\
+RoBERTa & .999 (.001) & .999 (.001) & .999 (.001) & 1.000 (.001) \\
+Llama-3.2-1B & .846 (.015) & .695 (.018) & .623 (.020) & .785 (.022) \\
+Llama-3.1-8B & .995 (.003) & .984 (.008) & .976 (.010) & .993 (.007) \\
+Llama-1M (cold) & .832 (.012) & .686 (.015) & .605 (.018) & .791 (.020) \\
+Qwen3-4B-Think & .850 (.014) & .701 (.016) & .620 (.017) & .800 (.020) \\
+LSTM & .999 (.001) & .994 (.003) & .995 (.003) & .994 (.003) \\
+Transformer & .999 (.001) & .992 (.002) & .985 (.005) & 1.000 (.001) \\
+RNNTransformer$^{\dagger}$ & .997 (.002) & .992 (.003) & .985 (.005) & 1.000 (.002) \\
+\bottomrule\end{tabular}
+\end{table}
+\begin{table}[H]
+\centering\small
+\caption{Historical results: OC-Noisy ($\pi=0.3$). Values are transcribed without numerical changes from the supplied manuscript; parentheses are its reported standard deviations. All numerical entries: \ou. Run-level verification remains incomplete.}
+\begin{tabular}{@{}lcccc@{}}\toprule
+Model & AUC & F1 & Precision & Recall \\\midrule
+\textit{Oracle} & .670 & .577 & .700 & .491 \\
+2-gram & .585 & .592 & .420 & 1.000 \\
+XGBoost (basic) & .463 (.010) & .418 (.012) & .437 (.008) & .400 (.015) \\
+XGBoost (LLM) & .418 (.011) & .453 (.014) & .437 (.008) & .470 (.018) \\
+BERT & .669 (.006) & .592 (.004) & .420 (.005) & 1.000 (.002) \\
+RoBERTa & .652 (.008) & .592 (.003) & .420 (.005) & 1.000 (.002) \\
+Llama-3.2-1B & .587 (.008) & .592 (.005) & .420 (.006) & .999 (.005) \\
+Llama-3.1-8B & .575 (.008) & .591 (.005) & .425 (.006) & .968 (.010) \\
+Qwen3-4B-Think & .597 (.007) & .591 (.004) & .423 (.005) & .979 (.008) \\
+Qwen2.5-14B$^{*}$ & .670 (---) & .586 (---) & .476 (---) & .763 (---) \\
+LSTM & .665 (.003) & .562 (.020) & .660 (.002) & .489 (.031) \\
+Transformer & .671 (.001) & .579 (.003) & .701 (.015) & .492 (.012) \\
+RNNTransformer$^{\dagger}$ & .671 (.005) & .578 (.005) & .683 (.010) & .501 (.005) \\
+\bottomrule\end{tabular}
+\end{table}
+\begin{table}[H]
+\centering\small
+\caption{Historical results: GPC-Deterministic ($\pi=0.0$). Values are transcribed without numerical changes from the supplied manuscript; parentheses are its reported standard deviations. All numerical entries: \ou. Run-level verification remains incomplete.}
+\begin{tabular}{@{}lcccc@{}}\toprule
+Model & AUC & F1 & Precision & Recall \\\midrule
+\textit{Oracle} & 1.000 & 1.000 & 1.000 & 1.000 \\
+1-gram & .505 & .668 & .501 & 1.000 \\
+XGBoost (basic) & .495 (.004) & .490 (.005) & .497 (.003) & .484 (.006) \\
+XGBoost (LLM) & .501 (.003) & .639 (.005) & .502 (.002) & .881 (.008) \\
+BERT & .503 (.002) & .668 (.002) & .501 (.002) & 1.000 (.001) \\
+RoBERTa & .501 (.003) & .668 (.002) & .501 (.002) & 1.000 (.001) \\
+Llama-3.2-1B & .497 (.005) & .668 (.001) & .501 (.002) & 1.000 (.001) \\
+Llama-3.1-8B & .500 (.003) & .668 (.002) & .501 (.002) & 1.000 (.001) \\
+Llama-1M (cold) & .503 (.003) & .668 (.002) & .501 (.003) & 1.000 (.001) \\
+Llama-3.1-70B$^{*}$ & .502 (---) & .668 (---) & .501 (---) & 1.000 (---) \\
+Qwen3-4B-Think & .500 (.002) & .668 (.001) & .501 (.000) & 1.000 (.001) \\
+LSTM & .502 (.003) & .668 (.002) & .501 (.002) & 1.000 (.001) \\
+Transformer & .501 (.003) & .668 (.002) & .501 (.002) & 1.000 (.001) \\
+RNNTransformer$^{\dagger}$ & .501 (.002) & .668 (.002) & .501 (.003) & 1.000 (.001) \\
+\bottomrule\end{tabular}
+\end{table}
