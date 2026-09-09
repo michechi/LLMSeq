@@ -1,4 +1,4 @@
-> Historical notes retained for context. For the current TMLR work, start with [the repository guide](../README.md) and [TMLR status](tmlr_status.md). Commands and relative paths below refer to the old layout and are not the current protocol.
+> Historical notes retained for context. For the current TMLR work, start with [the repository guide](../../README.md) and [TMLR status](../tmlr_status.md). Commands and relative paths below refer to the old layout and are not the current protocol.
 
 # ICML 2026 Rebuttal — Experiment Tracker
 

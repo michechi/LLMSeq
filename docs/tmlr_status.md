@@ -18,4 +18,4 @@ The planning budget is **300 H200-hours**, with clinical access available. Archi
 
 The AKI trajectory audit (`src/mimic/aki/`) and cancer work (`mimic_analysis/`) are preserved as separate projects. Their results do not replace the diagnosis-sequence study without a separately defined scientific change.
 
-Older overview, task list and analysis notes are retained as `legacy_*.md` files in this directory. Treat them as historical context; their titles and conclusions are not the current paper's claims.
+Older overview, task list and analysis notes are retained in [`archive/`](archive/). Treat them as historical context; their titles and conclusions are not the current paper's claims.

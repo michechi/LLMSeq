@@ -1,7 +1,7 @@
-> Historical notes retained for context. For the current TMLR work, start with [the repository guide](../README.md) and [TMLR status](tmlr_status.md). Commands and relative paths below refer to the old layout and are not the current protocol.
+> Historical notes retained for context. For the current TMLR work, start with [the repository guide](../../README.md) and [TMLR status](../tmlr_status.md). Commands and relative paths below refer to the old layout and are not the current protocol.
 
 # General Scope
-Thin is my git-hub repository for the paper I recently submitted to ICML26 and where I've got some reviews to it (you can find them in @Rebuttals_ICML26-2.pdf). You can find the paper in @/paper/paper.tex. 
+Thin is my git-hub repository for the paper I recently submitted to ICML26 and where I've got some reviews to it (you can find them in @Rebuttals_ICML26-2.pdf). You can find the paper in @/paper/neurips/paper.tex.
 
 # Models-Data-files
 ## Data

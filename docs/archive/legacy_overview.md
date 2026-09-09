@@ -1,4 +1,4 @@
-> Historical notes retained for context. For the current TMLR work, start with [the repository guide](../README.md) and [TMLR status](tmlr_status.md). Commands and relative paths below refer to the old layout and are not the current protocol.
+> Historical notes retained for context. For the current TMLR work, start with [the repository guide](../../README.md) and [TMLR status](../tmlr_status.md). Commands and relative paths below refer to the old layout and are not the current protocol.
 
 # LLMSeq - Sequential Data and LLMs
 
@@ -105,7 +105,7 @@ An additional config-driven serum-creatinine AKI trajectory audit lives in
 `src/mimic/aki`. It includes audited episode labels, patient-safe splits,
 matched ordered-versus-shuffled controls, tabular baselines, LSTM/Transformer
 models, and three-seed AUC/F1 reporting. See
-[`docs/mimic_aki_audit.md`](docs/mimic_aki_audit.md); its protocol template is
+[`docs/mimic_aki_audit.md`](../mimic_aki_audit.md); its protocol template is
 intentionally incomplete until every scientific choice is supplied.
 
 ### Simulation Data (Synthetic)

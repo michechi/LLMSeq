@@ -2,9 +2,19 @@
 
 Research code for evaluating what sequence-prediction results establish about label rules, input features and trained models. The current writing target is **TMLR**. Historical experiments and the separate AKI and cancer projects remain available.
 
-Start with [TMLR status and remaining work](docs/tmlr_status.md). The draft is a working document: existing result files are evidence to verify, not a claim that every experiment has been reproduced.
+Start with [the manuscript folders](paper/README.md) and [TMLR status and remaining work](docs/tmlr_status.md). The draft is a working document: existing result files are evidence to verify, not a claim that every experiment has been reproduced.
 
-## Where to work
+## Manuscripts
+
+| Version | Main source | Notes |
+|---|---|---|
+| **TMLR** — current writing target | [`paper/tmlr/main.tex`](paper/tmlr/main.tex) | Working draft and supplied style |
+| **NLDL** — preserved | [`paper/NLDL/main.tex`](paper/NLDL/main.tex) | [Open submission items](paper/NLDL/TODO_NLDL.md) |
+| **NeurIPS** — earlier manuscript | [`paper/neurips/paper.tex`](paper/neurips/paper.tex) | [Figures, earlier drafts and missing dependencies](paper/neurips/README.md) |
+
+Earlier general notes are grouped in [`docs/archive/`](docs/archive/); rebuttal and proof PDFs remain in [`docs/review_history/`](docs/review_history/).
+
+## Code and results
 
 | Work | Location |
 |---|---|
@@ -12,11 +22,10 @@ Start with [TMLR status and remaining work](docs/tmlr_status.md). The draft is a
 | Earlier feature and parity analyses | [`repro/src/analysis/mechanism_id/`](repro/src/analysis/mechanism_id/) |
 | Paper experiment implementations | [`repro/src/experiments/`](repro/src/experiments/) |
 | Small retained result tables | [`results/`](results/), [`paper_tables/`](paper_tables/) |
-| TMLR manuscript source | [`paper/tmlr/`](paper/tmlr/) |
 | Clinical diagnosis-sequence study | [`repro/src/mimic/`](repro/src/mimic/) |
 | Separate AKI trajectory project | [`docs/mimic_aki_audit.md`](docs/mimic_aki_audit.md), [`src/mimic/aki/`](src/mimic/aki/) |
 | Separate cancer project | [`mimic_analysis/README_cancer.md`](mimic_analysis/README_cancer.md) |
-| Historical scripts, notebooks and manuscripts | [`src/`](src/), [`simulation/`](simulation/), [`notebooks/`](notebooks/), [`paper/`](paper/) |
+| Historical scripts and notebooks | [`src/`](src/), [`simulation/`](simulation/), [`notebooks/`](notebooks/) |
 
 The top-level `src/` and `repro/src/` implementations differ. They have not been merged or treated as interchangeable. Run TMLR reproduction modules with the launcher below; run the AKI project from the repository root as documented in its guide.
 

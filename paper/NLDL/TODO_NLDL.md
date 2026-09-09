@@ -5,7 +5,7 @@ Nothing in `main.tex` or `references.bib` was fabricated to paper over these.
 
 ## 1. Missing figure assets (blocking for a real submission)
 
-Four PNGs are referenced by `paper/paper.tex` but exist nowhere in the
+Four PNGs are referenced by `paper/neurips/paper.tex` but exist nowhere in the
 repository, in git history, or in the compiled `NeurIPS.pdf`:
 
 | File | Used in | Status |
@@ -16,8 +16,8 @@ repository, in git history, or in the compiled `NeurIPS.pdf`:
 | `Llama.png` | Appendix J (attention) | missing |
 
 They are wired through `\figureorplaceholder`, so the document compiles and
-shows a labelled box in each slot. **Drop the real PNG next to `main.tex`
-(or in `paper/`) and it is picked up automatically — no edit needed.**
+shows a labelled box in each slot. **Drop the real PNG next to `main.tex` and it is picked up automatically.**
+The shared historical PNGs are now in `paper/neurips/figures/`.
 
 `auc_combined_main_1row.png` is normally produced by
 `repro/src/analysis/plot_main_figure.py`, but `results/` currently holds only

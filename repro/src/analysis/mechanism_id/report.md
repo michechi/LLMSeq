@@ -3,7 +3,7 @@
 **Status:** interim (Steps 1–5 complete; Step 6 decision branches drafted).
 **Last updated:** 2026-04-21.
 **Scope:** `data/simulation/tested/{X,y}_{train,val,test}_{6,9,test_just_pair}.csv`
-and the paper draft at `paper/paper_neurips.tex` (abstract + §3–§4, table 1).
+and the paper draft at `paper/neurips/archive/paper_neurips.tex` (abstract + §3–§4, table 1).
 
 ---
 

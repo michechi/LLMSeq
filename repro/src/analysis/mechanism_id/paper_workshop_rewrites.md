@@ -13,8 +13,8 @@ Every number below comes from `analysis/mechanism_id/results/`:
 - parity decomposition → `phase5_parity.csv`
 - oracle audit → `phase6_oracle.csv`
 
-All `REPLACE … WITH …` blocks refer to `paper/paper_neurips.tex` line
-numbers in the current HEAD of `refactor/restructure-repo`.
+All `REPLACE … WITH …` blocks refer to `paper/neurips/archive/paper_neurips.tex` line
+numbers recorded before the September 9, 2026 folder organization; that move preserved the draft's line count.
 
 Recommended target venues (in decreasing fit):
 
