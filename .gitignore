@@ -1,82 +1,112 @@
-# MIMIC-IV data (cannot be shared per PhysioNet agreement)
-data/raw/mimic-iv/
-data/processed/*
-!data/processed/mimic_training/
-!data/processed/mimic_training/*.csv
-!data/processed/mimic_training/*.json
+# Local data: keep documentation and explicit provenance manifests only.
+/data/*
+!/data/README.md
+!/data/manifests/
+!/data/simulation/
+/data/simulation/*
+!/data/simulation/oc_completion/
+/data/simulation/oc_completion/*
+!/data/simulation/oc_completion/dataset_manifest.json
+!/data/simulation/oc_completion/pairs/
+/data/simulation/oc_completion/pairs/*
+!/data/simulation/oc_completion/pairs/pair_generation_report.json
+/repro/data/*
+!/repro/data/README.md
+!/repro/data/mimic/
+/repro/data/mimic/*
+!/repro/data/mimic/README.md
+/mimic_analysis/data/
+clinical_histories.txt
 
-#Attention analysis
-Attention_BERT/
-Attention_Llama/
-
-# Data files
-*.csv
-*.gz
-*.json
-*.pt
-*.joblib
-*.csv.gz
-
-# Allow specific data directories
-!data/simulation/tested/
-!data/simulation/tested/*.csv
-!data/processed/mimic_training/*.csv
-!data/processed/mimic_training/*.json
-!results/sensitivity/*.csv
-
-# Large files
-data/simulation/holes/sequences_with_holes.jsonl
-Miniforge3-*.sh
-
-# Logs and outputs
+# Runtime outputs; small reviewed summary tables have explicit exceptions.
+/results/*
+!/results/README.md
+!/results/matched_completion/
+/results/matched_completion/*
+!/results/matched_completion/*.csv
+!/results/matched_completion/*.tex
+!/results/sensitivity/
+/results/sensitivity/*
+!/results/sensitivity/*.csv
+/repro/results/
+/repro/src/analysis/mechanism_id/results/
+/logs/
+/scripts/slurm/logs/
+/checkpoints/
+/outputs/
+/runs/
+/wandb/
+/src/logs/
+/src/slurm_logs/
+/src/output_slurms_fox/
+/src/results*/
 *.out
 *.err
 *.log
-src/logs/
-src/slurm_logs/
-src/slurm-*.out
-src/output_slurms_fox/
-src/results/
-src/results_rnn_baseline/
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.pkl
+*.pickle
+*.joblib
+*.parquet
+*.arrow
+*.npy
+*.npz
+*.gz
+*.zip
+*.tar
+*.sif
+*.bin
 
-#Let's include mimic logs and sensitivity logs
-!logs/mimic_*.out
-!scripts/slurm/logs/sensitivity_*.out
-!scripts/slurm/logs/sensitivity_*.err
+# Generated figure galleries; figures referenced by paper sources stay tracked.
+/Bert_att_results/
+/Llama_att_results/
+/Attention_BERT/
+/Attention_Llama/
+/*ngrams_diff*.png
+/parity_ngrams_diff.png
+/tricky_deterministic_ngrams_diff.png
+/tricky_random_ngrams_diff.png
+/paper/NeurIPS.pdf
+/paper/NLDL/main.pdf
+/paper/tmlr/main.pdf
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.run.xml
+*.synctex.gz
 
-# Include paper tables
-!paper_tables/*.csv
-
-# Python
+# Python, tools and operating system files.
 __pycache__/
-*.pyc
-*.pyo
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
 .ipynb_checkpoints/
-
-# IDE and environment
 .venv/
-.vscode/
+venv/
 *.egg-info/
 .eggs/
+/cache/
+.cache/
+/repro/cache/
+build/
+dist/
+.vscode/
+.idea/
+.claude/
+.DS_Store
+Thumbs.db
+*.bak
+*.tmp
+*.swp
+Miniforge3-*.sh
 
-# Secrets / credentials
+# Credentials: JSON configurations and manifests are deliberately not ignored.
 .env
 .env.*
 !.env.example
-
-# Notebooks (specific)
-src/preprocessing_no_pyhealth.ipynb
-src/mimiciv_clinical_dataset.csv
-src/landmark_df.csv
-
-# Cache
-cache/
-.cache/
-
-# MIMIC cancer pipeline
-mimic_analysis/data/intermediate/
-mimic_analysis/data/processed/
-mimic_analysis/data/hosp/
-mimic_analysis/data/mimiciv_note/
-mimic_analysis/data/dfci_models/
-*.parquet

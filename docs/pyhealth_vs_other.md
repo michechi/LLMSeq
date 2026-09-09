@@ -1,3 +1,5 @@
+> Historical exploratory workflow. Clinical records and generated clinical text must remain within credentialed storage; references below to external review do not authorize public release.
+
 # Notes on different MIMIC-IV preprocessing approaches
 
 With PyHealth we are making a subset of the whole patients (at least, it seems to be), here instead we prefer to focus more on the data, trying to understand all the info contained.

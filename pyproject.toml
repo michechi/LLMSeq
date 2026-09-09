@@ -15,6 +15,8 @@ dependencies = [
     "pandas>=2.1.0",
     "numpy>=1.24.0",
     "scipy>=1.10.0",
+    "pyarrow>=14.0.0",
+    "PyYAML>=6.0.1",
 
     # LLM/Transformers
     "transformers>=4.47.0",
@@ -57,3 +59,11 @@ ignore = ["E501"]
 [tool.black]
 line-length = 100
 target-version = ["py310"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [".", "src"]
+addopts = "-ra"
+markers = [
+    "slow: integration tests that train optional neural/XGBoost models",
+]

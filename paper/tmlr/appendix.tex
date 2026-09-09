@@ -1,0 +1,136 @@
+\section{Proofs and direct checks}
+\label{app:proofs}
+\subsection{Local information in the maximal-run OC rule}
+For each fixed value $a$ at the first position, let $F_a(x_2,\ldots,x_n)$ be the binary OC label. Independence means that the same distribution of $(X_2,\ldots,X_n)$ is used when comparing $F_a$ and $F_b$. This is all that is meant by coupling the two inputs: we draw the remaining positions once and compare two choices at the first position. Identical coordinate distributions are not required.
+
+Suppose first that $S\ne\mathcal A$. Let $s_{\min}$ be the minimum-rank key and $a_0$ a distractor. Any ordered maximal run under $X_1=a_0$ either remains unchanged under $X_1=s_{\min}$ or starts at $1+\lambda$ and extends to position one. Such an extension is still nondecreasing because its new first rank is the minimum. Thus $F_{s_{\min}}\geq F_{a_0}$ pointwise. On the event that $X_{1+\lambda}\in S$ and every other position after the first is a distractor, the first choice gives an ordered two-key run and the second gives no ordered run. Full support makes this event have positive probability. Consequently the two conditional label probabilities differ.
+
+When $S=\mathcal A$, every residue class modulo $\lambda$ is a maximal run. A run of length one cannot certify the label. Compare the minimum and maximum key at position one. Nondecreasing runs possible under the maximum are also possible under the minimum. The inclusion is strict: assigning the minimum to the rest of the first residue run produces an ordered run only under the minimum, provided distinct ranks exist. Independently, every other residue run of length at least two can be made non-ordered by starting with a maximum and following it with a minimum. Full support gives this joint event positive probability. Other residue runs therefore cannot erase the strict conditional difference. The nonconstant-label assumption excludes the degenerate single-rank case.
+
+For independent label flips, the observed conditional probability is
+\[
+P(Y=1\mid X_1=a)=\pi+(1-2\pi)P(Y^*=1\mid X_1=a).
+\]
+For $\pi<1/2$ this map is strictly increasing, so the observed label also depends on the first position. Under uniform symbols with a proper key set, the witness event yields the original bound
+\[
+P(Y^*=1\mid X_1=s_{\min})-P(Y^*=1\mid X_1=a_0)
+\geq \frac{m}{|\mathcal A|}\left(\frac{|\mathcal A|-m}{|\mathcal A|}\right)^{n-2}.
+\]
+Noise multiplies that difference by $1-2\pi$. This is a lower bound on a conditional probability difference; it is not a guarantee that a selected feature family attains the Bayes score. The result concerns this OC rule and independent full-support inputs, not all order-based tasks or dependent clinical records.
+
+\subsection{Parity and the noise reference}
+The parity of the number of even-count keys equals $(|K|+\sum_{a\in K}N_a)\bmod2$. Converting ``even'' into label one gives the fixed flip in Equation~\ref{eq:gpc}. Under independent uniform symbols, $B_t=\ind\{X_t\in K\}$ are independent Bernoulli($p$), so
+\[
+\mathbb E\!\left[(-1)^{\sum_{t\notin J}B_t}\right]=(1-2p)^{n-|J|}.
+\]
+At $p=1/2$, every nonempty unobserved set has unbiased parity, independently of $X_J$. Away from that balance, the bias is nonzero and the observed parity can change the conditional label distribution. For fixed $J$ and $0<p<1$, its magnitude tends to zero with increasing length. Rearranging positions never changes the full parity. The theorem is therefore about information in a restricted observation, not order sensitivity or impossibility for a learner that sees all positions.
+
+For Equation~\ref{eq:auc}, put $a=P(Y^*=1\mid Y=1)=\rho(1-\pi)/q$ and $b=P(Y^*=1\mid Y=0)=\rho\pi/(1-q)$. The binary true-rule score has AUC $(1+a-b)/2$, giving the stated formula. Its hard-classifier precision, recall and F1 are
+\[
+1-\pi,\qquad \frac{\rho(1-\pi)}{q},\qquad \frac{2\rho(1-\pi)}{\rho+q}.
+\]
+These are properties of that classifier. Optimizing F1 over thresholds can prefer the all-positive classifier, so the hard-rule F1 is not an upper bound.
+
+\subsection{Inversion parity and feature sufficiency}
+Condition on any attainable observation $X_J$ with $|J|\leq m-2$. At least two keys have not been observed. Choose two of those key identities by a fixed rule and exchange their positions in every completion. The operation is its own inverse, preserves the key-position set and all distractors, and is probability-preserving under the uniform key assignment. A transposition reverses permutation parity, so the two labels have equal conditional probability. The same argument, conditional on the full count vector, proves count independence.
+
+For tightness, take $J=\{1,\ldots,m-1\}$ and condition on those positions containing ranks $1,\ldots,m-1$ in order. This event has positive probability. The final key must occur later, so the key order is increasing and the label is fixed. Independence thus fails for at least one view of size $m-1$. With four keys, independence holds through two positions; with six, through four. \newres
+
+An exhaustive illustrative check with four keys, length six and one distractor enumerated $360$ sequences and all $22$ position sets of sizes zero, one or two. Every conditional label distribution was balanced, and the three-position witness fixed the label. \newres\ This checks the finite example, not the unverified training experiments or every possible parameter setting.
+
+There are two useful cautions. First, because each key occurs exactly once, changing its fixed rank map changes the inversion label only by a dataset-wide bit flip: permutation signs multiply. A classifier need not identify the entire hidden ranking. Second, $\sum_d g_{ab}^{(d)}$ records whether key $a$ precedes key $b$, so all-lag counts determine inversion parity when key identities and ranking are supplied. This is a global representation, not a contradiction of independence from a small fixed set of positions. A learned readout on that representation can still fail to find parity.
+
+\section{Recipes, provenance and reanalysis details}
+\label{app:recipes}
+\textbf{Historical pretrained recipe.} The documented Llama/Qwen classifier receives \texttt{Sequential events:} followed by space-separated letters and the sentinel \texttt{Outcome (0 or 1):}; the true label is not appended. The classifier is a $d\to d/2\to2$ head with Tanh and dropout $0.1$, reading the last non-padding hidden state. Its loss is classification cross-entropy plus autoregressive prompt loss with equal weights. LoRA targets q/k/v/o projections; BERT's targets query/key/value projections and uses its sequence-classification head. These are reported settings, not newly inferred historical configurations. \ou
+
+The manuscript specifies AdamW, $6\%$ warmup followed by linear decay, learning rate $2\times10^{-5}$, batch size $16$, token cap $200$, LoRA rank/alpha $8/16$, adapter dropout $0.1$, and loss-based early stopping with patience $3$ and maximum $20$ epochs. \ou\ Some saved sensitivity jobs instead specify BERT batch size $32$ and Llama batch size $64$ with token cap $100$. \orig\ Those logs are not proof of the main table's exact configuration. Total and trainable parameter counts must be recovered separately for every compared adaptation condition (R4).
+
+\begin{table}[H]
+\centering\small
+\caption{Reported small-model settings. All numerical entries: \ou. FFN denotes the Transformer feed-forward width. The two configurations are retained as reported; the missing run manifests prevent mapping every score to its exact configuration.}
+\begin{tabular}{@{}llrrrr@{}}\toprule
+Model & Configuration & Embedding & Hidden/FFN & Layers & Learning rate \\\midrule
+Transformer & Default & 64 & 256 & 2 & $5\times10^{-4}$ \\
+Transformer & Optimized & 64 & 128 & 3 & $5\times10^{-4}$ \\
+LSTM & Default & 32 & 64 & 2 & $10^{-3}$ \\
+LSTM & Optimized & 32 & 128 & 2 & $2\times10^{-3}$ \\
+RNNTransformer & Default & 64 & 64/256 & 1+2 & $5\times10^{-4}$ \\
+RNNTransformer & Optimized & 128 & 32/256 & 1+3 & $10^{-4}$ \\
+\bottomrule\end{tabular}
+\end{table}
+
+The small Transformer uses four attention heads, GELU, learned position embeddings and mean pooling with a padding mask. \ou\ Default small-model dropout is $0.3$; the optimized LSTM uses $0.2$. Batch size is $64$ and the reported schedule permits $30$ epochs, with validation-F1 patience $5$. The randomly initialized Llama-1M has hidden width $128$, four layers, four attention heads, two key/value heads and intermediate width $512$. \ou\ The manuscript calls the optimizer AdamW, while the inspected small-model trainer instantiates Adam. It describes letters indexed from one, while the inspected dataset maps A to zero and the Transformer treats zero as padding. The trainer's shallow best-state dictionary copy also retains references to changing tensors. \newres\ These findings require source-version recovery or clearly labeled corrected runs; they do not quantify the change in any historical score.
+
+\textbf{XGBoost and the feature refits.} The documented main XGBoost settings are depth $6$, minimum child weight $2$, split penalty $0.1$, row/column subsampling $0.8$, L1/L2 regularization $0.5/1.5$, learning rate $0.05$, at most $200$ rounds and validation-log-loss patience $10$. \ou\ The embedding variant uses mean-pooled Llama-1B features. The feature-audit table's earlier ``BoE-XGB'' label instead refers to scikit-learn gradient boosting, with $200$ estimators, depth $4$, subsample $0.8$ and seed $42$. Its reproduced AUCs are $0.815804$, $0.584070$ and $0.502810$ on stored deterministic OC, noisy OC and GPC. \recomp\ This naming correction does not replace the distinct main XGBoost models.
+
+Count and supplied-lag LR use L2 regularization with $C=1$; count features cover the full alphabet. The all-lag L1 fit uses $C=0.5$. \newres\ The original key-count feature list used WDQJXN, whereas the verified noisy OC key order ends in U. Replacing N by U gives noisy key-count AUC $0.583681$, compared with $0.574264$ as coded. \newres\ This correction is separated from the full-alphabet count baseline. The original deterministic generator remains unidentified.
+
+\textbf{Splits, selection and statistical scope.} The original neural experiment description reports training fractions $1\%,10\%,30\%,50\%,75\%,100\%$, generally three seeds, and threshold selection over $0.10,0.11,\ldots,0.89$ to maximize validation F1. It also names seed $9550$ without resolving the full run list. \ou\ Qwen-14B and Llama-70B rows explicitly report single runs. The claimed original hardware is one H100 with $80$GB memory. \ou\ The H200 estimates in the TODOs concern future checks, not the hardware of those historical results.
+
+The reanalysis uses the supplied split files, scikit-learn $1.5.1$, seed $42$ where applicable, DeLong's classwise-placement variance with half credit for ties, and paired differences on identical test rows. \newres\ The six exploratory comparisons are lag versus counts in all three datasets, corrected versus coded key counts in the two OC datasets, and lag versus the true-rule score on noisy OC. \newres\ Their adjusted p-values do not identify neural mechanisms. Main neural learning curves, most per-seed predictions and the exact main run configurations were not recovered. They are not replaced by curves drawn from hardcoded table values. Saved count/$k$-gram/boosting outputs reproduce in all $18$ entries to maximum absolute AUC discrepancy $1.11\times10^{-16}$. \recomp
+
+\section{Historical results retained without numerical changes}
+\label{app:historical}
+The following compact tables preserve the original main performance table, including metrics not emphasized in the revised argument. Asterisks identify the two stated single runs; the dagger identifies the BiLSTM--Transformer hybrid. A printed zero standard deviation or perfect mean is retained as supplied, not promoted to certainty. Reported model sizes are BERT $110$M, RoBERTa $355$M, the named decoder sizes, LSTM $198$K--$340$K, BiLSTM $256$K--$395$K, Transformer $103$K--$104$K, and the hybrid $319$K--$455$K. \ou\ Updated-parameter counts are unavailable. The below-chance noisy-OC XGBoost points require score-orientation and split checks before interpretation; their values are retained, without claiming systematic anti-prediction.
+
+The Naive rule checks whether the full sequence is alphabetically nondecreasing. In the available test file, $1{,}953/40{,}000$ sorted sequences are labeled negative, and the strict-rule score has AUC $0.951224$, rather than one. \newres\ Its historical table therefore serves as an unresolved sanity check. The deterministic OC caveat in Section~\ref{sec:setup} applies to every corresponding historical row. The historical GPC 1-gram AUC $.505$ does not match the supplied scorer's recomputed $.500652$. \ou\recomp\ These discrepancies are preserved explicitly.
+
+\input{tables/historical_full}
+\FloatBarrier
+
+\textbf{Additional historical controls.} The reported binary-parity reference has $7/10$ successful initializations at length ten and none at length twenty; the same failing initializations recur across fixed and streaming data, so those regimes cannot be pooled as independent seeds. \ou\ The original length-curriculum results at the final length, in seed order $0,1,2$, are Transformer $(0.999,0.497,0.999)$, LSTM $(1.000,1.000,1.000)$ and BERT $(0.493,0.502,0.500)$. \ou\ These support the stated success counts, with considerable uncertainty. The sensitivity sweep's recovered logs contain one seed per configuration, not a multi-seed uncertainty estimate. The held-out-rule script uses noiseless ordered-pair existence rather than strict noisy OC and selects an F1 threshold on held-out labels; it does not verify transfer of the rule defined here. Attention plots and few-shot summaries are excluded from the main evidence because their exact run/input provenance is missing. Original table blocks remain unchanged in the editorial evidence archive rather than being reproduced as lengthy, load-bearing appendices.
+
+\section{Application details and additional reported controls}
+\label{app:clinical}
+\textbf{Unchanged clinical cohort.} The source describes MIMIC-IV v3.1, with CKD codes ICD-10 N18.1--N18.5 and ICD-9 585.1--585.5. ESRD-related codes are ICD-10 N18.6, Z99.2, Z49.* and ICD-9 585.6, V45.1, V56.*. \orig\ Positives have a first ESRD-related admission strictly after the first CKD admission, with sequences ending before that ESRD admission. Negatives have CKD without a recorded ESRD-related endpoint. Same-admission cases and records with fewer than ten codes after processing are excluded. \orig\ Because histories are selected differently by outcome and no shared landmark/horizon is fixed, the label should not be described as prospective progression at a common forecast time.
+
+Reported sequence lengths are median $49$, mean $82$ and maximum $2{,}396$, with positive/negative medians $54/49$. The cohort contains $13{,}667$ negatives and positive prevalence $7.7\%$. \ou\ The original neural/bag-of-codes split is $60/20/20$, whereas $k$-gram summaries average five $80/20$ splits. \ou\ The code prepares one shuffled history per patient before truncation; small models cap at $1{,}024$ codes, and BERT truncates to $512$ tokens. \orig\ These differing retained inputs must be checked inside the credentialed environment. The recurrent models do not pack sequences in the inspected implementation, so reading their final hidden state includes padding. The clinical $k$-gram script selects its F1 threshold on test labels, invalidating that threshold-based evaluation, but not its AUC solely for this reason.
+
+\begin{table}[H]
+\centering\small
+\caption{Original clinical summary values retained verbatim. All entries: \ou. These summaries are not matched paired estimates: splits differ as stated above, and the $k$-gram F1 thresholds were selected on test data.}
+\begin{tabular}{@{}lrrl@{}}\toprule
+Model/control & Ordered AUC & Shuffled AUC & Original auxiliary value \\\midrule
+1-gram & $.823\pm.015$ & -- & F1 .356 \\
+2-gram & $.801\pm.016$ & -- & F1 .341 \\
+3-gram & $.576\pm.015$ & -- & F1 .165 \\
+4--7 gram & .479--.500 & -- & F1 .144--.146 \\
+Bag-of-codes LR & .809 & .809 & Difference 0 \\
+Bag-of-codes boosting & .803 & .803 & Difference 0 \\
+Transformer & .860 & .844 & Difference +.016 \\
+BiLSTM & .820 & .823 & Difference -.003 \\
+BERT & .826 & .843 & Difference -.017 \\
+LSTM & .500 & .467 & Failed run \\
+\bottomrule\end{tabular}
+\end{table}
+
+\textbf{Additional KIP details.} The supplied report gives bag-of-letter AUCs $0.498$--$0.509$, $k$-gram AUCs $0.499$--$0.503$, and fixed-lag baseline AUCs at most $0.524$ for the four-key setting. It reports all-lag performance of $1.0$ there, but does not recover the exact fitted readout in the available materials. For six keys, it reports no tested static baseline above $0.503$. \ou\ These finite baseline fits do not imply that the all-lag representation lacks information. Sample sizes, model revisions, training budgets, exact seed identities and the definition of reported variability must be supplied before these numbers can establish a complete comparison. No exact AUC is invented for cells described only as ``at chance.''
+
+\textbf{Additional recommendation details.} The report selects 30Music using the dataset comparison of \citet{klenitskiy2024} and states that it had the strongest shuffle-related degradation among fifteen evaluated datasets. \ou\ The report's relative SASRec and GRU4Rec losses are $86\%$ and $90\%$, respectively; we keep the underlying absolute scores in the main text because uncertainty and denominators matter. \ou\ The candidate universe, sampled-negative protocol, preprocessing filters, user/session boundary handling, target construction, split sizes and whether every perturbed condition retrains the model are not specified sufficiently in the supplied report. The claimed incomplete BERT recommender contributes no result. Recovery of those settings is R7, not a license to assume a standard protocol.
+
+\section{Required verification and optional extensions}
+\label{app:required}
+These items are unfinished work, not additional completed experiments. Costs are planning estimates for one H200, following the author's corrected hardware budget. CPU-only recovery needs no GPU allocation. Future training must use separately named, corrected datasets/configurations; it must not overwrite the original results. The available budget is $300$ H200-hours, with $60$ reserved for overruns. \prov{TODO-REQUIRED}\ Recovering the reported fine-tuning, KIP and recommendation archives takes priority over new training. Rerun costs remain conditional on measured throughput and on which outputs can be recovered.
+
+\textbf{R1: Data and implementation integrity.} \req{R1}{recover main generator versions, split hashes, all seed manifests and checkpoint versions. Independently recompute every deterministic label, the noisy flip mask and split disjointness; repair checkpoint cloning and real-token/padding separation in a new experiment version. Budget 2--6 H200-hours for timing and inference checks, plus CPU audit. Exact agreement validates the task description; unresolved mismatch prevents the affected mechanism claim. If corrected reference training is needed, use Transformer/LSTM/hybrid on the three original tasks over five seeds, with a separately declared fixed schedule (10--16 hours), and BERT on the two OC tasks (38--44 hours).}
+
+\textbf{R2: Model-level feature diagnostics.} \req{R2}{construct 10,000 unique opposite-label OC pairs with identical letter and lag-pair histograms, using multiple key triples/residue templates and non-key fillers. Assert every label and feature equality; reserve templates before looking at neural scores. Evaluate frozen checkpoints without retuning. Estimate within-pair ranking, with half credit for ties, and bootstrap seeds/template families with 10,000 resamples. Budget 1--4 H200-hours. Above-tie performance refutes a pair-count-only account; failures disprove exact rule recovery on the diagnostic inputs.}
+
+\textbf{R3: Scope the parity training result.} \req{R3}{recover original curriculum runs. For the planned corrected comparison, train Transformer/LSTM on raw GPC using five seeds, 100 epochs, no early stopping; compare direct length-20 training with 50 epochs at length ten followed by 50 at twenty, keeping optimizer steps matched and recording the unequal token totals. Tune learning rates $\{10^{-4},3\times10^{-4},10^{-3}\}$ in matched validation-only pilots; use constant-rate Adam, batch size $64$, and no optimizer reset between curriculum stages. Select one rate per architecture from mean final-length validation loss across both schedules, then freeze it for both arms. Use test error at most $0.01$ as the prespecified success endpoint and retain the final-epoch result. Budget 30--50 H200-hours. Any success refutes a blanket failure claim; no success supports only failure within the specified schedule. Show every seed and exact success-rate intervals.}
+
+\textbf{R4: Check adaptation rather than infer architecture.} \req{R4}{recover full-fine-tuning and LoRA configurations, exact trainable parameter counts, model/tokenizer versions, selected checkpoints and per-sequence scores. Check split, prompt, loss, readout, learning-rate and schedule matching, including LM padding masks. Budget 0--4 H200-hours if checkpoints exist. Verified improvement supports adaptation sensitivity; mismatches require a narrower statement. A new full-fine-tuning cost is unknown until throughput/memory are measured. A separate small-Transformer attention-mask/readout factorial, two tasks and five seeds per cell, is estimated at 8--14 hours if an architecture claim is retained.}
+
+\textbf{R5: Verify the positive KIP demonstration.} \req{R5}{recover the complete four-/six-key generator and run matrix, seed IDs, sample counts, exact ranking/label convention, checkpoints and ordered/shuffled predictions. Assert each key occurs once, independence of position assignment, disjoint splits and shuffle preservation of original labels. Recompute every reported AUC and define each variability statistic. Budget 0--4 H200-hours from archived checkpoints. A reproduced LSTM success with both shuffle controls supports order-dependent prediction on this task; failed verification suspends the neural claim, without affecting the mathematical construction. Retraining is unbudgeted pending a pilot.}
+
+\textbf{R6: Repair the clinical comparison.} \req{R6}{inside credentialed access, keep the original patients/split, truncate once to the same retained code list, then shuffle; repair packed recurrent states. Use Transformer/LSTM/BiLSTM, five training seeds and three fixed shuffle draws, with paired initialization/minibatch order and validation-only model/threshold selection. Report AUC, average precision and paired bootstrap intervals over patients, seeds and draws, keeping predictions within the secure environment. Budget 4--12 H200-hours. A proposed practical AUC margin of 0.01 must be fixed before new results; only intervals contained within that margin support bounded small effects. Wide intervals or positive material effects refute the proposed conclusion or leave it unresolved.}
+
+\textbf{R7: Verify the recommendation protocol.} \req{R7}{recover the six table rows' predictions and code, candidate sets, negative sampling, split/preprocessing parameters, training-versus-test shuffle behavior and exact seed/draw pairing. Check fixed visible items before comparing perturbations, and group bootstrap resampling at user level with shared predictions across conditions. Budget 0--4 H200-hours from archived models. Reproducing the fixed-content drop supports use of order under that protocol; recent-context controls test whether long histories are needed. No training cost is assumed without the model/configuration archive.}
+
+\textbf{R8: Final reporting.} \req{R8}{complete missing run-level statistics, source/version manifests and the author-reviewed AI disclosure; regenerate all new tables from predictions, preserve failures and explain discrepancies. Use Holm correction for prespecified superiority families. Report uncertainty over seeds separately from conditional test uncertainty; five independent paired seeds cannot give a two-sided exact sign-test p-value below 0.0625. Budget 1--4 H200-hours for final scoring, otherwise CPU work. Successful deterministic regeneration verifies displayed numbers; unresolved missing data remain flagged rather than replaced by plausible estimates.}
+
+\opt{O1}{add five confirmation seeds to the four direct/curriculum model cells, with the selected schedules unchanged, if measured savings remain; estimated 25--40 H200-hours. This improves success-rate precision but does not establish a universal learnability claim.}
+
+\opt{O2}{repeat the rule audit across five independently selected key rules with LSTM/Transformer and three seeds, preserving the original parameters; estimated 10--20 H200-hours. This tests breadth across rules rather than zero-shot identification of an unseen label map.}
+
+\opt{O3}{complete the missing two Llama-1B objective/readout cells, five seeds and matched validation tuning, if component attribution is needed; estimated 75--90 H200-hours. A gain in a combined recipe cannot otherwise be assigned to its objective or readout separately.}
