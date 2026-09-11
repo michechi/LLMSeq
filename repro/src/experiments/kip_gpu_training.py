@@ -407,7 +407,15 @@ def llm_args(args, csv_dir: Path) -> argparse.Namespace:
     """
     default_names = {"Llama1B": "meta-llama/Llama-3.2-1B",
                      "Llama8B": "meta-llama/Llama-3.1-8B",
-                     "Qwen32B": "Qwen/Qwen3-32B"}
+                     "Qwen32B": "Qwen/Qwen3-32B",
+                     # Qwen3.8-27B (2026-08) is a multimodal repo whose config
+                     # AutoModelForCausalLM maps to the TEXT-ONLY
+                     # Qwen3_5ForCausalLM backbone (verified transformers
+                     # 5.14.1; needs >= 5.8 -- the FOX 2024a stack's 4.55.4
+                     # cannot load it). Hybrid linear/full attention: the
+                     # q/k/v/o LoRA targets exist on the full-attention
+                     # layers only (every 4th of 64) -- recorded deviation.
+                     "Qwen27B": "Qwen/Qwen3.8-27B"}
     model_name = args.llm_model_name or default_names[args.model]
     argv = [
         "--number_to_use", args.tag,
@@ -556,7 +564,7 @@ def parse_args(args: Iterable[str] | None = None) -> argparse.Namespace:
     p = argparse.ArgumentParser(description="KIP GPU training driver (one run)")
     p.add_argument("--model", required=True,
                    choices=list(DL_MODELS) + ["BERT", "Llama1B", "Llama8B",
-                                              "Qwen32B"])
+                                              "Qwen32B", "Qwen27B"])
     p.add_argument("--tag", required=True, choices=["kip_m4", "kip_m6"])
     p.add_argument("--mode", required=True, choices=list(MODES))
     p.add_argument("--seed", type=int, required=True)
@@ -631,7 +639,7 @@ def main(argv: Iterable[str] | None = None) -> int:
 
     if args.model == "BERT":
         run_fn = run_bert
-    elif args.model in ("Llama1B", "Llama8B", "Qwen32B"):
+    elif args.model in ("Llama1B", "Llama8B", "Qwen32B", "Qwen27B"):
         run_fn = run_llm
     else:
         run_fn = run_dl

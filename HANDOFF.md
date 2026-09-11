@@ -144,9 +144,12 @@ GPU mid-round, so everything else moved to FOX as six new arrays
   seeds 9551/9552, m6 100%/30% ×3 seeds.
 - `kip_p_llama8b_fullft.slurm` — OPT-IN Llama8B full-FT triplets, both tags
   (July's kip_i 8B task never landed a row).
-- `kip_r_qwen32b_qlora.slurm` — Qwen3-32B QLoRA (4-bit NF4 + LoRA, the
-  paper big-decoder recipe via new driver flag `--llm_quant` + model
-  `Qwen32B`), ordered, both tags ×3 seeds; ungated, no HF token.
+- `kip_r_qwen27b_qlora.slurm` — Qwen3.8-27B QLoRA (4-bit NF4 + LoRA, the
+  paper big-decoder recipe via driver flag `--llm_quant` + model `Qwen27B`
+  -> Qwen/Qwen3.8-27B), ordered, both tags ×3 seeds; ungated, no HF token.
+  Multimodal repo loaded text-only via AutoModelForCausalLM; hybrid
+  linear/full attention so LoRA lands on the 16 full-attention layers
+  (recorded); needs transformers>=5.8 — job pins 5.14.1 user-site.
 - `kip_q_xgb_llm.slurm` — XGBoost llm-embedding encoding (Llama-3.1-8B),
   both tags ×3 seeds. NEEDS the 2026-09-11 XGBoost_fraction_experiment.py
   fixes (seed-keyed subset cache; explicit val/test set_type — the old
