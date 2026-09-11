@@ -279,10 +279,13 @@ tolerates it either way).
 ## 9. COMPLETION ROUND (2026-09-11) — kip_k … kip_q
 
 Everything still missing after the July FOX round and the September local
-A100 round, packaged as six new arrays. Each array task takes ONE H200;
-SLURM runs tasks concurrently across GPUs — that is the multi-GPU speedup
-(training itself stays single-GPU for recipe fidelity with the paper
-scripts; DDP would change the effective batch recipe).
+A100 round, packaged as six new job files. **Every job requests TWO H200s**
+(the site working set: 8-GPU nodes, 2 GPUs per process) and runs TWO grid
+cells concurrently inside the job, one per GPU via CUDA_VISIBLE_DEVICES —
+each training run itself stays single-GPU for recipe fidelity with the
+paper scripts (DDP would change the effective batch recipe). A job fails
+(nonzero exit) if EITHER of its cells fails; per-cell driver logs are
+logs/..._cell<N>.log (kip_q: logs/..._<tag>_<seed>.log).
 
 Prerequisite: `git pull` on branch `Rebuttals_NeurIPS` (this round's slurm
 files + a pandas-3.0 compat fix in `DL_TR_baselines_experiment.py` + the
@@ -295,13 +298,17 @@ Submit order (from `scripts/slurm/FOX/kip`, `mkdir -p logs` once;
 `export HF_TOKEN=...` covers every Llama task):
 
 ```bash
-sbatch kip_k_controls_b.slurm          # 9 tasks  — BERT + Llama1B shuffled-train gaps
-JL=$(sbatch --parsable kip_l_ordered_9550.slurm)   # 2 tasks — FOX seed-9550 ordered (BERT@512, Llama1B LoRA)
-sbatch --dependency=afterok:$JL kip_m_controls_c.slurm  # 12 tasks — full shuffled-eval grid
-sbatch kip_n_llama1b_fullft.slurm      # 10 tasks — Llama1B full-FT: m4 completion + m6 both fractions
-sbatch kip_p_llama8b_fullft.slurm      # 6 tasks  — OPT-IN: Llama8B full-FT triplets (~30–50 GPU-h)
-sbatch kip_q_xgb_llm.slurm             # 2 tasks  — XGBoost llm-embedding encoding (per-tag, seeds sequential inside)
+sbatch kip_k_controls_b.slurm          # 9 cells / 5 tasks — BERT + Llama1B shuffled-train gaps
+JL=$(sbatch --parsable kip_l_ordered_9550.slurm)   # 2 cells / 1 job — FOX seed-9550 ordered (BERT@512, Llama1B LoRA)
+sbatch --dependency=afterok:$JL kip_m_controls_c.slurm  # 12 cells / 6 tasks — full shuffled-eval grid
+sbatch kip_n_llama1b_fullft.slurm      # 10 cells / 5 tasks — Llama1B full-FT: m4 completion + m6 both fractions
+sbatch kip_p_llama8b_fullft.slurm      # 6 cells / 3 tasks — OPT-IN: Llama8B full-FT triplets (~30–50 GPU-h)
+sbatch kip_q_xgb_llm.slurm             # 2 tags / 1 job — XGBoost llm-embedding encoding (tags in parallel, seeds sequential)
 ```
+
+(If kip_l fails, the pending kip_m goes DependencyNeverSatisfied — scancel
+it and resubmit without the dependency; the 10 July-checkpoint cells run
+regardless, only the two 9550-m4 evals then fail fast.)
 
 Expected outcomes: every cell at chance (the LSTM-only-at-m4 story is
 already closed); rows land in `results/kip_training.csv` (k, l, m),
