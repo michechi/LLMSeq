@@ -304,6 +304,7 @@ sbatch --dependency=afterok:$JL kip_m_controls_c.slurm  # 12 cells / 6 tasks —
 sbatch kip_n_llama1b_fullft.slurm      # 10 cells / 5 tasks — Llama1B full-FT: m4 completion + m6 both fractions
 sbatch kip_p_llama8b_fullft.slurm      # 6 cells / 3 tasks — OPT-IN: Llama8B full-FT triplets (~30–50 GPU-h)
 sbatch kip_q_xgb_llm.slurm             # 2 tags / 1 job — XGBoost llm-embedding encoding (tags in parallel, seeds sequential)
+sbatch kip_r_qwen32b_qlora.slurm       # 6 cells / 3 tasks — Qwen3-32B QLoRA (4-bit NF4, paper big-decoder recipe; ungated, no token; controls later via KIP_MODE=)
 ```
 
 (If kip_l fails, the pending kip_m goes DependencyNeverSatisfied — scancel

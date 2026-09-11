@@ -406,7 +406,8 @@ def llm_args(args, csv_dir: Path) -> argparse.Namespace:
     does. It is never placed in argv, logs, results rows, or checkpoints.
     """
     default_names = {"Llama1B": "meta-llama/Llama-3.2-1B",
-                     "Llama8B": "meta-llama/Llama-3.1-8B"}
+                     "Llama8B": "meta-llama/Llama-3.1-8B",
+                     "Qwen32B": "Qwen/Qwen3-32B"}
     model_name = args.llm_model_name or default_names[args.model]
     argv = [
         "--number_to_use", args.tag,
@@ -422,6 +423,8 @@ def llm_args(args, csv_dir: Path) -> argparse.Namespace:
     ]
     if not args.llm_full_ft:
         argv.append("--peft")
+    if args.llm_quant:
+        argv.append("--use_quantization")
     largs = lfx.parse_args(argv)
     if args.smoke:
         largs.epochs = 1
@@ -436,7 +439,9 @@ def run_llm(args) -> dict:
     csv_dir = data_dir_for(args.mode, args)
     largs = llm_args(args, csv_dir)
     ft_desc = ("FULL fine-tuning (no LoRA)" if args.llm_full_ft
-               else "LoRA(r=8,a=16,qkvo,drop=.1,CAUSAL_LM)")
+               else ("QLoRA(4bit-nf4-dq,r=8,a=16,qkvo,drop=.1,CAUSAL_LM)"
+                     if args.llm_quant
+                     else "LoRA(r=8,a=16,qkvo,drop=.1,CAUSAL_LM)"))
     recipe = (f"LLM_fraction_experiment: {largs.model_name} {ft_desc} "
               f"AdamW lr={largs.lr} bs={largs.batch_size} "
               f"max_len={largs.max_length} fraction={args.llm_fraction} "
@@ -550,7 +555,8 @@ def run_llm(args) -> dict:
 def parse_args(args: Iterable[str] | None = None) -> argparse.Namespace:
     p = argparse.ArgumentParser(description="KIP GPU training driver (one run)")
     p.add_argument("--model", required=True,
-                   choices=list(DL_MODELS) + ["BERT", "Llama1B", "Llama8B"])
+                   choices=list(DL_MODELS) + ["BERT", "Llama1B", "Llama8B",
+                                              "Qwen32B"])
     p.add_argument("--tag", required=True, choices=["kip_m4", "kip_m6"])
     p.add_argument("--mode", required=True, choices=list(MODES))
     p.add_argument("--seed", type=int, required=True)
@@ -576,6 +582,10 @@ def parse_args(args: Iterable[str] | None = None) -> argparse.Namespace:
                         "values are a recorded deviation.")
     p.add_argument("--llm_batch_size", type=int, default=8,
                    help="Decoder batch size. 8 = script default.")
+    p.add_argument("--llm_quant", action="store_true",
+                   help="4-bit NF4 QLoRA via LLM_fraction_experiment's "
+                        "--use_quantization (the paper's big-decoder recipe; "
+                        "combine with the default LoRA, not --llm_full_ft).")
     p.add_argument("--bert_max_length", type=int, default=512,
                    help="BERT tokenizer pad/truncate length. 512 = paper appendix; "
                         "smaller values are a recorded deviation (see bert_args).")
@@ -621,7 +631,7 @@ def main(argv: Iterable[str] | None = None) -> int:
 
     if args.model == "BERT":
         run_fn = run_bert
-    elif args.model in ("Llama1B", "Llama8B"):
+    elif args.model in ("Llama1B", "Llama8B", "Qwen32B"):
         run_fn = run_llm
     else:
         run_fn = run_dl
