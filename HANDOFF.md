@@ -124,6 +124,37 @@ instruction 2026-07-26). An equivalent Olivia package exists at
    credentials (gated model); token read from env or cached login, never
    logged.
 
+## Completion round (2026-09-11) — kip_k … kip_q
+
+Status by then: items 1–5 and 7–8 above DONE (July, FOX + local); verified
+per-seed ledger at results/kip_training{,_p5,_fullft}.csv. September local
+A100 additions: LSTM m6 @30% data triplet (chance), BERT m4 shuffled-train
+seed 9551 (chance), and the paper-XGBoost grid on raw encodings —
+results/kip_xgb/, 216 cells, ALL at chance. A node swap removed the local
+GPU mid-round, so everything else moved to FOX as six new arrays
+(RUNBOOK.md §9, submit order + dependency there):
+
+- `kip_k_controls_b.slurm` — remaining mode-(b) cells: BERT m4 9552,
+  m6 9551/9552; Llama1B LoRA both tags ×3 seeds.
+- `kip_l_ordered_9550.slurm` — FOX re-runs of BERT m4 9550 @512 and Llama1B
+  LoRA m4 9550 (same-site ckpts for mode (c) + cross-site replicates).
+- `kip_m_controls_c.slurm` — full mode-(c) grid, BERT + Llama1B, both tags,
+  3 seeds (depends on kip_l for the two 9550-m4 cells).
+- `kip_n_llama1b_fullft.slurm` — Llama1B full-FT completion: m4 100%/30%
+  seeds 9551/9552, m6 100%/30% ×3 seeds.
+- `kip_p_llama8b_fullft.slurm` — OPT-IN Llama8B full-FT triplets, both tags
+  (July's kip_i 8B task never landed a row).
+- `kip_q_xgb_llm.slurm` — XGBoost llm-embedding encoding (Llama-3.1-8B),
+  both tags ×3 seeds. NEEDS the 2026-09-11 XGBoost_fraction_experiment.py
+  fixes (seed-keyed subset cache; explicit val/test set_type — the old
+  length heuristic silently evaluated "test" on VAL embeddings whenever
+  both splits are <100K rows, which also puts the paper's original tag-9
+  llm-encoding numbers in doubt — re-check them).
+
+Code fixes riding with this round: pandas-3.0 Arrow-indexing compat in
+DL_TR_baselines_experiment.subsample_training_data (identical seeded
+split); the two XGBoost embedding-cache fixes above.
+
 Separate rebuttal arm (NOT KIP): the RecSys audit grid — full spec in the
 "RECSYS AUDIT" section at the end of this file.
 

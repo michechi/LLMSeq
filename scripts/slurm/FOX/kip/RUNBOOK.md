@@ -273,3 +273,45 @@ tolerates it either way).
   task's `.out` log tail.
 - **Fresh Claude session on FOX needs context**: read `/HANDOFF.md`,
   `repro/src/analysis/mechanism_id/kip_report.md`, then this file.
+
+---
+
+## 9. COMPLETION ROUND (2026-09-11) — kip_k … kip_q
+
+Everything still missing after the July FOX round and the September local
+A100 round, packaged as six new arrays. Each array task takes ONE H200;
+SLURM runs tasks concurrently across GPUs — that is the multi-GPU speedup
+(training itself stays single-GPU for recipe fidelity with the paper
+scripts; DDP would change the effective batch recipe).
+
+Prerequisite: `git pull` on branch `Rebuttals_NeurIPS` (this round's slurm
+files + a pandas-3.0 compat fix in `DL_TR_baselines_experiment.py` + the
+embedding-cache fixes in `XGBoost_fraction_experiment.py` that kip_q needs).
+Data and module setup are unchanged (sections 1–4). The July checkpoints
+under `$REPO_ROOT/checkpoints/kip/` are load-bearing for kip_m — do not
+clean them.
+
+Submit order (from `scripts/slurm/FOX/kip`, `mkdir -p logs` once;
+`export HF_TOKEN=...` covers every Llama task):
+
+```bash
+sbatch kip_k_controls_b.slurm          # 9 tasks  — BERT + Llama1B shuffled-train gaps
+JL=$(sbatch --parsable kip_l_ordered_9550.slurm)   # 2 tasks — FOX seed-9550 ordered (BERT@512, Llama1B LoRA)
+sbatch --dependency=afterok:$JL kip_m_controls_c.slurm  # 12 tasks — full shuffled-eval grid
+sbatch kip_n_llama1b_fullft.slurm      # 10 tasks — Llama1B full-FT: m4 completion + m6 both fractions
+sbatch kip_p_llama8b_fullft.slurm      # 6 tasks  — OPT-IN: Llama8B full-FT triplets (~30–50 GPU-h)
+sbatch kip_q_xgb_llm.slurm             # 2 tasks  — XGBoost llm-embedding encoding (per-tag, seeds sequential inside)
+```
+
+Expected outcomes: every cell at chance (the LSTM-only-at-m4 story is
+already closed); rows land in `results/kip_training.csv` (k, l, m),
+`results/kip_training_fullft.csv` (n, p) and
+`results/kip_xgb/<tag>_ordered_llm_<seed>/` (q). Commit back per section 8, additionally running
+`git add results/kip_training_fullft.csv results/kip_xgb` (section 8 alone misses both).
+
+kip_q note: embeddings (~40 GB/tag) go to `$SCRATCH`, never the repo. The
+val/test embedding-cache collision fixed on 2026-09-11 affects ANY dataset
+whose val and test splits are both < 100K rows — if the paper's original
+llm-encoding XGBoost numbers (tag 9, 50K/50K) were produced with the old
+script, the test-set numbers actually evaluated val embeddings and should
+be re-checked.

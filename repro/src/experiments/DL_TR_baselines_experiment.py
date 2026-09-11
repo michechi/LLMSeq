@@ -770,6 +770,12 @@ def subsample_training_data(sequences, labels, fraction, seed):
     if fraction >= 1.0:
         return sequences, labels
 
+    # pandas>=3.0 backs string columns with Arrow arrays, which sklearn's
+    # fancy indexing inside train_test_split cannot take; plain numpy carries
+    # the same values and yields the identical seeded split.
+    sequences = np.asarray(sequences)
+    labels = np.asarray(labels)
+
     X_subset, _, y_subset, _ = train_test_split(
         sequences, labels,
         train_size=fraction,
