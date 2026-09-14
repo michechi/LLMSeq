@@ -398,7 +398,8 @@ def subsample_training_data(X_train, y_train, fraction, seed):
 
 def get_llm_embeddings_for_fraction(
     X_input, fraction, dataset_id, model_name, batch_size,
-    max_length, device, cache_dir, embedding_dir, is_subset=True
+    max_length, device, cache_dir, embedding_dir, is_subset=True,
+    set_type=None, seed=None
 ):
     """
     Generate or load LLM embeddings for a dataset/fraction.
@@ -435,10 +436,20 @@ def get_llm_embeddings_for_fraction(
     safe_model_name = model_name.replace("/", "_")
     if is_subset:
         fraction_str = f"{fraction:.2f}".replace(".", "")  # 0.01 -> "001"
-        embedding_path = f"{embedding_dir}X_train_{dataset_id}_llama_{fraction_str}_embeddings.npy"
+        # Subsets at fraction < 1.0 are seed-dependent (train_test_split with
+        # random_state=seed), so the cache must be keyed by seed or concurrent
+        # seeds silently reuse each other's differently-sampled subsets. At
+        # fraction >= 1.0 the "subset" is the full split, shareable across seeds.
+        seed_str = f"_s{seed}" if (seed is not None and fraction < 1.0) else ""
+        embedding_path = f"{embedding_dir}X_train_{dataset_id}_llama_{fraction_str}{seed_str}_embeddings.npy"
     else:
-        # For val/test, we don't include fraction
-        set_type = "val" if len(X_input) < 100000 else "test"
+        # For val/test, we don't include fraction. The old length heuristic
+        # ("val" iff len < 100000) collides val and test whenever BOTH splits
+        # are under 100K rows (e.g. 50K/50K): the test call would find the val
+        # cache on disk and silently evaluate on val embeddings. Callers must
+        # pass set_type explicitly; the heuristic remains only as a fallback.
+        if set_type is None:
+            set_type = "val" if len(X_input) < 100000 else "test"
         embedding_path = f"{embedding_dir}X_{set_type}_{dataset_id}_llama_embeddings.npy"
 
     # Check if embeddings already exist
@@ -619,17 +630,20 @@ def run_experiment(args):
                     X_train_encoded = get_llm_embeddings_for_fraction(
                         X_train_subset, fraction, args.csv_to_use,
                         args.model_name, args.batch_size, args.max_length,
-                        device, args.cache_dir, args.embedding_dir, is_subset=True
+                        device, args.cache_dir, args.embedding_dir, is_subset=True,
+                        seed=args.seed
                     )
                     X_val_encoded = get_llm_embeddings_for_fraction(
                         X_val, fraction, args.csv_to_use,
                         args.model_name, args.batch_size, args.max_length,
-                        device, args.cache_dir, args.embedding_dir, is_subset=False
+                        device, args.cache_dir, args.embedding_dir, is_subset=False,
+                        set_type="val"
                     )
                     X_test_encoded = get_llm_embeddings_for_fraction(
                         X_test, fraction, args.csv_to_use,
                         args.model_name, args.batch_size, args.max_length,
-                        device, args.cache_dir, args.embedding_dir, is_subset=False
+                        device, args.cache_dir, args.embedding_dir, is_subset=False,
+                        set_type="test"
                     )
 
                 elif encoding_method == 'categorical':

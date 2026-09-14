@@ -30,4 +30,9 @@ DATASET_TAGS = {
     "tricky_rnd": "9",
     "parity": "test_just_pair",
     "naive": "alph",
+    # KIP (Key-Inversion Parity), src/generators/kip.py. Unlike the tasks above,
+    # the hidden (S, kappa) is sampled per dataset and stored in
+    # <TAG>_rule.json next to the CSVs -- load it, never hardcode it.
+    "kip_m4": "kip_m4",
+    "kip_m6": "kip_m6",
 }

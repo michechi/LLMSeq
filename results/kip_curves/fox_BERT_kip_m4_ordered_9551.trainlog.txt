@@ -1,0 +1,61 @@
+Starting job 4012532 on gpu-17 on Fox at Sun Jul 26 11:57:43 CEST 2026
+
+=== JOB CONFIGURATION ===
+Job: 4012532 / Array task: 0
+Node: gpu-17.fox
+Config: model=BERT tag=kip_m4 mode=ordered seed=9551 bert_max_length=512
+2026-07-26 11:58:37,430: arg bert_max_length = 512
+2026-07-26 11:58:37,430: arg checkpoint_root = /fp/homes01/u01/ec-michelec/MIMICIV/checkpoints/kip
+2026-07-26 11:58:37,430: arg dl_patience = 3
+2026-07-26 11:58:37,430: arg llm_batch_size = 8
+2026-07-26 11:58:37,430: arg llm_max_length = 512
+2026-07-26 11:58:37,430: arg llm_model_name = meta-llama/Llama-3.2-1B
+2026-07-26 11:58:37,430: arg mode = ordered
+2026-07-26 11:58:37,430: arg model = BERT
+2026-07-26 11:58:37,430: arg ordered_csv = /fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/tested
+2026-07-26 11:58:37,430: arg results_csv = /fp/homes01/u01/ec-michelec/MIMICIV/results/kip_training.csv
+2026-07-26 11:58:37,430: arg seed = 9551
+2026-07-26 11:58:37,430: arg shuffled_csv = /fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/kip_shuffled
+2026-07-26 11:58:37,430: arg site = fox
+2026-07-26 11:58:37,430: arg smoke = False
+2026-07-26 11:58:37,430: arg tag = kip_m4
+2026-07-26 11:58:37,936: device: cuda
+2026-07-26 11:58:37,937: Argument batch_size: 16
+2026-07-26 11:58:37,937: Argument cache_dir: '/localscratch/4012532/hf_cache'
+2026-07-26 11:58:37,937: Argument cold_start: False
+2026-07-26 11:58:37,937: Argument early: 'loss'
+2026-07-26 11:58:37,937: Argument epochs: 20
+2026-07-26 11:58:37,937: Argument fractions: '1.0'
+2026-07-26 11:58:37,937: Argument gradient_accumulation_steps: 1
+2026-07-26 11:58:37,937: Argument lr: 2e-05
+2026-07-26 11:58:37,937: Argument max_length: 512
+2026-07-26 11:58:37,937: Argument model_name: 'bert-base-uncased'
+2026-07-26 11:58:37,937: Argument number_to_use: 'kip_m4'
+2026-07-26 11:58:37,937: Argument output_dir: '/fp/homes01/u01/ec-michelec/MIMICIV/results/kip_bert_raw'
+2026-07-26 11:58:37,937: Argument path_csv: '/fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/tested/'
+2026-07-26 11:58:37,937: Argument patience: 3
+2026-07-26 11:58:37,937: Argument peft: True
+2026-07-26 11:58:37,937: Argument seed: 9551
+2026-07-26 11:58:37,937: Argument tiny: False
+2026-07-26 11:58:37,937: Argument tiny_type: '1M'
+2026-07-26 11:58:37,937: recipe: BERT_fraction_experiment defaults + --peft: bert-base-uncased LoRA(r=8,a=16,qkv,drop=.1) AdamW lr=2e-05 bs=16 max_len=512 epochs<=20 patience=3 early=loss warmup=6%
+2026-07-26 11:58:41,208: Loading pre-trained BERT model (WARM START)
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at bert-base-uncased and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+trainable params: 443,906 || all params: 109,927,684 || trainable%: 0.4038
+2026-07-26 11:58:44,825: Model parameters: 109,927,684
+2026-07-26 12:20:18,775: Epoch 1/20 | Train Loss: 0.6953 | Val Loss: 0.6932 | Val AUC: 0.4995 | Val F1: 0.0000
+2026-07-26 12:20:18,837: New best model (AUC: 0.4995)
+2026-07-26 12:41:51,991: Epoch 2/20 | Train Loss: 0.6938 | Val Loss: 0.6936 | Val AUC: 0.4971 | Val F1: 0.6651
+2026-07-26 13:03:25,472: Epoch 3/20 | Train Loss: 0.6936 | Val Loss: 0.6931 | Val AUC: 0.4979 | Val F1: 0.0002
+2026-07-26 13:03:25,532: New best model (AUC: 0.4979)
+2026-07-26 13:24:58,782: Epoch 4/20 | Train Loss: 0.6936 | Val Loss: 0.6931 | Val AUC: 0.4981 | Val F1: 0.0204
+2026-07-26 13:24:58,821: New best model (AUC: 0.4981)
+2026-07-26 13:46:32,342: Epoch 5/20 | Train Loss: 0.6935 | Val Loss: 0.6934 | Val AUC: 0.4988 | Val F1: 0.0000
+2026-07-26 14:08:04,922: Epoch 6/20 | Train Loss: 0.6934 | Val Loss: 0.6941 | Val AUC: 0.4945 | Val F1: 0.6651
+2026-07-26 14:29:32,882: Epoch 7/20 | Train Loss: 0.6934 | Val Loss: 0.6932 | Val AUC: 0.5021 | Val F1: 0.6569
+2026-07-26 14:29:32,883: Early stopping at epoch 7
+2026-07-26 14:30:31,652: optimal threshold: 0.10 (val F1 0.6651)
+2026-07-26 14:31:29,740: checkpoint saved: /fp/homes01/u01/ec-michelec/MIMICIV/checkpoints/kip/BERT_kip_m4_ordered_9551/ckpt.pt
+2026-07-26 14:31:29,898: result row appended to /fp/homes01/u01/ec-michelec/MIMICIV/results/kip_training.csv
+2026-07-26 14:31:29,898: DONE BERT kip_m4 ordered seed=9551: test_auc=0.4987 test_f1=0.6649 (9168.5s)

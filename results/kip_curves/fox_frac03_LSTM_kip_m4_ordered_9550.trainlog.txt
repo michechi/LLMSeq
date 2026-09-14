@@ -1,0 +1,35 @@
+Starting job 4012802 on gpu-17 on Fox at Mon Jul 27 12:45:22 CEST 2026
+
+=== JOB CONFIGURATION ===
+Job: 4012802 / Array task: 0
+Node: gpu-17.fox
+Config: model=LSTM tag=kip_m4 mode=ordered seed=9550 fraction=0.3 patience=5
+2026-07-27 12:46:10,450: arg bert_max_length = 512
+2026-07-27 12:46:10,450: arg checkpoint_root = /fp/homes01/u01/ec-michelec/MIMICIV/checkpoints/kip_fullft
+2026-07-27 12:46:10,450: arg dl_fraction = 0.3
+2026-07-27 12:46:10,450: arg dl_patience = 5
+2026-07-27 12:46:10,450: arg llm_batch_size = 8
+2026-07-27 12:46:10,450: arg llm_fraction = 1.0
+2026-07-27 12:46:10,450: arg llm_full_ft = False
+2026-07-27 12:46:10,450: arg llm_max_length = 512
+2026-07-27 12:46:10,450: arg llm_model_name = None
+2026-07-27 12:46:10,450: arg mode = ordered
+2026-07-27 12:46:10,450: arg model = LSTM
+2026-07-27 12:46:10,450: arg ordered_csv = /fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/tested
+2026-07-27 12:46:10,450: arg results_csv = /fp/homes01/u01/ec-michelec/MIMICIV/results/kip_training_fullft.csv
+2026-07-27 12:46:10,450: arg seed = 9550
+2026-07-27 12:46:10,450: arg shuffled_csv = /fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/kip_shuffled
+2026-07-27 12:46:10,450: arg site = fox
+2026-07-27 12:46:10,450: arg smoke = False
+2026-07-27 12:46:10,450: arg tag = kip_m4
+2026-07-27 12:46:10,672: device: cuda
+2026-07-27 12:46:10,672: Loading data from: /fp/homes01/u01/ec-michelec/MIMICIV/data/simulation/tested/
+2026-07-27 12:46:11,365: Data loaded - Train: 400000, Val: 50000, Test: 50000
+2026-07-27 12:46:11,451: training subset after fraction 0.30: 120000 rows
+2026-07-27 12:46:11,451: recipe: DL_TR_baselines_experiment OPTIMAL: Adam lr=0.0005 bs=64 epochs<=30 patience=5 early=val_f1 fraction=0.3 config={'vocab_size': 26, 'embedding_dim': 64, 'hidden_dim': 128, 'num_layers': 2, 'num_classes': 2, 'dropout': 0.5}
+2026-07-27 12:46:27,244:   Epoch [5/30] Train Loss: 0.6932, Val F1: 0.4358, Val AUC: 0.5009
+2026-07-27 12:46:33,217:   Early stopping at epoch 7
+2026-07-27 12:46:33,895: per-epoch val curve saved: /fp/homes01/u01/ec-michelec/MIMICIV/checkpoints/kip_fullft/LSTM_kip_m4_ordered_9550/curve.json
+2026-07-27 12:46:33,895: checkpoint saved: /fp/homes01/u01/ec-michelec/MIMICIV/checkpoints/kip_fullft/LSTM_kip_m4_ordered_9550/ckpt.pt
+2026-07-27 12:46:34,070: result row appended to /fp/homes01/u01/ec-michelec/MIMICIV/results/kip_training_fullft.csv
+2026-07-27 12:46:34,070: DONE LSTM kip_m4 ordered seed=9550: test_auc=0.5031 test_f1=0.5934 (22.4s)
