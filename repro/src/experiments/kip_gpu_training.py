@@ -78,7 +78,7 @@ CHECKPOINT_ROOT = REPO_ROOT / "checkpoints" / "kip"
 RESULTS_CSV = REPO_ROOT / "results" / "kip_training.csv"
 HF_CACHE = Path(os.environ.get("HF_HOME", "/root/hf_cache"))
 
-DL_MODELS = ("LSTM", "Transformer")
+DL_MODELS = ("LSTM", "Transformer", "RNNTransformer")  # all in dlx.OPTIMAL_CONFIGS; run_dl is generic
 MODES = ("ordered", "shuffled_train", "shuffled_eval")
 
 RESULT_COLUMNS = [
