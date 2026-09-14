@@ -300,6 +300,8 @@ Submit order (from `scripts/slurm/FOX/kip`, `mkdir -p logs` once;
 ```bash
 sbatch kip_k_controls_b.slurm          # 9 cells / 5 tasks — BERT + Llama1B shuffled-train gaps
 JL=$(sbatch --parsable kip_l_ordered_9550.slurm)   # 2 cells / 1 job — FOX seed-9550 ordered (BERT@512, Llama1B LoRA)
+# FRESH CHECKOUT (July checkpoints absent): use kip_l2 INSTEAD of kip_l —
+#   JL=$(sbatch --parsable kip_l2_ordered_regen.slurm)   # 12 cells / 6 tasks: regenerates ALL mode-(a) ckpts kip_m needs
 sbatch --dependency=afterok:$JL kip_m_controls_c.slurm  # 12 cells / 6 tasks — full shuffled-eval grid
 sbatch kip_n_llama1b_fullft.slurm      # 10 cells / 5 tasks — Llama1B full-FT: m4 completion + m6 both fractions
 sbatch kip_p_llama8b_fullft.slurm      # 6 cells / 3 tasks — OPT-IN: Llama8B full-FT triplets (~30–50 GPU-h)
